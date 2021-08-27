@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BasePart.h"
+#include "Pixel.h"
 
-UBasePart::UBasePart()
+UPixel::UPixel()
 {
 }
 
-UBasePart::~UBasePart()
+UPixel::~UPixel()
 {
 }
