@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "BaseShip.h"
+#include "Voidsinger/VoidsingerTypes.h"
+#include "Voidsinger/StarSystemData.h"
 #include "Camera/CameraComponent.h"
 #include "PlayerShip.generated.h"
 
@@ -29,4 +31,6 @@ protected:
 public:
 	APlayerShip();
 	
+	UFUNCTION(BlueprintPure)
+	FTravelCost GetTravelCost(StarSystemData Target);
 };

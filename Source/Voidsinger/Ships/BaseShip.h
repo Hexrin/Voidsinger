@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Voidsinger/VoidsingerTypes.h"
 #include "BaseShip.generated.h"
 
 UCLASS()

@@ -21,3 +21,8 @@ APlayerShip::APlayerShip()
 
     AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
+
+FTravelCost APlayerShip::GetTravelCost(StarSystemData Target)
+{
+    return FTravelCost();
+}

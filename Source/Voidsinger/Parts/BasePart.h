@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "Pixel.h"
 #include "CoreMinimal.h"
 
 /**
@@ -14,7 +13,8 @@ public:
 	UBasePart();
 	~UBasePart();
 
-private:
-	TArray<UPixel> Pixels;
+protected:
+	UPROPERTY(EditAnywhere)
+	TArray<FIntPoint> DesiredShape;
 	
 };
