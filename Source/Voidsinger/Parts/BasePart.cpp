@@ -3,10 +3,10 @@
 
 #include "BasePart.h"
 
-UBasePart::UBasePart()
+BasePart::BasePart()
 {
 }
 
-UBasePart::~UBasePart()
+BasePart::~BasePart()
 {
 }

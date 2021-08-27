@@ -2,19 +2,16 @@
 
 #pragma once
 
-#include "Pixel.h"
 #include "CoreMinimal.h"
 
 /**
  * 
  */
-class VOIDSINGER_API UBasePart
+class VOIDSINGER_API BasePart
 {
 public:
-	UBasePart();
-	~UBasePart();
+	BasePart();
+	~BasePart();
 
-private:
-	TArray<UPixel> Pixels;
 	
 };
