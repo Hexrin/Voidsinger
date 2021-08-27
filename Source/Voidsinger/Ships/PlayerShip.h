@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseShip.h"
+#include "Camera/CameraComponent.h"
 #include "PlayerShip.generated.h"
 
 /**
@@ -15,10 +16,17 @@ class VOIDSINGER_API APlayerShip : public ABaseShip
 	GENERATED_BODY()
 	
 
-	protected:
+protected:
+	UPROPERTY(VisibleAnywhere)
+	class UCameraComponent* Camera;
+
+	UPROPERTY(EditAnywhere)
 	int Pixels;
 
-	public:
+	UPROPERTY(EditAnywhere)
+	float CameraHeight;
+
+public:
 	APlayerShip();
 	
 };
