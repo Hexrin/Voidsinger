@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "PlayerShip.h"
+
 
 APlayerShip::APlayerShip()
 {
@@ -22,7 +22,9 @@ APlayerShip::APlayerShip()
     AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
-FTravelCost APlayerShip::GetTravelCost(StarSystemData Target)
+FTravelCost APlayerShip::GetTravelCost(class UStarSystemData* Target)
 {
-    return FTravelCost();
+    TMap<TEnumAsByte<EFluidType>, float> FCosts;
+    FCosts.Add(EFluidType::Fuel, 100);
+    return FTravelCost(FCosts, 55);
 }

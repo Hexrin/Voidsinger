@@ -3,15 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BasePart.generated.h"
 
 /**
  * 
  */
-class VOIDSINGER_API UBasePart
+UCLASS()
+class VOIDSINGER_API UBasePart : public UObject
 {
+
+	GENERATED_BODY()
+
 public:
 	UBasePart();
-	~UBasePart();
 
 protected:
 	UPROPERTY(EditAnywhere)

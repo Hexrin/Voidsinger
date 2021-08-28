@@ -4,19 +4,23 @@
 
 #include "VoidsingerTypes.h"
 #include "CoreMinimal.h"
+#include "StarSystemData.generated.h"
 
 /**
  * 
  */
-class VOIDSINGER_API StarSystemData
+UCLASS()
+class VOIDSINGER_API UStarSystemData : public UObject
 {
+
+	GENERATED_BODY()
+
 public:
-	StarSystemData();
-	~StarSystemData();
+	UStarSystemData();
 
-	UPROPERTY(BlueprintReadOnly, ExposeOnSpawn = "true")
-	FVector2D Location;
+	UPROPERTY(BlueprintReadOnly)
+	FVector2D Location UMETA(ExposeOnSpawn = "true");
 
-	UPROPERTY(BlueprintReadOnly, ExposeOnSpawn = "true")
-	TEmumAsByte<EDifficulty> Difficulty;
+	UPROPERTY(BlueprintReadOnly);
+	TEnumAsByte<EDifficulty> Difficulty UMETA(ExposeOnSpawn = "true");
 };

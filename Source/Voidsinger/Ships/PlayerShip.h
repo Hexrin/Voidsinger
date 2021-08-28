@@ -32,5 +32,5 @@ public:
 	APlayerShip();
 	
 	UFUNCTION(BlueprintPure)
-	FTravelCost GetTravelCost(StarSystemData Target);
+	FTravelCost GetTravelCost(class UStarSystemData* Target);
 };

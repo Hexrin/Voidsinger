@@ -6,7 +6,3 @@
 UBasePart::UBasePart()
 {
 }
-
-UBasePart::~UBasePart()
-{
-}

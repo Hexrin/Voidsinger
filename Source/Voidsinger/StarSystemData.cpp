@@ -3,10 +3,7 @@
 
 #include "StarSystemData.h"
 
-StarSystemData::StarSystemData()
+UStarSystemData::UStarSystemData()
 {
 }
 
-StarSystemData::~StarSystemData()
-{
-}

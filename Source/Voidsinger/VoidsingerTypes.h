@@ -5,19 +5,8 @@
 #include "CoreMinimal.h"
 #include "Parts/BasePart.h"
 #include "UObject/NoExportTypes.h"
+#include "VoidsingerTypes.generated.h"
 
-
-USTRUCT(BlueprintType)
-struct VOIDSINGER_API FPartData
-{
-	GENERATED_BODY()
-
-		//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		//class UBasePart* Part;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Temperature;
-};
 
 UENUM(BlueprintType)
 enum EDifficulty
@@ -38,14 +27,32 @@ enum EFluidType
 };
 
 USTRUCT(BlueprintType)
+struct VOIDSINGER_API FPartData
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UBasePart* Part;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Temperature = 0;
+};
+
+USTRUCT(BlueprintType)
 struct VOIDSINGER_API FTravelCost
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<EFluidType, float> FluidCosts;
+	TMap<TEnumAsByte<EFluidType>, float> FluidCosts;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ElectricityCost;
+
+	FTravelCost(TMap<TEnumAsByte<EFluidType>, float> FCosts = TMap<TEnumAsByte<EFluidType>, float>(), float ECost = 0)
+	{
+		FluidCosts = FCosts;
+		ElectricityCost = ECost;
+	}
 
 };
