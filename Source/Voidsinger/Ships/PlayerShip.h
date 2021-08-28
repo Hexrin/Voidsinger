@@ -4,12 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "BaseShip.h"
-<<<<<<< HEAD
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/StarSystemData.h"
 #include "Camera/CameraComponent.h"
-=======
->>>>>>> origin/ZachM
 #include "PlayerShip.generated.h"
 
 /**
@@ -21,10 +18,13 @@ class VOIDSINGER_API APlayerShip : public ABaseShip
 	GENERATED_BODY()
 	
 
-	protected:
+protected:
+	UPROPERTY(VisibleAnywhere)
+	class UCameraComponent* Camera;
+
+	UPROPERTY(EditAnywhere)
 	int Pixels;
 
-<<<<<<< HEAD
 	UPROPERTY(EditAnywhere)
 	float CameraHeight;
 
@@ -32,9 +32,6 @@ class VOIDSINGER_API APlayerShip : public ABaseShip
 	class UStarSystemData* CurrentStarSystem;
 
 public:
-=======
-	public:
->>>>>>> origin/ZachM
 	APlayerShip();
 	
 	UFUNCTION(BlueprintPure)
