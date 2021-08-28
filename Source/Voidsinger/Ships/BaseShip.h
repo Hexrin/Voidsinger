@@ -27,6 +27,13 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintPure)
+	FVector2D GetCenterOfMass();
+
+	UFUNCTION(BlueprintPure)
+	float GetMass();
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	class UPartGridComponent* PartGrid;

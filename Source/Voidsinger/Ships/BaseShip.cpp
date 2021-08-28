@@ -34,3 +34,13 @@ void ABaseShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+FVector2D ABaseShip::GetCenterOfMass()
+{
+	return FVector2D();
+}
+
+float ABaseShip::GetMass()
+{
+	return 1.0f;
+}
+
