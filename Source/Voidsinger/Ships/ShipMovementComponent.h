@@ -26,11 +26,13 @@ public:
 	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	//declare functions
 	UFUNCTION(BlueprintCallable)
 	void AddForce(FVector2D ForceLocation, FVector2D Force);
 	
 private:
 
+	//declare private variables
 	class ABaseShip* Ship;
 	FVector2D Velocity;
 	float AngularVelocity;
