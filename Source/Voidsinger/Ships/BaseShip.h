@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "Voidsinger/Parts/PartGridComponent.h"
 #include "BaseShip.generated.h"
 
 UCLASS()
@@ -26,5 +27,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+private:
+	UPROPERTY(VisibleAnywhere)
+	class UPartGridComponent* PartGrid;
 };

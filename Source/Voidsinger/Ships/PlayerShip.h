@@ -28,9 +28,17 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float CameraHeight;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UStarSystemData* CurrentStarSystem;
+
 public:
 	APlayerShip();
 	
 	UFUNCTION(BlueprintPure)
 	FTravelCost GetTravelCost(class UStarSystemData* Target);
+
+	UFUNCTION(BlueprintCallable)
+	bool TravelToStarSystem(class UStarSystemData* Target);
+
+	
 };

@@ -28,3 +28,9 @@ FTravelCost APlayerShip::GetTravelCost(class UStarSystemData* Target)
     FCosts.Add(EFluidType::Fuel, 100);
     return FTravelCost(FCosts, 55);
 }
+
+bool APlayerShip::TravelToStarSystem(UStarSystemData* Target)
+{
+    CurrentStarSystem = Target;
+    return true;
+}

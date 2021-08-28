@@ -9,6 +9,8 @@ ABaseShip::ABaseShip()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Root Part Grid"));
+	
 }
 
 // Called when the game starts or when spawned
