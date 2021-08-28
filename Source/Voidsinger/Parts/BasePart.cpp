@@ -3,6 +3,13 @@
 
 #include "BasePart.h"
 
-UBasePart::UBasePart()
+BasePart::BasePart()
 {
 }
+<<<<<<< HEAD
+=======
+
+BasePart::~BasePart()
+{
+}
+>>>>>>> origin/ZachM
