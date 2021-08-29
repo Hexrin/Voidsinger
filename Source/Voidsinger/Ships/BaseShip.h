@@ -33,6 +33,13 @@ public:
 
 	//UFUNCTION(BlueprintPure)
 	float const GetFluidAmount(TEnumAsByte<EFluidType> Fluid);
+
+	UFUNCTION(BlueprintPure)
+	FVector2D GetCenterOfMass();
+
+	UFUNCTION(BlueprintPure)
+	float GetMass();
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	class UPartGridComponent* PartGrid;
