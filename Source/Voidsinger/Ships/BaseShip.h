@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/Parts/PartGridComponent.h"
+#include "ShipMovementComponent.h"
+#include "Components/SceneComponent.h"
 #include "BaseShip.generated.h"
 
 UCLASS()
@@ -40,7 +42,13 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetMass();
 
-private:
+//protected:
 	UPROPERTY(VisibleAnywhere)
+	class USceneComponent* SceneRoot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UPartGridComponent* PartGrid;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UShipMovementComponent* MovementComponent;
 };

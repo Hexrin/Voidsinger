@@ -2,6 +2,7 @@
 
 
 #include "ShipMovementComponent.h"
+#include "BaseShip.h"
 
 // Sets default values for this component's properties
 UShipMovementComponent::UShipMovementComponent()
@@ -30,8 +31,8 @@ void UShipMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	//transform the ship by the velocity and angular velocity
-	Ship->SetActorLocation(Ship->GetActorLocation() + FVector(Velocity.X, Velocity.Y, 0)) * DeltaTime;
-	Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0)) * DeltaTime;
+	Ship->SetActorLocation(Ship->GetActorLocation() + FVector(Velocity.X, Velocity.Y, 0) * DeltaTime);
+	Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0) * DeltaTime);
 
 }
 

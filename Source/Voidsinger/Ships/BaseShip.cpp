@@ -8,8 +8,11 @@ ABaseShip::ABaseShip()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
+	RootComponent = SceneRoot;
 
-	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Root Part Grid"));
+	MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));
+	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
 	
 }
 
@@ -42,6 +45,8 @@ float const ABaseShip::GetFluidCapacity(TEnumAsByte<EFluidType> Fluid)
 float const ABaseShip::GetFluidAmount(TEnumAsByte<EFluidType> Fluid)
 {
 	return 100.0f;
+}
+
 FVector2D ABaseShip::GetCenterOfMass()
 {
 	return FVector2D();

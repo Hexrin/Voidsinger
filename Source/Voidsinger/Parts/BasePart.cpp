@@ -15,7 +15,8 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape()
 
 const FIntPoint UBasePart::GetShapeBounds()
 {
-	FIntPoint Max = FIntPoint();
+	FIntPoint Max = FIntPoint(0,0);
+	UE_LOG(LogTemp, Warning, TEXT("before X=%d, Y=%d"), Max.X, Max.Y)
 	for (int i = 0; i < DesiredShape.Num(); i++)
 	{
 		if (DesiredShape[i].X > Max.X)
@@ -27,5 +28,6 @@ const FIntPoint UBasePart::GetShapeBounds()
 			Max.Y = DesiredShape[i].Y;
 		}
 	}
+	UE_LOG(LogTemp, Warning, TEXT("after X=%d, Y=%d"), Max.X, Max.Y)
 	return Max;
 }

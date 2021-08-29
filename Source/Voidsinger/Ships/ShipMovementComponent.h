@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "BaseShip.h"
 #include "ShipMovementComponent.generated.h"
 
+//Forward Declaration read these: https://forums.unrealengine.com/t/circular-dependency-detected-for-filename/45749/2 & https://answers.unrealengine.com/questions/62540/calling-a-function-in-my-gamemode-from-an-actor-cy.html
+class ABaseShip;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
 class VOIDSINGER_API UShipMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -33,7 +35,7 @@ public:
 private:
 
 	//declare private variables
-	class ABaseShip* Ship;
+	ABaseShip* Ship;
 	FVector2D Velocity;
 	float AngularVelocity;
 
