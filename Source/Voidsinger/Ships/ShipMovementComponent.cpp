@@ -6,13 +6,12 @@
 // Sets default values for this component's properties
 UShipMovementComponent::UShipMovementComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
+
 	PrimaryComponentTick.bCanEverTick = true;
 	Ship = (ABaseShip*)GetOwner();
 	AngularVelocity = 0;
 	Velocity = FVector2D(0, 0);
-	// ...
+
 }
 
 
@@ -20,39 +19,45 @@ UShipMovementComponent::UShipMovementComponent()
 void UShipMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
 	
 }
 
 
-
+//Called every tick
 void UShipMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	Ship->SetActorLocation(Ship->GetActorLocation() + FVector(Velocity.X, Velocity.Y, 0));
-	Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0));
+
+	//transform the ship by the velocity and angular velocity
+	Ship->SetActorLocation(Ship->GetActorLocation() + FVector(Velocity.X, Velocity.Y, 0)) * DeltaTime;
+	Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0)) * DeltaTime;
 
 }
 
+//When a force is added to the ship
 void UShipMovementComponent::AddForce(FVector2D ForceLocation, FVector2D Force)
 {
 	
+	//Distance vector is the distance from the center of mass to the force location.
 	FVector2D DistanceVector = Ship->GetCenterOfMass() - ForceLocation;
-
+	
+	//Account for exactly hitting the center of mass, in which case there would be no rotation and the full 
+	//force would be used.
 	if (DistanceVector.IsNearlyZero())
 	{
 		Velocity += Force / Ship->GetMass();
 		UE_LOG(LogTemp, Warning, TEXT("????????"));
 	}
+
+	//calculate the change in velocity and change in angular velocity based off the force
 	else
 	{
+		//these 2 lines of math took literally 7 hours to figure out.
 		Velocity += (FVector2D::DotProduct(DistanceVector.GetSafeNormal(), Force) * DistanceVector.GetSafeNormal()) / Ship->GetMass();
 		AngularVelocity += FVector2D::DotProduct(DistanceVector.GetRotated(90).GetSafeNormal(), Force) * DistanceVector.Size() / Ship->GetMass();
-		UE_LOG(LogTemp, Warning, TEXT("mass = %f"), Ship->GetMass());
 	}
 
-	//UE_LOG(LogTemp, Warning, TEXT("x = %f, y = %f"), DistanceVector.GetSafeNormal().X * FVector2D::DotProduct(DistanceVector.GetSafeNormal(), Force), DistanceVector.GetSafeNormal().Y * FVector2D::DotProduct(DistanceVector.GetSafeNormal(), Force));
+	
 }
 
