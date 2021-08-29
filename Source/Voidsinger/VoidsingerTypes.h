@@ -39,6 +39,18 @@ struct VOIDSINGER_API FPartData
 };
 
 USTRUCT(BlueprintType)
+struct VOIDSINGER_API FArrayBounds
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FIntPoint LowerBounds = FIntPoint();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FIntPoint UpperBounds = FIntPoint();
+};
+
+USTRUCT(BlueprintType)
 struct VOIDSINGER_API FTravelCost
 {
 	GENERATED_BODY()

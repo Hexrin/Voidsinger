@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "BasePart.h"
+#include "Voidsinger/VoidsingerTypes.h"
 #include "PartGridComponent.generated.h"
 
 
@@ -24,7 +26,23 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, bool bAlwaysPlace);
+
+
 private:
-	TArray<TArray<UBasePart>> PartGrid;
-		
+	
+	TArray<TArray<UBasePart*>> PartGrid;
+	
+	FArrayBounds GridBounds;
+
+	UPROPERTY(EditAnywhere)
+	FIntPoint GridSize;
+
+	UPROPERTY(EditAnywhere)
+	float GridScale;
+
+	UPROPERTY(EditAnywhere)
+	class UStaticMesh* PixelMesh;
+
+	bool const CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape);
 };

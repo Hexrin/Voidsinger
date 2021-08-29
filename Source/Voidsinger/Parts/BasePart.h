@@ -8,7 +8,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBasePart : public UObject
 {
 
@@ -17,8 +17,14 @@ class VOIDSINGER_API UBasePart : public UObject
 public:
 	UBasePart();
 
+	UFUNCTION(BlueprintPure)
+	const TArray<FIntPoint> GetDesiredShape();
+
+	UFUNCTION(BlueprintPure)
+	const FIntPoint GetShapeBounds();
+
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly, NoClear)
 	TArray<FIntPoint> DesiredShape;
 	
 };

@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class VOIDSINGER_API UStarSystemData : public UObject
 {
 

@@ -27,6 +27,12 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	//UFUNCTION(BlueprintPure)
+	float const GetFluidCapacity(TEnumAsByte<EFluidType> Fluid);
+
+	//UFUNCTION(BlueprintPure)
+	float const GetFluidAmount(TEnumAsByte<EFluidType> Fluid);
 private:
 	UPROPERTY(VisibleAnywhere)
 	class UPartGridComponent* PartGrid;
