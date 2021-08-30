@@ -46,8 +46,9 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	// ...
 }
 
-bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, bool bAlwaysPlace)
+bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace)
 {
+
 	TArray<FIntPoint> DesiredShape = PartType.GetDefaultObject()->GetDesiredShape();
 	FIntPoint PartBounds = PartType.GetDefaultObject()->GetShapeBounds();
 
@@ -93,6 +94,37 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 	else
 	{
 		return false;
+	}
+}
+
+void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
+{
+	for (int i = 0; i < Parts.Num(); i++)
+	{
+		AddPart(Parts[i].PartClass, Parts[i].PartLocation, Parts[i].PartRotation, false);
+	}
+}
+
+void UPartGridComponent::SaveShip()
+{
+	TArray<UBasePart*> Parts;
+	for (int i = GridBounds.LowerBounds.X; i < GridBounds.UpperBounds.X; i++)
+	{
+		for (int j = GridBounds.LowerBounds.Y; j < GridBounds.UpperBounds.Y; j++)
+		{
+			if (IsValid(PartGrid[i][j]) && !Parts.Contains(PartGrid[i][j]))
+			{
+				Parts.Add(PartGrid[i][j]);
+			}
+		}
+	}
+	
+	USaveGame* SaveGameInstance = UGameplayStatics::CreateSaveGameObject(USaveShip::StaticClass());
+
+	for (int i = 0; i < Parts.Num(); i++)
+	{
+
+		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i]->GetClass(), Parts[i]->GetPartLocation(), Parts[i]->GetPartRotation()));
 	}
 }
 

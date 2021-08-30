@@ -30,10 +30,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	//UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure)
 	float const GetFluidCapacity(TEnumAsByte<EFluidType> Fluid);
 
-	//UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure)
 	float const GetFluidAmount(TEnumAsByte<EFluidType> Fluid);
 
 	UFUNCTION(BlueprintPure)

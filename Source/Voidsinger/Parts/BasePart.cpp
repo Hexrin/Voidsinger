@@ -10,24 +10,39 @@ UBasePart::UBasePart()
 
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
 {
+	TArray<FIntPoint> TempShap = TArray<FIntPoint>();
+	for (int i = 0; i < DesiredShape.Num(); i++)
+	{
+		
+	}
 	return DesiredShape;
 }
 
 const FIntPoint UBasePart::GetShapeBounds()
 {
-	FIntPoint Max = FIntPoint(0,0);
+	FIntPoint Max = GetDesiredShape()[0];
 	UE_LOG(LogTemp, Warning, TEXT("before X=%d, Y=%d"), Max.X, Max.Y)
-	for (int i = 0; i < DesiredShape.Num(); i++)
+	for (int i = 0; i < GetDesiredShape().Num(); i++)
 	{
-		if (DesiredShape[i].X > Max.X)
+		if (GetDesiredShape()[i].X > Max.X)
 		{
-			Max.X = DesiredShape[i].X;
+			Max.X = GetDesiredShape()[i].X;
 		}
-		if (DesiredShape[i].Y > Max.Y)
+		if (GetDesiredShape()[i].Y > Max.Y)
 		{
-			Max.Y = DesiredShape[i].Y;
+			Max.Y = GetDesiredShape()[i].Y;
 		}
 	}
 	UE_LOG(LogTemp, Warning, TEXT("after X=%d, Y=%d"), Max.X, Max.Y)
 	return Max;
+}
+
+FIntPoint UBasePart::GetPartLocation()
+{
+	return FIntPoint();
+}
+
+TEnumAsByte<EPartRotation> UBasePart::GetPartRotation()
+{
+	return TEnumAsByte<EPartRotation>();
 }
