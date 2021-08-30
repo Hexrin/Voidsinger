@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Parts/BasePart.h"
 #include "UObject/NoExportTypes.h"
 #include "VoidsingerTypes.generated.h"
 
@@ -94,7 +93,10 @@ struct VOIDSINGER_API FSavePartInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EPartRotation> PartRotation;
 
-	FSavePartInfo();
+	FSavePartInfo()
+	{
+		FSavePartInfo(nullptr, FIntPoint(), EPartRotation::Degrees0);
+	}
 
 	FSavePartInfo(TSubclassOf<UBasePart> Class, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation)
 	{

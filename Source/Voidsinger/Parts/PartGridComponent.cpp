@@ -48,6 +48,7 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace)
 {
+
 	TArray<FIntPoint> DesiredShape = PartType.GetDefaultObject()->GetDesiredShape();
 	FIntPoint PartBounds = PartType.GetDefaultObject()->GetShapeBounds();
 
