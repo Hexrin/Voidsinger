@@ -105,7 +105,7 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 	}
 }
 
-void UPartGridComponent::SaveShip()
+void UPartGridComponent::SaveShip(FString ShipName)
 {
 	TArray<UBasePart*> Parts;
 	for (int i = GridBounds.LowerBounds.X; i < GridBounds.UpperBounds.X; i++)
@@ -126,6 +126,15 @@ void UPartGridComponent::SaveShip()
 
 		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i]->GetClass(), Parts[i]->GetPartLocation(), Parts[i]->GetPartRotation()));
 	}
+
+	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);
+
+}
+
+void UPartGridComponent::LoadSavedShip(FString ShipName)
+{
+	USaveGame* SaveGameInstance = UGameplayStatics::LoadGameFromSlot(ShipName, 0);
+	BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);
 }
 
 bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape)
