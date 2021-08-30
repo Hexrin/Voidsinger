@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "BasePart.h"
+#include "Kismet/GameplayStatics.h"
+#include "Voidsinger/SaveShip.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "PartGridComponent.generated.h"
 
@@ -27,8 +29,13 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
-	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, bool bAlwaysPlace);
+	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace);
 
+	UFUNCTION(BlueprintCallable)
+	void BuildShip(TArray<FSavePartInfo> Parts);
+
+	UFUNCTION(BlueprintCallable)
+	void SaveShip();
 
 private:
 	

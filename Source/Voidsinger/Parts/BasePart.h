@@ -3,11 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Voidsinger/VoidsingerTypes.h"
 #include "BasePart.generated.h"
 
 /**
  * 
  */
+
+enum EPartRotation;
+
 UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBasePart : public UObject
 {
@@ -22,6 +26,12 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	const FIntPoint GetShapeBounds();
+
+	UFUNCTION(BlueprintPure)
+	FIntPoint GetPartLocation();
+
+	UFUNCTION(BlueprintPure)
+	TEnumAsByte<EPartRotation> GetPartRotation();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, NoClear)
