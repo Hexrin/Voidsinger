@@ -31,3 +31,13 @@ const FIntPoint UBasePart::GetShapeBounds()
 	UE_LOG(LogTemp, Warning, TEXT("after X=%d, Y=%d"), Max.X, Max.Y)
 	return Max;
 }
+
+FIntPoint UBasePart::GetPartLocation()
+{
+	return FIntPoint();
+}
+
+TEnumAsByte<EPartRotation> UBasePart::GetPartRotation()
+{
+	return TEnumAsByte<EPartRotation>();
+}

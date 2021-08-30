@@ -7,6 +7,7 @@
 #include "UObject/NoExportTypes.h"
 #include "VoidsingerTypes.generated.h"
 
+class UBasePart;
 
 UENUM(BlueprintType)
 enum EDifficulty
@@ -67,4 +68,39 @@ struct VOIDSINGER_API FTravelCost
 		ElectricityCost = ECost;
 	}
 
+
+};
+
+UENUM(BlueprintType)
+enum EPartRotation
+{
+	Degrees0		UMETA(DisplayName = "0 Degrees"),
+	Degrees90		UMETA(DisplayName = "90 Degrees"),
+	Degrees180		UMETA(DisplayName = "180 Degrees"),
+	Degrees270		UMETA(DisplayName = "270 Degrees"),
+};
+
+USTRUCT(BlueprintType)
+struct VOIDSINGER_API FSavePartInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UBasePart> PartClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FIntPoint PartLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EPartRotation> PartRotation;
+
+	FSavePartInfo();
+
+	FSavePartInfo(TSubclassOf<UBasePart> Class, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation)
+	{
+
+		PartClass = Class;
+		PartLocation = Location;
+		PartRotation = Rotation;
+	}
 };
