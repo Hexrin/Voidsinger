@@ -7,10 +7,10 @@ APlayerShip::APlayerShip()
 {
     Pixels=55;
     
-    /*if (!CameraHeight)
+    if (!CameraHeight)
     {
-        CameraHeight = 2000;
-    }*/
+        CameraHeight = 100;
+    }
 
 
     //Setup Camera
