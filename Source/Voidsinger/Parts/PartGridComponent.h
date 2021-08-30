@@ -50,7 +50,7 @@ private:
 	float GridScale;
 
 	UPROPERTY(EditAnywhere)
-	class UStaticMesh* PixelMesh;
+	class UStaticMesh* PixelMesh; 
 
 	bool const CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape);
 };

@@ -5,7 +5,7 @@
 
 UBasePart::UBasePart()
 {
-
+	
 }
 
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
@@ -13,7 +13,23 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape()
 	TArray<FIntPoint> TempShap = TArray<FIntPoint>();
 	for (int i = 0; i < DesiredShape.Num(); i++)
 	{
-		
+		switch (Rotation)
+		{
+		case Degrees0:
+			TempShap.Add(DesiredShape[i]);
+			break;
+		case Degrees90:
+			TempShap.Add(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
+			break;
+		case Degrees180:
+			TempShap.Add(DesiredShape[i] * -1);
+			break;
+		case Degrees270:
+			TempShap.Add(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
+			break;
+		default:
+			break;
+		}
 	}
 	return DesiredShape;
 }
