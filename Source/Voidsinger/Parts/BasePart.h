@@ -32,19 +32,35 @@ public:
 	const FArrayBounds GetShapeBounds(TEnumAsByte<EPartRotation> Rot);
 
 	UFUNCTION(BlueprintPure)
-	FIntPoint GetPartLocation();
+	FIntPoint GetLocation();
 
 	UFUNCTION(BlueprintPure)
-	TEnumAsByte<EPartRotation> GetPartRotation();
+	TEnumAsByte<EPartRotation> GetRotation();
 
-	
 	UFUNCTION(BlueprintPure)
 	TArray<FIntPoint> GetShape();
+
+	UFUNCTION(BlueprintPure)
+	TArray<FIntPoint> GetMass();
+
+	UFUNCTION(BlueprintPure)
+	TArray<FIntPoint> GetCost();
 
 	TEnumAsByte<EPartRotation> Rotation;
 protected:
 	UPROPERTY(EditDefaultsOnly, NoClear)
 	TArray<FIntPoint> DesiredShape;
+	TArray<FIntPoint> DestroyedPixels;
+	
+	UPROPERTY(EditDefaultsOnly, NoClear)
+	float Mass;
+
+	UPROPERTY(EditDefaultsOnly)
+	static const int Cost;
+
+	const FIntPoint Location;
+
+
 
 	
 

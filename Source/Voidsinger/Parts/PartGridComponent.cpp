@@ -127,7 +127,7 @@ void UPartGridComponent::SaveShip(FString ShipName)
 	for (int i = 0; i < Parts.Num(); i++)
 	{
 
-		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i]->GetClass(), Parts[i]->GetPartLocation(), Parts[i]->GetPartRotation()));
+		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i]->GetClass(), Parts[i]->GetLocation(), Parts[i]->GetRotation()));
 	}
 
 	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);

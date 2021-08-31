@@ -116,12 +116,12 @@ const FArrayBounds UBasePart::GetShapeBounds(TEnumAsByte<EPartRotation> Rot)
 	return Bounds;
 }
 
-FIntPoint UBasePart::GetPartLocation()
+FIntPoint UBasePart::GetLocation()
 {
 	return FIntPoint();
 }
 
-TEnumAsByte<EPartRotation> UBasePart::GetPartRotation()
+TEnumAsByte<EPartRotation> UBasePart::GetRotation()
 {
 	return TEnumAsByte<EPartRotation>();
 }
