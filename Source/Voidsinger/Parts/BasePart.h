@@ -33,6 +33,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	TEnumAsByte<EPartRotation> GetPartRotation();
 
+	UFUNCTION(BlueprintPure)
+	TArray<FIntPoint> GetShape();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, NoClear)
 	TArray<FIntPoint> DesiredShape;
