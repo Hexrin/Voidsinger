@@ -22,4 +22,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FSavePartInfo> SavedShip;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString SaveSlotName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int UserIndex;
+
 };

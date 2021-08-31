@@ -62,3 +62,8 @@ TEnumAsByte<EPartRotation> UBasePart::GetPartRotation()
 {
 	return TEnumAsByte<EPartRotation>();
 }
+
+TArray<FIntPoint> UBasePart::GetShape()
+{
+	return TArray<FIntPoint>();
+}
