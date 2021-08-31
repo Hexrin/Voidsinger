@@ -5,5 +5,6 @@
 
 USaveShip::USaveShip()
 {
-
+	SaveSlotName = TEXT("TestSaveSlot");
+	UserIndex = 0;
 }

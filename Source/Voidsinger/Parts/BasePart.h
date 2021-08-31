@@ -21,6 +21,8 @@ class VOIDSINGER_API UBasePart : public UObject
 public:
 	UBasePart();
 
+
+
 	UFUNCTION(BlueprintPure)
 	const TArray<FIntPoint> GetDesiredShape();
 
@@ -33,8 +35,15 @@ public:
 	UFUNCTION(BlueprintPure)
 	TEnumAsByte<EPartRotation> GetPartRotation();
 
+	TEnumAsByte<EPartRotation> Rotation;
+	UFUNCTION(BlueprintPure)
+	TArray<FIntPoint> GetShape();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, NoClear)
 	TArray<FIntPoint> DesiredShape;
+
+	
+
 	
 };
