@@ -49,11 +49,17 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace)
 {
 
-	TArray<FIntPoint> DesiredShape = PartType.GetDefaultObject()->GetDesiredShape();
-	FIntPoint PartBounds = PartType.GetDefaultObject()->GetShapeBounds();
+	TArray<FIntPoint> DesiredShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
+	FArrayBounds PartBounds = PartType.GetDefaultObject()->GetShapeBounds(Rotation);
 
 
-	if (PartGrid.IsValidIndex(Location.X + PartBounds.X) && PartGrid[Location.X + PartBounds.X].IsValidIndex(Location.Y + PartBounds.Y) && (bAlwaysPlace || CanShapeFit(Location, DesiredShape)))
+	if (
+		PartGrid.IsValidIndex(Location.X + PartBounds.UpperBounds.X) && PartGrid.IsValidIndex(Location.X + PartBounds.LowerBounds.X)
+		&&
+		PartGrid[Location.X + PartBounds.UpperBounds.X].IsValidIndex(Location.Y + PartBounds.UpperBounds.Y) && PartGrid[Location.X + PartBounds.LowerBounds.X].IsValidIndex(Location.Y + PartBounds.LowerBounds.Y)
+		&& 
+		(bAlwaysPlace || CanShapeFit(Location, DesiredShape))
+		)
 	{
 		
 		if (Location.X < GridBounds.LowerBounds.X)
@@ -68,17 +74,14 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 		
 		
 		UBasePart* Part = NewObject<UBasePart>(PartType);
+		Part->Rotation = Rotation;
 
 		for (int i = 0; i < DesiredShape.Num(); i++)
 		{
 			PartGrid[DesiredShape[i].X + Location.X][DesiredShape[i].Y + Location.Y] = Part;
 			
-			//class UStaticMeshComponent* NewPlane = NewObject<UStaticMeshComponent>(GetOwner());
-
-			
 			class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
 			Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
-			//NewPlane->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 
 			if (Location.X > GridBounds.UpperBounds.X)
 			{
@@ -105,7 +108,7 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 	}
 }
 
-void UPartGridComponent::SaveShip()
+void UPartGridComponent::SaveShip(FString ShipName)
 {
 	TArray<UBasePart*> Parts;
 	for (int i = GridBounds.LowerBounds.X; i < GridBounds.UpperBounds.X; i++)
@@ -126,6 +129,15 @@ void UPartGridComponent::SaveShip()
 
 		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i]->GetClass(), Parts[i]->GetPartLocation(), Parts[i]->GetPartRotation()));
 	}
+
+	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);
+
+}
+
+void UPartGridComponent::LoadSavedShip(FString ShipName)
+{
+	USaveGame* SaveGameInstance = UGameplayStatics::LoadGameFromSlot(ShipName, 0);
+	BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);
 }
 
 bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape)

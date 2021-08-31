@@ -5,7 +5,7 @@
 
 UBasePart::UBasePart()
 {
-
+	
 }
 
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
@@ -13,28 +13,107 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape()
 	TArray<FIntPoint> TempShap = TArray<FIntPoint>();
 	for (int i = 0; i < DesiredShape.Num(); i++)
 	{
-		
+		switch (Rotation)
+		{
+		case Degrees0:
+			TempShap.Add(DesiredShape[i]);
+			break;
+		case Degrees90:
+			TempShap.Add(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
+			break;
+		case Degrees180:
+			TempShap.Add(DesiredShape[i] * -1);
+			break;
+		case Degrees270:
+			TempShap.Add(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
+			break;
+		default:
+			break;
+		}
 	}
-	return DesiredShape;
+	return TempShap;
 }
 
-const FIntPoint UBasePart::GetShapeBounds()
+const TArray<FIntPoint> UBasePart::GetDesiredShape(TEnumAsByte<EPartRotation> Rot)
 {
-	FIntPoint Max = GetDesiredShape()[0];
-	UE_LOG(LogTemp, Warning, TEXT("before X=%d, Y=%d"), Max.X, Max.Y)
-	for (int i = 0; i < GetDesiredShape().Num(); i++)
+	TArray<FIntPoint> TempShap = TArray<FIntPoint>();
+	for (int i = 0; i < DesiredShape.Num(); i++)
 	{
-		if (GetDesiredShape()[i].X > Max.X)
+		switch (Rot)
 		{
-			Max.X = GetDesiredShape()[i].X;
-		}
-		if (GetDesiredShape()[i].Y > Max.Y)
-		{
-			Max.Y = GetDesiredShape()[i].Y;
+		case Degrees0:
+			TempShap.Add(DesiredShape[i]);
+			break;
+		case Degrees90:
+			TempShap.Add(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
+			break;
+		case Degrees180:
+			TempShap.Add(DesiredShape[i] * -1);
+			break;
+		case Degrees270:
+			TempShap.Add(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
+			break;
+		default:
+			break;
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("after X=%d, Y=%d"), Max.X, Max.Y)
-	return Max;
+	return TempShap;
+}
+
+const FArrayBounds UBasePart::GetShapeBounds()
+{
+	FArrayBounds Bounds = FArrayBounds();
+
+	for (int i = 0; i < GetDesiredShape().Num(); i++)
+	{
+		if (GetDesiredShape()[i].X > Bounds.UpperBounds.X)
+		{
+			Bounds.UpperBounds.X = GetDesiredShape()[i].X;
+		}
+		if (GetDesiredShape()[i].Y > Bounds.UpperBounds.Y)
+		{
+			Bounds.UpperBounds.Y = GetDesiredShape()[i].Y;
+		}
+
+		if (GetDesiredShape()[i].X < Bounds.LowerBounds.X)
+		{
+			Bounds.LowerBounds.X = GetDesiredShape()[i].X;
+		}
+		if (GetDesiredShape()[i].Y < Bounds.LowerBounds.Y)
+		{
+			Bounds.LowerBounds.Y = GetDesiredShape()[i].Y;
+		}
+	}
+
+	return Bounds;
+}
+
+const FArrayBounds UBasePart::GetShapeBounds(TEnumAsByte<EPartRotation> Rot)
+{
+	FArrayBounds Bounds = FArrayBounds();
+
+	for (int i = 0; i < GetDesiredShape(Rot).Num(); i++)
+	{
+		if (GetDesiredShape(Rot)[i].X > Bounds.UpperBounds.X)
+		{
+			Bounds.UpperBounds.X = GetDesiredShape(Rot)[i].X;
+		}
+		if (GetDesiredShape(Rot)[i].Y > Bounds.UpperBounds.Y)
+		{
+			Bounds.UpperBounds.Y = GetDesiredShape(Rot)[i].Y;
+		}
+
+		if (GetDesiredShape(Rot)[i].X < Bounds.LowerBounds.X)
+		{
+			Bounds.LowerBounds.X = GetDesiredShape(Rot)[i].X;
+		}
+		if (GetDesiredShape(Rot)[i].Y < Bounds.LowerBounds.Y)
+		{
+			Bounds.LowerBounds.Y = GetDesiredShape(Rot)[i].Y;
+		}
+	}
+
+	return Bounds;
 }
 
 FIntPoint UBasePart::GetPartLocation()
@@ -45,4 +124,9 @@ FIntPoint UBasePart::GetPartLocation()
 TEnumAsByte<EPartRotation> UBasePart::GetPartRotation()
 {
 	return TEnumAsByte<EPartRotation>();
+}
+
+TArray<FIntPoint> UBasePart::GetShape()
+{
+	return TArray<FIntPoint>();
 }

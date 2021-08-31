@@ -35,7 +35,10 @@ public:
 	void BuildShip(TArray<FSavePartInfo> Parts);
 
 	UFUNCTION(BlueprintCallable)
-	void SaveShip();
+	void SaveShip(FString ShipName);
+
+	UFUNCTION(BlueprintCallable)
+	void LoadSavedShip(FString ShipName);
 
 private:
 	
@@ -50,7 +53,7 @@ private:
 	float GridScale;
 
 	UPROPERTY(EditAnywhere)
-	class UStaticMesh* PixelMesh;
+	class UStaticMesh* PixelMesh; 
 
 	bool const CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape);
 };
