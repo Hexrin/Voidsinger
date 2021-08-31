@@ -68,17 +68,14 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 		
 		
 		UBasePart* Part = NewObject<UBasePart>(PartType);
+		Part->Rotation = Rotation;
 
 		for (int i = 0; i < DesiredShape.Num(); i++)
 		{
 			PartGrid[DesiredShape[i].X + Location.X][DesiredShape[i].Y + Location.Y] = Part;
 			
-			//class UStaticMeshComponent* NewPlane = NewObject<UStaticMeshComponent>(GetOwner());
-
-			
 			class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
 			Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
-			//NewPlane->AttachToComponent(GetOwner()->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 
 			if (Location.X > GridBounds.UpperBounds.X)
 			{
@@ -105,7 +102,7 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 	}
 }
 
-void UPartGridComponent::SaveShip()
+void UPartGridComponent::SaveShip(FString ShipName)
 {
 	TArray<UBasePart*> Parts;
 	for (int i = GridBounds.LowerBounds.X; i < GridBounds.UpperBounds.X; i++)
@@ -126,6 +123,15 @@ void UPartGridComponent::SaveShip()
 
 		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i]->GetClass(), Parts[i]->GetPartLocation(), Parts[i]->GetPartRotation()));
 	}
+
+	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);
+
+}
+
+void UPartGridComponent::LoadSavedShip(FString ShipName)
+{
+	USaveGame* SaveGameInstance = UGameplayStatics::LoadGameFromSlot(ShipName, 0);
+	BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);
 }
 
 bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape)
