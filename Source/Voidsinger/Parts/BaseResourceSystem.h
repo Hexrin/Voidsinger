@@ -37,13 +37,16 @@ public:
 	void MergeSystems(UBaseResourceSystem* MergedSystem);
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveSection(TArray<UBasePart*> RemovedParts);
+	void CreateNewSystem(TArray<UBasePart*> RemovedParts);
 
 	UFUNCTION(BlueprintCallable)
 	void AddSection(TArray<UBasePart*> AddedParts);
 
 	UFUNCTION(BlueprintCallable)
-	void ScanSystemForBreaks();
+	void StartScanSystemForBreaks();
+
+	UFUNCTION()
+	void ScanSystemForBreaks(TArray<UBasePart*> PartsToScan);
 
 	UFUNCTION(BlueprintCallable)
 	bool AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2);
@@ -58,5 +61,7 @@ private:
 
 	UPROPERTY()
 	TArray<UBasePart*> ConnectedParts;
+
+	TArray<TArray<UBasePart*>> SeparatedSystems;
 
 };

@@ -36,7 +36,7 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 
 }
 
-void UBaseResourceSystem::RemoveSection(TArray<UBasePart*> RemovedParts)
+void UBaseResourceSystem::CreateNewSystem(TArray<UBasePart*> RemovedParts)
 {
 	for (int i = 0; i < RemovedParts.Num(); i++)
 	{
@@ -55,49 +55,73 @@ void UBaseResourceSystem::AddSection(TArray<UBasePart*> AddedParts)
 	ConnectedParts.Append(AddedParts);
 }
 
-void UBaseResourceSystem::ScanSystemForBreaks()
+void UBaseResourceSystem::StartScanSystemForBreaks()
 {
-	TArray<TArray<UBasePart*>> SeparatedSystems;
-
-
 	
+	ScanSystemForBreaks(ConnectedParts);
 
+}
+
+void UBaseResourceSystem::ScanSystemForBreaks(TArray<UBasePart*> PartsToScan)
+{
+	TArray<UBasePart*> DisconnectedParts = FindDisconnectedParts(PartsToScan);
+
+	if (DisconnectedParts.IsEmpty())
+	{
+		for (int i = 0; i < SeparatedSystems.Num(); i++)
+		{
+			CreateNewSystem(SeparatedSystems[i]);
+		}
+
+		SeparatedSystems.Empty();
+	}
+	else
+	{
+		for (int i = 0; i < DisconnectedParts.Num(); i++)
+		{
+			PartsToScan.Remove(DisconnectedParts[i]);
+		}
+		SeparatedSystems.Add(PartsToScan);
+		ScanSystemForBreaks(DisconnectedParts);
+	}
 
 }
 
 bool UBaseResourceSystem::AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2)
 {
 
-	TArray<FIntPoint> Shape = Part->GetShape();
-
-	for (int i = 0; i < PartsToCheck.Num(); i++)
+	for (int i = 0; i < Shape1.Num(); i++)
 	{
-		for (int j = 0; j < PartsToCheck[i]->GetShape().Num(); j++)
+		for (int j = 0; j < Shape2.Num(); i++)
 		{
-			for (int k = 0; k < Shape.Num(); k++)
+			if (UKismetMathLibrary::InRange_FloatFloat(float(Shape1[i].X), float(Shape2[j].X - 1), float(Shape2[j].X + 1)) || UKismetMathLibrary::InRange_FloatFloat(float(Shape1[i].Y), float(Shape2[j].Y - 1), float(Shape2[j].Y + 1)))
 			{
-				if (UKismetMathLibrary::InRange_FloatFloat(float(PartsToCheck[i]->GetShape()[j].X), float(Shape[k].X - 1), float(Shape[k].X + 1)))
-				{
-					return true;
-				}
+				return true;
 			}
 		}
 	}
+	
 	return false;
 }
 
 TArray<UBasePart*> UBaseResourceSystem::FindDisconnectedParts(TArray<UBasePart*> Parts)
 {
 	TArray<UBasePart*> DisconnectedParts;
+	TArray<FIntPoint> CombinedShape;
 
-	for (int i = 0; i < Parts.Num(); i++)
+	CombinedShape.Append(Parts[0]->GetShape());
+
+	for (int i = 1; i < Parts.Num(); i++)
 	{
 
-		if (!IsPartAdjacent(Parts[i]))
+		if (AreShapesAdjacent(CombinedShape, Parts[i]->GetShape()))
 		{
-			DisconnectedParts.Add(Parts[i]);
+			CombinedShape.Append(Parts[i]->GetShape());
 		}
-
+		else
+		{
+			DisconnectedParts.Add(Parts[i + 1]);
+		}
 	}
 	return DisconnectedParts;
 }
