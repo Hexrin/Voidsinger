@@ -25,9 +25,11 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	const TArray<FIntPoint> GetDesiredShape();
+	const TArray<FIntPoint> GetDesiredShape(TEnumAsByte<EPartRotation> Rot);
 
 	UFUNCTION(BlueprintPure)
-	const FIntPoint GetShapeBounds();
+	const FArrayBounds GetShapeBounds();
+	const FArrayBounds GetShapeBounds(TEnumAsByte<EPartRotation> Rot);
 
 	UFUNCTION(BlueprintPure)
 	FIntPoint GetPartLocation();
@@ -35,10 +37,11 @@ public:
 	UFUNCTION(BlueprintPure)
 	TEnumAsByte<EPartRotation> GetPartRotation();
 
-	TEnumAsByte<EPartRotation> Rotation;
+	
 	UFUNCTION(BlueprintPure)
 	TArray<FIntPoint> GetShape();
 
+	TEnumAsByte<EPartRotation> Rotation;
 protected:
 	UPROPERTY(EditDefaultsOnly, NoClear)
 	TArray<FIntPoint> DesiredShape;

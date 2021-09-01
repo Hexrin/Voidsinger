@@ -22,7 +22,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* Camera;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int Pixels;
 
 	UPROPERTY(EditAnywhere)

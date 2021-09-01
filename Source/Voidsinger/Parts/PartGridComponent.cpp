@@ -49,11 +49,17 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace)
 {
 
-	TArray<FIntPoint> DesiredShape = PartType.GetDefaultObject()->GetDesiredShape();
-	FIntPoint PartBounds = PartType.GetDefaultObject()->GetShapeBounds();
+	TArray<FIntPoint> DesiredShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
+	FArrayBounds PartBounds = PartType.GetDefaultObject()->GetShapeBounds(Rotation);
 
 
-	if (PartGrid.IsValidIndex(Location.X + PartBounds.X) && PartGrid[Location.X + PartBounds.X].IsValidIndex(Location.Y + PartBounds.Y) && (bAlwaysPlace || CanShapeFit(Location, DesiredShape)))
+	if (
+		PartGrid.IsValidIndex(Location.X + PartBounds.UpperBounds.X) && PartGrid.IsValidIndex(Location.X + PartBounds.LowerBounds.X)
+		&&
+		PartGrid[Location.X + PartBounds.UpperBounds.X].IsValidIndex(Location.Y + PartBounds.UpperBounds.Y) && PartGrid[Location.X + PartBounds.LowerBounds.X].IsValidIndex(Location.Y + PartBounds.LowerBounds.Y)
+		&& 
+		(bAlwaysPlace || CanShapeFit(Location, DesiredShape))
+		)
 	{
 		
 		if (Location.X < GridBounds.LowerBounds.X)
