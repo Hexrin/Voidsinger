@@ -4,6 +4,7 @@
 
 #include "BasePart.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "BaseResourceSystem.generated.h"
@@ -37,6 +38,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveSection(TArray<UBasePart*> RemovedParts);
+
+	UFUNCTION(BlueprintCallable)
+	void AddSection(TArray<UBasePart*> AddedParts);
+
+	UFUNCTION(BlueprintCallable)
+	void ScanSystemForBreaks();
+
+	UFUNCTION(BlueprintCallable)
+	bool IsPartAdjacent(UBasePart* Part);
 
 private:
 
