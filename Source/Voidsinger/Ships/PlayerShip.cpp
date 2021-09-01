@@ -17,7 +17,7 @@ APlayerShip::APlayerShip()
     Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
     Camera->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
     Camera->SetRelativeLocation(FVector(0, 0, CameraHeight));
-    Camera->SetRelativeRotation(FRotator(-90, 0, 90));
+    Camera->SetRelativeRotation(FRotator(-90, -90, 90));
 
     AutoPossessPlayer = EAutoReceiveInput::Player0;
 }

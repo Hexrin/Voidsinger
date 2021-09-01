@@ -144,7 +144,7 @@ bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> Desi
 {
 	for (int i = 0; i < DesiredShape.Num(); i++)
 	{
-		if (IsValid(PartGrid[DesiredShape[i].X + Loc.X][DesiredShape[i].Y + Loc.Y]))
+		if (!PartGrid.IsValidIndex(DesiredShape[i].X + Loc.X) || !PartGrid[DesiredShape[i].X + Loc.X].IsValidIndex(DesiredShape[i].Y + Loc.Y) || IsValid(PartGrid[DesiredShape[i].X + Loc.X][DesiredShape[i].Y + Loc.Y]))
 		{
 			return false;
 		}
