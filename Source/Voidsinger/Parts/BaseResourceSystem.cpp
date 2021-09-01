@@ -65,10 +65,9 @@ void UBaseResourceSystem::ScanSystemForBreaks()
 
 }
 
-bool UBaseResourceSystem::IsPartAdjacent(UBasePart* Part)
+bool UBaseResourceSystem::AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2)
 {
-	TArray<UBasePart*> PartsToCheck = ConnectedParts;
-	PartsToCheck.Remove(Part);
+
 	TArray<FIntPoint> Shape = Part->GetShape();
 
 	for (int i = 0; i < PartsToCheck.Num(); i++)

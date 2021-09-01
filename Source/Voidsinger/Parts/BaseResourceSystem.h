@@ -46,7 +46,10 @@ public:
 	void ScanSystemForBreaks();
 
 	UFUNCTION(BlueprintCallable)
-	bool IsPartAdjacent(UBasePart* Part);
+	bool AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2);
+
+	UFUNCTION(BlueprintCallable)
+	TArray<UBasePart*> FindDisconnectedParts(TArray<UBasePart*> Parts);
 
 private:
 
