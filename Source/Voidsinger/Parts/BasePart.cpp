@@ -5,7 +5,7 @@
 
 UBasePart::UBasePart()
 {
-	
+	Init(FIntPoint(), EPartRotation::Degrees0);
 }
 
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
@@ -129,4 +129,10 @@ TEnumAsByte<EPartRotation> UBasePart::GetRotation()
 TArray<FIntPoint> UBasePart::GetShape()
 {
 	return TArray<FIntPoint>();
+}
+
+void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot)
+{
+	Rotation = Rot;
+	Location = Loc;
 }

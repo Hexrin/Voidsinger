@@ -43,7 +43,9 @@ public:
 	//UFUNCTION(BlueprintPure)
 	//TArray<FIntPoint> GetMass();
 
-	TEnumAsByte<EPartRotation> Rotation;
+	UFUNCTION(BlueprintCallable)
+	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot);
+
 protected:
 	UPROPERTY(EditDefaultsOnly, NoClear)
 	TArray<FIntPoint> DesiredShape;
@@ -55,7 +57,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Cost;
 
-	const FIntPoint Location;
+	TEnumAsByte<EPartRotation> Rotation;
+
+	FIntPoint Location;
 
 
 
