@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "BasePart.h"
+#include "NullPart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Voidsinger/SaveShip.h"
 #include "Voidsinger/VoidsingerTypes.h"
