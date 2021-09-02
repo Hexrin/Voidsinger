@@ -15,10 +15,17 @@ UPartGridComponent::UPartGridComponent()
 
 	GridSize = FIntPoint(250);
 	
-	PartGrid.AddZeroed(GridSize.X);
+	PartGrid = TArray<TArray<UBasePart*>>();
+
+	class UNullPart* NullPartRef = NewObject<UNullPart>(this);
+
+	PartGrid.AddDefaulted(GridSize.X);
 	for (int i = 0; i < GridSize.X; i++)
 	{
-		PartGrid[i].AddZeroed(GridSize.Y);
+		for (int j = 0; j < GridSize.X; j++)
+		{
+			PartGrid[i].Add(NullPartRef);
+		}
 	}
 
 	if (!GridScale)
@@ -74,7 +81,7 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 		
 		
 		UBasePart* Part = NewObject<UBasePart>(PartType);
-		Part->Rotation = Rotation;
+		Part->Init(Location, Rotation);
 
 		for (int i = 0; i < DesiredShape.Num(); i++)
 		{
@@ -144,7 +151,7 @@ bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> Desi
 {
 	for (int i = 0; i < DesiredShape.Num(); i++)
 	{
-		if (!PartGrid.IsValidIndex(DesiredShape[i].X + Loc.X) || !PartGrid[DesiredShape[i].X + Loc.X].IsValidIndex(DesiredShape[i].Y + Loc.Y) || IsValid(PartGrid[DesiredShape[i].X + Loc.X][DesiredShape[i].Y + Loc.Y]))
+		if ((PartGrid[DesiredShape[i].X + Loc.X][DesiredShape[i].Y + Loc.Y])->GetClass() == UNullPart::GetStaticClass())
 		{
 			return false;
 		}
