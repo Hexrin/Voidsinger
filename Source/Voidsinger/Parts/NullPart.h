@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Parts/BasePart.h"
+#include "BasePart.h"
 #include "NullPart.generated.h"
 
 /**
