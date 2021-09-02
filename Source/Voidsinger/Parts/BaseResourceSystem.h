@@ -21,7 +21,7 @@ class VOIDSINGER_API UBaseResourceSystem : public UObject
 public:
 	UBaseResourceSystem();
 
-	/*UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable)
 	void AddResources(float Amount);
 
 	UFUNCTION(BlueprintCallable)
@@ -43,6 +43,9 @@ public:
 	void AddSection(TArray<UBasePart*> AddedParts);
 
 	UFUNCTION(BlueprintCallable)
+	void RemoveSection(TArray<UBasePart*> RemovedParts);
+
+	UFUNCTION(BlueprintCallable)
 	void StartScanSystemForBreaks();
 
 	UFUNCTION()
@@ -52,7 +55,7 @@ public:
 	bool AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2);
 
 	UFUNCTION(BlueprintCallable)
-	TArray<UBasePart*> FindDisconnectedParts(TArray<UBasePart*> Parts);*/
+	TArray<UBasePart*> FindDisconnectedParts(TArray<UBasePart*> Parts);
 
 private:
 
