@@ -24,8 +24,8 @@ APlayerShip::APlayerShip()
 
 FTravelCost APlayerShip::GetTravelCost(class UStarSystemData* Target)
 {
-    TMap<TEnumAsByte<EFluidType>, float> FCosts;
-    FCosts.Add(EFluidType::Fuel, 100);
+    TMap<TEnumAsByte<EResourceType>, float> FCosts;
+    FCosts.Add(EResourceType::Fuel, 100);
     return FTravelCost(FCosts, 55);
 }
 
