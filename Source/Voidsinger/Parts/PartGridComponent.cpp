@@ -15,20 +15,9 @@ UPartGridComponent::UPartGridComponent()
 
 	GridSize = FIntPoint(25);
 	
-	PartGrid = TArray<TArray<UBasePart*>>();
+	PartGrid = TMap<FIntPoint, UBasePart*>();
 
 	class UNullPart* NullPartRef = CreateDefaultSubobject<UNullPart>(TEXT("Nothing"));
-
-	PartGrid.AddDefaulted(GridSize.X);
-	for (int i = 0; i < GridSize.X; i++)
-	{
-		for (int j = 0; j < GridSize.X; j++)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("jupdup %i"), (true)?1:0);
-			PartGrid[i].Add(NullPartRef);
-		}
-
-	}
 
 	if (!GridScale)
 	{
@@ -62,15 +51,13 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 	FArrayBounds PartBounds = PartType.GetDefaultObject()->GetShapeBounds(Rotation);
 
 
-	if (
-		PartGrid.IsValidIndex(Location.X + PartBounds.UpperBounds.X) && PartGrid.IsValidIndex(Location.X + PartBounds.LowerBounds.X)
+	if (GridSize.X >= Location.X + PartBounds.UpperBounds.X && -GridSize.X <= Location.X + PartBounds.LowerBounds.X
 		&&
-		PartGrid[Location.X + PartBounds.UpperBounds.X].IsValidIndex(Location.Y + PartBounds.UpperBounds.Y) && PartGrid[Location.X + PartBounds.LowerBounds.X].IsValidIndex(Location.Y + PartBounds.LowerBounds.Y)
-		&& 
-		(bAlwaysPlace || CanShapeFit(Location, DesiredShape))
-		)
-	{
-		
+		GridSize.Y >= Location.Y + PartBounds.UpperBounds.Y && -GridSize.Y <= Location.Y + PartBounds.LowerBounds.Y
+		&&
+		(bAlwaysPlace || CanShapeFit(Location, DesiredShape)))
+	{		
+
 		if (Location.X < GridBounds.LowerBounds.X)
 		{
 			GridBounds.LowerBounds.X = Location.X;
@@ -80,15 +67,13 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 			GridBounds.LowerBounds.Y = Location.Y;
 		}
 
-		
-		
 		UBasePart* Part = NewObject<UBasePart>(PartType);
 		Part->Init(Location, Rotation);
 
 		for (int i = 0; i < DesiredShape.Num(); i++)
 		{
-			PartGrid[DesiredShape[i].X + Location.X][DesiredShape[i].Y + Location.Y] = Part;
-			
+			PartGrid.Add(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), Part);
+
 			class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
 			Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
 
@@ -103,10 +88,7 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 		}
 		return true;
 	}
-	else
-	{
-		return false;
-	}
+	return false;
 }
 
 void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
@@ -119,17 +101,10 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 
 void UPartGridComponent::SaveShip(FString ShipName)
 {
+	
 	TArray<UBasePart*> Parts;
-	for (int i = GridBounds.LowerBounds.X; i < GridBounds.UpperBounds.X; i++)
-	{
-		for (int j = GridBounds.LowerBounds.Y; j < GridBounds.UpperBounds.Y; j++)
-		{
-			if (IsValid(PartGrid[i][j]) && !Parts.Contains(PartGrid[i][j]))
-			{
-				Parts.Add(PartGrid[i][j]);
-			}
-		}
-	}
+
+	PartGrid.GenerateValueArray(Parts);
 	
 	USaveGame* SaveGameInstance = UGameplayStatics::CreateSaveGameObject(USaveShip::StaticClass());
 
@@ -153,8 +128,8 @@ bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> Desi
 {
 	for (int i = 0; i < DesiredShape.Num(); i++)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("oooo %i"), ((PartGrid[DesiredShape[i].X + Loc.X][DesiredShape[i].Y + Loc.Y])->IsValidLowLevel()) ? 1 : 0);
-		if ((PartGrid[DesiredShape[i].X + Loc.X][DesiredShape[i].Y + Loc.Y]) ->IsValidLowLevel() && !(PartGrid[DesiredShape[i].X + Loc.X][DesiredShape[i].Y + Loc.Y])->IsA(UNullPart::StaticClass()))
+		
+		if (PartGrid.Contains(Loc + DesiredShape[i]))
 		{
 			return false;
 		}

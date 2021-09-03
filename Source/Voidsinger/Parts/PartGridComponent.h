@@ -43,7 +43,7 @@ public:
 
 private:
 	
-	TArray<TArray<UBasePart*>> PartGrid;
+	TMap<FIntPoint, UBasePart*> PartGrid;
 	
 	FArrayBounds GridBounds;
 
