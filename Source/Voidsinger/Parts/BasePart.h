@@ -44,6 +44,8 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetMass();
 
+	
+
 	UFUNCTION(BlueprintCallable)
 	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid);
 
@@ -74,6 +76,8 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ResourceTypes;
 
+	float _Mass;
+	int _Cost;
 	
 
 	

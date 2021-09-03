@@ -145,9 +145,4 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 	Rotation = Rot;
 	Location = Loc;
 	PartGridComponent = PartGrid;
-
-	for (int i = 0; i < ResourceTypes.Num(); i++)
-	{
-		 
-	}
 }

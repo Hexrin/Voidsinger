@@ -2,6 +2,7 @@
 
 
 #include "PartGridComponent.h"
+#include "BasePart.h"
 
 // Sets default values for this component's properties
 UPartGridComponent::UPartGridComponent()
@@ -16,8 +17,6 @@ UPartGridComponent::UPartGridComponent()
 	GridSize = FIntPoint(25);
 	
 	PartGrid = TMap<FIntPoint, UBasePart*>();
-
-	class UNullPart* NullPartRef = CreateDefaultSubobject<UNullPart>(TEXT("Nothing"));
 
 	if (!GridScale)
 	{
@@ -68,7 +67,7 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 		}
 
 		UBasePart* Part = NewObject<UBasePart>(PartType);
-		Part->Init(Location, Rotation);
+		Part->Init(Location, Rotation, this);
 
 		for (int i = 0; i < DesiredShape.Num(); i++)
 		{
@@ -109,10 +108,8 @@ void UPartGridComponent::SaveShip(FString ShipName)
 
 	for (int i = 0; i < Parts.Num(); i++)
 	{
-
 		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i]->GetClass(), Parts[i]->GetLocation(), Parts[i]->GetRotation()));
 	}
-
 	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);
 
 }

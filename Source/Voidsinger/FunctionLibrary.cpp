@@ -18,7 +18,7 @@ FIntPoint UFunctionLibrary::RotateIntPoint(FIntPoint IntPoint, TEnumAsByte<EPart
 		return IntPoint * -1;
 
 	case Degrees270:
-		return FIntPoint(IntPoint.Y, -IntPoint.X));
+		return FIntPoint(IntPoint.Y, -IntPoint.X);
 
 	default:
 		
