@@ -5,12 +5,12 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "BasePart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Voidsinger/SaveShip.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "PartGridComponent.generated.h"
 
+class UBasePart;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
 class VOIDSINGER_API UPartGridComponent : public UActorComponent

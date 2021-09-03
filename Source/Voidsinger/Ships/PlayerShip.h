@@ -19,8 +19,7 @@ class VOIDSINGER_API APlayerShip : public ABaseShip
 	
 
 protected:
-	UPROPERTY(VisibleAnywhere)
-	class UCameraComponent* Camera;
+	
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int Pixels;
@@ -40,5 +39,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool TravelToStarSystem(class UStarSystemData* Target);
 
+	UPROPERTY(VisibleAnywhere)
+	class UCameraComponent* Camera;
 	
 };
