@@ -10,12 +10,12 @@ UBasePart::UBasePart()
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
 {
 	TArray<FIntPoint> TempShape = TArray<FIntPoint>();
-	for (int i = 0; i < DesiredShape.Num(); i++)
+	for (int i = 0; i < _DesiredShape.Num(); i++)
 	{
 		switch (Rotation)
 		{
 		case Degrees0:
-			TempShape.Add(DesiredShape[i]);
+			TempShape.Add(_DesiredShape[i]);
 			break;
 		case Degrees90:
 			TempShape.Add(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
@@ -36,21 +36,21 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape()
 const TArray<FIntPoint> UBasePart::GetDesiredShape(TEnumAsByte<EPartRotation> Rot)
 {
 	TArray<FIntPoint> TempShape = TArray<FIntPoint>();
-	for (int i = 0; i < DesiredShape.Num(); i++)
+	for (int i = 0; i < _DesiredShape.Num(); i++)
 	{
 		switch (Rot)
 		{
 		case Degrees0:
-			TempShape.Add(DesiredShape[i]);
+			TempShape.Add(_DesiredShape[i]);
 			break;
 		case Degrees90:
-			TempShape.Add(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
+			TempShape.Add(FIntPoint(-_DesiredShape[i].Y, _DesiredShape[i].X));
 			break;
 		case Degrees180:
-			TempShape.Add(DesiredShape[i] * -1);
+			TempShape.Add(_DesiredShape[i] * -1);
 			break;
 		case Degrees270:
-			TempShape.Add(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
+			TempShape.Add(FIntPoint(_DesiredShape[i].Y, -_DesiredShape[i].X));
 			break;
 		default:
 			break;
@@ -137,7 +137,7 @@ const TArray<FIntPoint> UBasePart::GetShape()
 
 float UBasePart::GetMass()
 {
-	return Mass/DesiredShape.Num();
+	return _Mass/ _DesiredShape.Num();
 }
 
 void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid)
@@ -145,4 +145,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 	Rotation = Rot;
 	Location = Loc;
 	PartGridComponent = PartGrid;
+	_Mass = Mass;
+	_Cost = Cost;
+	_DesiredShape = DesiredShape;
 }
