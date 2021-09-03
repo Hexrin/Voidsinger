@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "Voidsinger/Parts/PartGridComponent.h"
 #include "BasePart.generated.h"
 
 /**
@@ -44,7 +45,7 @@ public:
 	float GetMass();
 
 	UFUNCTION(BlueprintCallable)
-	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot);
+	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid);
 
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* PixelMesh;
@@ -68,7 +69,10 @@ private:
 	FIntPoint Location;
 
 	
+	UPartGridComponent* PartGridComponent;
 
+	UPROPERTY(EditDefaultsOnly)
+	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ResourceTypes;
 
 	
 
