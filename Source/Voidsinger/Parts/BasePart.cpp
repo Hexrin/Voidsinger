@@ -116,19 +116,29 @@ const FArrayBounds UBasePart::GetShapeBounds(TEnumAsByte<EPartRotation> Rot)
 	return Bounds;
 }
 
-FIntPoint UBasePart::GetLocation()
+const FIntPoint UBasePart::GetLocation()
 {
 	return FIntPoint();
 }
 
-TEnumAsByte<EPartRotation> UBasePart::GetRotation()
+const TEnumAsByte<EPartRotation> UBasePart::GetRotation()
 {
 	return TEnumAsByte<EPartRotation>();
 }
 
-TArray<FIntPoint> UBasePart::GetShape()
+const TArray<FIntPoint> UBasePart::GetShape()
 {
-	return TArray<FIntPoint>();
+	TArray<FIntPoint> ActualShape = GetDesiredShape();
+	for (int i = 0; i < DestroyedPixels.Num(); i++)
+	{
+		ActualShape.Remove(DestroyedPixels[i]);
+	}
+	return ActualShape;
+}
+
+float UBasePart::GetMass()
+{
+	return Mass/DesiredShape.Num();
 }
 
 void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot)

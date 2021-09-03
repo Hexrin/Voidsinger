@@ -32,35 +32,42 @@ public:
 	const FArrayBounds GetShapeBounds(TEnumAsByte<EPartRotation> Rot);
 
 	UFUNCTION(BlueprintPure)
-	FIntPoint GetLocation();
+	const FIntPoint GetLocation();
 
 	UFUNCTION(BlueprintPure)
-	TEnumAsByte<EPartRotation> GetRotation();
+	const TEnumAsByte<EPartRotation> GetRotation();
 
 	UFUNCTION(BlueprintPure)
-	TArray<FIntPoint> GetShape();
+	const TArray<FIntPoint> GetShape();
 
-	//UFUNCTION(BlueprintPure)
-	//TArray<FIntPoint> GetMass();
+	UFUNCTION(BlueprintPure)
+	float GetMass();
 
 	UFUNCTION(BlueprintCallable)
 	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot);
 
+	UPROPERTY(EditAnywhere)
+	UStaticMesh* PixelMesh;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, NoClear)
 	TArray<FIntPoint> DesiredShape;
-	TArray<FIntPoint> DestroyedPixels;
-	
+
 	UPROPERTY(EditDefaultsOnly, NoClear)
 	float Mass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Cost;
 
+
+private:
+	TArray<FIntPoint> DestroyedPixels;
+	
 	TEnumAsByte<EPartRotation> Rotation;
 
 	FIntPoint Location;
 
+	
 
 
 	

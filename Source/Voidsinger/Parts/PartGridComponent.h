@@ -41,6 +41,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoadSavedShip(FString ShipName);
 
+	UFUNCTION(BlueprintPure)
+	const FVector2D GetCenterOfMass();
+
+	UFUNCTION(BlueprintPure)
+	const float GetMass();
+
 private:
 	
 	TMap<FIntPoint, UBasePart*> PartGrid;
@@ -51,10 +57,7 @@ private:
 	FIntPoint GridSize;
 
 	UPROPERTY(EditAnywhere)
-	float GridScale;
-
-	UPROPERTY(EditAnywhere)
-	class UStaticMesh* PixelMesh; 
+	float GridScale; 
 
 	bool const CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape);
 };

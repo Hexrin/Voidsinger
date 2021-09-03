@@ -37,11 +37,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	float const GetFluidAmount(TEnumAsByte<EFluidType> Fluid);
 
-	UFUNCTION(BlueprintPure)
-	FVector2D GetCenterOfMass();
-
-	UFUNCTION(BlueprintPure)
-	float GetMass();
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UBaseResourceSystem*> ResourceSystems;
