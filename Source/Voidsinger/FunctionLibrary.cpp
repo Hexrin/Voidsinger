@@ -3,7 +3,7 @@
 
 #include "FunctionLibrary.h"
 
-static FIntPoint UFunctionLibrary::RotateIntPoint(FIntPoint IntPoint, TEnumAsByte<EPartRotation> Rotation) 
+FIntPoint UFunctionLibrary::RotateIntPoint(FIntPoint IntPoint, TEnumAsByte<EPartRotation> Rotation) 
 {
 	switch (Rotation)
 	{

@@ -5,7 +5,6 @@
 
 UBasePart::UBasePart()
 {
-	Init(FIntPoint(), EPartRotation::Degrees0);
 }
 
 const TArray<FIntPoint> UBasePart::GetDesiredShape()

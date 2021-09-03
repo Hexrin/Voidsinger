@@ -65,7 +65,7 @@ protected:
 	UPartGridComponent* PartGridComponent;
 
 	UPROPERTY(EditDefaultsOnly)
-	TMap<EResourceType, TArray<FIntPoint>> ResourceTypes;
+	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ResourceTypes;
 
 	
 
