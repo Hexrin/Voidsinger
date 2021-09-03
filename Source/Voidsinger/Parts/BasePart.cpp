@@ -5,59 +5,58 @@
 
 UBasePart::UBasePart()
 {
-	Init(FIntPoint(), EPartRotation::Degrees0);
 }
 
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
 {
-	TArray<FIntPoint> TempShap = TArray<FIntPoint>();
+	TArray<FIntPoint> TempShape = TArray<FIntPoint>();
 	for (int i = 0; i < DesiredShape.Num(); i++)
 	{
 		switch (Rotation)
 		{
 		case Degrees0:
-			TempShap.Add(DesiredShape[i]);
+			TempShape.Add(DesiredShape[i]);
 			break;
 		case Degrees90:
-			TempShap.Add(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
+			TempShape.Add(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
 			break;
 		case Degrees180:
-			TempShap.Add(DesiredShape[i] * -1);
+			TempShape.Add(DesiredShape[i] * -1);
 			break;
 		case Degrees270:
-			TempShap.Add(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
+			TempShape.Add(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
 			break;
 		default:
 			break;
 		}
 	}
-	return TempShap;
+	return TempShape;
 }
 
 const TArray<FIntPoint> UBasePart::GetDesiredShape(TEnumAsByte<EPartRotation> Rot)
 {
-	TArray<FIntPoint> TempShap = TArray<FIntPoint>();
+	TArray<FIntPoint> TempShape = TArray<FIntPoint>();
 	for (int i = 0; i < DesiredShape.Num(); i++)
 	{
 		switch (Rot)
 		{
 		case Degrees0:
-			TempShap.Add(DesiredShape[i]);
+			TempShape.Add(DesiredShape[i]);
 			break;
 		case Degrees90:
-			TempShap.Add(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
+			TempShape.Add(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
 			break;
 		case Degrees180:
-			TempShap.Add(DesiredShape[i] * -1);
+			TempShape.Add(DesiredShape[i] * -1);
 			break;
 		case Degrees270:
-			TempShap.Add(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
+			TempShape.Add(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
 			break;
 		default:
 			break;
 		}
 	}
-	return TempShap;
+	return TempShape;
 }
 
 const FArrayBounds UBasePart::GetShapeBounds()
@@ -116,23 +115,34 @@ const FArrayBounds UBasePart::GetShapeBounds(TEnumAsByte<EPartRotation> Rot)
 	return Bounds;
 }
 
-FIntPoint UBasePart::GetLocation()
+const FIntPoint UBasePart::GetLocation()
 {
 	return FIntPoint();
 }
 
-TEnumAsByte<EPartRotation> UBasePart::GetRotation()
+const TEnumAsByte<EPartRotation> UBasePart::GetRotation()
 {
 	return TEnumAsByte<EPartRotation>();
 }
 
-TArray<FIntPoint> UBasePart::GetShape()
+const TArray<FIntPoint> UBasePart::GetShape()
 {
-	return TArray<FIntPoint>();
+	TArray<FIntPoint> ActualShape = GetDesiredShape();
+	for (int i = 0; i < DestroyedPixels.Num(); i++)
+	{
+		ActualShape.Remove(DestroyedPixels[i]);
+	}
+	return ActualShape;
 }
 
-void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot)
+float UBasePart::GetMass()
+{
+	return Mass/DesiredShape.Num();
+}
+
+void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid)
 {
 	Rotation = Rot;
 	Location = Loc;
+	PartGridComponent = PartGrid;
 }

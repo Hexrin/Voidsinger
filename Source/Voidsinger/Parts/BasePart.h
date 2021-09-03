@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "Voidsinger/Parts/PartGridComponent.h"
 #include "BasePart.generated.h"
 
 /**
@@ -32,37 +33,51 @@ public:
 	const FArrayBounds GetShapeBounds(TEnumAsByte<EPartRotation> Rot);
 
 	UFUNCTION(BlueprintPure)
-	FIntPoint GetLocation();
+	const FIntPoint GetLocation();
 
 	UFUNCTION(BlueprintPure)
-	TEnumAsByte<EPartRotation> GetRotation();
+	const TEnumAsByte<EPartRotation> GetRotation();
 
 	UFUNCTION(BlueprintPure)
-	TArray<FIntPoint> GetShape();
+	const TArray<FIntPoint> GetShape();
 
-	//UFUNCTION(BlueprintPure)
-	//TArray<FIntPoint> GetMass();
+	UFUNCTION(BlueprintPure)
+	float GetMass();
+
+	
 
 	UFUNCTION(BlueprintCallable)
-	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot);
+	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid);
+
+	UPROPERTY(EditAnywhere)
+	UStaticMesh* PixelMesh;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, NoClear)
 	TArray<FIntPoint> DesiredShape;
-	TArray<FIntPoint> DestroyedPixels;
-	
+
 	UPROPERTY(EditDefaultsOnly, NoClear)
 	float Mass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Cost;
 
+
+private:
+	TArray<FIntPoint> DestroyedPixels;
+	
 	TEnumAsByte<EPartRotation> Rotation;
 
 	FIntPoint Location;
 
+	
+	UPartGridComponent* PartGridComponent;
 
+	UPROPERTY(EditDefaultsOnly)
+	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ResourceTypes;
 
+	float _Mass;
+	int _Cost;
 	
 
 	

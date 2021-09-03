@@ -32,16 +32,12 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintPure)
-	float const GetFluidCapacity(TEnumAsByte<EFluidType> Fluid);
+	float const GetFluidCapacity(TEnumAsByte<EResourceType> Fluid);
 
 	UFUNCTION(BlueprintPure)
-	float const GetFluidAmount(TEnumAsByte<EFluidType> Fluid);
+	float const GetFluidAmount(TEnumAsByte<EResourceType> Fluid);
 
-	UFUNCTION(BlueprintPure)
-	FVector2D GetCenterOfMass();
-
-	UFUNCTION(BlueprintPure)
-	float GetMass();
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UBaseResourceSystem*> ResourceSystems;

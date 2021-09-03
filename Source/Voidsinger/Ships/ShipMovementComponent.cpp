@@ -41,22 +41,22 @@ void UShipMovementComponent::AddForce(FVector2D ForceLocation, FVector2D Force)
 {
 	
 	//Distance vector is the distance from the center of mass to the force location.
-	FVector2D DistanceVector = Ship->GetCenterOfMass() - ForceLocation;
+	FVector2D DistanceVector = Ship->PartGrid->GetCenterOfMass() - ForceLocation;
 	
 	//Account for exactly hitting the center of mass, in which case there would be no rotation and the full 
 	//force would be used.
 	if (DistanceVector.IsNearlyZero())
 	{
-		Velocity += Force / Ship->GetMass();
-		UE_LOG(LogTemp, Warning, TEXT("????????"));
+		Velocity += Force / Ship->PartGrid->GetMass();
+		//UE_LOG(LogTemp, Warning, TEXT("????????"));
 	}
 
 	//calculate the change in velocity and change in angular velocity based off the force
 	else
 	{
 		//these 2 lines of math took literally 7 hours to figure out.
-		Velocity += (FVector2D::DotProduct(DistanceVector.GetSafeNormal(), Force) * DistanceVector.GetSafeNormal()) / Ship->GetMass();
-		AngularVelocity += FVector2D::DotProduct(DistanceVector.GetRotated(90).GetSafeNormal(), Force) * DistanceVector.Size() / Ship->GetMass();
+		Velocity += (FVector2D::DotProduct(DistanceVector.GetSafeNormal(), Force) * DistanceVector.GetSafeNormal()) / Ship->PartGrid->GetMass();
+		AngularVelocity += FVector2D::DotProduct(DistanceVector.GetRotated(90).GetSafeNormal(), Force) * DistanceVector.Size() / Ship->PartGrid->GetMass();
 	}
 
 	

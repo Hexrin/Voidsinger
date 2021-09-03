@@ -5,13 +5,12 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "BasePart.h"
-#include "NullPart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Voidsinger/SaveShip.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "PartGridComponent.generated.h"
 
+class UBasePart;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
 class VOIDSINGER_API UPartGridComponent : public UActorComponent
@@ -41,6 +40,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoadSavedShip(FString ShipName);
 
+	UFUNCTION(BlueprintPure)
+	const FVector2D GetCenterOfMass();
+
+	UFUNCTION(BlueprintPure)
+	const float GetMass();
+
 private:
 	
 	TMap<FIntPoint, UBasePart*> PartGrid;
@@ -51,10 +56,7 @@ private:
 	FIntPoint GridSize;
 
 	UPROPERTY(EditAnywhere)
-	float GridScale;
-
-	UPROPERTY(EditAnywhere)
-	class UStaticMesh* PixelMesh; 
+	float GridScale; 
 
 	bool const CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape);
 };

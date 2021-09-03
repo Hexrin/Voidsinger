@@ -37,23 +37,15 @@ void ABaseShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-float const ABaseShip::GetFluidCapacity(TEnumAsByte<EFluidType> Fluid)
+float const ABaseShip::GetFluidCapacity(TEnumAsByte<EResourceType> Fluid)
 {
 	return 100.0f;
 }
 
-float const ABaseShip::GetFluidAmount(TEnumAsByte<EFluidType> Fluid)
+float const ABaseShip::GetFluidAmount(TEnumAsByte<EResourceType> Fluid)
 {
 	return 100.0f;
 }
 
-FVector2D ABaseShip::GetCenterOfMass()
-{
-	return FVector2D();
-}
 
-float ABaseShip::GetMass()
-{
-	return 1.0f;
-}
 

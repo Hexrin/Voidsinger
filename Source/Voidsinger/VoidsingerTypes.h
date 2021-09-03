@@ -18,13 +18,15 @@ enum EDifficulty
 };
 
 UENUM(BlueprintType)
-enum EFluidType
+enum EResourceType
 {
 	Fuel			UMETA(DisplayName = "Fuel"),
 	Hydrogen		UMETA(DisplayName = "Hydrogen"),
 	InertGas		UMETA(DisplayName = "InertGas"),
 	Coolent			UMETA(DisplayName = "Coolent"),
+	Electricity		UMETA(DisplayName = "Electricity")
 };
+
 
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FPartData
@@ -56,12 +58,12 @@ struct VOIDSINGER_API FTravelCost
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<TEnumAsByte<EFluidType>, float> FluidCosts;
+	TMap<TEnumAsByte<EResourceType>, float> FluidCosts;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ElectricityCost;
 
-	FTravelCost(TMap<TEnumAsByte<EFluidType>, float> FCosts = TMap<TEnumAsByte<EFluidType>, float>(), float ECost = 0)
+	FTravelCost(TMap<TEnumAsByte<EResourceType>, float> FCosts = TMap<TEnumAsByte<EResourceType>, float>(), float ECost = 0)
 	{
 		FluidCosts = FCosts;
 		ElectricityCost = ECost;
@@ -70,6 +72,15 @@ struct VOIDSINGER_API FTravelCost
 
 };
 
+USTRUCT(BlueprintType)
+struct VOIDSINGER_API FIntPointArray
+{
+	GENERATED_BODY();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FIntPoint> IntPointArray;
+
+};
 UENUM(BlueprintType)
 enum EPartRotation
 {

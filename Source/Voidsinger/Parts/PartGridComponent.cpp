@@ -2,6 +2,7 @@
 
 
 #include "PartGridComponent.h"
+#include "BasePart.h"
 
 // Sets default values for this component's properties
 UPartGridComponent::UPartGridComponent()
@@ -16,8 +17,6 @@ UPartGridComponent::UPartGridComponent()
 	GridSize = FIntPoint(25);
 	
 	PartGrid = TMap<FIntPoint, UBasePart*>();
-
-	class UNullPart* NullPartRef = CreateDefaultSubobject<UNullPart>(TEXT("Nothing"));
 
 	if (!GridScale)
 	{
@@ -68,14 +67,14 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 		}
 
 		UBasePart* Part = NewObject<UBasePart>(PartType);
-		Part->Init(Location, Rotation);
+		Part->Init(Location, Rotation, this);
 
 		for (int i = 0; i < DesiredShape.Num(); i++)
 		{
 			PartGrid.Add(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), Part);
 
 			class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
-			Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
+			Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PartType.GetDefaultObject()->PixelMesh);
 
 			if (Location.X > GridBounds.UpperBounds.X)
 			{
@@ -84,8 +83,7 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 			if (Location.Y > GridBounds.UpperBounds.Y)
 			{
 				GridBounds.UpperBounds.Y = Location.Y;
-			}
-		}
+			}		}
 		return true;
 	}
 	return false;
@@ -110,10 +108,8 @@ void UPartGridComponent::SaveShip(FString ShipName)
 
 	for (int i = 0; i < Parts.Num(); i++)
 	{
-
 		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i]->GetClass(), Parts[i]->GetLocation(), Parts[i]->GetRotation()));
 	}
-
 	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);
 
 }
@@ -122,6 +118,27 @@ void UPartGridComponent::LoadSavedShip(FString ShipName)
 {
 	USaveGame* SaveGameInstance = UGameplayStatics::LoadGameFromSlot(ShipName, 0);
 	BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);
+}
+
+const FVector2D UPartGridComponent::GetCenterOfMass()
+{
+	FVector2D Center = FVector2D();
+	float Mass = GetMass() == 0 ? 1 : GetMass();
+	for (auto& Elem : PartGrid)
+	{
+		Center += Elem.Key * Elem.Value->GetMass() / Mass;
+	}
+	return Center;
+}
+
+const float UPartGridComponent::GetMass()
+{
+	float Mass = 0;
+	for (auto& Elem : PartGrid)
+	{
+		Mass += Elem.Value->GetMass();
+	}
+	return Mass;
 }
 
 bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape)
