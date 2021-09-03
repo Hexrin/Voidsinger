@@ -129,7 +129,7 @@ const FVector2D UPartGridComponent::GetCenterOfMass()
 	float Mass = GetMass() == 0 ? 1 : GetMass();
 	for (auto& Elem : PartGrid)
 	{
-		Center += Elem.Key * Cast<UBasePart>(Elem.Value->StaticClass()->GetDefaultObject())->GetMass()/ Mass;
+		Center += Elem.Key * Elem.Value->GetMass() / Mass;
 	}
 	return Center;
 }
@@ -139,7 +139,7 @@ const float UPartGridComponent::GetMass()
 	float Mass = 0;
 	for (auto& Elem : PartGrid)
 	{
-		Mass += Cast<UBasePart>(Elem.Value->StaticClass()->GetDefaultObject())->GetMass();
+		Mass += Elem.Value->GetMass();
 	}
 	return Mass;
 }
