@@ -5,17 +5,18 @@
 
 UBasePart::UBasePart()
 {
+	
 }
 
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
 {
 	TArray<FIntPoint> TempShape = TArray<FIntPoint>();
-	for (int i = 0; i < _DesiredShape.Num(); i++)
+	for (int i = 0; i < DesiredShape.Num(); i++)
 	{
 		switch (Rotation)
 		{
 		case Degrees0:
-			TempShape.Add(_DesiredShape[i]);
+			TempShape.Add(DesiredShape[i]);
 			break;
 		case Degrees90:
 			TempShape.Add(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
@@ -36,21 +37,21 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape()
 const TArray<FIntPoint> UBasePart::GetDesiredShape(TEnumAsByte<EPartRotation> Rot)
 {
 	TArray<FIntPoint> TempShape = TArray<FIntPoint>();
-	for (int i = 0; i < _DesiredShape.Num(); i++)
+	for (int i = 0; i < DesiredShape.Num(); i++)
 	{
 		switch (Rot)
 		{
 		case Degrees0:
-			TempShape.Add(_DesiredShape[i]);
+			TempShape.Add(DesiredShape[i]);
 			break;
 		case Degrees90:
-			TempShape.Add(FIntPoint(-_DesiredShape[i].Y, _DesiredShape[i].X));
+			TempShape.Add(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
 			break;
 		case Degrees180:
-			TempShape.Add(_DesiredShape[i] * -1);
+			TempShape.Add(DesiredShape[i] * -1);
 			break;
 		case Degrees270:
-			TempShape.Add(FIntPoint(_DesiredShape[i].Y, -_DesiredShape[i].X));
+			TempShape.Add(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
 			break;
 		default:
 			break;
@@ -137,15 +138,15 @@ const TArray<FIntPoint> UBasePart::GetShape()
 
 float UBasePart::GetMass()
 {
-	return _Mass/ _DesiredShape.Num();
+	return Mass/ DesiredShape.Num();
 }
 
-void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid)
+void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
 {
 	Rotation = Rot;
 	Location = Loc;
 	PartGridComponent = PartGrid;
-	_Mass = Mass;
-	_Cost = Cost;
-	_DesiredShape = DesiredShape;
+	Mass = PartType.GetDefaultObject()->Mass;
+	Cost = PartType.GetDefaultObject()->Cost;
+	DesiredShape = PartType.GetDefaultObject()->DesiredShape;
 }

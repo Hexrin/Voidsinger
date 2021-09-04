@@ -48,7 +48,7 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 
 	TArray<FIntPoint> DesiredShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
 	FArrayBounds PartBounds = PartType.GetDefaultObject()->GetShapeBounds(Rotation);
-
+	
 
 	if (GridSize.X >= Location.X + PartBounds.UpperBounds.X && -GridSize.X <= Location.X + PartBounds.LowerBounds.X
 		&&
@@ -67,7 +67,7 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 		}
 
 		UBasePart* Part = NewObject<UBasePart>(PartType);
-		Part->Init(Location, Rotation, this);
+		Part->Init(Location, Rotation, this, PartType);
 
 		for (int i = 0; i < DesiredShape.Num(); i++)
 		{
@@ -83,7 +83,8 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 			if (Location.Y > GridBounds.UpperBounds.Y)
 			{
 				GridBounds.UpperBounds.Y = Location.Y;
-			}		}
+			}
+		}
 		return true;
 	}
 	return false;
@@ -126,7 +127,7 @@ const FVector2D UPartGridComponent::GetCenterOfMass()
 	float Mass = GetMass() == 0 ? 1 : GetMass();
 	for (auto& Elem : PartGrid)
 	{
-		Center += Elem.Key * Elem.Value->GetMass() / Mass;
+		Center += FVector2D(Elem.Key) * Elem.Value->GetMass() / Mass;
 	}
 	return Center;
 }

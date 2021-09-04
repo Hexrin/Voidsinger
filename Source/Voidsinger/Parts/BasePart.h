@@ -47,7 +47,7 @@ public:
 	
 
 	UFUNCTION(BlueprintCallable)
-	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid);
+	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
 
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* PixelMesh;
@@ -75,10 +75,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ResourceTypes;
-
-	float _Mass;
-	int _Cost;
-	TArray<FIntPoint> _DesiredShape;
 
 	
 };
