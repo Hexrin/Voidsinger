@@ -66,7 +66,7 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 			GridBounds.LowerBounds.Y = Location.Y;
 		}
 
-		UBasePart* Part = NewObject<UBasePart>(PartType);
+		UBasePart* Part = NewObject<UBasePart>(this, PartType);
 		Part->Init(Location, Rotation, this, PartType);
 
 		for (int i = 0; i < DesiredShape.Num(); i++)
@@ -123,8 +123,9 @@ void UPartGridComponent::LoadSavedShip(FString ShipName)
 
 const FVector2D UPartGridComponent::GetCenterOfMass()
 {
-	FVector2D Center = FVector2D();
+	FVector2D Center = FVector2D(0,0);
 	float Mass = GetMass();
+	UE_LOG(LogTemp, Warning, TEXT("PRE cofmass?? x=%f, y=%f, Mass=%f"), Center.X, Center.Y, Mass);
 	for (auto& Elem : PartGrid)
 	{
 		Center += FVector2D(Elem.Key) * Elem.Value->GetMass() / Mass;

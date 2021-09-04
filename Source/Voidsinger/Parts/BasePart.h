@@ -53,8 +53,11 @@ public:
 	UStaticMesh* PixelMesh;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, NoClear)
+	UPROPERTY(EditDefaultsOnly)
 	TArray<FIntPoint> DesiredShape;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<float> sadarray;
 
 	UPROPERTY(EditDefaultsOnly, NoClear)
 	float Mass;

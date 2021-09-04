@@ -141,7 +141,7 @@ const TArray<FIntPoint> UBasePart::GetShape()
 float UBasePart::GetMass()
 {
 	
-	UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %f"), Mass / DesiredShape.Num(), DesiredShape.Num());
+	UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i, sad = %i"), Mass / GetDesiredShape().Num(), GetDesiredShape().Num(), sadarray.Num());
 	return Mass / GetDesiredShape().Num();
 }
 
@@ -151,7 +151,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 	Rotation = Rot;
 	Location = Loc;
 	PartGridComponent = PartGrid;
-	Mass = PartType.GetDefaultObject()->Mass;
-	Cost = PartType.GetDefaultObject()->Cost;
-	DesiredShape = PartType.GetDefaultObject()->GetDesiredShape();
+	//Mass = PartType.GetDefaultObject()->Mass;
+	//Cost = PartType.GetDefaultObject()->Cost;
+	//DesiredShape = PartType.GetDefaultObject()->GetDesiredShape();
 }
