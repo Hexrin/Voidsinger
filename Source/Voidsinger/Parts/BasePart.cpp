@@ -2,6 +2,7 @@
 
 
 #include "BasePart.h"
+#include "BaseResourceSystem.h"
 
 UBasePart::UBasePart()
 {
@@ -140,12 +141,117 @@ float UBasePart::GetMass()
 	return _Mass/ _DesiredShape.Num();
 }
 
-void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid)
+TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
+{
+	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ReturnValue;
+	TArray<FIntPoint> IntPointArray;
+
+	for (auto& i : ResourceTypes)
+	{
+		IntPointArray.Empty();
+		for (auto& j : i.Value.IntPointArray)
+		{
+			IntPointArray.Add(UFunctionLibrary::RotateIntPoint(j, GetRotation()));
+		}
+		
+		ReturnValue.Add(i.Key, FIntPointArray(IntPointArray));
+	}
+	return ReturnValue;
+}
+
+void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGridComp)
 {
 	Rotation = Rot;
 	Location = Loc;
-	PartGridComponent = PartGrid;
+	PartGridComponent = PartGridComp;
 	_Mass = Mass;
 	_Cost = Cost;
 	_DesiredShape = DesiredShape;
+
+	for (auto& i : GetResourceTypes())
+	{
+		bool SystemFound = false;
+
+		for (auto& j : i.Value.IntPointArray)
+		{
+			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			{
+				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetResourceTypes())
+				{
+					if (k.Key == i.Key)
+					{
+						for (auto& l : k.Value.IntPointArray)
+						{
+							if (l == FIntPoint(j.X + 1, j.Y))
+							{
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetSystem());
+								SystemFound = true;
+							}
+						}
+					}
+				}
+
+			}
+			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			{
+				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))->GetResourceTypes())
+				{
+					if (k.Key == i.Key)
+					{
+						for (auto& l : k.Value.IntPointArray)
+						{
+							if (l == FIntPoint(j.X + 1, j.Y + 1))
+							{
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))->GetSystem());
+								SystemFound = true;
+							}
+						}
+					}
+				}
+			}
+			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			{
+				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))->GetResourceTypes())
+				{
+					if (k.Key == i.Key)
+					{
+						for (auto& l : k.Value.IntPointArray)
+						{
+							if (l == FIntPoint(j.X, j.Y + 1))
+							{
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))->GetSystem());
+								SystemFound = true;
+							}
+						}
+					}
+				}
+			}
+			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			{
+				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))->GetResourceTypes())
+				{
+					if (k.Key == i.Key)
+					{
+						for (auto& l : k.Value.IntPointArray)
+						{
+							if (l == FIntPoint(j.X + 1, j.Y + 1))
+							{
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))->GetSystem());
+								SystemFound = true;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (SystemFound == false)
+		{
+			CreateNewSystem(i.Key);
+		}
+	}
+}
+
+void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
+{
+	AddToSystem();
 }
