@@ -5,6 +5,8 @@
 
 UBasePart::UBasePart()
 {
+	Rotation = EPartRotation::Degrees0;
+	Location = FIntPoint();
 	Mass = 1;
 	Cost = 1;
 	DesiredShape = TArray<FIntPoint>();
