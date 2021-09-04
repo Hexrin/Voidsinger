@@ -75,11 +75,20 @@ struct VOIDSINGER_API FTravelCost
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FIntPointArray
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FIntPoint> IntPointArray;
 
+	FIntPointArray()
+	{
+		FIntPointArray(TArray<FIntPoint>(0,0));
+	}
+
+	FIntPointArray(TArray<FIntPoint> Array)
+	{
+		IntPointArray = Array;
+	}
 };
 UENUM(BlueprintType)
 enum EPartRotation

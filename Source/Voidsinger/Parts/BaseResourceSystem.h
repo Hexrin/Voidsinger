@@ -5,6 +5,7 @@
 #include "BasePart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Voidsinger/VoidsingerTypes.h"
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "BaseResourceSystem.generated.h"

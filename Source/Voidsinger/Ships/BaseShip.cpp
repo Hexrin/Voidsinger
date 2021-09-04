@@ -2,6 +2,7 @@
 
 
 #include "BaseShip.h"
+#include "Voidsinger/Parts/BaseResourceSystem.h"
 
 // Sets default values
 ABaseShip::ABaseShip()
