@@ -45,9 +45,10 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace)
 {
-
-	TArray<FIntPoint> DesiredShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
-	FArrayBounds PartBounds = PartType.GetDefaultObject()->GetShapeBounds(Rotation);
+	UBasePart* Part = NewObject<UBasePart>(this, PartType);
+	Part->Init(Location, Rotation, this, PartType);
+	TArray<FIntPoint> DesiredShape = Part->GetDesiredShape(Rotation);
+	FArrayBounds PartBounds = Part->GetShapeBounds(Rotation);
 	
 
 	if (GridSize.X >= Location.X + PartBounds.UpperBounds.X && -GridSize.X <= Location.X + PartBounds.LowerBounds.X
@@ -66,8 +67,7 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 			GridBounds.LowerBounds.Y = Location.Y;
 		}
 
-		UBasePart* Part = NewObject<UBasePart>(this, PartType);
-		Part->Init(Location, Rotation, this, PartType);
+		
 
 		for (int i = 0; i < DesiredShape.Num(); i++)
 		{
@@ -87,6 +87,7 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 		}
 		return true;
 	}
+	Part->ConditionalBeginDestroy();
 	return false;
 }
 

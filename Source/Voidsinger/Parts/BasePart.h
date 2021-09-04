@@ -56,9 +56,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FIntPoint> DesiredShape;
 
-	UPROPERTY(EditDefaultsOnly)
-	TArray<float> sadarray;
-
 	UPROPERTY(EditDefaultsOnly, NoClear)
 	float Mass;
 
@@ -67,8 +64,10 @@ protected:
 
 
 private:
-	TArray<FIntPoint> DestroyedPixels;
-	
+	TArray<FIntPoint> ActualShape;
+	TArray<FIntPoint> RotatedShape;
+	FArrayBounds Bounds;
+
 	TEnumAsByte<EPartRotation> Rotation;
 
 	FIntPoint Location;
