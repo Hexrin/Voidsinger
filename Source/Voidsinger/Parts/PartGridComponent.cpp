@@ -92,15 +92,15 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 
 void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 {
-	for (int i = 0; i < Parts.Num(); i++)
+	/*for (int i = 0; i < Parts.Num(); i++)
 	{
 		AddPart(Parts[i].PartClass, Parts[i].PartLocation, Parts[i].PartRotation, false);
-	}
+	}*/
 }
 
 void UPartGridComponent::SaveShip(FString ShipName)
 {
-	
+	/*
 	TArray<UBasePart*> Parts;
 
 	PartGrid.GenerateValueArray(Parts);
@@ -111,24 +111,25 @@ void UPartGridComponent::SaveShip(FString ShipName)
 	{
 		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i]->GetClass(), Parts[i]->GetLocation(), Parts[i]->GetRotation()));
 	}
-	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);
+	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);*/
 
 }
 
 void UPartGridComponent::LoadSavedShip(FString ShipName)
 {
-	USaveGame* SaveGameInstance = UGameplayStatics::LoadGameFromSlot(ShipName, 0);
-	BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);
+	/*USaveGame* SaveGameInstance = UGameplayStatics::LoadGameFromSlot(ShipName, 0);
+	BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);*/
 }
 
 const FVector2D UPartGridComponent::GetCenterOfMass()
 {
 	FVector2D Center = FVector2D();
-	float Mass = GetMass() == 0 ? 1 : GetMass();
+	float Mass = GetMass();
 	for (auto& Elem : PartGrid)
 	{
 		Center += FVector2D(Elem.Key) * Elem.Value->GetMass() / Mass;
 	}
+	UE_LOG(LogTemp, Warning, TEXT("cofmass?? x=%f, y=%f"), Center.X, Center.Y);
 	return Center;
 }
 
@@ -139,7 +140,8 @@ const float UPartGridComponent::GetMass()
 	{
 		Mass += Elem.Value->GetMass();
 	}
-	return Mass;
+	UE_LOG(LogTemp, Warning, TEXT("other mass = %f"), Mass);
+	return Mass == 0 ? 1 : Mass;
 }
 
 bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape)
