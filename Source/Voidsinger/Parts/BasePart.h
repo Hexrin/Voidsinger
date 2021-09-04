@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
-#include "Voidsinger/FunctionLibrary.h"
-#include "Voidsinger/Ships/BaseShip.h"
 #include "Voidsinger/Parts/PartGridComponent.h"
 #include "BasePart.generated.h"
 
@@ -13,7 +11,6 @@
  * 
  */
 
-class UBaseResourceSystem;
 enum EPartRotation;
 
 UCLASS(BlueprintType, Blueprintable)
@@ -47,24 +44,10 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetMass();
 
-	UFUNCTION(BlueprintPure)
-	TMap<TEnumAsByte<EResourceType>, FIntPointArray> GetResourceTypes();
+	
 
 	UFUNCTION(BlueprintCallable)
 	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
-
-	UFUNCTION(BlueprintCallable)
-	void CreateNewSystem(TEnumAsByte<EResourceType> ResourceType);
-
-	UFUNCTION(BlueprintPure)
-	TArray<UBaseResourceSystem*> GetSystems();
-
-	UFUNCTION(BlueprintPure)
-	UBaseResourceSystem* GetSystemByType(TEnumAsByte<EResourceType> Type);
-
-	UFUNCTION(BlueprintCallable)
-
-	void AddToSystem(UBaseResourceSystem* System);
 
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* PixelMesh;
@@ -90,7 +73,6 @@ private:
 
 	FIntPoint Location;
 
-	TArray<UBaseResourceSystem*> Systems;
 	
 	UPartGridComponent* PartGridComponent;
 

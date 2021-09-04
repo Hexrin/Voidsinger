@@ -80,14 +80,6 @@ struct VOIDSINGER_API FIntPointArray
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FIntPoint> IntPointArray;
 
-	FIntPointArray();
-
-
-	FIntPointArray(TArray<FIntPoint> Array)
-	{
-		IntPointArray = Array;
-	}
-
 };
 UENUM(BlueprintType)
 enum EPartRotation
