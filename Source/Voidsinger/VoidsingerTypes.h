@@ -80,10 +80,8 @@ struct VOIDSINGER_API FIntPointArray
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FIntPoint> IntPointArray;
 
-	FIntPointArray()
-	{
-		FIntPointArray(TArray<FIntPoint>());
-	}
+	FIntPointArray();
+
 
 	FIntPointArray(TArray<FIntPoint> Array)
 	{

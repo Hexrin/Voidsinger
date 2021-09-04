@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/FunctionLibrary.h"
+#include "Voidsinger/Ships/BaseShip.h"
 #include "Voidsinger/Parts/PartGridComponent.h"
 #include "BasePart.generated.h"
 
@@ -55,6 +56,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateNewSystem(TEnumAsByte<EResourceType> ResourceType);
 
+	UFUNCTION(BlueprintPure)
+	TArray<UBaseResourceSystem*> GetSystems();
+
+	UFUNCTION(BlueprintPure)
+	UBaseResourceSystem* GetSystemByType(TEnumAsByte<EResourceType> Type);
+
+	UFUNCTION(BlueprintCallable)
+	void AddToSystem(UBaseResourceSystem* System);
+
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* PixelMesh;
 
@@ -76,7 +86,7 @@ private:
 
 	FIntPoint Location;
 
-	TArray<UBaseResourceSystem*
+	TArray<UBaseResourceSystem*> Systems;
 	
 	UPartGridComponent* PartGridComponent;
 

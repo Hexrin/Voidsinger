@@ -135,3 +135,8 @@ TArray<UBasePart*> UBaseResourceSystem::FindDisconnectedParts(TArray<UBasePart*>
 	}
 	return DisconnectedParts;
 }
+
+TEnumAsByte<EResourceType> UBaseResourceSystem::GetType()
+{
+	return SystemType;
+}
