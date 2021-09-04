@@ -2,6 +2,7 @@
 
 
 #include "BasePart.h"
+#include "BaseResourceSystem.h"
 
 UBasePart::UBasePart()
 {
@@ -102,6 +103,27 @@ float UBasePart::GetMass()
 	return Mass / GetDesiredShape().Num();
 }
 
+
+
+
+TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
+{
+	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ReturnValue;
+	TArray<FIntPoint> IntPointArray;
+
+	for (auto& i : ResourceTypes)
+	{
+		IntPointArray.Empty();
+		for (auto& j : i.Value.IntPointArray)
+		{
+			IntPointArray.Add(UFunctionLibrary::RotateIntPoint(j, GetRotation()));
+		}
+		
+		ReturnValue.Add(i.Key, FIntPointArray(IntPointArray));
+	}
+	return ReturnValue;
+}
+
 void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
 {
 	UE_LOG(LogTemp, Warning, TEXT("INIT"))
@@ -109,4 +131,117 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 	Location = Loc;
 	PartGridComponent = PartGrid;
 	ActualShape = GetDesiredShape();
+
+	for (auto& i : GetResourceTypes())
+	{
+		bool SystemFound = false;
+
+		for (auto& j : i.Value.IntPointArray)
+		{
+			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			{
+				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetResourceTypes())
+				{
+					if (k.Key == i.Key)
+					{
+						for (auto& l : k.Value.IntPointArray)
+						{
+							if (l == FIntPoint(j.X + 1, j.Y))
+							{
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetSystemByType(k.Key));
+								SystemFound = true;
+							}
+						}
+					}
+				}
+
+			}
+			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			{
+				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))->GetResourceTypes())
+				{
+					if (k.Key == i.Key)
+					{
+						for (auto& l : k.Value.IntPointArray)
+						{
+							if (l == FIntPoint(j.X + 1, j.Y + 1))
+							{
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))->GetSystemByType(k.Key));
+								SystemFound = true;
+							}
+						}
+					}
+				}
+			}
+			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			{
+				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))->GetResourceTypes())
+				{
+					if (k.Key == i.Key)
+					{
+						for (auto& l : k.Value.IntPointArray)
+						{
+							if (l == FIntPoint(j.X, j.Y + 1))
+							{
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))->GetSystemByType(k.Key));
+								SystemFound = true;
+							}
+						}
+					}
+				}
+			}
+			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			{
+				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))->GetResourceTypes())
+				{
+					if (k.Key == i.Key)
+					{
+						for (auto& l : k.Value.IntPointArray)
+						{
+							if (l == FIntPoint(j.X + 1, j.Y + 1))
+							{
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))->GetSystemByType(k.Key));
+								SystemFound = true;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (SystemFound == false)
+		{
+			CreateNewSystem(i.Key);
+		}
+	}
+}
+
+void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
+{
+	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
+	NewSystem->AddPart(this);
+	Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->ResourceSystems.Add(NewSystem);
+	AddToSystem(NewSystem);
+}
+
+TArray<UBaseResourceSystem*> UBasePart::GetSystems()
+{
+	return Systems;
+}
+
+UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
+{
+	for (auto& i : GetSystems())
+	{
+		if (i->GetType() == Type)
+		{
+			return i;
+		}
+	}
+	return nullptr;
+}
+
+void UBasePart::AddToSystem(UBaseResourceSystem* System)
+{
+	System->AddPart(this);
+	Systems.Add(System);
 }
