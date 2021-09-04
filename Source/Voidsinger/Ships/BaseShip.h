@@ -39,7 +39,7 @@ public:
 
 	
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UBaseResourceSystem*> ResourceSystems;
 
 //protected:
