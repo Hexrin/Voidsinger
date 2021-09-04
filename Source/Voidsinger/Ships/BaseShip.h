@@ -6,10 +6,11 @@
 #include "GameFramework/Pawn.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/Parts/PartGridComponent.h"
-#include "Voidsinger/Parts/BaseResourceSystem.h"
 #include "ShipMovementComponent.h"
 #include "Components/SceneComponent.h"
 #include "BaseShip.generated.h"
+
+class UBaseResourceSystem;
 
 UCLASS()
 class VOIDSINGER_API ABaseShip : public APawn
