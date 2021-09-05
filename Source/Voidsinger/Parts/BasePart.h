@@ -44,9 +44,10 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetMass();
 
-	
+	UFUNCTION()
+	void DestroyPixel(FIntPoint RelativeLoc);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
 	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
 
 	UPROPERTY(EditAnywhere)

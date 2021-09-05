@@ -32,6 +32,9 @@ public:
 	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace);
 
 	UFUNCTION(BlueprintCallable)
+	class UBasePart* DestroyPixel(FIntPoint Location);
+
+	UFUNCTION(BlueprintCallable)
 	void BuildShip(TArray<FSavePartInfo> Parts);
 
 	UFUNCTION(BlueprintCallable)

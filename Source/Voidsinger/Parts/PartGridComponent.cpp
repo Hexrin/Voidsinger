@@ -91,6 +91,14 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 	return false;
 }
 
+UBasePart* UPartGridComponent::DestroyPixel(FIntPoint Location)
+{
+	class UBasePart* DamagedPart = PartGrid.FindRef(Location);
+	DamagedPart->DestroyPixel(Location - DamagedPart->GetLocation());
+	PartGrid.Remove(Location);
+	return DamagedPart;
+}
+
 void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 {
 	/*for (int i = 0; i < Parts.Num(); i++)

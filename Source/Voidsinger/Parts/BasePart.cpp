@@ -58,24 +58,25 @@ const FArrayBounds UBasePart::GetShapeBounds(TEnumAsByte<EPartRotation> Rot)
 {
 	if (Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds)
 	{
-		for (int i = 0; i < GetDesiredShape(Rot).Num(); i++)
+		
+		for (FIntPoint i : GetDesiredShape(Rot))
 		{
-			if (GetDesiredShape(Rot)[i].X > Bounds.UpperBounds.X)
+			if (i.X > Bounds.UpperBounds.X)
 			{
-				Bounds.UpperBounds.X = GetDesiredShape(Rot)[i].X;
+				Bounds.UpperBounds.X = i.X;
 			}
-			if (GetDesiredShape(Rot)[i].Y > Bounds.UpperBounds.Y)
+			if (i.Y > Bounds.UpperBounds.Y)
 			{
-				Bounds.UpperBounds.Y = GetDesiredShape(Rot)[i].Y;
+				Bounds.UpperBounds.Y = i.Y;
 			}
 
-			if (GetDesiredShape(Rot)[i].X < Bounds.LowerBounds.X)
+			if (i.X < Bounds.LowerBounds.X)
 			{
-				Bounds.LowerBounds.X = GetDesiredShape(Rot)[i].X;
+				Bounds.LowerBounds.X = i.X;
 			}
-			if (GetDesiredShape(Rot)[i].Y < Bounds.LowerBounds.Y)
+			if (i.Y < Bounds.LowerBounds.Y)
 			{
-				Bounds.LowerBounds.Y = GetDesiredShape(Rot)[i].Y;
+				Bounds.LowerBounds.Y = i.Y;
 			}
 		}
 	}
@@ -84,12 +85,12 @@ const FArrayBounds UBasePart::GetShapeBounds(TEnumAsByte<EPartRotation> Rot)
 
 const FIntPoint UBasePart::GetLocation()
 {
-	return FIntPoint();
+	return Location;
 }
 
 const TEnumAsByte<EPartRotation> UBasePart::GetRotation()
 {
-	return TEnumAsByte<EPartRotation>();
+	return Rotation;
 }
 
 const TArray<FIntPoint> UBasePart::GetShape()
@@ -100,8 +101,13 @@ const TArray<FIntPoint> UBasePart::GetShape()
 float UBasePart::GetMass()
 {
 	
-	UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i"), Mass / GetDesiredShape().Num(), GetDesiredShape().Num());
+	//UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i"), Mass / GetDesiredShape().Num(), GetDesiredShape().Num());
 	return Mass / GetDesiredShape().Num();
+}
+
+void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
+{
+	ActualShape.Remove(RelativeLoc);
 }
 
 void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
