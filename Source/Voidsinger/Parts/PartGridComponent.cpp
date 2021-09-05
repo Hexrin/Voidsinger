@@ -17,6 +17,7 @@ UPartGridComponent::UPartGridComponent()
 	GridSize = FIntPoint(25);
 	
 	PartGrid = TMap<FIntPoint, UBasePart*>();
+	MeshGrid = TMap<FIntPoint, UActorComponent*>();
 
 	if (!GridScale)
 	{
@@ -75,6 +76,7 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 
 			class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
 			Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PartType.GetDefaultObject()->PixelMesh);
+			MeshGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), NewPlane);
 
 			if (Location.X > GridBounds.UpperBounds.X)
 			{
@@ -91,12 +93,46 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 	return false;
 }
 
-UBasePart* UPartGridComponent::DestroyPixel(FIntPoint Location)
+bool UPartGridComponent::RemovePart(FIntPoint Location)
 {
-	class UBasePart* DamagedPart = PartGrid.FindRef(Location);
-	DamagedPart->DestroyPixel(Location - DamagedPart->GetLocation());
-	PartGrid.Remove(Location);
-	return DamagedPart;
+	if (IsValid(PartGrid.FindRef(Location)))
+	{
+
+		class UBasePart* PartToRemove = PartGrid.FindRef(Location);
+		FIntPoint PartLoc = PartToRemove->GetLocation();
+		for (FIntPoint Loc : PartToRemove->GetShape())
+		{
+			PartToRemove->DestroyPixel(Loc);
+			PartGrid.Remove(PartLoc + Loc);
+
+			MeshGrid.FindRef(PartLoc + Loc)->DestroyComponent();
+			MeshGrid.Remove(PartLoc + Loc);
+		}
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart)
+{
+	if (IsValid(PartGrid.FindRef(Location)))
+	{
+		DamagedPart = PartGrid.FindRef(Location);
+		DamagedPart->DestroyPixel(Location - DamagedPart->GetLocation());
+		PartGrid.Remove(Location);
+
+		MeshGrid.FindRef(Location)->DestroyComponent();
+		MeshGrid.Remove(Location);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	
 }
 
 void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
