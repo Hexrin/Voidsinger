@@ -61,6 +61,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	TEnumAsByte<EResourceType> GetType();
 
+	UFUNCTION(BlueprintCallable)
+	void SetType(TEnumAsByte<EResourceType> Type);
+
 protected:
 
 	UPROPERTY()

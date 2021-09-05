@@ -138,13 +138,6 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 
 		for (auto& j : i.Value.IntPointArray)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("This is being called"));
-			UE_LOG(LogTemp, Warning, TEXT("x = %i, y = %i"), FIntPoint(j.X + 1, j.Y).X, FIntPoint(j.X + 1, j.Y).Y)
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(1, 0)))
-			{
-				UE_LOG(LogTemp, Warning, TEXT("This ref is vaild"));
-			}
-	
 			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
 			{
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetResourceTypes())
