@@ -47,7 +47,7 @@ public:
 	const float GetMass();
 
 private:
-	
+	UPROPERTY()
 	TMap<FIntPoint, UBasePart*> PartGrid;
 	
 	FArrayBounds GridBounds;
