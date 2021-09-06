@@ -53,26 +53,6 @@ struct VOIDSINGER_API FArrayBounds
 };
 
 USTRUCT(BlueprintType)
-struct VOIDSINGER_API FTravelCost
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<TEnumAsByte<EResourceType>, float> FluidCosts;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float ElectricityCost;
-
-	FTravelCost(TMap<TEnumAsByte<EResourceType>, float> FCosts = TMap<TEnumAsByte<EResourceType>, float>(), float ECost = 0)
-	{
-		FluidCosts = FCosts;
-		ElectricityCost = ECost;
-	}
-
-
-};
-
-USTRUCT(BlueprintType)
 struct VOIDSINGER_API FIntPointArray
 {
 	GENERATED_BODY()

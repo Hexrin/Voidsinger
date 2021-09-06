@@ -26,3 +26,23 @@ FIntPoint UFunctionLibrary::RotateIntPoint(FIntPoint IntPoint, TEnumAsByte<EPart
 	}
 
 }
+
+bool UFunctionLibrary::PointsConected(TMap<FIntPoint, UBasePart*> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConectivityArray)
+{
+	if (StartPoint == EndPoint)
+	{
+		return true;
+	}
+	bool ReturnValue = false;
+	for (int i = 0; i < )
+	{
+
+	}
+	
+	if (PartGrid.Contains(StartPoint + FIntPoint(1, 0)) && !ReturnValue)
+	{
+		ReturnValue = PointsConected(PartGrid, StartPoint + FIntPoint(1, 0), EndPoint, ConectivityArray);
+	}
+	
+	return false;
+}
