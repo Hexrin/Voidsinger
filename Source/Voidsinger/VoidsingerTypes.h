@@ -82,11 +82,11 @@ struct VOIDSINGER_API FUBasePartArray
 
 	FUBasePartArray()
 	{
-		FIntPointArray(TArray<UBasePart*>(nullptr));
+		FUBasePartArray(TArray<UBasePart*>(0,0));
 	}
 
 
-	FUBasePartArray(TArray<UBasePart> Array)
+	FUBasePartArray(TArray<UBasePart*> Array)
 	{
 		UBasePartArray = Array;
 	}
