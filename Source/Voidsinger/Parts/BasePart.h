@@ -84,16 +84,26 @@ protected:
 
 
 private:
+
+	UPROPERTY()
 	TArray<FIntPoint> ActualShape;
+
+	UPROPERTY()
 	TArray<FIntPoint> RotatedShape;
+
+	UPROPERTY()
 	FArrayBounds Bounds;
 
+	UPROPERTY()
 	TEnumAsByte<EPartRotation> Rotation;
 
+	UPROPERTY()
 	FIntPoint Location;
 
+	UPROPERTY()
 	TArray<UBaseResourceSystem*> Systems;
 	
+	UPROPERTY()
 	UPartGridComponent* PartGridComponent;
 
 	UPROPERTY(EditDefaultsOnly)

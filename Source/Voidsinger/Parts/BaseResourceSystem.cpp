@@ -80,7 +80,7 @@ void UBaseResourceSystem::ScanSystemForBreaks(TArray<UBasePart*> PartsToScan)
 	{
 		for (int i = 0; i < SeparatedSystems.Num(); i++)
 		{
-			CreateNewSystem(SeparatedSystems[i]);
+			CreateNewSystem(SeparatedSystems[i].UBasePartArray);
 		}
 
 		SeparatedSystems.Empty();
@@ -91,7 +91,7 @@ void UBaseResourceSystem::ScanSystemForBreaks(TArray<UBasePart*> PartsToScan)
 		{
 			PartsToScan.Remove(DisconnectedParts[i]);
 		}
-		SeparatedSystems.Add(PartsToScan);
+		SeparatedSystems.Add(FUBasePartArray(PartsToScan));
 		ScanSystemForBreaks(DisconnectedParts);
 	}
 
