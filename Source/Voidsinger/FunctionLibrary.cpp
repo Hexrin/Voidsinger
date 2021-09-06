@@ -26,7 +26,11 @@ FIntPoint UFunctionLibrary::RotateIntPoint(FIntPoint IntPoint, TEnumAsByte<EPart
 	}
 
 }
-
+bool UFunctionLibrary::PointsConected(TMap<FIntPoint, UBasePart*> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint)
+{
+	TArray<FIntPoint> ConectivityArray = TArray<FIntPoint>();
+	return PointsConected(PartGrid, StartPoint, EndPoint, ConectivityArray);
+}
 bool UFunctionLibrary::PointsConected(TMap<FIntPoint, UBasePart*> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConectivityArray)
 {
 	if (StartPoint == EndPoint)
@@ -34,15 +38,24 @@ bool UFunctionLibrary::PointsConected(TMap<FIntPoint, UBasePart*> PartGrid, FInt
 		return true;
 	}
 	bool ReturnValue = false;
-	for (int i = 0; i < )
-	{
 
-	}
-	
-	if (PartGrid.Contains(StartPoint + FIntPoint(1, 0)) && !ReturnValue)
+	const bool IsXCloser = abs((EndPoint - StartPoint).X) > abs((EndPoint - StartPoint).Y);
+	bool XIsPosive = (EndPoint - StartPoint).X > 0;
+	bool YIsPosive = (EndPoint - StartPoint).Y > 0;
+	UE_LOG(LogTemp, Warning, TEXT("Direction x=%i, y=%i"), (EndPoint - StartPoint).X, (EndPoint - StartPoint).Y);
+
+	for (int i = 0; i < 3; i++)
 	{
-		ReturnValue = PointsConected(PartGrid, StartPoint + FIntPoint(1, 0), EndPoint, ConectivityArray);
+		FIntPoint TargetPoint = (IsXCloser ^ (i % 2 == 0)) ? FIntPoint((XIsPosive ^ (i < 2)) ? 1 : -1, 0) : FIntPoint((0, YIsPosive ^ (i < 2)) ? 1 : -1);
+		UE_LOG(LogTemp, Warning, TEXT("Target Point x=%i, y=%i"), TargetPoint.X, TargetPoint.Y);
+		if (PartGrid.Contains(StartPoint + FIntPoint(1, 0)))
+		{
+			ReturnValue = PointsConected(PartGrid, StartPoint + FIntPoint(1, 0), EndPoint, ConectivityArray);
+			if (ReturnValue)
+			{
+				break;
+			}
+		}
 	}
-	
-	return false;
+	return ReturnValue;
 }
