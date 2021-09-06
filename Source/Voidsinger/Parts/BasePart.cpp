@@ -121,7 +121,7 @@ TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 		IntPointArray.Empty();
 		for (auto& j : i.Value.IntPointArray)
 		{
-			IntPointArray.Add(UFunctionLibrary::RotateIntPoint(j, GetRotation()));
+			IntPointArray.Add(UFunctionLibrary::RotateIntPoint(j, GetRotation()) + GetLocation());
 		}
 		
 		ReturnValue.Add(i.Key, FIntPointArray(IntPointArray));
@@ -140,18 +140,12 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 	for (auto& i : GetResourceTypes())
 	{
 		bool SystemFound = false;
-
 		for (auto& j : i.Value.IntPointArray)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("This is being called"));
-			UE_LOG(LogTemp, Warning, TEXT("x = %i, y = %i"), FIntPoint(j.X + 1, j.Y).X, FIntPoint(j.X + 1, j.Y).Y)
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(1, 0)))
+		{	
+			UE_LOG(LogTemp, Warning, TEXT("x = %i, y + %i"), j.X + 1,  j.Y);
+			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X + 1, j.Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("This ref is vaild"));
-			}
-	
-			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
-			{
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetResourceTypes())
 				{
 					if (k.Key == i.Key)
@@ -160,6 +154,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 						{
 							if (l == FIntPoint(j.X + 1, j.Y))
 							{
+								UE_LOG(LogTemp, Warning, TEXT("This ref is vaild"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetSystemByType(k.Key));
 								SystemFound = true;
 							}
@@ -168,7 +163,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 				}
 
 			}
-			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X, j.Y + 1)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
 			{
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))->GetResourceTypes())
 				{
@@ -185,7 +180,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 					}
 				}
 			}
-			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X, j.Y - 1)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
 			{
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))->GetResourceTypes())
 				{
@@ -202,7 +197,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 					}
 				}
 			}
-			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X - 1, j.Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
 			{
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))->GetResourceTypes())
 				{

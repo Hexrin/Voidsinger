@@ -71,8 +71,9 @@ protected:
 
 	UPROPERTY()
 	TArray<UBasePart*> ConnectedParts;
-
-	TArray<TArray<UBasePart*>> SeparatedSystems;
+	
+	UPROPERTY()
+	TArray<FUBasePartArray> SeparatedSystems;
 
 	UPROPERTY()
 	TEnumAsByte<EResourceType> SystemType;

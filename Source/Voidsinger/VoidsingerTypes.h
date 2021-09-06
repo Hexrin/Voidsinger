@@ -71,6 +71,27 @@ struct VOIDSINGER_API FIntPointArray
 		IntPointArray = Array;
 	}
 };
+
+USTRUCT(BlueprintType)
+struct VOIDSINGER_API FUBasePartArray
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<UBasePart*> UBasePartArray;
+
+	FUBasePartArray()
+	{
+		FUBasePartArray(TArray<UBasePart*>(0,0));
+	}
+
+
+	FUBasePartArray(TArray<UBasePart*> Array)
+	{
+		UBasePartArray = Array;
+	}
+};
+
 UENUM(BlueprintType)
 enum EPartRotation
 {
