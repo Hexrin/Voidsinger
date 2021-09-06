@@ -190,6 +190,11 @@ const float UPartGridComponent::GetMass()
 	return Mass == 0 ? 1 : Mass;
 }
 
+TMap<FIntPoint, UBasePart*> UPartGridComponent::GetPartGrid()
+{
+	return PartGrid;
+}
+
 bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape)
 {
 	for (int i = 0; i < DesiredShape.Num(); i++)

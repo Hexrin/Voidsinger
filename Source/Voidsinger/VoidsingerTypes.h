@@ -65,6 +65,7 @@ struct VOIDSINGER_API FIntPointArray
 		FIntPointArray(TArray<FIntPoint>(0,0));
 	}
 
+
 	FIntPointArray(TArray<FIntPoint> Array)
 	{
 		IntPointArray = Array;

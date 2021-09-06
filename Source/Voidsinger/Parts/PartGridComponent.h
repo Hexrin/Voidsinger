@@ -52,6 +52,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	const float GetMass();
 
+	UFUNCTION(BlueprintPure)
+	TMap<FIntPoint, UBasePart*> GetPartGrid();
+
 private:
 	UPROPERTY()
 	TMap<FIntPoint, UBasePart*> PartGrid;

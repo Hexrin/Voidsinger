@@ -6,8 +6,6 @@
 
 UBasePart::UBasePart()
 {
-	Rotation = EPartRotation::Degrees0;
-	Location = FIntPoint();
 	Mass = 1;
 	Cost = 1;
 	DesiredShape = TArray<FIntPoint>();
@@ -59,25 +57,24 @@ const FArrayBounds UBasePart::GetShapeBounds(TEnumAsByte<EPartRotation> Rot)
 {
 	if (Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds)
 	{
-		
-		for (FIntPoint i : GetDesiredShape(Rot))
+		for (int i = 0; i < GetDesiredShape(Rot).Num(); i++)
 		{
-			if (i.X > Bounds.UpperBounds.X)
+			if (GetDesiredShape(Rot)[i].X > Bounds.UpperBounds.X)
 			{
-				Bounds.UpperBounds.X = i.X;
+				Bounds.UpperBounds.X = GetDesiredShape(Rot)[i].X;
 			}
-			if (i.Y > Bounds.UpperBounds.Y)
+			if (GetDesiredShape(Rot)[i].Y > Bounds.UpperBounds.Y)
 			{
-				Bounds.UpperBounds.Y = i.Y;
+				Bounds.UpperBounds.Y = GetDesiredShape(Rot)[i].Y;
 			}
 
-			if (i.X < Bounds.LowerBounds.X)
+			if (GetDesiredShape(Rot)[i].X < Bounds.LowerBounds.X)
 			{
-				Bounds.LowerBounds.X = i.X;
+				Bounds.LowerBounds.X = GetDesiredShape(Rot)[i].X;
 			}
-			if (i.Y < Bounds.LowerBounds.Y)
+			if (GetDesiredShape(Rot)[i].Y < Bounds.LowerBounds.Y)
 			{
-				Bounds.LowerBounds.Y = i.Y;
+				Bounds.LowerBounds.Y = GetDesiredShape(Rot)[i].Y;
 			}
 		}
 	}
@@ -86,12 +83,12 @@ const FArrayBounds UBasePart::GetShapeBounds(TEnumAsByte<EPartRotation> Rot)
 
 const FIntPoint UBasePart::GetLocation()
 {
-	return Location;
+	return FIntPoint();
 }
 
 const TEnumAsByte<EPartRotation> UBasePart::GetRotation()
 {
-	return Rotation;
+	return TEnumAsByte<EPartRotation>();
 }
 
 const TArray<FIntPoint> UBasePart::GetShape()
@@ -102,14 +99,12 @@ const TArray<FIntPoint> UBasePart::GetShape()
 float UBasePart::GetMass()
 {
 	
-	//UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i"), Mass / GetDesiredShape().Num(), GetDesiredShape().Num());
+	UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i"), Mass / GetDesiredShape().Num(), GetDesiredShape().Num());
 	return Mass / GetDesiredShape().Num();
 }
 
-void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
-{
-	ActualShape.Remove(RelativeLoc);
-}
+
+
 
 TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 {
@@ -143,13 +138,6 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 
 		for (auto& j : i.Value.IntPointArray)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("This is being called"));
-			UE_LOG(LogTemp, Warning, TEXT("x = %i, y = %i"), FIntPoint(j.X + 1, j.Y).X, FIntPoint(j.X + 1, j.Y).Y)
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(1, 0)))
-			{
-				UE_LOG(LogTemp, Warning, TEXT("This ref is vaild"));
-			}
-	
 			if (IsValid(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
 			{
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetResourceTypes())

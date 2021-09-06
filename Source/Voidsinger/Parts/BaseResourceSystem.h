@@ -58,7 +58,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<UBasePart*> FindDisconnectedParts(TArray<UBasePart*> Parts);
 
-private:
+	UFUNCTION(BlueprintPure)
+	TEnumAsByte<EResourceType> GetType();
+
+	UFUNCTION(BlueprintCallable)
+	void SetType(TEnumAsByte<EResourceType> Type);
+
+protected:
 
 	UPROPERTY()
 	float ResourceAmount;
@@ -67,5 +73,8 @@ private:
 	TArray<UBasePart*> ConnectedParts;
 
 	TArray<TArray<UBasePart*>> SeparatedSystems;
+
+	UPROPERTY()
+	TEnumAsByte<EResourceType> SystemType;
 
 };

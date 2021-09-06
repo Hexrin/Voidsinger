@@ -6,7 +6,7 @@
 
 UBaseResourceSystem::UBaseResourceSystem()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("Resource system init"));
 }
 
 void UBaseResourceSystem::AddResources(float Amount)
@@ -134,4 +134,15 @@ TArray<UBasePart*> UBaseResourceSystem::FindDisconnectedParts(TArray<UBasePart*>
 		}
 	}
 	return DisconnectedParts;
+}
+
+TEnumAsByte<EResourceType> UBaseResourceSystem::GetType()
+{
+	return SystemType;
+}
+
+void UBaseResourceSystem::SetType(TEnumAsByte<EResourceType> Type)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Type = %i"), Type);
+	SystemType = Type;
 }
