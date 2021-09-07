@@ -78,7 +78,7 @@ private:
 
 	float _Mass;
 	int _Cost;
-	
+	TArray<FIntPoint> _DesiredShape;
 
 	
 };
