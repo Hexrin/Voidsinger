@@ -171,7 +171,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 					{
 						for (auto& l : k.Value.IntPointArray)
 						{
-							if (l == FIntPoint(j.X + 1, j.Y + 1))
+							if (l == FIntPoint(j.X, j.Y + 1))
 							{
 								UE_LOG(LogTemp, Warning, TEXT("y + 1 system Found"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))->GetSystemByType(k.Key));
@@ -190,7 +190,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 					{
 						for (auto& l : k.Value.IntPointArray)
 						{
-							if (l == FIntPoint(j.X, j.Y + 1))
+							if (l == FIntPoint(j.X, j.Y - 1))
 							{
 								UE_LOG(LogTemp, Warning, TEXT("y - 1 system found"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))->GetSystemByType(k.Key));
@@ -209,7 +209,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 					{
 						for (auto& l : k.Value.IntPointArray)
 						{
-							if (l == FIntPoint(j.X + 1, j.Y + 1))
+							if (l == FIntPoint(j.X - 1, j.Y))
 							{
 								UE_LOG(LogTemp, Warning, TEXT("x - 1 system found"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))->GetSystemByType(k.Key));
@@ -229,10 +229,11 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 
 void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Create system"));
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
 	NewSystem->SetType(ResourceType);
 	NewSystem->AddPart(this);
-	Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->ResourceSystems.Add(NewSystem);
+	Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->AddResourceSystem(NewSystem);
 	AddToSystem(NewSystem);
 }
 
@@ -258,6 +259,7 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 	System->AddPart(this);
 	if (IsValid(GetSystemByType(System->GetType())) && GetSystemByType(System->GetType()) != System)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Merge systems"));
 		GetSystemByType(System->GetType())->MergeSystems(System);
 	}
 	else
