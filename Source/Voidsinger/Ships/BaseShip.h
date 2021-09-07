@@ -38,9 +38,13 @@ public:
 	UFUNCTION(BlueprintPure)
 	float const GetFluidAmount(TEnumAsByte<EResourceType> Fluid);
 
-	
+	UFUNCTION()
+	void AddResourceSystem(UBaseResourceSystem* System);
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UFUNCTION()
+	void RemoveResourceSystem(UBaseResourceSystem* System);
+
+	UPROPERTY()
 	TArray<UBaseResourceSystem*> ResourceSystems;
 
 //protected:
