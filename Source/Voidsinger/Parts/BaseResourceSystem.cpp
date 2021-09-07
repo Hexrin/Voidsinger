@@ -32,8 +32,11 @@ void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart)
 
 void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 {
+	//GetWorld();
 	ConnectedParts.Append(MergedSystem->ConnectedParts);
-	Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
+	//UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>(ThisClass::StaticClass()));
+	//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->AddResourceSystem(NewSystem);
+	//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
 
 }
 
@@ -43,7 +46,6 @@ void UBaseResourceSystem::CreateNewSystem(TArray<UBasePart*> RemovedParts)
 	{
 		ConnectedParts.Remove(RemovedParts[i]);
 	}
-
 
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>(ThisClass::StaticClass()));
 	NewSystem->AddSection(RemovedParts);
