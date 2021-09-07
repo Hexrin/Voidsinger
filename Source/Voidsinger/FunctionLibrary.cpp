@@ -46,11 +46,11 @@ bool UFunctionLibrary::PointsConected(TMap<FIntPoint, UBasePart*> PartGrid, FInt
 
 	for (int i = 0; i < 3; i++)
 	{
-		FIntPoint TargetPoint = (IsXCloser ^ (i % 2 == 0)) ? FIntPoint((XIsPosive ^ (i < 2)) ? 1 : -1, 0) : FIntPoint((0, YIsPosive ^ (i < 2)) ? 1 : -1);
+		FIntPoint TargetPoint = (IsXCloser ^ (i % 2 == 0)) ? FIntPoint((XIsPosive ^ (i > 2)) ? 1 : -1, 0) : FIntPoint(0, (YIsPosive ^ (i > 2)) ? 1 : -1);
 		UE_LOG(LogTemp, Warning, TEXT("Target Point x=%i, y=%i"), TargetPoint.X, TargetPoint.Y);
-		if (PartGrid.Contains(StartPoint + FIntPoint(1, 0)))
+		if (PartGrid.Contains(StartPoint + TargetPoint))
 		{
-			ReturnValue = PointsConected(PartGrid, StartPoint + FIntPoint(1, 0), EndPoint, ConectivityArray);
+			ReturnValue = PointsConected(PartGrid, StartPoint + TargetPoint, EndPoint, ConectivityArray);
 			if (ReturnValue)
 			{
 				break;
