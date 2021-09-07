@@ -3,6 +3,8 @@
 
 #include "Voidsinger/Parts/BaseResourceSystem.h"
 #include "Voidsinger/Ships/BaseShip.h"
+#include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
 
 UBaseResourceSystem::UBaseResourceSystem()
 {
@@ -34,8 +36,24 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 {
 	//GetWorld();
 	ConnectedParts.Append(MergedSystem->ConnectedParts);
+	/*if (IsValid(MergedSystem))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("THIS IS VALid though@@@!"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("how tf is this not valid though"));
+	}*/
 	//UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>(ThisClass::StaticClass()));
 	//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->AddResourceSystem(NewSystem);
+	if (IsValid(GetWorld()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("world is valid??"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("comfusion"));
+	}
 	//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
 
 }
@@ -145,6 +163,6 @@ TEnumAsByte<EResourceType> UBaseResourceSystem::GetType()
 
 void UBaseResourceSystem::SetType(TEnumAsByte<EResourceType> Type)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Type = %i"), Type);
+	UE_LOG(LogTemp, Warning, TEXT("Type = %i"), Type.GetValue());
 	SystemType = Type;
 }
