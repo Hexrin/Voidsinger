@@ -64,9 +64,11 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	UBaseResourceSystem* GetSystemByType(TEnumAsByte<EResourceType> Type);
+	
+	UFUNCTION(BlueprintPure)
+	const UPartGridComponent* GetPartGrid();
 
 	UFUNCTION(BlueprintCallable)
-
 	void AddToSystem(UBaseResourceSystem* System);
 
 	UPROPERTY(EditAnywhere)
