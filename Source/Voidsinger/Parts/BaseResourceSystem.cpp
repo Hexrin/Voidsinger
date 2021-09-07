@@ -6,7 +6,7 @@
 
 UBaseResourceSystem::UBaseResourceSystem()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("Resource system init"));
 }
 
 void UBaseResourceSystem::AddResources(float Amount)
@@ -80,7 +80,7 @@ void UBaseResourceSystem::ScanSystemForBreaks(TArray<UBasePart*> PartsToScan)
 	{
 		for (int i = 0; i < SeparatedSystems.Num(); i++)
 		{
-			CreateNewSystem(SeparatedSystems[i]);
+			CreateNewSystem(SeparatedSystems[i].UBasePartArray);
 		}
 
 		SeparatedSystems.Empty();
@@ -91,7 +91,7 @@ void UBaseResourceSystem::ScanSystemForBreaks(TArray<UBasePart*> PartsToScan)
 		{
 			PartsToScan.Remove(DisconnectedParts[i]);
 		}
-		SeparatedSystems.Add(PartsToScan);
+		SeparatedSystems.Add(FUBasePartArray(PartsToScan));
 		ScanSystemForBreaks(DisconnectedParts);
 	}
 
@@ -134,4 +134,15 @@ TArray<UBasePart*> UBaseResourceSystem::FindDisconnectedParts(TArray<UBasePart*>
 		}
 	}
 	return DisconnectedParts;
+}
+
+TEnumAsByte<EResourceType> UBaseResourceSystem::GetType()
+{
+	return SystemType;
+}
+
+void UBaseResourceSystem::SetType(TEnumAsByte<EResourceType> Type)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Type = %i"), Type);
+	SystemType = Type;
 }

@@ -22,11 +22,13 @@ APlayerShip::APlayerShip()
     AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
-FTravelCost APlayerShip::GetTravelCost(class UStarSystemData* Target)
+TMap<TEnumAsByte<EResourceType>, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
 {
-    TMap<TEnumAsByte<EResourceType>, float> FCosts;
-    FCosts.Add(EResourceType::Fuel, 100);
-    return FTravelCost(FCosts, 55);
+    TMap<TEnumAsByte<EResourceType>, float> Costs;
+    
+    Costs.Add(EResourceType::Fuel, 100);
+    Costs.Add(EResourceType::Hydrogen, 35);
+    return Costs;
 }
 
 bool APlayerShip::TravelToStarSystem(UStarSystemData* Target)

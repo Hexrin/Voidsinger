@@ -34,7 +34,7 @@ public:
 	APlayerShip();
 	
 	UFUNCTION(BlueprintPure)
-	FTravelCost GetTravelCost(class UStarSystemData* Target);
+	TMap<TEnumAsByte<EResourceType>, float> GetTravelCost(class UStarSystemData* Target);
 
 	UFUNCTION(BlueprintCallable)
 	bool TravelToStarSystem(class UStarSystemData* Target);

@@ -5,6 +5,7 @@
 #include "BasePart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Voidsinger/VoidsingerTypes.h"
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "BaseResourceSystem.generated.h"
@@ -57,14 +58,24 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<UBasePart*> FindDisconnectedParts(TArray<UBasePart*> Parts);
 
-private:
+	UFUNCTION(BlueprintPure)
+	TEnumAsByte<EResourceType> GetType();
+
+	UFUNCTION(BlueprintCallable)
+	void SetType(TEnumAsByte<EResourceType> Type);
+
+protected:
 
 	UPROPERTY()
 	float ResourceAmount;
 
 	UPROPERTY()
 	TArray<UBasePart*> ConnectedParts;
+	
+	UPROPERTY()
+	TArray<FUBasePartArray> SeparatedSystems;
 
-	TArray<TArray<UBasePart*>> SeparatedSystems;
+	UPROPERTY()
+	TEnumAsByte<EResourceType> SystemType;
 
 };

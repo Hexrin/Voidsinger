@@ -53,34 +53,45 @@ struct VOIDSINGER_API FArrayBounds
 };
 
 USTRUCT(BlueprintType)
-struct VOIDSINGER_API FTravelCost
+struct VOIDSINGER_API FIntPointArray
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<TEnumAsByte<EResourceType>, float> FluidCosts;
+	TArray<FIntPoint> IntPointArray;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float ElectricityCost;
-
-	FTravelCost(TMap<TEnumAsByte<EResourceType>, float> FCosts = TMap<TEnumAsByte<EResourceType>, float>(), float ECost = 0)
+	FIntPointArray()
 	{
-		FluidCosts = FCosts;
-		ElectricityCost = ECost;
+		FIntPointArray(TArray<FIntPoint>(0,0));
 	}
 
 
+	FIntPointArray(TArray<FIntPoint> Array)
+	{
+		IntPointArray = Array;
+	}
 };
 
 USTRUCT(BlueprintType)
-struct VOIDSINGER_API FIntPointArray
+struct VOIDSINGER_API FUBasePartArray
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FIntPoint> IntPointArray;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<UBasePart*> UBasePartArray;
 
+	FUBasePartArray()
+	{
+		FUBasePartArray(TArray<UBasePart*>(0,0));
+	}
+
+
+	FUBasePartArray(TArray<UBasePart*> Array)
+	{
+		UBasePartArray = Array;
+	}
 };
+
 UENUM(BlueprintType)
 enum EPartRotation
 {

@@ -39,7 +39,7 @@ void UShipMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 //When a force is added to the ship
 void UShipMovementComponent::AddForce(FVector2D ForceLocation, FVector2D Force)
 {
-	
+	///UE_LOG(LogTemp, Warning, TEXT("???? x=%f, y=%f"), Ship->PartGrid->GetCenterOfMass().X, Ship->PartGrid->GetCenterOfMass().Y)
 	//Distance vector is the distance from the center of mass to the force location.
 	FVector2D DistanceVector = Ship->PartGrid->GetCenterOfMass() - ForceLocation;
 	
@@ -54,9 +54,10 @@ void UShipMovementComponent::AddForce(FVector2D ForceLocation, FVector2D Force)
 	//calculate the change in velocity and change in angular velocity based off the force
 	else
 	{
+		//UE_LOG(LogTemp, Warning, TEXT("dot=%f, dist x=%f, y=%f"), FVector2D::DotProduct(DistanceVector.GetSafeNormal(), Force), DistanceVector.GetSafeNormal().X, DistanceVector.GetSafeNormal().Y);
 		//these 2 lines of math took literally 7 hours to figure out.
 		Velocity += (FVector2D::DotProduct(DistanceVector.GetSafeNormal(), Force) * DistanceVector.GetSafeNormal()) / Ship->PartGrid->GetMass();
-		AngularVelocity += FVector2D::DotProduct(DistanceVector.GetRotated(90).GetSafeNormal(), Force) * DistanceVector.Size() / Ship->PartGrid->GetMass();
+		AngularVelocity -= FVector2D::DotProduct(DistanceVector.GetRotated(90).GetSafeNormal(), Force) * DistanceVector.Size() / Ship->PartGrid->GetMass();
 	}
 
 	

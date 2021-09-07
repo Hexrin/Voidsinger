@@ -32,6 +32,12 @@ public:
 	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace);
 
 	UFUNCTION(BlueprintCallable)
+	bool RemovePart(FIntPoint Location);
+
+	UFUNCTION(BlueprintCallable)
+	bool DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart);
+
+	UFUNCTION(BlueprintCallable)
 	void BuildShip(TArray<FSavePartInfo> Parts);
 
 	UFUNCTION(BlueprintCallable)
@@ -46,10 +52,17 @@ public:
 	UFUNCTION(BlueprintPure)
 	const float GetMass();
 
+	UFUNCTION(BlueprintPure)
+	TMap<FIntPoint, UBasePart*> GetPartGrid();
+
 private:
-	
+	UPROPERTY()
 	TMap<FIntPoint, UBasePart*> PartGrid;
-	
+
+	UPROPERTY()
+	TMap<FIntPoint, UActorComponent*> MeshGrid;
+
+	UPROPERTY()
 	FArrayBounds GridBounds;
 
 	UPROPERTY(EditAnywhere)
@@ -58,5 +71,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float GridScale; 
 
+	UFUNCTION()
 	bool const CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape);
 };
