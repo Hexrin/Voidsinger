@@ -170,12 +170,12 @@ const FVector2D UPartGridComponent::GetCenterOfMass()
 {
 	FVector2D Center = FVector2D(0,0);
 	float Mass = GetMass();
-	UE_LOG(LogTemp, Warning, TEXT("PRE cofmass?? x=%f, y=%f, Mass=%f"), Center.X, Center.Y, Mass);
+	//UE_LOG(LogTemp, Warning, TEXT("PRE cofmass?? x=%f, y=%f, Mass=%f"), Center.X, Center.Y, Mass);
 	for (auto& Elem : PartGrid)
 	{
 		Center += FVector2D(Elem.Key) * Elem.Value->GetMass() / Mass;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("cofmass?? x=%f, y=%f"), Center.X, Center.Y);
+	//UE_LOG(LogTemp, Warning, TEXT("cofmass?? x=%f, y=%f"), Center.X, Center.Y);
 	return Center;
 }
 
@@ -186,7 +186,7 @@ const float UPartGridComponent::GetMass()
 	{
 		Mass += Elem.Value->GetMass();
 	}
-	UE_LOG(LogTemp, Warning, TEXT("other mass = %f"), Mass);
+	//UE_LOG(LogTemp, Warning, TEXT("other mass = %f"), Mass);
 	return Mass == 0 ? 1 : Mass;
 }
 
