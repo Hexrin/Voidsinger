@@ -254,7 +254,7 @@ UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
 	return nullptr;
 }
 
-UPartGridComponent* UBasePart::GetPartGrid()
+const UPartGridComponent* UBasePart::GetPartGrid()
 {
 	return PartGridComponent;
 }
