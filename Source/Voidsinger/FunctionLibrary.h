@@ -17,7 +17,7 @@ class VOIDSINGER_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	
 public:
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	static FIntPoint RotateIntPoint(FIntPoint IntPoint, TEnumAsByte<EPartRotation> Rotation);
 
 	UFUNCTION(BlueprintPure)
