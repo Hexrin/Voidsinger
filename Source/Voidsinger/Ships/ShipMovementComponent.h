@@ -35,7 +35,7 @@ public:
 private:
 
 	//declare private variables
-	UPROPERTY()
+	//UPROPERTY()
 	ABaseShip* Ship;
 
 	UPROPERTY()
