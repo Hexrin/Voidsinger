@@ -48,11 +48,11 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 	//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->AddResourceSystem(NewSystem);
 	if (IsValid(GetWorld()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("world is valid??"));
+		Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("comfusion"));
+		UE_LOG(LogTemp, Warning, TEXT("The world is not valid on the resource system for some unexplicable reason"));
 	}
 	//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
 
@@ -165,4 +165,18 @@ void UBaseResourceSystem::SetType(TEnumAsByte<EResourceType> Type)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Type = %i"), Type.GetValue());
 	SystemType = Type;
+}
+
+UWorld* UBaseResourceSystem::GetWorld() const
+{
+
+	if (ConnectedParts.Num() > 0)
+	{
+		return ConnectedParts[0]->GetWorld();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("you forgot to add a part to the system first dummy"));
+		return nullptr;
+	}
 }

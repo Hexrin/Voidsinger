@@ -13,7 +13,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBaseResourceSystem : public UObject
 {
 	GENERATED_BODY()
@@ -63,6 +63,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetType(TEnumAsByte<EResourceType> Type);
+
+	virtual class UWorld* GetWorld() const override;
+
+	UPROPERTY(Transient)
+	UWorld* World;
 
 protected:
 
