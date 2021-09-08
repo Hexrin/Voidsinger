@@ -35,8 +35,13 @@ public:
 private:
 
 	//declare private variables
+	UPROPERTY()
 	ABaseShip* Ship;
+
+	UPROPERTY()
 	FVector2D Velocity;
+
+	UPROPERTY()
 	float AngularVelocity;
 
 };
