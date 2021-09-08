@@ -56,9 +56,13 @@ void ABaseShip::AddResourceSystem(UBaseResourceSystem* System)
 
 void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
 {
-	if (IsValid(System))
+	if (IsValid(this))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("uh wat"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("okay so why is this not valid"));
 	}
 	//if (ResourceSystems.Contains(System))
 	//{
