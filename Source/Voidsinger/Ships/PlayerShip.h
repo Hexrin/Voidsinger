@@ -39,7 +39,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool TravelToStarSystem(class UStarSystemData* Target);
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 	
 };
