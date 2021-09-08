@@ -50,7 +50,6 @@ float const ABaseShip::GetFluidAmount(TEnumAsByte<EResourceType> Fluid)
 
 void ABaseShip::AddResourceSystem(UBaseResourceSystem* System)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Adding system works?"));
 	ResourceSystems.Add(System);
 }
 
