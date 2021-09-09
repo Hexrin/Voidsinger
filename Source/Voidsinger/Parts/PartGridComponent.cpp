@@ -137,15 +137,23 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& Dama
 
 void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 {
-	/*for (int i = 0; i < Parts.Num(); i++)
+	TArray<FIntPoint> AllParts;
+
+	PartGrid.GenerateKeyArray(AllParts);
+
+	for (auto& i : AllParts)
+	{
+		RemovePart(i);
+	}
+	for (int i = 0; i < Parts.Num(); i++)
 	{
 		AddPart(Parts[i].PartClass, Parts[i].PartLocation, Parts[i].PartRotation, false);
-	}*/
+	}
 }
 
 void UPartGridComponent::SaveShip(FString ShipName)
 {
-	/*
+	
 	TArray<UBasePart*> Parts;
 
 	PartGrid.GenerateValueArray(Parts);
@@ -156,14 +164,14 @@ void UPartGridComponent::SaveShip(FString ShipName)
 	{
 		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i]->GetClass(), Parts[i]->GetLocation(), Parts[i]->GetRotation()));
 	}
-	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);*/
+	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);
 
 }
 
 void UPartGridComponent::LoadSavedShip(FString ShipName)
 {
-	/*USaveGame* SaveGameInstance = UGameplayStatics::LoadGameFromSlot(ShipName, 0);
-	BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);*/
+	USaveGame* SaveGameInstance = UGameplayStatics::LoadGameFromSlot(ShipName, 0);
+	BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);
 }
 
 const FVector2D UPartGridComponent::GetCenterOfMass()
