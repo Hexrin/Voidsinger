@@ -10,6 +10,7 @@ UPartGridComponent::UPartGridComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.TickInterval = .5;
 
 	//Initiate Variables
 	GridBounds.UpperBounds = FIntPoint();
@@ -42,6 +43,17 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	// ...
+	/*TMap<FIntPoint, float> NewHeatMap;
+	for (auto& Data : PartGrid)
+	{
+		float HeatAdded = 0;
+		for (int i = 0; i < 4; i++)
+		{
+			FIntPoint TargetPoint = (i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1);
+			HeatAdded +=
+		}
+		NewHeatMap.Emplace(Data.Key
+	}*/
 }
 
 
