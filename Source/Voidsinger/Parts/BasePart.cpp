@@ -124,7 +124,6 @@ TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 		{
 			IntPointArray.Add(UFunctionLibrary::RotateIntPoint(j, GetRotation()) + GetLocation());
 		}
-		UE_LOG(LogTemp, Warning, TEXT("i.key = %i"), i.Key.GetValue());
 		ReturnValue.Add(i.Key, FIntPointArray(IntPointArray));
 	}
 	return ReturnValue;
@@ -132,7 +131,7 @@ TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 
 void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
 {
-	UE_LOG(LogTemp, Warning, TEXT("INIT"))
+	//UE_LOG(LogTemp, Warning, TEXT("INIT"))
 	Rotation = Rot;
 	Location = Loc;
 	PartGridComponent = PartGrid;
@@ -145,7 +144,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 		{	
 			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X + 1, j.Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("x + 1 is valid"));
+				//UE_LOG(LogTemp, Warning, TEXT("x + 1 is valid"));
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetResourceTypes())
 				{
 					if (k.Key == i.Key)
@@ -154,10 +153,10 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 						{
 							if (l == FIntPoint(j.X + 1, j.Y))
 							{
-								UE_LOG(LogTemp, Warning, TEXT("x + 1 system found"));
+								//UE_LOG(LogTemp, Warning, TEXT("x + 1 system found"));
 								for (auto& m : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetSystems())
 								{
-									UE_LOG(LogTemp, Warning, TEXT("systems on x + 1 types: %i"), m->GetType().GetValue());
+									//UE_LOG(LogTemp, Warning, TEXT("systems on x + 1 types: %i"), m->GetType().GetValue());
 								}
 
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetSystemByType(i.Key));
@@ -170,7 +169,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 			}
 			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X, j.Y + 1)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("y + 1 is valid"));
+				//UE_LOG(LogTemp, Warning, TEXT("y + 1 is valid"));
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))->GetResourceTypes())
 				{
 					if (k.Key == i.Key)
@@ -179,7 +178,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 						{
 							if (l == FIntPoint(j.X, j.Y + 1))
 							{
-								UE_LOG(LogTemp, Warning, TEXT("y + 1 system Found"));
+								//UE_LOG(LogTemp, Warning, TEXT("y + 1 system Found"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))->GetSystemByType(i.Key));
 								SystemFound = true;
 							}
@@ -189,7 +188,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 			}
 			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X, j.Y - 1)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("y - 1 is valid"));
+				//UE_LOG(LogTemp, Warning, TEXT("y - 1 is valid"));
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))->GetResourceTypes())
 				{
 					if (k.Key == i.Key)
@@ -198,7 +197,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 						{
 							if (l == FIntPoint(j.X, j.Y - 1))
 							{
-								UE_LOG(LogTemp, Warning, TEXT("y - 1 system found"));
+								//UE_LOG(LogTemp, Warning, TEXT("y - 1 system found"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))->GetSystemByType(k.Key));
 								SystemFound = true;
 							}
@@ -208,7 +207,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 			}
 			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X - 1, j.Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("x - 1 is valid"));
+				//UE_LOG(LogTemp, Warning, TEXT("x - 1 is valid"));
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))->GetResourceTypes())
 				{
 					if (k.Key == i.Key)
@@ -217,7 +216,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 						{
 							if (l == FIntPoint(j.X - 1, j.Y))
 							{
-								UE_LOG(LogTemp, Warning, TEXT("x - 1 system found"));
+								//UE_LOG(LogTemp, Warning, TEXT("x - 1 system found"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))->GetSystemByType(k.Key));
 								SystemFound = true;
 							}
@@ -235,9 +234,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 
 void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 {
-	UE_LOG(LogTemp, Warning, TEXT("resource type = %i"), ResourceType.GetValue());
-	//FString bruhvar = ToString(UEnum::GetValueAsString(ResourceType.GetValue()));
-	//UE_LOG(LogTemp, Warning, TEXT("resource type but string = %s"), bruhvar);
+
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
 	NewSystem->SetType(ResourceType);
 	NewSystem->AddPart(this);
@@ -272,17 +269,10 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 	System->AddPart(this);
 	if (IsValid(GetSystemByType(System->GetType())) && GetSystemByType(System->GetType()) != System)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("IT IS VALid though@@@!"));
-		//UE_LOG(LogTemp, Warning, TEXT("Merge systems"));
-		//UE_LOG(LogTemp, Warning, TEXT("%i"), IsValid(GetSystemByType(System->GetType())));
-		//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 		GetSystemByType(System->GetType())->MergeSystems(System);
 	}
 	else
 	{
 		Systems.Add(System);
-		UE_LOG(LogTemp, Warning, TEXT("Why isn't it valid though???"));
-		//UE_LOG(LogTemp, Warning, TEXT("ees not valid"));
-		//UE_LOG(LogTemp, Warning, TEXT("%i"), IsValid(GetSystemByType(System->GetType())));
 	}
 }

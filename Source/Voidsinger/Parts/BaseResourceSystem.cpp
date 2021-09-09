@@ -8,7 +8,7 @@
 
 UBaseResourceSystem::UBaseResourceSystem()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Resource system init"));
+	//UE_LOG(LogTemp, Warning, TEXT("Resource system init"));
 }
 
 void UBaseResourceSystem::AddResources(float Amount)
@@ -34,28 +34,16 @@ void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart)
 
 void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 {
-	//GetWorld();
 	ConnectedParts.Append(MergedSystem->ConnectedParts);
-	/*if (IsValid(MergedSystem))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("THIS IS VALid though@@@!"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("how tf is this not valid though"));
-	}*/
-	//UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>(ThisClass::StaticClass()));
-	//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->AddResourceSystem(NewSystem);
 	if (IsValid(GetWorld()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("world is valid??"));
+		//UE_LOG(LogTemp, Warning, TEXT("Merge Systems"));
+		Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("comfusion"));
+		UE_LOG(LogTemp, Error, TEXT("The world is not valid on the resource system for some unexplicable reason (ask Mabel)"));
 	}
-	//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
-
 }
 
 void UBaseResourceSystem::CreateNewSystem(TArray<UBasePart*> RemovedParts)
@@ -163,6 +151,20 @@ TEnumAsByte<EResourceType> UBaseResourceSystem::GetType()
 
 void UBaseResourceSystem::SetType(TEnumAsByte<EResourceType> Type)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Type = %i"), Type.GetValue());
+	//UE_LOG(LogTemp, Warning, TEXT("New Resource System Type = %i"), Type.GetValue());
 	SystemType = Type;
+}
+
+UWorld* UBaseResourceSystem::GetWorld() const
+{
+
+	if (ConnectedParts.Num() > 0)
+	{
+		return ConnectedParts[0]->GetWorld();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("You forgot to add a part to the system before calling MergeSystem() or CreateNewSystem(). AddPart(). Ask Mabel."));
+		return nullptr;
+	}
 }

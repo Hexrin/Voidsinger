@@ -50,28 +50,17 @@ float const ABaseShip::GetFluidAmount(TEnumAsByte<EResourceType> Fluid)
 
 void ABaseShip::AddResourceSystem(UBaseResourceSystem* System)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Adding system works?"));
 	ResourceSystems.Add(System);
 }
 
 void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
 {
-	if (IsValid(this))
+
+	if (ResourceSystems.Contains(System))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("uh wat"));
+		ResourceSystems.Remove(System);
+
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("okay so why is this not valid"));
-	}
-	//if (ResourceSystems.Contains(System))
-	//{
-	//	ResourceSystems.Remove(System);
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("aha it doesn't contain it"));
-	//}
 }
 
 
