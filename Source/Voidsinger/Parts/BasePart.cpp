@@ -282,3 +282,8 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 		Systems.Add(System);
 	}
 }
+
+bool UBasePart::IsFunctional()
+{
+	return Functional;
+}

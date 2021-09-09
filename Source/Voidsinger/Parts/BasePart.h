@@ -74,6 +74,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* PixelMesh;
 
+	UFUNCTION()
+	bool IsFunctional();
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FIntPoint> DesiredShape;
@@ -101,6 +104,9 @@ private:
 
 	UPROPERTY()
 	FIntPoint Location;
+
+	UPROPERTY()
+	bool Functional;
 
 	UPROPERTY()
 	TArray<UBaseResourceSystem*> Systems;

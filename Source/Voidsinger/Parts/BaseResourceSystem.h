@@ -46,11 +46,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveSection(TArray<UBasePart*> RemovedParts);
 
-	UFUNCTION(BlueprintCallable)
-	void StartScanSystemForBreaks();
+	//UFUNCTION(BlueprintCallable)
+	//void StartScanSystemForBreaks();
 
 	UFUNCTION()
 	void ScanSystemForBreaks(TArray<UBasePart*> PartsToScan);
+	void ScanSystemForBreaks();
 
 	UFUNCTION(BlueprintCallable)
 	bool AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2);
