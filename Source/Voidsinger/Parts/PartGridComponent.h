@@ -36,6 +36,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart);
+	bool DestroyPixel(FIntPoint Location);
 
 	UFUNCTION(BlueprintCallable)
 	void BuildShip(TArray<FSavePartInfo> Parts);
