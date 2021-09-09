@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Voidsinger/SaveShip.h"
 #include "Voidsinger/VoidsingerTypes.h"
@@ -29,7 +28,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
-	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace);
+	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace = false);
+	bool AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace = false);
 
 	UFUNCTION(BlueprintCallable)
 	bool RemovePart(FIntPoint Location);
@@ -54,14 +54,11 @@ public:
 	const float GetMass();
 
 	UFUNCTION(BlueprintPure)
-	TMap<FIntPoint, UBasePart*> GetPartGrid();
+	TMap<FIntPoint, FPartData> GetPartGrid();
 
 private:
 	UPROPERTY()
-	TMap<FIntPoint, UBasePart*> PartGrid;
-
-	UPROPERTY()
-	TMap<FIntPoint, UActorComponent*> MeshGrid;
+	TMap<FIntPoint, FPartData> PartGrid;
 
 	UPROPERTY()
 	FArrayBounds GridBounds;

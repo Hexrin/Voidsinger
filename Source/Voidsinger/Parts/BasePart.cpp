@@ -142,10 +142,10 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 		bool SystemFound = false;
 		for (auto& j : i.Value.IntPointArray)
 		{	
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X + 1, j.Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X + 1, j.Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part != this)
 			{
 				//UE_LOG(LogTemp, Warning, TEXT("x + 1 is valid"));
-				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetResourceTypes())
+				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part->GetResourceTypes())
 				{
 					if (k.Key == i.Key)
 					{
@@ -154,12 +154,12 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 							if (l == FIntPoint(j.X + 1, j.Y))
 							{
 								//UE_LOG(LogTemp, Warning, TEXT("x + 1 system found"));
-								for (auto& m : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetSystems())
+								for (auto& m : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part->GetSystems())
 								{
 									//UE_LOG(LogTemp, Warning, TEXT("systems on x + 1 types: %i"), m->GetType().GetValue());
 								}
 
-								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y))->GetSystemByType(i.Key));
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part->GetSystemByType(i.Key));
 								SystemFound = true;
 							}
 						}
@@ -167,10 +167,10 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 				}
 
 			}
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X, j.Y + 1)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X, j.Y + 1)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part != this)
 			{
 				//UE_LOG(LogTemp, Warning, TEXT("y + 1 is valid"));
-				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))->GetResourceTypes())
+				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1)).Part->GetResourceTypes())
 				{
 					if (k.Key == i.Key)
 					{
@@ -179,17 +179,17 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 							if (l == FIntPoint(j.X, j.Y + 1))
 							{
 								//UE_LOG(LogTemp, Warning, TEXT("y + 1 system Found"));
-								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1))->GetSystemByType(i.Key));
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1)).Part->GetSystemByType(i.Key));
 								SystemFound = true;
 							}
 						}
 					}
 				}
 			}
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X, j.Y - 1)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X, j.Y - 1)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part != this)
 			{
 				//UE_LOG(LogTemp, Warning, TEXT("y - 1 is valid"));
-				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))->GetResourceTypes())
+				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1)).Part->GetResourceTypes())
 				{
 					if (k.Key == i.Key)
 					{
@@ -198,17 +198,17 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 							if (l == FIntPoint(j.X, j.Y - 1))
 							{
 								//UE_LOG(LogTemp, Warning, TEXT("y - 1 system found"));
-								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1))->GetSystemByType(k.Key));
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1)).Part->GetSystemByType(k.Key));
 								SystemFound = true;
 							}
 						}
 					}
 				}
 			}
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X - 1, j.Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)) != this)
+			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X - 1, j.Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part != this)
 			{
 				//UE_LOG(LogTemp, Warning, TEXT("x - 1 is valid"));
-				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))->GetResourceTypes())
+				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y)).Part->GetResourceTypes())
 				{
 					if (k.Key == i.Key)
 					{
@@ -217,7 +217,7 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 							if (l == FIntPoint(j.X - 1, j.Y))
 							{
 								//UE_LOG(LogTemp, Warning, TEXT("x - 1 system found"));
-								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y))->GetSystemByType(k.Key));
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1, j.Y)).Part->GetSystemByType(k.Key));
 								SystemFound = true;
 							}
 						}

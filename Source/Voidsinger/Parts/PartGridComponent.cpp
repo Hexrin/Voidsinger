@@ -17,8 +17,7 @@ UPartGridComponent::UPartGridComponent()
 
 	GridSize = FIntPoint(50);
 	
-	PartGrid = TMap<FIntPoint, UBasePart*>();
-	MeshGrid = TMap<FIntPoint, UActorComponent*>();
+	PartGrid = TMap<FIntPoint, FPartData>();
 
 	if (!GridScale)
 	{
@@ -98,12 +97,11 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 				RemovePart(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y));
 			}
 
-			PartGrid.Add(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), Part);
-
 			//Create Mesh
 			class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
 			Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PartType.GetDefaultObject()->PixelMesh);
-			MeshGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), NewPlane);
+
+			PartGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), FPartData(Part, 0.f , Cast<UStaticMeshComponent>(NewPlane)));
 		}
 		return true;
 	}
@@ -115,16 +113,16 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 bool UPartGridComponent::RemovePart(FIntPoint Location)
 {
 	//Check if location is valid
-	if (IsValid(PartGrid.FindRef(Location)))
+	if (PartGrid.Contains(Location))
 	{
 		//Intialize Variables
-		class UBasePart* PartToRemove = PartGrid.FindRef(Location);
+		class UBasePart* PartToRemove = PartGrid.Find(Location)->Part;
 		FIntPoint PartLoc = PartToRemove->GetLocation();
 
 		//Iterate though the shape of PartToRemove and remove them from the part grid
 		for (FIntPoint Loc : PartToRemove->GetShape())
 		{
-			DestroyPixel(Loc);
+			DestroyPixel(Loc + PartLoc);
 		}
 		return true;
 	}
@@ -143,16 +141,16 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart)
 {
 	//Check if pixel is valid
-	if (IsValid(PartGrid.FindRef(Location)))
+	if (PartGrid.Contains(Location))
 	{
 		//Remove from grid
-		DamagedPart = PartGrid.FindRef(Location);
+		DamagedPart = PartGrid.FindRef(Location).Part;
 		DamagedPart->DestroyPixel(Location - DamagedPart->GetLocation());
-		PartGrid.Remove(Location);
-
+		
 		//Destroy Mesh
-		MeshGrid.FindRef(Location)->DestroyComponent();
-		MeshGrid.Remove(Location);
+		PartGrid.FindRef(Location).PixelMesh->DestroyComponent();
+
+		PartGrid.Remove(Location);
 		return true;
 	}
 	else
@@ -181,7 +179,7 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 void UPartGridComponent::SaveShip(FString ShipName)
 {
 	
-	TArray<UBasePart*> Parts;
+	TArray<FPartData> Parts;
 
 	PartGrid.GenerateValueArray(Parts);
 	
@@ -189,7 +187,7 @@ void UPartGridComponent::SaveShip(FString ShipName)
 
 	for (int i = 0; i < Parts.Num(); i++)
 	{
-		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i]->GetClass(), Parts[i]->GetLocation(), Parts[i]->GetRotation()));
+		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i].Part->GetClass(), Parts[i].Part->GetLocation(), Parts[i].Part->GetRotation()));
 	}
 	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);
 
@@ -213,7 +211,7 @@ const FVector2D UPartGridComponent::GetCenterOfMass()
 	//Iterate though Pixels and adjust center of mass
 	for (auto& Elem : PartGrid)
 	{
-		Center += FVector2D(Elem.Key) * Elem.Value->GetMass() / Mass;
+		Center += FVector2D(Elem.Key) * Elem.Value.Part->GetMass() / Mass;
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("cofmass?? x=%f, y=%f"), Center.X, Center.Y);
 	
@@ -230,7 +228,7 @@ const float UPartGridComponent::GetMass()
 	//Interate though Pixels and summate their mass
 	for (auto& Elem : PartGrid)
 	{
-		Mass += Elem.Value->GetMass();
+		Mass += Elem.Value.Part->GetMass();
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("other mass = %f"), Mass);
 
@@ -239,7 +237,7 @@ const float UPartGridComponent::GetMass()
 }
 
 //Gets the PartGrid Map
-TMap<FIntPoint, UBasePart*> UPartGridComponent::GetPartGrid()
+TMap<FIntPoint, FPartData> UPartGridComponent::GetPartGrid()
 {
 	return PartGrid;
 }

@@ -29,13 +29,13 @@ FIntPoint UFunctionLibrary::RotateIntPoint(FIntPoint IntPoint, TEnumAsByte<EPart
 
 
 //Returns true if StartPoint and EndPoint are connected via PartGrid
-bool UFunctionLibrary::PointsConnected(TMap<FIntPoint, UBasePart*> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint)
+bool UFunctionLibrary::PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint)
 {
 	//Initate Conectiveity Array
 	TArray<FIntPoint> ConectivityArray = TArray<FIntPoint>();
 	return PointsConnected(PartGrid, StartPoint, EndPoint, ConectivityArray);
 }
-bool UFunctionLibrary::PointsConnected(TMap<FIntPoint, UBasePart*> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray)
+bool UFunctionLibrary::PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray)
 {
 	//Detect if funtion has reached target
 	if (StartPoint == EndPoint)

@@ -21,6 +21,6 @@ public:
 	static FIntPoint RotateIntPoint(FIntPoint IntPoint, TEnumAsByte<EPartRotation> Rotation);
 
 	UFUNCTION(BlueprintPure)
-	static bool PointsConnected(TMap<FIntPoint, UBasePart*> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint);
-	static bool PointsConnected(TMap<FIntPoint, UBasePart*> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray);
+	static bool PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint);
+	static bool PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray);
 };
