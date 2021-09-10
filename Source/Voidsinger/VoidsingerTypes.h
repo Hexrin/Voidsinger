@@ -38,7 +38,7 @@ struct VOIDSINGER_API FPartData
 		class UBasePart* Part;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float Temperature = 0;
+		float* Temperature = 0;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* PixelMesh;
@@ -48,7 +48,7 @@ struct VOIDSINGER_API FPartData
 			FPartData(nullptr, 0, nullptr);
 		}
 
-		FPartData(UBasePart* PartRef, float Temp, UStaticMeshComponent* MeshRef)
+		FPartData(UBasePart* PartRef, float* Temp, UStaticMeshComponent* MeshRef)
 		{
 			Part = PartRef;
 			Temperature = Temp;
@@ -138,7 +138,6 @@ struct VOIDSINGER_API FSavePartInfo
 
 	FSavePartInfo(TSubclassOf<UBasePart> Class, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation)
 	{
-
 		PartClass = Class;
 		PartLocation = Location;
 		PartRotation = Rotation;
