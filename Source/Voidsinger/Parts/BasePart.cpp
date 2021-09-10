@@ -110,6 +110,21 @@ float UBasePart::GetMass()
 void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 {
 	ActualShape.Remove(RelativeLoc);
+
+	if (IsFunctional())
+	{
+		for (auto& i : Systems)
+		{
+			i->RemovePixel(RelativeLoc);
+		}
+	}
+	else
+	{
+		for (auto& i : Systems)
+		{
+			i->RemovePart(this, true);
+		}
+	}
 }
 
 TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
@@ -283,7 +298,13 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 	}
 }
 
+//This should only return false if NO pixel is functional
 bool UBasePart::IsFunctional()
 {
 	return Functional;
+}
+
+bool UBasePart::IsPixelFunctional(FIntPoint Pixel)
+{
+	return false;
 }
