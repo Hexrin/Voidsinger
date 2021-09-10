@@ -29,7 +29,7 @@ void UBaseResourceSystem::AddPart(UBasePart* AddedPart)
 void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart)
 {
 	ConnectedParts.Remove(RemovedPart);
-	StartScanSystemForBreaks();
+	ScanSystemForBreaks();
 }
 
 void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
@@ -69,7 +69,7 @@ void UBaseResourceSystem::RemoveSection(TArray<UBasePart*> RemovedParts)
 	for (int i = 0; i < RemovedParts.Num(); i++)
 	{
 		ConnectedParts.Remove(RemovedParts[i]);
-		StartScanSystemForBreaks();
+		ScanSystemForBreaks();
 	}
 }
 
