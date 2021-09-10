@@ -76,6 +76,40 @@ void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart, bool CheckForDiscon
 
 void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 {
+	TArray<FIntPoint> NumbersFound;
+
+	for (auto& i : ConnectedParts)
+	{
+		if (i->GetShape().Contains(FIntPoint(Pixel.X + 1, Pixel.Y)))
+		{
+			NumbersFound.Add(FIntPoint(Pixel.X + 1, Pixel.Y));
+		}
+		if (i->GetShape().Contains(FIntPoint(Pixel.X - 1, Pixel.Y)))
+		{
+			NumbersFound.Add(FIntPoint(Pixel.X - 1, Pixel.Y));
+		}
+		if (i->GetShape().Contains(FIntPoint(Pixel.X, Pixel.Y + 1)))
+		{
+			NumbersFound.Add(FIntPoint(Pixel.X, Pixel.Y + 1));
+		}
+		if (i->GetShape().Contains(FIntPoint(Pixel.X, Pixel.Y - 1)))
+		{
+			NumbersFound.Add(FIntPoint(Pixel.X, Pixel.Y - 1));
+		}
+	}
+	if (NumbersFound.Num() > 1)
+	{
+		for (int i = 0; i < NumbersFound.Num() - 1; i++)
+		{
+			if (!UFunctionLibrary::PointsConnectedWithFunctionality(GetMapFromConnectedParts(), NumbersFound[i], NumbersFound[i + 1]))
+			{
+				TArray<FIntPoint> Temp;
+				Temp.Emplace(NumbersFound[i + 1]);
+				FindConnectedShape(ConnectedParts, Temp);
+				break;
+			}
+		}
+	}
 }
 
 void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
@@ -125,50 +159,12 @@ void UBaseResourceSystem::ScanSystemForBreaks()
 
 }
 
-void UBaseResourceSystem::NewScanSystemForBreaks(FIntPoint LocRemoved)
-{
-	TArray<FIntPoint> NumbersFound;
-
-	for (auto& i : ConnectedParts)
-	{
-		if (i->GetShape().Contains(FIntPoint(LocRemoved.X + 1, LocRemoved.Y)))
-		{
-			NumbersFound.Add(FIntPoint(LocRemoved.X + 1, LocRemoved.Y));
-		}
-		if (i->GetShape().Contains(FIntPoint(LocRemoved.X - 1, LocRemoved.Y)))
-		{
-			NumbersFound.Add(FIntPoint(LocRemoved.X - 1, LocRemoved.Y));
-		}
-		if (i->GetShape().Contains(FIntPoint(LocRemoved.X, LocRemoved.Y + 1)))
-		{
-			NumbersFound.Add(FIntPoint(LocRemoved.X, LocRemoved.Y + 1));
-		}
-		if (i->GetShape().Contains(FIntPoint(LocRemoved.X, LocRemoved.Y - 1)))
-		{
-			NumbersFound.Add(FIntPoint(LocRemoved.X, LocRemoved.Y - 1));
-		}
-	}
-	if (NumbersFound.Num() > 1)
-	{
-		for (int i = 0; i < NumbersFound.Num() - 1; i++)
-		{
-			if (!UFunctionLibrary::PointsConnectedWithFunctionality(GetMapFromConnectedParts(), NumbersFound[i], NumbersFound[i + 1]))
-			{
-				TArray<FIntPoint> Temp;
-				Temp.Emplace(NumbersFound[i + 1]);
-				FindConnectedShape(ConnectedParts, Temp);
-				break;
-			}
-		}
-	}
-}
-
 TArray<FIntPoint> UBaseResourceSystem::FindConnectedShape(TArray<UBasePart*> Parts, TArray<FIntPoint> Shape)
 {
 	for (auto& i : Parts)
 	{
-
 	}
+	return TArray<FIntPoint>();
 }
 
 void UBaseResourceSystem::ScanSystemForBreaks(TArray<UBasePart*> PartsToScan)
