@@ -27,6 +27,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	//---Ship Creation---\\
+
 	UFUNCTION(BlueprintCallable)
 	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace = false);
 	bool AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace = false);
@@ -34,9 +36,21 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool RemovePart(FIntPoint Location);
 
+
+
+	//---Destruction---\\
+
 	UFUNCTION(BlueprintCallable)
 	bool DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart);
 	bool DestroyPixel(FIntPoint Location);
+
+	UFUNCTION(BlueprintCallable)
+	void ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply = 1);
+	void ApplyHeatAtLocation(FIntPoint RelativeLocation, float HeatToApply = 1);
+
+
+
+	//---Save Ship---\\
 
 	UFUNCTION(BlueprintCallable)
 	void BuildShip(TArray<FSavePartInfo> Parts);
@@ -46,6 +60,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LoadSavedShip(FString ShipName);
+
+
+
+	//---Getters---\\
 
 	UFUNCTION(BlueprintPure)
 	const FVector2D GetCenterOfMass();

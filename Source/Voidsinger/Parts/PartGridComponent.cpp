@@ -50,15 +50,14 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		for (int i = 0; i < 4; i++)
 		{
 			FIntPoint TargetPoint = (i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1);
-			HeatAdded += PartGrid.Find(TargetPoint + Data.Key)->Temperature / 8;
+			HeatAdded += PartGrid.FindRef(TargetPoint + Data.Key).Temperature / 8;
 		}
 		NewHeatMap.Emplace(Data.Key, Data.Value.Temperature / 2 + HeatAdded);
 	}
 
 	for (auto& Data : PartGrid)
 	{
-
-		PartGrid.Emplace(Data.Key, FPartData(Data.Value.Part, NewHeatMap.FindRef(Data.Key), Data.Value.PixelMesh));
+		Data.Value.SetTemperature(NewHeatMap.FindRef(Data.Key));
 	}
 }
 
@@ -158,6 +157,19 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 {
 	class UBasePart* DamagedPart = NewObject<UBasePart>(this);
 	return DestroyPixel(Location, DamagedPart);
+}
+void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)
+{
+	PartGrid.FindRef(FIntPoint(0, 0)).SetTemperature(1);
+	//PartGrid.FindRef(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).RoundToVector().IntPoint()).SetTemperature(HeatToApply);
+}
+void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float HeatToApply)
+{
+	if (PartGrid.Contains(RelativeLocation))
+	{
+		PartGrid.FindRef(RelativeLocation).SetTemperature(HeatToApply);
+	}
+	
 }
 bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart)
 {
