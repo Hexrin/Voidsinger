@@ -57,8 +57,6 @@ public:
 	void ScanSystemForBreaks(TArray<UBasePart*> PartsToScan);
 	void ScanSystemForBreaks();
 	
-	UFUNCTION()
-	void NewScanSystemForBreaks(FIntPoint LocRemoved);
 
 	UFUNCTION()
 	TArray<FIntPoint> FindConnectedShape(TArray<UBasePart*> Parts, TArray<FIntPoint> Shape);
