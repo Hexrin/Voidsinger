@@ -74,8 +74,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* PixelMesh;
 
+	//This should only return false if NO pixel is functional.
 	UFUNCTION()
 	bool IsFunctional();
+
+	UFUNCTION()
+	bool IsPixelFunctional(FIntPoint Pixel);
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

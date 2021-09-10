@@ -6,7 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Voidsinger/VoidsingerTypes.h"
-#include "FunctionLibrary.h"
+#include "Voidsinger/FunctionLibrary.h"
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "BaseResourceSystem.generated.h"
@@ -36,6 +36,9 @@ public:
 	void RemovePart(UBasePart* RemovedPart, bool CheckForDisconnections);
 
 	UFUNCTION(BlueprintCallable)
+	void RemovePixel(FIntPoint Pixel);
+
+	UFUNCTION(BlueprintCallable)
 	void MergeSystems(UBaseResourceSystem* MergedSystem);
 
 	UFUNCTION(BlueprintCallable)
@@ -53,6 +56,12 @@ public:
 	UFUNCTION()
 	void ScanSystemForBreaks(TArray<UBasePart*> PartsToScan);
 	void ScanSystemForBreaks();
+	
+	UFUNCTION()
+	void NewScanSystemForBreaks(FIntPoint LocRemoved);
+
+	UFUNCTION()
+	TArray<FIntPoint> FindConnectedShape(TArray<UBasePart*> Parts, TArray<FIntPoint> Shape);
 
 	UFUNCTION(BlueprintCallable)
 	bool AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2);
