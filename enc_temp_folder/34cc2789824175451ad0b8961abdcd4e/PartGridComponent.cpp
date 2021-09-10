@@ -50,9 +50,9 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		for (int i = 0; i < 4; i++)
 		{
 			FIntPoint TargetPoint = (i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1);
-			HeatAdded += PartGrid.FindRef(TargetPoint + Data.Key).Temperature / 8 * DeltaTime;
+			HeatAdded += PartGrid.FindRef(TargetPoint + Data.Key).Temperature / 8;
 		}
-		NewHeatMap.Emplace(Data.Key, Data.Value.Temperature / 2*DeltaTime + HeatAdded < .05 ? Data.Value.Temperature / 2 + HeatAdded : 0);
+		NewHeatMap.Emplace(Data.Key, Data.Value.Temperature / 2 + HeatAdded < .05 ? Data.Value.Temperature / 2 + HeatAdded : 0);
 	}
 
 	for (auto& Data : PartGrid)
@@ -63,7 +63,7 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		}
 		else
 		{
-			Data.Value.SetTemperature(FMath::Lerp(Data.Value.Temperature, NewHeatMap.FindRef(Data.Key), DeltaTime));
+			Data.Value.SetTemperature(NewHeatMap.FindRef(Data.Key));
 		}
 	}
 }
