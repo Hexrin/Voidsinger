@@ -55,7 +55,7 @@ struct VOIDSINGER_API FPartData
 			PixelMesh = MeshRef;
 		}
 
-		void SetTemperature(float NewTemp)
+		void SetTemperature(const float NewTemp)
 		{
 			Temperature = NewTemp;
 		}
