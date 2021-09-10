@@ -26,36 +26,36 @@ void UBaseResourceSystem::AddPart(UBasePart* AddedPart)
 	ConnectedParts.Add(AddedPart);
 }
 
-void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart, bool CheckForDisconnections)
+void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart)
 {
 
 	ConnectedParts.Remove(RemovedPart);
 
-	//Check for Disconnections should almost always be true. The only situation it should not be true is when RemovePart is called 
-	//from ScanSystemForBreaks.
-	if (CheckForDisconnections)
-	{
+}
 
-		FIntPoint LocRemoved = RemovedPart->GetLocation();;
+void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
+{
+	if (GetMapFromConnectedParts().Contains(Pixel))
+	{
 		TArray<FIntPoint> NumbersFound;
 
 		for (auto& i : ConnectedParts)
 		{
-			if (i->GetShape().Contains(FIntPoint(LocRemoved.X + 1, LocRemoved.Y)))
+			if (i->GetShape().Contains(FIntPoint(Pixel.X + 1, Pixel.Y)))
 			{
-				NumbersFound.Add(FIntPoint(LocRemoved.X + 1, LocRemoved.Y));
+				NumbersFound.Add(FIntPoint(Pixel.X + 1, Pixel.Y));
 			}
-			if (i->GetShape().Contains(FIntPoint(LocRemoved.X - 1, LocRemoved.Y)))
+			if (i->GetShape().Contains(FIntPoint(Pixel.X - 1, Pixel.Y)))
 			{
-				NumbersFound.Add(FIntPoint(LocRemoved.X - 1, LocRemoved.Y));
+				NumbersFound.Add(FIntPoint(Pixel.X - 1, Pixel.Y));
 			}
-			if (i->GetShape().Contains(FIntPoint(LocRemoved.X, LocRemoved.Y + 1)))
+			if (i->GetShape().Contains(FIntPoint(Pixel.X, Pixel.Y + 1)))
 			{
-				NumbersFound.Add(FIntPoint(LocRemoved.X, LocRemoved.Y + 1));
+				NumbersFound.Add(FIntPoint(Pixel.X, Pixel.Y + 1));
 			}
-			if (i->GetShape().Contains(FIntPoint(LocRemoved.X, LocRemoved.Y - 1)))
+			if (i->GetShape().Contains(FIntPoint(Pixel.X, Pixel.Y - 1)))
 			{
-				NumbersFound.Add(FIntPoint(LocRemoved.X, LocRemoved.Y - 1));
+				NumbersFound.Add(FIntPoint(Pixel.X, Pixel.Y - 1));
 			}
 		}
 		if (NumbersFound.Num() > 1)
@@ -66,47 +66,15 @@ void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart, bool CheckForDiscon
 				{
 					TArray<FIntPoint> Temp;
 					Temp.Emplace(NumbersFound[i + 1]);
-					FindConnectedShape(ConnectedParts, Temp);
+					TMap<FIntPoint, FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
+					TSet<UBasePart*> RemovedSet;
+					for (auto& i : FindConnectedShape(ConnectedParts, Temp))
+					{
+						RemovedSet.Emplace(ConnectedPartsMap.Find(i));
+					}
+					CreateNewSystem(RemovedSet.Array());
 					break;
 				}
-			}			
-		}
-	}
-}
-
-void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
-{
-	TArray<FIntPoint> NumbersFound;
-
-	for (auto& i : ConnectedParts)
-	{
-		if (i->GetShape().Contains(FIntPoint(Pixel.X + 1, Pixel.Y)))
-		{
-			NumbersFound.Add(FIntPoint(Pixel.X + 1, Pixel.Y));
-		}
-		if (i->GetShape().Contains(FIntPoint(Pixel.X - 1, Pixel.Y)))
-		{
-			NumbersFound.Add(FIntPoint(Pixel.X - 1, Pixel.Y));
-		}
-		if (i->GetShape().Contains(FIntPoint(Pixel.X, Pixel.Y + 1)))
-		{
-			NumbersFound.Add(FIntPoint(Pixel.X, Pixel.Y + 1));
-		}
-		if (i->GetShape().Contains(FIntPoint(Pixel.X, Pixel.Y - 1)))
-		{
-			NumbersFound.Add(FIntPoint(Pixel.X, Pixel.Y - 1));
-		}
-	}
-	if (NumbersFound.Num() > 1)
-	{
-		for (int i = 0; i < NumbersFound.Num() - 1; i++)
-		{
-			if (!UFunctionLibrary::PointsConnectedWithFunctionality(GetMapFromConnectedParts(), NumbersFound[i], NumbersFound[i + 1]))
-			{
-				TArray<FIntPoint> Temp;
-				Temp.Emplace(NumbersFound[i + 1]);
-				FindConnectedShape(ConnectedParts, Temp);
-				break;
 			}
 		}
 	}
@@ -144,11 +112,11 @@ void UBaseResourceSystem::AddSection(TArray<UBasePart*> AddedParts)
 	ConnectedParts.Append(AddedParts);
 }
 
-void UBaseResourceSystem::RemoveSection(TArray<UBasePart*> RemovedParts, bool CheckForDisconnections)
+void UBaseResourceSystem::RemoveSection(TArray<UBasePart*> RemovedParts)
 {
 	for (int i = 0; i < RemovedParts.Num() - 1; i++)
 	{
-		RemovePart(RemovedParts[i], CheckForDisconnections);
+		RemovePart(RemovedParts[i]);
 	}
 }
 
@@ -163,6 +131,7 @@ TArray<FIntPoint> UBaseResourceSystem::FindConnectedShape(TArray<UBasePart*> Par
 {
 	for (auto& i : Parts)
 	{
+
 	}
 	return TArray<FIntPoint>();
 }

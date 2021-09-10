@@ -33,7 +33,7 @@ public:
 	void AddPart(UBasePart* AddedPart);
 
 	UFUNCTION(BlueprintCallable)
-	void RemovePart(UBasePart* RemovedPart, bool CheckForDisconnections);
+	void RemovePart(UBasePart* RemovedPart);
 
 	UFUNCTION(BlueprintCallable)
 	void RemovePixel(FIntPoint Pixel);
@@ -48,7 +48,7 @@ public:
 	void AddSection(TArray<UBasePart*> AddedParts);
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveSection(TArray<UBasePart*> RemovedParts, bool CheckForDisconnections);
+	void RemoveSection(TArray<UBasePart*> RemovedParts);
 
 	//UFUNCTION(BlueprintCallable)
 	//void StartScanSystemForBreaks();

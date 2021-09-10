@@ -122,7 +122,8 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	{
 		for (auto& i : Systems)
 		{
-			i->RemovePart(this, true);
+			i->RemovePart(this);
+			i->RemovePixel(RelativeLoc);
 		}
 	}
 }
