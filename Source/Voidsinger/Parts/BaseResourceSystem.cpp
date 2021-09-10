@@ -73,7 +73,7 @@ void UBaseResourceSystem::RemoveSection(TArray<UBasePart*> RemovedParts)
 	}
 }
 
-void UBaseResourceSystem::StartScanSystemForBreaks()
+void UBaseResourceSystem::ScanSystemForBreaks()
 {
 	
 	ScanSystemForBreaks(ConnectedParts);
