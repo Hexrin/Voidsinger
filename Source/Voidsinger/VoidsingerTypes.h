@@ -143,6 +143,7 @@ struct VOIDSINGER_API FSavePartInfo
 
 	FSavePartInfo(TSubclassOf<UBasePart> Class, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation)
 	{
+
 		PartClass = Class;
 		PartLocation = Location;
 		PartRotation = Rotation;
