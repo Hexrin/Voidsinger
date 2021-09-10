@@ -26,10 +26,49 @@ void UBaseResourceSystem::AddPart(UBasePart* AddedPart)
 	ConnectedParts.Add(AddedPart);
 }
 
-void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart)
+void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart, bool CheckForDisconnections)
 {
+
 	ConnectedParts.Remove(RemovedPart);
-	ScanSystemForBreaks();
+
+	//Check for Disconnections should almost always be true. The only situation it should not be true is when RemovePart is called 
+	//from ScanSystemForBreaks.
+	if (CheckForDisconnections)
+	{
+
+		FIntPoint LocRemoved = RemovedPart->GetLocation();;
+		TArray<FIntPoint> NumbersFound;
+
+		for (auto& i : ConnectedParts)
+		{
+			if (i->GetShape().Contains(FIntPoint(LocRemoved.X + 1, LocRemoved.Y)))
+			{
+				NumbersFound.Add(FIntPoint(LocRemoved.X + 1, LocRemoved.Y));
+			}
+			if (i->GetShape().Contains(FIntPoint(LocRemoved.X - 1, LocRemoved.Y)))
+			{
+				NumbersFound.Add(FIntPoint(LocRemoved.X - 1, LocRemoved.Y));
+			}
+			if (i->GetShape().Contains(FIntPoint(LocRemoved.X, LocRemoved.Y + 1)))
+			{
+				NumbersFound.Add(FIntPoint(LocRemoved.X, LocRemoved.Y + 1));
+			}
+			if (i->GetShape().Contains(FIntPoint(LocRemoved.X, LocRemoved.Y - 1)))
+			{
+				NumbersFound.Add(FIntPoint(LocRemoved.X, LocRemoved.Y - 1));
+			}
+		}
+		if (NumbersFound.Num() > 1)
+		{
+			for (int i = 0; i < NumbersFound.Num() - 1; i++)
+			{
+				if (!UFunctionLibrary::PointsConnected(GetMapFromConnectedParts(), NumbersFound[i], NumbersFound[i + 1]))
+				{
+					ScanSystemForBreaks();
+				}
+			}			
+		}
+	}
 }
 
 void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
@@ -64,12 +103,11 @@ void UBaseResourceSystem::AddSection(TArray<UBasePart*> AddedParts)
 	ConnectedParts.Append(AddedParts);
 }
 
-void UBaseResourceSystem::RemoveSection(TArray<UBasePart*> RemovedParts)
+void UBaseResourceSystem::RemoveSection(TArray<UBasePart*> RemovedParts, bool CheckForDisconnections)
 {
-	for (int i = 0; i < RemovedParts.Num(); i++)
+	for (int i = 0; i < RemovedParts.Num() - 1; i++)
 	{
-		ConnectedParts.Remove(RemovedParts[i]);
-		ScanSystemForBreaks();
+		RemovePart(RemovedParts[i], CheckForDisconnections);
 	}
 }
 
@@ -168,3 +206,18 @@ UWorld* UBaseResourceSystem::GetWorld() const
 		return nullptr;
 	}
 }
+
+TMap<FIntPoint, FPartData> UBaseResourceSystem::GetMapFromConnectedParts()
+{
+	TMap<FIntPoint, FPartData> Temp;
+	for (auto& i : ConnectedParts)
+	{
+		for (auto& j : i->GetShape())
+		{
+			Temp.Emplace(j, FPartData(i, 0, nullptr));
+		}
+	}
+	return Temp;
+}
+
+

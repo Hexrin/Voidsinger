@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "FunctionLibrary.h"
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "BaseResourceSystem.generated.h"
@@ -32,7 +33,7 @@ public:
 	void AddPart(UBasePart* AddedPart);
 
 	UFUNCTION(BlueprintCallable)
-	void RemovePart(UBasePart* RemovedPart);
+	void RemovePart(UBasePart* RemovedPart, bool CheckForDisconnections);
 
 	UFUNCTION(BlueprintCallable)
 	void MergeSystems(UBaseResourceSystem* MergedSystem);
@@ -44,7 +45,7 @@ public:
 	void AddSection(TArray<UBasePart*> AddedParts);
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveSection(TArray<UBasePart*> RemovedParts);
+	void RemoveSection(TArray<UBasePart*> RemovedParts, bool CheckForDisconnections);
 
 	//UFUNCTION(BlueprintCallable)
 	//void StartScanSystemForBreaks();
@@ -67,8 +68,8 @@ public:
 
 	virtual class UWorld* GetWorld() const override;
 
-	UPROPERTY(Transient)
-	UWorld* World;
+	UFUNCTION()
+	TMap<FIntPoint, FPartData> GetMapFromConnectedParts();
 
 protected:
 
