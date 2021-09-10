@@ -50,22 +50,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveSection(TArray<UBasePart*> RemovedParts);
 
-	//UFUNCTION(BlueprintCallable)
-	//void StartScanSystemForBreaks();
-
-	UFUNCTION()
-	void ScanSystemForBreaks(TArray<UBasePart*> PartsToScan);
-	void ScanSystemForBreaks();
-	
-
 	UFUNCTION()
 	TArray<FIntPoint> FindConnectedShape(TArray<UBasePart*> Parts, TArray<FIntPoint> Shape);
 
 	UFUNCTION(BlueprintCallable)
 	bool AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2);
-
-	UFUNCTION(BlueprintCallable)
-	TArray<UBasePart*> FindDisconnectedParts(TArray<UBasePart*> Parts);
 
 	UFUNCTION(BlueprintPure)
 	TEnumAsByte<EResourceType> GetType();

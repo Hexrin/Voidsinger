@@ -120,45 +120,32 @@ void UBaseResourceSystem::RemoveSection(TArray<UBasePart*> RemovedParts)
 	}
 }
 
-void UBaseResourceSystem::ScanSystemForBreaks()
-{
-	
-	ScanSystemForBreaks(ConnectedParts);
-
-}
-
 TArray<FIntPoint> UBaseResourceSystem::FindConnectedShape(TArray<UBasePart*> Parts, TArray<FIntPoint> Shape)
 {
-	for (auto& i : Parts)
+
+	TMap<FIntPoint, FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
+	TArray<FIntPoint> NewShape = Shape;
+
+	for (auto& i : Shape)
 	{
-
-	}
-	return TArray<FIntPoint>();
-}
-
-void UBaseResourceSystem::ScanSystemForBreaks(TArray<UBasePart*> PartsToScan)
-{
-	TArray<UBasePart*> DisconnectedParts = FindDisconnectedParts(PartsToScan);
-
-	if (DisconnectedParts.IsEmpty())
-	{
-		for (int i = 0; i < SeparatedSystems.Num(); i++)
+		if (!Shape.Contains(FIntPoint(i.X + 1, i.Y)))
 		{
-			CreateNewSystem(SeparatedSystems[i].UBasePartArray);
+			if (ConnectedPartsMap.Contains(FIntPoint(i.X + 1, i.Y)))
+			{
+				if (ConnectedPartsMap.Find(FIntPoint(i.X + 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X + 1, i.Y)))
+				{
+					NewShape.Emplace(FIntPoint(i.X + 1, i.Y));
+				}
+			}
 		}
-
-		SeparatedSystems.Empty();
 	}
-	else
+
+	if (NewShape != Shape)
 	{
-		for (int i = 0; i < DisconnectedParts.Num(); i++)
-		{
-			PartsToScan.Remove(DisconnectedParts[i]);
-		}
-		SeparatedSystems.Add(FUBasePartArray(PartsToScan));
-		ScanSystemForBreaks(DisconnectedParts);
+		NewShape = FindConnectedShape(Parts, NewShape);
 	}
 
+	return NewShape;
 }
 
 bool UBaseResourceSystem::AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2)
@@ -176,28 +163,6 @@ bool UBaseResourceSystem::AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIn
 	}
 	
 	return false;
-}
-
-TArray<UBasePart*> UBaseResourceSystem::FindDisconnectedParts(TArray<UBasePart*> Parts)
-{
-	TArray<UBasePart*> DisconnectedParts;
-	TArray<FIntPoint> CombinedShape;
-
-	CombinedShape.Append(Parts[0]->GetShape());
-
-	for (int i = 1; i < Parts.Num(); i++)
-	{
-
-		if (AreShapesAdjacent(CombinedShape, Parts[i]->GetShape()))
-		{
-			CombinedShape.Append(Parts[i]->GetShape());
-		}
-		else
-		{
-			DisconnectedParts.Add(Parts[i + 1]);
-		}
-	}
-	return DisconnectedParts;
 }
 
 TEnumAsByte<EResourceType> UBaseResourceSystem::GetType()
