@@ -122,9 +122,15 @@ TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 		IntPointArray.Empty();
 		for (auto& j : i.Value.IntPointArray)
 		{
-			IntPointArray.Add(UFunctionLibrary::RotateIntPoint(j, GetRotation()) + GetLocation());
+			if (GetShape().Contains(UFunctionLibrary::RotateIntPoint(j, GetRotation()) + GetLocation()))
+			{
+				IntPointArray.Add(UFunctionLibrary::RotateIntPoint(j, GetRotation()) + GetLocation());
+			}
 		}
-		ReturnValue.Add(i.Key, FIntPointArray(IntPointArray));
+		if (!IntPointArray.IsEmpty())
+		{
+			ReturnValue.Add(i.Key, FIntPointArray(IntPointArray));
+		}
 	}
 	return ReturnValue;
 }
@@ -275,4 +281,9 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 	{
 		Systems.Add(System);
 	}
+}
+
+bool UBasePart::IsFunctional()
+{
+	return Functional;
 }
