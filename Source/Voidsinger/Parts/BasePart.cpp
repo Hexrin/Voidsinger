@@ -6,8 +6,8 @@
 #include "Engine/Engine.h"
 
 
-//Initializer Funtions\\
-|----------------------|
+/*Initializer Funtions*\
+\*--------------------*/
 UBasePart::UBasePart()
 {
 	//Initalize All Variables
@@ -128,8 +128,8 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 
 
 
-//--------Tick--------\\
-|----------------------|
+/*--------Tick--------*\
+\*--------------------*/
 void UBasePart::Tick(float DeltaTime)
 {
 	//Call Blueprint Implementable Event
@@ -149,8 +149,8 @@ TStatId UBasePart::GetStatId() const
 
 
 
-//--Getter Functions--\\
-|----------------------|
+/*--Getter Functions--*\
+\*--------------------*/
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
 {
 	
@@ -286,8 +286,8 @@ TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 
 
 
-//Condtional  Checkers\\
-|----------------------|
+/*Condtional  Checkers*\
+\*--------------------*/
 bool UBasePart::IsFunctional()
 {
 	return bFunctional;
@@ -301,8 +301,8 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 
 
 
-//---Misc. Functions--\\
-|----------------------|
+/*---Misc. Functions--*\
+\*--------------------*/
 void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 {
 	ActualShape.Remove(RelativeLoc);

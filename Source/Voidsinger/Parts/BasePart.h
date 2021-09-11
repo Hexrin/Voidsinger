@@ -33,11 +33,12 @@ class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject
 
 
 
-	//Initializer Funtions\\
-	|----------------------|
+	/*Initializer Funtions*\
+	\*--------------------*/
 public:
 	//Constructor
 	UBasePart();
+
 	//Used to inialize variables
 	UFUNCTION()
 	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
@@ -50,8 +51,8 @@ protected:
 
 
 
-	//--------Tick--------\\
-	|----------------------|
+	/*--------Tick--------*\
+	\*--------------------*/
 public:
 	//Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -72,8 +73,8 @@ protected:
 
 
 
-	//--Getter Functions--\\
-	|----------------------|
+	/*--Getter Functions--*\
+	\*--------------------*/
 public:
 	//Gets the desired shape of the part ignoring any damage the part may have taken
 	UFUNCTION(BlueprintPure)
@@ -120,8 +121,8 @@ public:
 
 
 
-	//Condtional  Checkers\\
-	|----------------------|
+	/*Condtional  Checkers*\
+	\*--------------------*/
 public:
 	//returns true if there is atleast one functional pixel
 	UFUNCTION()
@@ -134,8 +135,8 @@ public:
 
 
 
-	//---Misc. Functions--\\
-	|----------------------|
+	/*---Misc. Functions--*\
+	\*--------------------*/
 public:
 	//Remove a pixel form the actual shape of the part
 	UFUNCTION(BlueprintCallable)
@@ -166,8 +167,8 @@ public:
 
 
 
-	//-Blueprint Defaults-\\
-	|----------------------|
+	/*-Blueprint Defaults-*\
+	\*--------------------*/
 protected:
 	//Stores the default shape of the part
 	UPROPERTY(EditDefaultsOnly)
@@ -184,8 +185,8 @@ protected:
 
 
 
-	//Function Return Vals\\
-	|----------------------|
+	/*Function Return Vals*\
+	\*--------------------*/
 private:
 	//Stores the curent shape of the part acounting for damage and rotation
 	UPROPERTY()
@@ -204,8 +205,8 @@ private:
 	bool bFunctional;
 
 
-	//Instanced  Variables\\
-	|----------------------|
+	/*Instanced  Variables* \
+	\*--------------------*/
 	//Stores this parts rotation
 	UPROPERTY()
 	TEnumAsByte<EPartRotation> Rotation;

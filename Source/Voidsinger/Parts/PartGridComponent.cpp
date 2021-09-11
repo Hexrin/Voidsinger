@@ -84,7 +84,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 
 	//Initalize Variables
 	TArray<FIntPoint> DesiredShape = Part->GetDesiredShape(Rotation);
-	FArrayBounds PartBounds = Part->GetShapeBounds(Rotation);
+	FArrayBounds PartBounds = Part->GetPartBounds(Rotation);
 
 	//Detect if placement is in valid position
 	if (GridSize.X >= Location.X + PartBounds.UpperBounds.X && -GridSize.X <= Location.X + PartBounds.LowerBounds.X
@@ -125,7 +125,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 
 				//Create Mesh
 				class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
-				Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PartType.GetDefaultObject()->PixelMesh);
+				Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
 
 				PartGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), FPartData(Part, 0.f, Cast<UStaticMeshComponent>(NewPlane)));
 			}
