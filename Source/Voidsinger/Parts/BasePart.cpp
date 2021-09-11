@@ -7,6 +7,7 @@
 
 UBasePart::UBasePart()
 {
+	//Initalize All Variables
 	Rotation = EPartRotation::Degrees0;
 	Location = FIntPoint();
 	Mass = 1;
@@ -15,6 +16,21 @@ UBasePart::UBasePart()
 	Bounds = FArrayBounds();
 	RotatedShape = TArray<FIntPoint>();
 	ActualShape = TArray<FIntPoint>();
+}
+
+//Tick
+void UBasePart::Tick(float DeltaTime)
+{
+	//Call Blueprint Implementable Event
+	EventTick(DeltaTime);
+}
+bool UBasePart::IsTickable() const
+{
+	return true;
+}
+TStatId UBasePart::GetStatId() const
+{
+	return TStatId();
 }
 
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
@@ -305,7 +321,7 @@ bool UBasePart::IsFunctional()
 	return Functional;
 }
 
-bool UBasePart::IsPixelFunctional(FIntPoint Pixel)
+bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 {
 	return false;
 }

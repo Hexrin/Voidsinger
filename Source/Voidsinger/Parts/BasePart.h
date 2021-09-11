@@ -17,76 +17,154 @@ class UBaseResourceSystem;
 enum EPartRotation;
 
 UCLASS(BlueprintType, Blueprintable)
-class VOIDSINGER_API UBasePart : public UObject
+class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject
 {
 
 	GENERATED_BODY()
 
+
+
+
+
+	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
+	//             FUNCTIONS             ||
+	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
+	
+
+
+
+	//Initializer Funtions\\
+	|----------------------|
 public:
+	//Constructor
 	UBasePart();
+	//Used to inialize variables
+	UFUNCTION()
+	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
+
+protected:
+	//Begin Play for use in blueprints
+	UFUNCTION(BlueprintImplementableEvent)
+	void BeginPlay();
 
 
 
+
+	//--------Tick--------\\
+	|----------------------|
+public:
+	virtual void Tick(float DeltaTime) override;
+	virtual bool IsTickable() const override;
+	virtual TStatId GetStatId() const override;
+
+protected:
+	//Event Tick for use in blueprints
+	UFUNCTION(BlueprintImplementableEvent)
+	void EventTick(float DeltaTime);
+
+	
+
+
+
+
+	//--Getter Functions--\\
+	|----------------------|
+public:
+	//Gets the desired shape of the part ignoring any damage the part may have taken
 	UFUNCTION(BlueprintPure)
 	const TArray<FIntPoint> GetDesiredShape();
 	const TArray<FIntPoint> GetDesiredShape(TEnumAsByte<EPartRotation> Rot);
 
+	//Gets the outer bounds of the part
 	UFUNCTION(BlueprintPure)
-	const FArrayBounds GetShapeBounds();
-	const FArrayBounds GetShapeBounds(TEnumAsByte<EPartRotation> Rot);
+	const FArrayBounds GetPartBounds();
+	const FArrayBounds GetPartBounds(TEnumAsByte<EPartRotation> Rot);
 
-	UFUNCTION(BlueprintPure)
-	const FIntPoint GetLocation();
-
-	UFUNCTION(BlueprintPure)
-	const TEnumAsByte<EPartRotation> GetRotation();
-
+	//Gets the curent shape of the part accounting for damage
 	UFUNCTION(BlueprintPure)
 	const TArray<FIntPoint> GetShape();
 
+	//Gets the location of the origin of the part relative to the part grid
+	UFUNCTION(BlueprintPure)
+	const FIntPoint GetLocation();
+
+	//Gets the rotaion of the part
+	UFUNCTION(BlueprintPure)
+	const TEnumAsByte<EPartRotation> GetRotation();
+
+	//Gets the mass of a single pixel for this part
 	UFUNCTION(BlueprintPure)
 	float GetMass();
 
-	UFUNCTION()
-	void DestroyPixel(FIntPoint RelativeLoc);
-
-	UFUNCTION(BlueprintPure)
-	TMap<TEnumAsByte<EResourceType>, FIntPointArray> GetResourceTypes();
-
-	UFUNCTION()
-	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
-
-	UFUNCTION(BlueprintCallable)
-	void CreateNewSystem(TEnumAsByte<EResourceType> ResourceType);
-
-	UFUNCTION(BlueprintPure)
-	TArray<UBaseResourceSystem*> GetSystems();
-
-	UFUNCTION(BlueprintPure)
-	UBaseResourceSystem* GetSystemByType(TEnumAsByte<EResourceType> Type);
-	
+	//Gets the part grid that this part is attached to
 	UFUNCTION(BlueprintPure)
 	const UPartGridComponent* GetPartGrid();
 
-	UFUNCTION(BlueprintCallable)
-	void AddToSystem(UBaseResourceSystem* System);
+	//----------idk what this do so Mabel should write this----------------
+	UFUNCTION(BlueprintPure)
+	TArray<UBaseResourceSystem*> GetSystems();
 
-	UPROPERTY(EditAnywhere)
-	UStaticMesh* PixelMesh;
+	//----------idk what this do so Mabel should write this----------------
+	UFUNCTION(BlueprintPure)
+	UBaseResourceSystem* GetSystemByType(TEnumAsByte<EResourceType> Type);
 
-	//This should only return false if NO pixel is functional.
+	//----------idk what this do so Mabel should write this----------------
+	UFUNCTION(BlueprintPure)
+	TMap<TEnumAsByte<EResourceType>, FIntPointArray> GetResourceTypes();
+
+
+
+
+	//Condtional  Checkers\\
+	|----------------------|
+public:
+	//returns true if there is atleast one functional pixel
 	UFUNCTION()
 	bool IsFunctional();
 
+	//returns true if pixel at loc is functional
 	UFUNCTION()
-	bool IsPixelFunctional(FIntPoint Pixel);
+	bool IsPixelFunctional(FIntPoint Loc);
 
+
+	//---Misc. Functions--\\
+	|----------------------|
+public:
+	//Remove a pixel form the actual shape of the part
+	UFUNCTION(BlueprintCallable)
+	void DestroyPixel(FIntPoint RelativeLoc);
+
+	//----------idk what this do so Mabel should write this----------------
+	UFUNCTION(BlueprintCallable)
+	void CreateNewSystem(TEnumAsByte<EResourceType> ResourceType);
+
+	//----------idk what this do so Mabel should write this----------------
+	UFUNCTION(BlueprintCallable)
+	void AddToSystem(UBaseResourceSystem* System);
+
+
+
+
+
+
+
+
+
+
+
+
+	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
+	//             VARIABLES             ||
+	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
+
+
+	
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FIntPoint> DesiredShape;
 
 	UPROPERTY(EditDefaultsOnly, NoClear)
-	float Mass;
+	float TotalMass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Cost;
