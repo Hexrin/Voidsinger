@@ -80,7 +80,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 {
 	//Create Part
 	UBasePart* Part = NewObject<UBasePart>(this, PartType);
-	Part->Init(Location, Rotation, this, PartType);
+	Part->InitilizeVariables(Location, Rotation, this, PartType);
 
 	//Initalize Variables
 	TArray<FIntPoint> DesiredShape = Part->GetDesiredShape(Rotation);
@@ -130,6 +130,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 				PartGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), FPartData(Part, 0.f, Cast<UStaticMeshComponent>(NewPlane)));
 			}
 		}
+		Part->InitizlizeFuntionality();
 		return true;
 	}
 	return false;

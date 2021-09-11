@@ -39,10 +39,14 @@ public:
 	//Constructor
 	UBasePart();
 
-	//Used to inialize variables
+	//Used to inialize variables. Called before part is placed onto the part grid
 	UFUNCTION()
-	void Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
+	void InitilizeVariables(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
 
+	//Used to initize funtionality once the part has been placed onto the part grid
+	UFUNCTION()
+	void InitizlizeFuntionality();
+	
 protected:
 	//Begin Play for use in blueprints
 	UFUNCTION(BlueprintImplementableEvent)
@@ -204,7 +208,8 @@ private:
 	UPROPERTY()
 	bool bFunctional;
 
-
+	UPROPERTY()
+	bool bIsBeingDestroyed;
 	/*Instanced  Variables* \
 	\*--------------------*/
 	//Stores this parts rotation

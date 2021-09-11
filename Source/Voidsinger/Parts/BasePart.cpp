@@ -20,16 +20,19 @@ UBasePart::UBasePart()
 	RotatedShape = TArray<FIntPoint>();
 	ActualShape = TArray<FIntPoint>();
 	bFunctional = true;
+	bIsBeingDestroyed = false;
 }
 
-void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
+void UBasePart::InitilizeVariables(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("INIT"))
+	//Initalize Variables
 	Rotation = Rot;
 	Location = Loc;
 	PartGridComponent = PartGrid;
 	ActualShape = GetDesiredShape();
 
+	//Initalize Resouce System ---------NEEDS TO BE COMMENTED BY MABEL
+	//Ps. you may want to move this to InitizlizeFuntionality but idk how this works
 	for (auto& i : GetResourceTypes())
 	{
 		bool SystemFound = false;
@@ -125,20 +128,27 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 	}
 }
 
-
+void UBasePart::InitizlizeFuntionality()
+{
+	//Call BeginPlay for blueprints
+	BeginPlay();
+}
 
 
 /*--------Tick--------*\
 \*--------------------*/
 void UBasePart::Tick(float DeltaTime)
 {
-	//Call Blueprint Implementable Event
-	EventTick(DeltaTime);
+	if (!bIsBeingDestroyed)
+	{
+		//Call Blueprint Implementable Event
+		EventTick(DeltaTime);
+	}
 }
 
 bool UBasePart::IsTickable() const
 {
-	return true;
+	return (!IsTemplate(RF_ClassDefaultObject));
 }
 
 TStatId UBasePart::GetStatId() const
@@ -321,6 +331,10 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 			i->RemovePart(this);
 			i->RemovePixel(RelativeLoc);
 		}
+	}
+	if (ActualShape.Num() <= 0)
+	{
+		bIsBeingDestroyed = ConditionalBeginDestroy();
 	}
 }
 
