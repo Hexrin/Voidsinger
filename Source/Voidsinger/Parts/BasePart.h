@@ -47,6 +47,8 @@ public:
 	UFUNCTION()
 	void InitizlizeFuntionality();
 	
+	UWorld* GetWorld() const;
+
 protected:
 	//Begin Play for use in blueprints
 	UFUNCTION(BlueprintImplementableEvent)
