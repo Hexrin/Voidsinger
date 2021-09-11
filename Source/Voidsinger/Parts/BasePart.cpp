@@ -5,166 +5,21 @@
 #include "BaseResourceSystem.h"
 #include "Engine/Engine.h"
 
+
+//Initializer Funtions\\
+|----------------------|
 UBasePart::UBasePart()
 {
 	//Initalize All Variables
 	Rotation = EPartRotation::Degrees0;
 	Location = FIntPoint();
-	Mass = 1;
+	TotalPartMass = 1;
 	Cost = 1;
 	DesiredShape = TArray<FIntPoint>();
 	Bounds = FArrayBounds();
 	RotatedShape = TArray<FIntPoint>();
 	ActualShape = TArray<FIntPoint>();
-}
-
-//Tick
-void UBasePart::Tick(float DeltaTime)
-{
-	//Call Blueprint Implementable Event
-	EventTick(DeltaTime);
-}
-bool UBasePart::IsTickable() const
-{
-	return true;
-}
-TStatId UBasePart::GetStatId() const
-{
-	return TStatId();
-}
-
-const TArray<FIntPoint> UBasePart::GetDesiredShape()
-{
-	
-	return GetDesiredShape(Rotation);
-}
-
-const TArray<FIntPoint> UBasePart::GetDesiredShape(TEnumAsByte<EPartRotation> Rot)
-{
-	if (0 == RotatedShape.Num())
-	{
-		for (int i = 0; i < DesiredShape.Num(); i++)
-		{
-			switch (Rot)
-			{
-			case Degrees0:
-				RotatedShape.Emplace(DesiredShape[i]);
-				break;
-			case Degrees90:
-				RotatedShape.Emplace(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
-				break;
-			case Degrees180:
-				RotatedShape.Emplace(DesiredShape[i] * -1);
-				break;
-			case Degrees270:
-				RotatedShape.Emplace(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	return RotatedShape;
-}
-
-const FArrayBounds UBasePart::GetShapeBounds()
-{
-	return GetShapeBounds(Rotation);
-}
-
-const FArrayBounds UBasePart::GetShapeBounds(TEnumAsByte<EPartRotation> Rot)
-{
-	if (Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds)
-	{
-		
-		for (FIntPoint i : GetDesiredShape(Rot))
-		{
-			if (i.X > Bounds.UpperBounds.X)
-			{
-				Bounds.UpperBounds.X = i.X;
-			}
-			if (i.Y > Bounds.UpperBounds.Y)
-			{
-				Bounds.UpperBounds.Y = i.Y;
-			}
-
-			if (i.X < Bounds.LowerBounds.X)
-			{
-				Bounds.LowerBounds.X = i.X;
-			}
-			if (i.Y < Bounds.LowerBounds.Y)
-			{
-				Bounds.LowerBounds.Y = i.Y;
-			}
-		}
-	}
-	return Bounds;
-}
-
-const FIntPoint UBasePart::GetLocation()
-{
-	return Location;
-}
-
-const TEnumAsByte<EPartRotation> UBasePart::GetRotation()
-{
-	return Rotation;
-}
-
-const TArray<FIntPoint> UBasePart::GetShape()
-{
-	return ActualShape;
-}
-
-float UBasePart::GetMass()
-{
-	
-	//UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i"), Mass / GetDesiredShape().Num(), GetDesiredShape().Num());
-	return Mass / GetDesiredShape().Num();
-}
-
-void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
-{
-	ActualShape.Remove(RelativeLoc);
-
-	if (IsFunctional())
-	{
-		for (auto& i : Systems)
-		{
-			i->RemovePixel(RelativeLoc);
-		}
-	}
-	else
-	{
-		for (auto& i : Systems)
-		{
-			i->RemovePart(this);
-			i->RemovePixel(RelativeLoc);
-		}
-	}
-}
-
-TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
-{
-	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ReturnValue;
-	TArray<FIntPoint> IntPointArray;
-
-	for (auto& i : ResourceTypes)
-	{
-		IntPointArray.Empty();
-		for (auto& j : i.Value.IntPointArray)
-		{
-			if (GetShape().Contains(UFunctionLibrary::RotateIntPoint(j, GetRotation()) + GetLocation()))
-			{
-				IntPointArray.Add(UFunctionLibrary::RotateIntPoint(j, GetRotation()) + GetLocation());
-			}
-		}
-		if (!IntPointArray.IsEmpty())
-		{
-			ReturnValue.Add(i.Key, FIntPointArray(IntPointArray));
-		}
-	}
-	return ReturnValue;
+	bFunctional = true;
 }
 
 void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
@@ -270,14 +125,122 @@ void UBasePart::Init(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridCom
 	}
 }
 
-void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
-{
 
-	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
-	NewSystem->SetType(ResourceType);
-	NewSystem->AddPart(this);
-	Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->AddResourceSystem(NewSystem);
-	AddToSystem(NewSystem);
+
+
+//--------Tick--------\\
+|----------------------|
+void UBasePart::Tick(float DeltaTime)
+{
+	//Call Blueprint Implementable Event
+	EventTick(DeltaTime);
+}
+
+bool UBasePart::IsTickable() const
+{
+	return true;
+}
+
+TStatId UBasePart::GetStatId() const
+{
+	return TStatId();
+}
+
+
+
+
+//--Getter Functions--\\
+|----------------------|
+const TArray<FIntPoint> UBasePart::GetDesiredShape()
+{
+	
+	return GetDesiredShape(Rotation);
+}
+const TArray<FIntPoint> UBasePart::GetDesiredShape(TEnumAsByte<EPartRotation> Rot)
+{
+	if (0 == RotatedShape.Num())
+	{
+		for (int i = 0; i < DesiredShape.Num(); i++)
+		{
+			switch (Rot)
+			{
+			case Degrees0:
+				RotatedShape.Emplace(DesiredShape[i]);
+				break;
+			case Degrees90:
+				RotatedShape.Emplace(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
+				break;
+			case Degrees180:
+				RotatedShape.Emplace(DesiredShape[i] * -1);
+				break;
+			case Degrees270:
+				RotatedShape.Emplace(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	return RotatedShape;
+}
+
+const TArray<FIntPoint> UBasePart::GetShape()
+{
+	return ActualShape;
+}
+
+const FArrayBounds UBasePart::GetPartBounds()
+{
+	return GetPartBounds(Rotation);
+}
+const FArrayBounds UBasePart::GetPartBounds(TEnumAsByte<EPartRotation> Rot)
+{
+	if (Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds)
+	{
+		
+		for (FIntPoint i : GetDesiredShape(Rot))
+		{
+			if (i.X > Bounds.UpperBounds.X)
+			{
+				Bounds.UpperBounds.X = i.X;
+			}
+			if (i.Y > Bounds.UpperBounds.Y)
+			{
+				Bounds.UpperBounds.Y = i.Y;
+			}
+
+			if (i.X < Bounds.LowerBounds.X)
+			{
+				Bounds.LowerBounds.X = i.X;
+			}
+			if (i.Y < Bounds.LowerBounds.Y)
+			{
+				Bounds.LowerBounds.Y = i.Y;
+			}
+		}
+	}
+	return Bounds;
+}
+
+const FIntPoint UBasePart::GetLocation()
+{
+	return Location;
+}
+
+const TEnumAsByte<EPartRotation> UBasePart::GetRotation()
+{
+	return Rotation;
+}
+
+float UBasePart::GetMass()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i"), TotalPartMass / GetDesiredShape().Num(), GetDesiredShape().Num());
+	return TotalPartMass / GetDesiredShape().Num();
+}
+
+const UPartGridComponent* UBasePart::GetPartGrid()
+{
+	return PartGridComponent;
 }
 
 TArray<UBaseResourceSystem*> UBasePart::GetSystems()
@@ -297,9 +260,78 @@ UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
 	return nullptr;
 }
 
-const UPartGridComponent* UBasePart::GetPartGrid()
+TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 {
-	return PartGridComponent;
+	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ReturnValue;
+	TArray<FIntPoint> IntPointArray;
+
+	for (auto& i : ResourceTypes)
+	{
+		IntPointArray.Empty();
+		for (auto& j : i.Value.IntPointArray)
+		{
+			if (GetShape().Contains(UFunctionLibrary::RotateIntPoint(j, GetRotation()) + GetLocation()))
+			{
+				IntPointArray.Add(UFunctionLibrary::RotateIntPoint(j, GetRotation()) + GetLocation());
+			}
+		}
+		if (!IntPointArray.IsEmpty())
+		{
+			ReturnValue.Add(i.Key, FIntPointArray(IntPointArray));
+		}
+	}
+	return ReturnValue;
+}
+
+
+
+
+//Condtional  Checkers\\
+|----------------------|
+bool UBasePart::IsFunctional()
+{
+	return bFunctional;
+}
+
+bool UBasePart::IsPixelFunctional(FIntPoint Loc)
+{
+	return false;
+}
+
+
+
+
+//---Misc. Functions--\\
+|----------------------|
+void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
+{
+	ActualShape.Remove(RelativeLoc);
+
+	if (IsFunctional())
+	{
+		for (auto& i : Systems)
+		{
+			i->RemovePixel(RelativeLoc);
+		}
+	}
+	else
+	{
+		for (auto& i : Systems)
+		{
+			i->RemovePart(this);
+			i->RemovePixel(RelativeLoc);
+		}
+	}
+}
+
+void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
+{
+
+	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
+	NewSystem->SetType(ResourceType);
+	NewSystem->AddPart(this);
+	Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->AddResourceSystem(NewSystem);
+	AddToSystem(NewSystem);
 }
 
 void UBasePart::AddToSystem(UBaseResourceSystem* System)
@@ -313,15 +345,4 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 	{
 		Systems.Add(System);
 	}
-}
-
-//This should only return false if NO pixel is functional
-bool UBasePart::IsFunctional()
-{
-	return Functional;
-}
-
-bool UBasePart::IsPixelFunctional(FIntPoint Loc)
-{
-	return false;
 }
