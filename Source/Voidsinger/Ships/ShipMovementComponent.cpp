@@ -63,3 +63,12 @@ void UShipMovementComponent::AddForce(FVector2D ForceLocation, FVector2D Force)
 	
 }
 
+FVector2D UShipMovementComponent::GetVelocity()
+{
+	return Velocity;
+}
+
+float UShipMovementComponent::GetAngularVelocity()
+{
+	return AngularVelocity;
+}

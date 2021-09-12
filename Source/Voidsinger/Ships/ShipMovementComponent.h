@@ -31,7 +31,12 @@ public:
 	//declare functions
 	UFUNCTION(BlueprintCallable)
 	void AddForce(FVector2D ForceLocation, FVector2D Force);
-	
+
+	UFUNCTION(BlueprintPure)
+	FVector2D GetVelocity();
+
+	UFUNCTION(BlueprintPure)
+	float GetAngularVelocity();
 private:
 
 	//declare private variables
