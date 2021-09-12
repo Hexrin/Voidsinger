@@ -144,6 +144,18 @@ public:
 	/*---Misc. Functions--*\
 	\*--------------------*/
 public:
+	//Called when a part is compleatly destroyed
+	UFUNCTION(BlueprintImplementableEvent, meta=(ShortToolTip = "Called when a part is compleatly destroyed"))
+	void EventDestroyed();
+
+	//Called when a part is damaged
+	UFUNCTION(BlueprintImplementableEvent, meta = (ShortToolTip = "Called when a part is damaged"))
+	void EventDamaged();
+
+	//Called when a part is damaged in such a way that it fill no longer be functional
+	UFUNCTION(BlueprintImplementableEvent, meta = (ShortToolTip = "Called when a part is damaged in such a way that it fill no longer be functional"))
+	void EventCriticalyDamaged();
+
 	//Remove a pixel form the actual shape of the part
 	UFUNCTION(BlueprintCallable)
 	void DestroyPixel(FIntPoint RelativeLoc);

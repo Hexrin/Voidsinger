@@ -336,6 +336,7 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 {
 	ActualShape.Remove(RelativeLoc);
+	EventDamaged();
 
 	if (IsFunctional())
 	{
@@ -346,6 +347,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	}
 	else
 	{
+		EventCriticalyDamaged();
 		for (auto& i : Systems)
 		{
 			i->RemovePart(this);
@@ -354,6 +356,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	}
 	if (ActualShape.Num() <= 0)
 	{
+		EventDestroyed();
 		bIsBeingDestroyed = ConditionalBeginDestroy();
 	}
 }
