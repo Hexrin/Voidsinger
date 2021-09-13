@@ -43,8 +43,8 @@ void UShipMovementComponent::AddForce(FVector2D ForceLocation, FVector2D Force)
 	///UE_LOG(LogTemp, Warning, TEXT("???? x=%f, y=%f"), Ship->PartGrid->GetCenterOfMass().X, Ship->PartGrid->GetCenterOfMass().Y)
 	//Distance vector is the distance from the center of mass to the force location.
 	FVector2D DistanceVector = Ship->PartGrid->GetCenterOfMass() - ForceLocation;
-	//DrawDebugLine(GetWorld(), FVector(Ship->PartGrid->GetCenterOfMass(), 0) + GetOwner()->GetActorLocation(), FVector(DistanceVector, 0) + GetOwner()->GetActorLocation(), FColor::Red, false, 0.f, 0U, .5);
-	//DrawDebugLine(GetWorld(), FVector(ForceLocation, 0)+GetOwner()->GetActorLocation(), FVector(ForceLocation + AdjForce *100, 0) + GetOwner()->GetActorLocation(), FColor::Cyan, false, 0.f,0U, .25);
+	DrawDebugLine(GetWorld(), FVector(Ship->PartGrid->GetCenterOfMass(), 0) + GetOwner()->GetActorLocation(), FVector(DistanceVector, 0) + GetOwner()->GetActorLocation(), FColor::Red, false, 0.f, 0U, .5);
+	DrawDebugLine(GetWorld(), FVector(ForceLocation, 0)+GetOwner()->GetActorLocation(), FVector(ForceLocation + AdjForce *100, 0) + GetOwner()->GetActorLocation(), FColor::Cyan, false, 0.f,0U, .25);
 
 	//Account for exactly hitting the center of mass, in which case there would be no rotation and the full 
 	//force would be used.
@@ -61,7 +61,7 @@ void UShipMovementComponent::AddForce(FVector2D ForceLocation, FVector2D Force)
 		//these 2 lines of math took literally 7 hours to figure out.
 		Velocity += ((FVector2D::DotProduct(DistanceVector.GetSafeNormal(), AdjForce) * DistanceVector.GetSafeNormal()) / Ship->PartGrid->GetMass()).GetRotated(GetOwner()->GetActorRotation().Yaw);
 		AngularVelocity -= FVector2D::DotProduct(DistanceVector.GetRotated(90).GetSafeNormal(), AdjForce) * DistanceVector.Size() / Ship->PartGrid->GetMass();
-		//UE_LOG(LogTemp, Warning, TEXT("Linear dot=%f, Angular dot x=%f"), FVector2D::DotProduct(DistanceVector.GetSafeNormal(), AdjForce), FVector2D::DotProduct(DistanceVector.GetRotated(90).GetSafeNormal(), AdjForce));
+		UE_LOG(LogTemp, Warning, TEXT("Linear dot=%f, Angular dot x=%f"), FVector2D::DotProduct(DistanceVector.GetSafeNormal(), AdjForce), FVector2D::DotProduct(DistanceVector.GetRotated(90).GetSafeNormal(), AdjForce));
 	}
 
 	
