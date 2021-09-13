@@ -172,6 +172,11 @@ UWorld* UBasePart::GetWorld() const
 
 
 
+void UBasePart::DestroyPart()
+{
+	bIsBeingDestroyed = ConditionalBeginDestroy();
+}
+
 /*--------Tick--------*\
 \*--------------------*/
 void UBasePart::Tick(float DeltaTime)
@@ -179,7 +184,7 @@ void UBasePart::Tick(float DeltaTime)
 	if (!bIsBeingDestroyed)
 	{
 		//Call Blueprint Implementable Event
-		EventTick(DeltaTime);
+		OnTick(DeltaTime);
 	}
 }
 
@@ -205,27 +210,16 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape()
 }
 const TArray<FIntPoint> UBasePart::GetDesiredShape(TEnumAsByte<EPartRotation> Rot)
 {
-	if (0 == RotatedShape.Num() || this != this->GetClass()->GetDefaultObject())
+	if (0 == RotatedShape.Num() || this == this->GetClass()->GetDefaultObject())
 	{
-		for (int i = 0; i < DesiredShape.Num(); i++)
+		if (this == this->GetClass()->GetDefaultObject())
 		{
-			switch (Rot)
-			{
-			case Degrees0:
-				RotatedShape.Emplace(DesiredShape[i]);
-				break;
-			case Degrees90:
-				RotatedShape.Emplace(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
-				break;
-			case Degrees180:
-				RotatedShape.Emplace(DesiredShape[i] * -1);
-				break;
-			case Degrees270:
-				RotatedShape.Emplace(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
-				break;
-			default:
-				break;
-			}
+			RotatedShape.Empty();
+		}
+
+		for (FIntPoint PixelLoc : DesiredShape)
+		{
+			RotatedShape.Emplace(UFunctionLibrary::RotateIntPoint(PixelLoc, Rot));
 		}
 	}
 	return RotatedShape;
@@ -242,7 +236,7 @@ const FArrayBounds UBasePart::GetPartBounds()
 }
 const FArrayBounds UBasePart::GetPartBounds(TEnumAsByte<EPartRotation> Rot)
 {
-	if (Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds)
+	if ((Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds) || this == this->GetClass()->GetDefaultObject())
 	{
 		
 		for (FIntPoint i : GetDesiredShape(Rot))
@@ -353,7 +347,7 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 {
 	ActualShape.Remove(RelativeLoc);
-	EventDamaged();
+	OnDamaged();
 
 	if (IsFunctional())
 	{
@@ -364,7 +358,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	}
 	else
 	{
-		EventCriticallyDamaged();
+		OnCriticallyDamaged();
 		for (auto& i : Systems)
 		{
 			i->RemovePart(this);
@@ -373,8 +367,8 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	}
 	if (ActualShape.Num() <= 0)
 	{
-		EventDestroyed();
-		bIsBeingDestroyed = ConditionalBeginDestroy();
+		OnDestroyed();
+		DestroyPart();
 	}
 }
 
