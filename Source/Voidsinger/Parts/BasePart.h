@@ -35,7 +35,9 @@ class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject
 
 	/*Initializer Funtions*\
 	\*--------------------*/
+
 public:
+
 	//Constructor
 	UBasePart();
 
