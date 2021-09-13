@@ -27,7 +27,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float CameraHeight;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UStarSystemData* CurrentStarSystem;
 
 public:
@@ -38,9 +38,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool TravelToStarSystem(class UStarSystemData* Target);
-
-	UFUNCTION(BlueprintPure)
-	class UStarSystemData* GetCurrentStarSystem();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
