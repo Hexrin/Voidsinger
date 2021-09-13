@@ -42,9 +42,7 @@ void UShipMovementComponent::AddForce(FVector2D ForceLocation, FVector2D Force)
 	///UE_LOG(LogTemp, Warning, TEXT("???? x=%f, y=%f"), Ship->PartGrid->GetCenterOfMass().X, Ship->PartGrid->GetCenterOfMass().Y)
 	//Distance vector is the distance from the center of mass to the force location.
 	FVector2D DistanceVector = Ship->PartGrid->GetCenterOfMass() - ForceLocation;
-	//DrawDebugLine(GetWorld(), Ship->PartGrid->GetCenterOfMass(), DistanceVector,)
 	
-
 	//Account for exactly hitting the center of mass, in which case there would be no rotation and the full 
 	//force would be used.
 	if (DistanceVector.IsNearlyZero())
