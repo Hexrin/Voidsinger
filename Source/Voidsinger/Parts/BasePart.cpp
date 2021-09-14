@@ -205,7 +205,7 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape()
 }
 const TArray<FIntPoint> UBasePart::GetDesiredShape(TEnumAsByte<EPartRotation> Rot)
 {
-	if (0 == RotatedShape.Num())
+	if (0 == RotatedShape.Num() || this != this->GetClass()->GetDefaultObject())
 	{
 		for (int i = 0; i < DesiredShape.Num(); i++)
 		{

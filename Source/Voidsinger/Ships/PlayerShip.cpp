@@ -31,8 +31,13 @@ TMap<TEnumAsByte<EResourceType>, float> APlayerShip::GetTravelCost(class UStarSy
     return Costs;
 }
 
-bool APlayerShip::TravelToStarSystem(UStarSystemData* Target)
+bool APlayerShip::TravelToStarSystem(class UStarSystemData* Target)
 {
     CurrentStarSystem = Target;
     return true;
+}
+
+UStarSystemData* APlayerShip::GetCurrentStarSystem()
+{
+    return CurrentStarSystem;
 }
