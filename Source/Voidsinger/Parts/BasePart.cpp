@@ -23,7 +23,7 @@ UBasePart::UBasePart()
 	bIsBeingDestroyed = false;
 }
 
-void UBasePart::InitializeVariables(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
+void UBasePart::InitilizeVariables(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
 {
 	//Initalize Variables
 	Rotation = Rot;
@@ -31,47 +31,31 @@ void UBasePart::InitializeVariables(FIntPoint Loc, TEnumAsByte<EPartRotation> Ro
 	PartGridComponent = PartGrid;
 	ActualShape = GetDesiredShape();
 
-	
-}
-
-void UBasePart::InitializeFunctionality()
-{
-	//Initialize Resource System
-
-	//Basic description: for each pixel on this part that has a resource type, check around that location for another part that has a pixel with that resource type next to the
-	// pixel currently being checked. If there is no adjacent resource system create a new one.
-
-	//This needs to be called for each resource type so a resource system for each type is created.
+	//Initalize Resouce System ---------NEEDS TO BE COMMENTED BY MABEL
+	//Ps. you may want to move this to InitizlizeFuntionality but idk how this works
 	for (auto& i : GetResourceTypes())
 	{
-		//System found will be useful later to determine if the part should be added to an existing or the part should make a new system.
 		bool SystemFound = false;
-
-		//For each pixel location that has this resource type applied to it
 		for (auto& j : i.Value.IntPointArray)
-		{
-			//Check the X + 1 location for a part on the part grid
+		{	
 			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X + 1, j.Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part != this)
 			{
-				//For each resource type location on the adjacent part
+				//UE_LOG(LogTemp, Warning, TEXT("x + 1 is valid"));
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part->GetResourceTypes())
 				{
-					//check if the type of the resource system is the same as the type of of the adjecent part's resource system
 					if (k.Key == i.Key)
 					{
-						//For each pixel location on the adjacent part that has this resource type
 						for (auto& l : k.Value.IntPointArray)
 						{
-							//Check if the adjacent part's pixel is actually adjacent to the pixel in question on this part
 							if (l == FIntPoint(j.X + 1, j.Y))
 							{
-								//if all the above checks succeed, then add this part to the resource system that it found it was adjacent to.
-								//Get system by type works because a part can only ever be part of 1 system with a given type, with various different reasons and logic to get
-								// that result. 
-								//(although... i may need to think about that)
-								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part->GetSystemByType(i.Key));
+								//UE_LOG(LogTemp, Warning, TEXT("x + 1 system found"));
+								for (auto& m : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part->GetSystems())
+								{
+									//UE_LOG(LogTemp, Warning, TEXT("systems on x + 1 types: %i"), m->GetType().GetValue());
+								}
 
-								//A system was found!
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part->GetSystemByType(i.Key));
 								SystemFound = true;
 							}
 						}
@@ -79,10 +63,9 @@ void UBasePart::InitializeFunctionality()
 				}
 
 			}
-
-			//Do everything done for X + 1 for Y + 1
 			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X, j.Y + 1)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part != this)
 			{
+				//UE_LOG(LogTemp, Warning, TEXT("y + 1 is valid"));
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1)).Part->GetResourceTypes())
 				{
 					if (k.Key == i.Key)
@@ -91,6 +74,7 @@ void UBasePart::InitializeFunctionality()
 						{
 							if (l == FIntPoint(j.X, j.Y + 1))
 							{
+								//UE_LOG(LogTemp, Warning, TEXT("y + 1 system Found"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y + 1)).Part->GetSystemByType(i.Key));
 								SystemFound = true;
 							}
@@ -98,10 +82,9 @@ void UBasePart::InitializeFunctionality()
 					}
 				}
 			}
-
-			//Do everything done for X + 1 for Y -1
 			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X, j.Y - 1)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part != this)
 			{
+				//UE_LOG(LogTemp, Warning, TEXT("y - 1 is valid"));
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1)).Part->GetResourceTypes())
 				{
 					if (k.Key == i.Key)
@@ -110,6 +93,7 @@ void UBasePart::InitializeFunctionality()
 						{
 							if (l == FIntPoint(j.X, j.Y - 1))
 							{
+								//UE_LOG(LogTemp, Warning, TEXT("y - 1 system found"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X, j.Y - 1)).Part->GetSystemByType(k.Key));
 								SystemFound = true;
 							}
@@ -117,8 +101,6 @@ void UBasePart::InitializeFunctionality()
 					}
 				}
 			}
-
-			//Do everything done for X + 1 for X - 1
 			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X - 1, j.Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1, j.Y)).Part != this)
 			{
 				//UE_LOG(LogTemp, Warning, TEXT("x - 1 is valid"));
@@ -139,14 +121,15 @@ void UBasePart::InitializeFunctionality()
 				}
 			}
 		}
-
-		//If the code gets to this point without finding a system, then it will create a new resource system
 		if (SystemFound == false)
 		{
 			CreateNewSystem(i.Key);
 		}
 	}
+}
 
+void UBasePart::InitizlizeFuntionality()
+{
 	//Call BeginPlay for blueprints
 	BeginPlay();
 }
@@ -364,7 +347,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	}
 	else
 	{
-		EventCriticallyDamaged();
+		EventCriticalyDamaged();
 		for (auto& i : Systems)
 		{
 			i->RemovePart(this);
@@ -378,31 +361,23 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	}
 }
 
-//Create a new resource system
 void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 {
 
-	//Make the new system, make sure it's the right type, and add the system to the list of systems on the player character
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
 	NewSystem->SetType(ResourceType);
+	NewSystem->AddPart(this);
 	Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->AddResourceSystem(NewSystem);
-
-	//Call this to add the part to the system and double check that merges don't need to happen (see AddToSystem)
 	AddToSystem(NewSystem);
 }
 
 void UBasePart::AddToSystem(UBaseResourceSystem* System)
 {
-	//Add the part to the system
 	System->AddPart(this);
-
-	//If there is already a system of this resource type on this part, then merge System with that system
 	if (IsValid(GetSystemByType(System->GetType())) && GetSystemByType(System->GetType()) != System)
 	{
 		GetSystemByType(System->GetType())->MergeSystems(System);
 	}
-
-	//else just add it to the list of systems on this part.
 	else
 	{
 		Systems.Add(System);
