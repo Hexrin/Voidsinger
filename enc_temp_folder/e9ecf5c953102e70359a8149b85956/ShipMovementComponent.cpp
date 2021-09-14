@@ -57,7 +57,7 @@ void UShipMovementComponent::AddForce(FVector2D RelativeForceLocation, FVector2D
 	{
 		float VelocityShare = RelativeForce.Size();
 		VelocityShare = VelocityShare / (VelocityShare + DeltaVelocity.Size());
-		//DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation() + FVector(RelativeForceLocation, 0), (GetOwner()->GetActorLocation() + FVector(RelativeForceLocation, 0)) + FVector(RelativeForce.GetRotated(GetOwner()->GetActorRotation().Yaw), 0) * 10, FColor::Emerald, false, -1.0F, 0U, 1);
+		DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation() + FVector(RelativeForceLocation, 0), (GetOwner()->GetActorLocation() + FVector(RelativeForceLocation, 0)) + FVector(RelativeForce.GetRotated(GetOwner()->GetActorRotation().Yaw), 0) * 10, FColor::Emerald, false, -1.0F, 0U, 1);
 
 
 		CenterOfThrust = (1 - VelocityShare) * CenterOfThrust + RelativeForceLocation * VelocityShare;
