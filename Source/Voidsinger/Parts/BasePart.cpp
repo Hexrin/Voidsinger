@@ -17,7 +17,7 @@ UBasePart::UBasePart()
 	Cost = 1;
 	DesiredShape = TArray<FIntPoint>();
 	Bounds = FArrayBounds();
-	RotatedShape = TArray<FIntPoint>();
+	//RotatedShape = TArray<FIntPoint>();
 	ActualShape = TArray<FIntPoint>();
 	bFunctional = true;
 	bIsBeingDestroyed = false;
@@ -210,18 +210,11 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape()
 }
 const TArray<FIntPoint> UBasePart::GetDesiredShape(TEnumAsByte<EPartRotation> Rot)
 {
-	if (0 == RotatedShape.Num() || this == this->GetClass()->GetDefaultObject())
-	{
-		if (this == this->GetClass()->GetDefaultObject())
-		{
-			RotatedShape.Empty();
-		}
-
+	TArray<FIntPoint> RotatedShape = TArray<FIntPoint>();
 		for (FIntPoint PixelLoc : DesiredShape)
 		{
 			RotatedShape.Emplace(UFunctionLibrary::RotateIntPoint(PixelLoc, Rot));
 		}
-	}
 	return RotatedShape;
 }
 
