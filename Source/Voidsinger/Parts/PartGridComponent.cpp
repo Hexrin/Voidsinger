@@ -72,7 +72,7 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 //Adds a compleate part to the part grid
 bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace)
 {
-	TArray<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
+	TArray<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape();
 	return AddPart(PartialPartShape, PartType, Location, Rotation, bAlwaysPlace);
 }
 //Adds a partial part to PartPrid
@@ -80,11 +80,11 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 {
 	//Create Part
 	UBasePart* Part = NewObject<UBasePart>(this, PartType);
-	Part->InitializeVariables(Location, Rotation, this, PartType);
+	Part->InitilizeVariables(Location, Rotation, this, PartType);
 
 	//Initalize Variables
-	TArray<FIntPoint> DesiredShape = Part->GetDesiredShape();
-	FArrayBounds PartBounds = Part->GetPartBounds();
+	TArray<FIntPoint> DesiredShape = Part->GetDesiredShape(Rotation);
+	FArrayBounds PartBounds = Part->GetPartBounds(Rotation);
 
 	//Detect if placement is in valid position
 	if (GridSize.X >= Location.X + PartBounds.UpperBounds.X && -GridSize.X <= Location.X + PartBounds.LowerBounds.X
@@ -130,7 +130,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 				PartGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), FPartData(Part, 0.f, Cast<UStaticMeshComponent>(NewPlane)));
 			}
 		}
-		Part->InitializeFunctionality();
+		Part->InitizlizeFuntionality();
 		return true;
 	}
 
