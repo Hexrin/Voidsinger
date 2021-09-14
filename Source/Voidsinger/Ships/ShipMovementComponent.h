@@ -45,7 +45,13 @@ private:
 	ABaseShip* Ship;
 
 	UPROPERTY()
-	FVector2D Velocity;
+	FVector2D LinearVelocity;
+
+	UPROPERTY()
+	FVector2D DeltaVelocity;
+
+	UPROPERTY()
+	FVector2D CenterOfThrust;
 
 	UPROPERTY()
 	float AngularVelocity;
