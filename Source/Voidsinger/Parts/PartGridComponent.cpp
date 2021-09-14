@@ -46,13 +46,15 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	TMap<FIntPoint, float> NewHeatMap;
 	for (auto& Data : PartGrid)
 	{
-		float HeatAdded = 0;
+		float NewHeat = 0;
 		for (int i = 0; i < 4; i++)
 		{
 			FIntPoint TargetPoint = (i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1);
-			HeatAdded += PartGrid.FindRef(TargetPoint + Data.Key).Temperature / 8 * DeltaTime;
+			NewHeat += PartGrid.FindRef(TargetPoint + Data.Key).Temperature / 8;
 		}
-		NewHeatMap.Emplace(Data.Key, Data.Value.Temperature / 2*DeltaTime + HeatAdded < .05 ? Data.Value.Temperature / 2 + HeatAdded : 0);
+		NewHeat = Data.Value.Temperature / 2 + NewHeat;
+		//NewHeat = FMath::Lerp(Data.Value.Temperature, NewHeat, DeltaTime);
+		NewHeatMap.Emplace(Data.Key, NewHeat < .05 ? NewHeat : 0);
 	}
 
 	for (auto& Data : PartGrid)
@@ -170,14 +172,15 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 }
 void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)
 {
-	PartGrid.Find(FIntPoint(0, 0))->SetTemperature(PartGrid.Find(FIntPoint(0, 0))->Temperature + HeatToApply);
+	ApplyHeatAtLocation(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint());
+		
 	//PartGrid.FindRef(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).RoundToVector().IntPoint()).SetTemperature(HeatToApply);
 }
 void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float HeatToApply)
 {
 	if (PartGrid.Contains(RelativeLocation))
 	{
-		PartGrid.FindRef(RelativeLocation).SetTemperature(HeatToApply);
+		PartGrid.Find(RelativeLocation)->SetTemperature(PartGrid.Find(RelativeLocation)->Temperature + HeatToApply);
 	}
 	
 }
