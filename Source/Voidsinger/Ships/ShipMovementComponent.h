@@ -12,12 +12,12 @@
 class ABaseShip;
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent), BlueprintType)
 class VOIDSINGER_API UShipMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 
 	UShipMovementComponent();
 
@@ -25,9 +25,9 @@ protected:
 
 	virtual void BeginPlay() override;
 
-public:	
+public:
 
-	
+
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//declare functions
