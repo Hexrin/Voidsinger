@@ -211,8 +211,8 @@ private:
 	TArray<FIntPoint> ActualShape;
 
 	//Stores the rotated version of DesiredShape 
-	UPROPERTY()
-	TArray<FIntPoint> RotatedShape;
+	//UPROPERTY()
+	//TArray<FIntPoint> RotatedShape;
 
 	//Stores the bounds of the part
 	UPROPERTY()

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "DrawDebugHelpers.h" //remove this once debuging is compleate
+#include "Voidsinger/FunctionLibrary.h"
 #include "ShipMovementComponent.generated.h"
 
 //Forward Declaration read these: https://forums.unrealengine.com/t/circular-dependency-detected-for-filename/45749/2 & https://answers.unrealengine.com/questions/62540/calling-a-function-in-my-gamemode-from-an-actor-cy.html
@@ -45,7 +46,13 @@ private:
 	ABaseShip* Ship;
 
 	UPROPERTY()
-	FVector2D Velocity;
+	FVector2D LinearVelocity;
+
+	UPROPERTY()
+	FVector2D DeltaVelocity;
+
+	UPROPERTY()
+	FVector2D CenterOfThrust;
 
 	UPROPERTY()
 	float AngularVelocity;
