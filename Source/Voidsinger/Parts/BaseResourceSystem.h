@@ -25,8 +25,8 @@ class VOIDSINGER_API UBaseResourceSystem : public UObject
 
 public:
 
-	/*Initializer Funtions*\
-	\*--------------------*/
+	/*Initializer Functions*\
+	\*---------------------*/
 
 	//Constructor
 	UBaseResourceSystem();

@@ -19,11 +19,11 @@ UPartGridComponent::UPartGridComponent()
 	GridSize = FIntPoint(50);
 	
 	PartGrid = TMap<FIntPoint, FPartData>();
-	GridScale = 1;
-	/*if (!GridScale)
+
+	if (!GridScale)
 	{
 		GridScale = 1;
-	}*/
+	}
 	// ...
 }
 
@@ -135,8 +135,6 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 		Part->InitializeFunctionality();
 		return true;
 	}
-
-	Part->DestroyPart();
 	return false;
 }
 
