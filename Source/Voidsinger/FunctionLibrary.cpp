@@ -124,3 +124,9 @@ bool UFunctionLibrary::PointsConnectedWithFunctionality(TMap<FIntPoint, FPartDat
 
 	return ReturnValue;
 }
+
+
+FVector UFunctionLibrary::SafeDivide(FVector V1, FVector V2)
+{
+	return FVector((V2.X != 0.0f) ? (V1.X / V2.X) : 0.0f, (V2.Y != 0.0f) ? (V1.Y / V2.Y) : 0.0f, (V2.Z != 0.0f) ? (V1.Z / V2.Z) : 0.0f);
+}

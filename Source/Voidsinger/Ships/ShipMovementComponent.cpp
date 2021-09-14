@@ -11,7 +11,7 @@ UShipMovementComponent::UShipMovementComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	Ship = (ABaseShip*)GetOwner();
 	AngularVelocity = 0;
-	Velocity = FVector2D(0, 0);
+	LinearVelocity = FVector2D(0, 0);
 
 }
 
@@ -29,47 +29,47 @@ void UShipMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (!DeltaVelocity.IsNearlyZero(DeltaTime / 25))
+	{
+		FVector2D LeverDirection = (Ship->PartGrid->GetCenterOfMass() - CenterOfThrust).GetSafeNormal();
+		if (LeverDirection.IsNearlyZero())
+		{
+			LeverDirection = DeltaVelocity.GetSafeNormal();
+		}
+		UE_LOG(LogTemp, Warning, TEXT("line dot=%f"), FVector2D::DotProduct(LeverDirection, DeltaVelocity));
 
-	//transform the ship by the velocity and angular velocity
-	Ship->SetActorLocation(Ship->GetActorLocation() + FVector(Velocity.X, Velocity.Y, 0) * DeltaTime);
+		LinearVelocity += ((FVector2D::DotProduct(LeverDirection, DeltaVelocity) * LeverDirection) / Ship->PartGrid->GetMass()).GetRotated(GetOwner()->GetActorRotation().Yaw);
+		AngularVelocity -= FVector2D::DotProduct(LeverDirection.GetRotated(90), DeltaVelocity) * (Ship->PartGrid->GetCenterOfMass() - CenterOfThrust).Size() / Ship->PartGrid->GetMass();
+		//transform the ship by the velocity and angular velocity
+		
+	}
+	Ship->SetActorLocation(Ship->GetActorLocation() + FVector(LinearVelocity.X, LinearVelocity.Y, 0) * DeltaTime);
 	Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0) * DeltaTime);
 
+	DeltaVelocity.Set(0, 0);
+	CenterOfThrust.Set(0, 0);
 }
 
 //When a force is added to the ship
-void UShipMovementComponent::AddForce(FVector2D ForceLocation, FVector2D Force)
+void UShipMovementComponent::AddForce(FVector2D RelativeForceLocation, FVector2D RelativeForce)
 {
-	FVector2D AdjForce = Force.GetRotated(-1*GetOwner()->GetActorRotation().Yaw);
-	///UE_LOG(LogTemp, Warning, TEXT("???? x=%f, y=%f"), Ship->PartGrid->GetCenterOfMass().X, Ship->PartGrid->GetCenterOfMass().Y)
-	//Distance vector is the distance from the center of mass to the force location.
-	FVector2D DistanceVector = Ship->PartGrid->GetCenterOfMass() - ForceLocation;
-	//DrawDebugLine(GetWorld(), FVector(Ship->PartGrid->GetCenterOfMass(), 0) + GetOwner()->GetActorLocation(), FVector(DistanceVector, 0) + GetOwner()->GetActorLocation(), FColor::Red, false, 0.f, 0U, .5);
-	//DrawDebugLine(GetWorld(), FVector(ForceLocation, 0)+GetOwner()->GetActorLocation(), FVector(ForceLocation + AdjForce *100, 0) + GetOwner()->GetActorLocation(), FColor::Cyan, false, 0.f,0U, .25);
-
-	//Account for exactly hitting the center of mass, in which case there would be no rotation and the full 
-	//force would be used.
-	if (DistanceVector.IsNearlyZero())
+	if (!RelativeForce.IsZero())
 	{
-		Velocity += Force / Ship->PartGrid->GetMass();
-		//UE_LOG(LogTemp, Warning, TEXT("????????"));
-	}
+		float VelocityShare = RelativeForce.Size();
+		VelocityShare = VelocityShare / (VelocityShare + DeltaVelocity.Size());
+		//DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation() + FVector(RelativeForceLocation, 0), (GetOwner()->GetActorLocation() + FVector(RelativeForceLocation, 0)) + FVector(RelativeForce.GetRotated(GetOwner()->GetActorRotation().Yaw), 0) * 10, FColor::Emerald, false, -1.0F, 0U, 1);
 
-	//calculate the change in velocity and change in angular velocity based off the force
-	else
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("dot=%f, dist x=%f, y=%f"), FVector2D::DotProduct(DistanceVector.GetSafeNormal(), Force), DistanceVector.GetSafeNormal().X, DistanceVector.GetSafeNormal().Y);
-		//these 2 lines of math took literally 7 hours to figure out.
-		Velocity += ((FVector2D::DotProduct(DistanceVector.GetSafeNormal(), AdjForce) * DistanceVector.GetSafeNormal()) / Ship->PartGrid->GetMass()).GetRotated(GetOwner()->GetActorRotation().Yaw);
-		AngularVelocity -= FVector2D::DotProduct(DistanceVector.GetRotated(90).GetSafeNormal(), AdjForce) * DistanceVector.Size() / Ship->PartGrid->GetMass();
-		//UE_LOG(LogTemp, Warning, TEXT("Linear dot=%f, Angular dot x=%f"), FVector2D::DotProduct(DistanceVector.GetSafeNormal(), AdjForce), FVector2D::DotProduct(DistanceVector.GetRotated(90).GetSafeNormal(), AdjForce));
-	}
 
-	
+		CenterOfThrust = (1 - VelocityShare) * CenterOfThrust + RelativeForceLocation * VelocityShare;
+
+		UE_LOG(LogTemp, Warning, TEXT("share =%f"), VelocityShare);
+		DeltaVelocity += RelativeForce;
+	}
 }
 
 FVector2D UShipMovementComponent::GetVelocity()
 {
-	return Velocity;
+	return LinearVelocity;
 }
 
 float UShipMovementComponent::GetAngularVelocity()

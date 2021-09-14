@@ -27,4 +27,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	static bool PointsConnectedWithFunctionality(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint);
 	static bool PointsConnectedWithFunctionality(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray);
+
+	UFUNCTION(BlueprintCallable)
+	static FVector SafeDivide(FVector V1, FVector V2);
 };
