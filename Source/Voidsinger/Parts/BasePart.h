@@ -49,14 +49,19 @@ public:
 	UFUNCTION()
 	void InitializeFunctionality();
 	
+	//Used to get world. Also gives child BPs acces to the Kismet Systems Library
 	UWorld* GetWorld() const;
+
+	//Destroys the part. Does not call the blueprint funciton
+	UFUNCTION()
+	void DestroyPart();
 
 protected:
 	//Begin Play for use in blueprints
 	UFUNCTION(BlueprintImplementableEvent)
 	void BeginPlay();
 
-
+	
 
 
 	/*--------Tick--------*\
@@ -74,7 +79,7 @@ public:
 protected:
 	//Event Tick for use in blueprints
 	UFUNCTION(BlueprintImplementableEvent)
-	void EventTick(float DeltaTime);
+	void OnTick(float DeltaTime);
 
 	
 
@@ -152,15 +157,15 @@ public:
 
 	//Called when a part is completely destroyed
 	UFUNCTION(BlueprintImplementableEvent, meta=(ShortToolTip = "Called when a part is completely destroyed"))
-	void EventDestroyed();
+	void OnDestroyed();
 
 	//Called when a part is damaged
 	UFUNCTION(BlueprintImplementableEvent, meta = (ShortToolTip = "Called when a part is damaged"))
-	void EventDamaged();
+	void OnDamaged();
 
 	//Called when a part is damaged in such a way that it will no longer be functional
 	UFUNCTION(BlueprintImplementableEvent, meta = (ShortToolTip = "Called when a part is damaged in such a way that it will no longer be functional"))
-	void EventCriticallyDamaged();
+	void OnCriticallyDamaged();
 
 	//Remove a pixel form the actual shape of the part
 	UFUNCTION(BlueprintCallable)
@@ -221,8 +226,8 @@ private:
 	TArray<FIntPoint> ActualShape;
 
 	//Stores the rotated version of DesiredShape 
-	UPROPERTY()
-	TArray<FIntPoint> RotatedShape;
+	//UPROPERTY()
+	//TArray<FIntPoint> RotatedShape;
 
 	//Stores the bounds of the part
 	UPROPERTY()
