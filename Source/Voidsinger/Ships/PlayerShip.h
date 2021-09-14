@@ -38,6 +38,8 @@ protected:
 public:
 	APlayerShip();
 	
+	virtual void Tick(float DeltaTime) override;
+
 	UFUNCTION(BlueprintPure)
 	TMap<TEnumAsByte<EResourceType>, float> GetTravelCost(class UStarSystemData* Target);
 
@@ -94,9 +96,12 @@ public:
 	void AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong);
 
 	UPROPERTY()
+	bool ShouldVoidsongTimerTick = false;
+
+	UPROPERTY()
 	float VoidsongResetDelay = 3.0;
 
 	UPROPERTY()
-	sfloat ResetVoidsongTimer = 0;
+	float ResetVoidsongTimer = 0;
 
 };

@@ -33,6 +33,21 @@ APlayerShip::APlayerShip()
     }
 }
 
+void APlayerShip::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    if (ShouldVoidsongTimerTick)
+    {
+        ResetVoidsongTimer += DeltaTime;
+        if (ResetVoidsongTimer >= VoidsongResetDelay)
+        {
+            ResetVoidsong();
+            ResetVoidsongTimer = 0.0;
+        }
+    }
+}
+
 TMap<TEnumAsByte<EResourceType>, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
 {
     TMap<TEnumAsByte<EResourceType>, float> Costs;
@@ -81,12 +96,14 @@ void APlayerShip::Voidsong5Call()
 void APlayerShip::AddVoidsongInput(int input)
 {
     VoidsongCombo.Emplace(input);
+    ShouldVoidsongTimerTick = true;
 
     for (auto& i : AvailableVoidsongs)
     {
         if (i->ActivationCombo == VoidsongCombo)
         {
             i->Activate();
+            ResetVoidsong();
         }
     }
 
@@ -95,6 +112,7 @@ void APlayerShip::AddVoidsongInput(int input)
 void APlayerShip::ResetVoidsong()
 {
     VoidsongCombo.Empty();
+    ShouldVoidsongTimerTick = false;
 }
 
 void APlayerShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
