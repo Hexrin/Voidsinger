@@ -17,7 +17,7 @@ UBasePart::UBasePart()
 	Cost = 1;
 	DesiredShape = TArray<FIntPoint>();
 	Bounds = FArrayBounds();
-	//RotatedShape = TArray<FIntPoint>();
+	RotatedShape = TArray<FIntPoint>();
 	ActualShape = TArray<FIntPoint>();
 	bFunctional = true;
 	bIsBeingDestroyed = false;
@@ -172,11 +172,6 @@ UWorld* UBasePart::GetWorld() const
 
 
 
-void UBasePart::DestroyPart()
-{
-	bIsBeingDestroyed = ConditionalBeginDestroy();
-}
-
 /*--------Tick--------*\
 \*--------------------*/
 void UBasePart::Tick(float DeltaTime)
@@ -184,7 +179,7 @@ void UBasePart::Tick(float DeltaTime)
 	if (!bIsBeingDestroyed)
 	{
 		//Call Blueprint Implementable Event
-		OnTick(DeltaTime);
+		EventTick(DeltaTime);
 	}
 }
 
@@ -210,11 +205,29 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape()
 }
 const TArray<FIntPoint> UBasePart::GetDesiredShape(TEnumAsByte<EPartRotation> Rot)
 {
-	TArray<FIntPoint> RotatedShape = TArray<FIntPoint>();
-		for (FIntPoint PixelLoc : DesiredShape)
+	if (0 == RotatedShape.Num() || this != this->GetClass()->GetDefaultObject())
+	{
+		for (int i = 0; i < DesiredShape.Num(); i++)
 		{
-			RotatedShape.Emplace(UFunctionLibrary::RotateIntPoint(PixelLoc, Rot));
+			switch (Rot)
+			{
+			case Degrees0:
+				RotatedShape.Emplace(DesiredShape[i]);
+				break;
+			case Degrees90:
+				RotatedShape.Emplace(FIntPoint(-DesiredShape[i].Y, DesiredShape[i].X));
+				break;
+			case Degrees180:
+				RotatedShape.Emplace(DesiredShape[i] * -1);
+				break;
+			case Degrees270:
+				RotatedShape.Emplace(FIntPoint(DesiredShape[i].Y, -DesiredShape[i].X));
+				break;
+			default:
+				break;
+			}
 		}
+	}
 	return RotatedShape;
 }
 
@@ -229,7 +242,7 @@ const FArrayBounds UBasePart::GetPartBounds()
 }
 const FArrayBounds UBasePart::GetPartBounds(TEnumAsByte<EPartRotation> Rot)
 {
-	if ((Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds) || this == this->GetClass()->GetDefaultObject())
+	if (Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds)
 	{
 		
 		for (FIntPoint i : GetDesiredShape(Rot))
@@ -340,7 +353,7 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 {
 	ActualShape.Remove(RelativeLoc);
-	OnDamaged();
+	EventDamaged();
 
 	if (IsFunctional())
 	{
@@ -351,7 +364,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	}
 	else
 	{
-		OnCriticallyDamaged();
+		EventCriticallyDamaged();
 		for (auto& i : Systems)
 		{
 			i->RemovePart(this);
@@ -360,8 +373,8 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	}
 	if (ActualShape.Num() <= 0)
 	{
-		OnDestroyed();
-		DestroyPart();
+		EventDestroyed();
+		bIsBeingDestroyed = ConditionalBeginDestroy();
 	}
 }
 
