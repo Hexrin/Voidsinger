@@ -25,6 +25,22 @@ UWorld* UBaseVoidsong::GetWorld() const
 	// In all other cases...
 	return GetOuter()->GetWorld();
 }
+void UBaseVoidsong::Tick(float DeltaTime)
+{
+	if (!bIsBeingDestroyed)
+	{
+		//Call Blueprint Implementable Event
+		EventTick(DeltaTime);
+	}
+}
+bool UBaseVoidsong::IsTickable() const
+{
+	return (!IsTemplate(RF_ClassDefaultObject));
+}
+TStatId UBaseVoidsong::GetStatId() const
+{
+	return TStatId();
+}
 void UBaseVoidsong::Activate()
 {
 	if (CanActivateAgain)
@@ -39,16 +55,6 @@ void UBaseVoidsong::Activate()
 		FTimerHandle DurationTimer;
 		GetWorld()->GetTimerManager().SetTimer(DurationTimer, this, &UBaseVoidsong::DurationDelay, Duration);
 	}
-}
-
-void UBaseVoidsong::Effect()
-{
-	//This is where the effect of the voidsong would be created
-}
-
-void UBaseVoidsong::Deactivate()
-{
-	//This is where the effect would be undone
 }
 
 void UBaseVoidsong::DurationDelay()

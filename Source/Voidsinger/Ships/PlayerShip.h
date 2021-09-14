@@ -4,14 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "BaseShip.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/StarSystemData.h"
+#include "Voidsinger/Voidsongs/BaseVoidsong.h"
 #include "Camera/CameraComponent.h"
 #include "PlayerShip.generated.h"
 
 /**
  * 
  */
+
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVoidsongDelegate, TArray<int>, ActivationSequence);
+
 UCLASS()
 class VOIDSINGER_API APlayerShip : public ABaseShip
 {
@@ -45,4 +50,53 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 	
+	/*Voidsong input actions*\
+	\*----------------------*/
+
+	//Input actions
+	UFUNCTION()
+	void Voidsong1Call();
+
+	UFUNCTION()
+	void Voidsong2Call();
+
+	UFUNCTION()
+	void Voidsong3Call();
+
+	UFUNCTION()
+	void Voidsong4Call();
+
+	UFUNCTION()
+	void Voidsong5Call();
+
+	/*Voidsong activation*\
+	\*-------------------*/
+
+	UFUNCTION()
+	void AddVoidsongInput(int input);
+
+	UFUNCTION()
+	void ResetVoidsong();
+
+	UPROPERTY()
+	TArray<int> VoidsongCombo;
+
+	//UPROPERTY()
+	//FVoidsongDelegate OnVoidsongDelegate;
+
+	UPROPERTY()
+	TArray<UBaseVoidsong*> AvailableVoidsongs;
+
+	UFUNCTION()
+	void LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs);
+
+	UFUNCTION()
+	void AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong);
+
+	UPROPERTY()
+	float VoidsongResetDelay = 3.0;
+
+	UPROPERTY()
+	sfloat ResetVoidsongTimer = 0;
+
 };
