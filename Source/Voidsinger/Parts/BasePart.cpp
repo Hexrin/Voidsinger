@@ -31,7 +31,7 @@ void UBasePart::InitializeVariables(FIntPoint Loc, TEnumAsByte<EPartRotation> Ro
 	PartGridComponent = PartGrid;
 	ActualShape = GetDesiredShape();
 
-	
+
 }
 
 void UBasePart::InitializeFunctionality()

@@ -232,7 +232,6 @@ TEnumAsByte<EResourceType> UBaseResourceSystem::GetType()
 
 void UBaseResourceSystem::SetType(TEnumAsByte<EResourceType> Type)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("New Resource System Type = %i"), Type.GetValue());
 	SystemType = Type;
 }
 
