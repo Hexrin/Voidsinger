@@ -4,10 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "BaseShip.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/StarSystemData.h"
-#include "Voidsinger/Voidsongs/BaseVoidsong.h"
 #include "Camera/CameraComponent.h"
 #include "PlayerShip.generated.h"
 
@@ -141,4 +139,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	class UStarSystemData* CurrentStarSystem;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UCameraComponent* Camera;
+	
 };

@@ -67,8 +67,8 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 			//For each in NumbersFound.Num() - 1 because of how PointsConnected works
 			for (int i = 0; i < NumbersFound.Num() - 1; i++)
 			{
-				//This checks if the current index is connected to the next index.
-				//If there's ever a disconnection here, there is a disconnection. 
+				//This needs to be improved, but right now it checks if the current index is connected to the next index.
+				//actually it might not need to be improved but i need to think about it
 				if (!UFunctionLibrary::PointsConnectedWithFunctionality(GetMapFromConnectedParts(), NumbersFound[i], NumbersFound[i + 1]))
 				{
 					//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
@@ -232,6 +232,7 @@ TEnumAsByte<EResourceType> UBaseResourceSystem::GetType()
 
 void UBaseResourceSystem::SetType(TEnumAsByte<EResourceType> Type)
 {
+	//UE_LOG(LogTemp, Warning, TEXT("New Resource System Type = %i"), Type.GetValue());
 	SystemType = Type;
 }
 

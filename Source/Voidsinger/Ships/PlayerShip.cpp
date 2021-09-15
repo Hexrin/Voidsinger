@@ -5,7 +5,6 @@
 
 APlayerShip::APlayerShip()
 {
-
     Pixels=55;
     
     if (!CameraHeight)
@@ -136,14 +135,5 @@ void APlayerShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 {
     UBaseVoidsong* bruhVar = NewObject<UBaseVoidsong>(this, Voidsong);
     AvailableVoidsongs.Emplace(bruhVar);
-
-    if (IsValid(bruhVar))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("New object is valid."));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("new object is not valid??"));
-    }
 }
 

@@ -53,31 +53,31 @@ struct VOIDSINGER_API FPartData
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UBasePart* Part;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBasePart* Part;
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float Temperature = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Temperature = 0;
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UStaticMeshComponent* PixelMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* PixelMesh;
 
-		FPartData()
-		{
-			FPartData(nullptr, 0, nullptr);
-		}
+	FPartData()
+	{
+		FPartData(nullptr, 0, nullptr);
+	}
 
-		FPartData(UBasePart* PartRef, float Temp, UStaticMeshComponent* MeshRef)
-		{
-			Part = PartRef;
-			Temperature = Temp;
-			PixelMesh = MeshRef;
-		}
+	FPartData(UBasePart* PartRef, float Temp, UStaticMeshComponent* MeshRef)
+	{
+		Part = PartRef;
+		Temperature = Temp;
+		PixelMesh = MeshRef;
+	}
 
-		void SetTemperature(const float NewTemp)
-		{
-			Temperature = NewTemp;
-		}
+	void SetTemperature(const float NewTemp)
+	{
+		Temperature = NewTemp;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -117,8 +117,8 @@ struct VOIDSINGER_API FUBasePartArray
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<UBasePart*> UBasePartArray;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UBasePart*> UBasePartArray;
 
 	FUBasePartArray()
 	{
