@@ -22,15 +22,6 @@ APlayerShip::APlayerShip()
 
     AutoPossessPlayer = EAutoReceiveInput::Player0;
 
-    //Setup Voidsong inputs
-    if (InputComponent)
-    {
-        InputComponent->BindAction("Voidsong1", IE_Pressed, this, &APlayerShip::Voidsong1Call);
-        InputComponent->BindAction("Voidsong2", IE_Pressed, this, &APlayerShip::Voidsong2Call);
-        InputComponent->BindAction("Voidsong3", IE_Pressed, this, &APlayerShip::Voidsong3Call);
-        InputComponent->BindAction("Voidsong4", IE_Pressed, this, &APlayerShip::Voidsong4Call);
-        InputComponent->BindAction("Voidsong5", IE_Pressed, this, &APlayerShip::Voidsong5Call);
-    }
 }
 
 void APlayerShip::Tick(float DeltaTime)
@@ -68,6 +59,18 @@ UStarSystemData* APlayerShip::GetCurrentStarSystem()
     return CurrentStarSystem;
 }
 
+void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+    //Set up Voidsong bindings
+    InputComponent->BindAction("Voidsong1", IE_Pressed, this, &APlayerShip::Voidsong1Call);
+    InputComponent->BindAction("Voidsong2", IE_Pressed, this, &APlayerShip::Voidsong2Call);
+    InputComponent->BindAction("Voidsong3", IE_Pressed, this, &APlayerShip::Voidsong3Call);
+    InputComponent->BindAction("Voidsong4", IE_Pressed, this, &APlayerShip::Voidsong4Call);
+    InputComponent->BindAction("Voidsong5", IE_Pressed, this, &APlayerShip::Voidsong5Call);
+}
+
 void APlayerShip::Voidsong1Call()
 {
     AddVoidsongInput(1);
@@ -96,12 +99,17 @@ void APlayerShip::Voidsong5Call()
 void APlayerShip::AddVoidsongInput(int input)
 {
     VoidsongCombo.Emplace(input);
+    ResetVoidsongTimer = 0;
     ShouldVoidsongTimerTick = true;
 
     for (auto& i : AvailableVoidsongs)
     {
+        for (auto& j : i->ActivationCombo)
+        {
+        }
         if (i->ActivationCombo == VoidsongCombo)
         {
+            UE_LOG(LogTemp, Warning, TEXT("Activate should be called"));
             i->Activate();
             ResetVoidsong();
         }
@@ -111,6 +119,7 @@ void APlayerShip::AddVoidsongInput(int input)
 
 void APlayerShip::ResetVoidsong()
 {
+    UE_LOG(LogTemp, Warning, TEXT("ResetVoidsong"));
     VoidsongCombo.Empty();
     ShouldVoidsongTimerTick = false;
 }
@@ -125,6 +134,16 @@ void APlayerShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
 
 void APlayerShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 {
-    AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(Voidsong));
+    UBaseVoidsong* bruhVar = NewObject<UBaseVoidsong>(this, Voidsong);
+    AvailableVoidsongs.Emplace(bruhVar);
+
+    if (IsValid(bruhVar))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("New object is valid."));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("new object is not valid??"));
+    }
 }
 

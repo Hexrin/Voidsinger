@@ -5,7 +5,6 @@
 
 UBaseVoidsong::UBaseVoidsong()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Resource system init"));
 }
 
 UWorld* UBaseVoidsong::GetWorld() const

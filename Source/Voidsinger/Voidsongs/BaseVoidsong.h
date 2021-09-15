@@ -11,8 +11,8 @@
 /**
  * 
  */
-UCLASS()
-class VOIDSINGER_API UBaseVoidsong : public UObject
+UCLASS(BlueprintType, Blueprintable)
+class VOIDSINGER_API UBaseVoidsong : public UObject, public FTickableGameObject
 {
 	GENERATED_BODY()
 	
@@ -35,13 +35,13 @@ public:
 	\*--------------------*/
 
 	//Called every frame
-	virtual void Tick(float DeltaTime);
+	virtual void Tick(float DeltaTime) override;
 
 	//Determines if this part will tick
-	virtual bool IsTickable() const;
+	virtual bool IsTickable() const override;
 
 	//Is a nesseary part of tick component
-	virtual TStatId GetStatId() const;
+	virtual TStatId GetStatId() const override;
 
 public:
 	//Event Tick for use in blueprints
@@ -79,12 +79,15 @@ public:
 	\*------------------*/
 
 	//The duration of the voidsong.
+	UPROPERTY(EditDefaultsOnly)
 	float Duration;
 
 	//The cooldown of the voidsong.
+	UPROPERTY(EditDefaultsOnly)
 	float Cooldown;
 
 	//The activation key combo of the voidsong.
+	UPROPERTY(EditDefaultsOnly)
 	TArray<int> ActivationCombo;
 
 	UPROPERTY()
@@ -99,5 +102,5 @@ public:
 private:
 	//Used to check if the voidsong is off cooldown.
 	UPROPERTY()
-	bool CanActivateAgain;
+	bool CanActivateAgain = true;
 };

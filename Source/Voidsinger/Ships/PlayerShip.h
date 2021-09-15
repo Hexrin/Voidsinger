@@ -52,6 +52,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 	
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 	/*Voidsong input actions*\
 	\*----------------------*/
 
@@ -86,13 +89,13 @@ public:
 	//UPROPERTY()
 	//FVoidsongDelegate OnVoidsongDelegate;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UBaseVoidsong*> AvailableVoidsongs;
 
 	UFUNCTION()
 	void LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong);
 
 	UPROPERTY()
