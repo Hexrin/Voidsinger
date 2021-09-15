@@ -23,7 +23,7 @@ class VOIDSINGER_API UBaseVoidsong : public UObject, public FTickableGameObject
 public:
 
 	/*Initializer Functions*\
-	\*--------------------*/
+	\*---------------------*/
 
 	//Constructor
 	UBaseVoidsong();

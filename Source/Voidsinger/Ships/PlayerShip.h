@@ -15,45 +15,48 @@
  * 
  */
 
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVoidsongDelegate, TArray<int>, ActivationSequence);
-
 UCLASS()
 class VOIDSINGER_API APlayerShip : public ABaseShip
 {
 	GENERATED_BODY()
 	
 
-protected:
-	
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int Pixels;
-
-	UPROPERTY(EditAnywhere)
-	float CameraHeight;
-
-	UPROPERTY(VisibleAnywhere)
-	class UStarSystemData* CurrentStarSystem;
 
 public:
+
+	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
+	//             FUNCTIONS             ||
+	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
+
+	/*Initializer Functions*\
+	\*---------------------*/
+
+	//Constructor
 	APlayerShip();
 	
+	//Tick
 	virtual void Tick(float DeltaTime) override;
 
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	/*Getter Functions*\
+	\*----------------*/
+
+	//Gets the travel cost of going to the given start system
 	UFUNCTION(BlueprintPure)
 	TMap<TEnumAsByte<EResourceType>, float> GetTravelCost(class UStarSystemData* Target);
 
-	UFUNCTION(BlueprintCallable)
-	bool TravelToStarSystem(class UStarSystemData* Target);
-
+	//Gets the start system the player is currently in
 	UFUNCTION(BlueprintPure)
 	class UStarSystemData* GetCurrentStarSystem();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class UCameraComponent* Camera;
-	
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	/*Traveling Functions*\
+	\*-------------------*/
+
+	//Travels to the start system given
+	UFUNCTION(BlueprintCallable)
+	bool TravelToStarSystem(class UStarSystemData* Target);
 
 	/*Voidsong input actions*\
 	\*----------------------*/
@@ -74,37 +77,68 @@ public:
 	UFUNCTION()
 	void Voidsong5Call();
 
-	/*Voidsong activation*\
+	/*Voidsong Management*\
 	\*-------------------*/
 
+	//Records the incoming voidsong input
 	UFUNCTION()
 	void AddVoidsongInput(int input);
 
+	//Clears the Voidsong combo so if the player doesn't play for a bit it will just reset
 	UFUNCTION()
 	void ResetVoidsong();
 
-	UPROPERTY()
-	TArray<int> VoidsongCombo;
-
-	//UPROPERTY()
-	//FVoidsongDelegate OnVoidsongDelegate;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<UBaseVoidsong*> AvailableVoidsongs;
-
+	//Creates Voidsong objects with the given classes of Voidsongs and adds them to the AvaialableVoidsongs. Will be useful for loading from a save game.
 	UFUNCTION()
 	void LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs);
 
+	//Adds a new Voidsong to the AvailableVoidsongs. Will be useful for gaining a new voidsong.
 	UFUNCTION(BlueprintCallable)
 	void AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong);
 
-	UPROPERTY()
-	bool ShouldVoidsongTimerTick = false;
+	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
+	//             VARIABLES             ||
+	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
 
-	UPROPERTY()
+
+	/*Voidsong Timer*\
+	\*--------------*/
+
+	//The time the player has to wait without playing to reset the Voidsong combo
+	UPROPERTY(EditDefaultsOnly)
 	float VoidsongResetDelay = 3.0;
 
+	//The time for counting to VoidsongResetDelay
 	UPROPERTY()
 	float ResetVoidsongTimer = 0;
 
+	//Boolean for the Voidsong Timer
+	UPROPERTY()
+	bool ShouldVoidsongTimerTick = false;
+
+	/*Voidsong Management*\
+	\*-------------------*/
+
+	//Array of the inputs that the player has put in to play voidsongs
+	UPROPERTY()
+	TArray<int> VoidsongCombo;
+
+	//Array of the voidsongs that are available to play
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UBaseVoidsong*> AvailableVoidsongs;
+
+	//idk about everythings after this so liam should commnt these
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UCameraComponent* Camera;
+
+protected:
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int Pixels;
+
+	UPROPERTY(EditAnywhere)
+	float CameraHeight;
+
+	UPROPERTY(VisibleAnywhere)
+	class UStarSystemData* CurrentStarSystem;
 };
