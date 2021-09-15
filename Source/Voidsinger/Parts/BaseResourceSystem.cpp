@@ -39,6 +39,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 	{
 		TArray<FIntPoint> NumbersFound;
 
+		//Check for previously adjacent parts
 		for (auto& i : ConnectedParts)
 		{
 			if (i->GetShape().Contains(FIntPoint(Pixel.X + 1, Pixel.Y)))
@@ -58,12 +59,20 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 				NumbersFound.Add(FIntPoint(Pixel.X, Pixel.Y - 1));
 			}
 		}
+
+		//If NumbersFound is less than 2 then you don't need to bother checking anything since there will be no breaks in the system
 		if (NumbersFound.Num() > 1)
 		{
+
+			//For each in NumbersFound.Num() - 1 because of how PointsConnected works
 			for (int i = 0; i < NumbersFound.Num() - 1; i++)
 			{
+				//This checks if the current index is connected to the next index.
+				//If there's ever a disconnection here, there is a disconnection. 
 				if (!UFunctionLibrary::PointsConnectedWithFunctionality(GetMapFromConnectedParts(), NumbersFound[i], NumbersFound[i + 1]))
 				{
+					//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
+					//also not be connected.
 					TArray<FIntPoint> Temp;
 					Temp.Emplace(NumbersFound[i + 1]);
 					TMap<FIntPoint, FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
@@ -73,6 +82,8 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 						RemovedSet.Emplace(ConnectedPartsMap.Find(j)->Part);
 					}
 					CreateNewSystem(RemovedSet.Array());
+
+					//since there will never be more than 1 system removed at a time, this should not need to continue after this point
 					break;
 				}
 			}
@@ -120,50 +131,99 @@ void UBaseResourceSystem::RemoveSection(TArray<UBasePart*> RemovedParts)
 	}
 }
 
+//Finds the shape that is connected to the shape given
 TArray<FIntPoint> UBaseResourceSystem::FindConnectedShape(TArray<UBasePart*> Parts, TArray<FIntPoint> Shape)
 {
 
+	//Initalize ConnectedPartsMap here so GetMapFromConnectedParts doesn't have to be called every single time
 	TMap<FIntPoint, FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
+
+	//New shape will return the entire connected shape, indcluding the starting shape
 	TArray<FIntPoint> NewShape = Shape;
 
+	//Check each pixel of the shape
 	for (auto& i : Shape)
 	{
+		//If the shape does NOT contain the checked location
 		if (!Shape.Contains(FIntPoint(i.X + 1, i.Y)))
 		{
+			//And the connected parts ARE at that location
 			if (ConnectedPartsMap.Contains(FIntPoint(i.X + 1, i.Y)))
 			{
+				//And the pixel at that location is functional
 				if (ConnectedPartsMap.Find(FIntPoint(i.X + 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X + 1, i.Y)))
 				{
+					//Add that location to the new shape, because it is connected
 					NewShape.Emplace(FIntPoint(i.X + 1, i.Y));
+				}
+			}
+		}
+
+		//Do the same thing done for X + 1 for X - 1
+		if (!Shape.Contains(FIntPoint(i.X - 1, i.Y)))
+		{
+			if (ConnectedPartsMap.Contains(FIntPoint(i.X - 1, i.Y)))
+			{
+				if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X - 1, i.Y)))
+				{
+					NewShape.Emplace(FIntPoint(i.X - 1, i.Y));
+				}
+			}
+		}
+
+		//Do the same thing done for X + 1 for Y + 1
+		if (!Shape.Contains(FIntPoint(i.X, i.Y + 1)))
+		{
+			if (ConnectedPartsMap.Contains(FIntPoint(i.X, i.Y + 1)))
+			{
+				if (ConnectedPartsMap.Find(FIntPoint(i.X, i.Y + 1))->Part->IsPixelFunctional(FIntPoint(i.X , i.Y + 1)))
+				{
+					NewShape.Emplace(FIntPoint(i.X, i.Y + 1));
+				}
+			}
+		}
+
+		//Do the same thing done for X + 1 for Y - 1
+		if (!Shape.Contains(FIntPoint(i.X, i.Y - 1)))
+		{
+			if (ConnectedPartsMap.Contains(FIntPoint(i.X, i.Y - 1)))
+			{
+				if (ConnectedPartsMap.Find(FIntPoint(i.X, i.Y - 1))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y - 1)))
+				{
+					NewShape.Emplace(FIntPoint(i.X, i.Y - 1));
 				}
 			}
 		}
 	}
 
+	//If the new shape has changed at all
 	if (NewShape != Shape)
 	{
+		//Continue to check for connections by calling the function recursively.
 		NewShape = FindConnectedShape(Parts, NewShape);
 	}
 
+	//Once everything has figured itself out, return the New Shape
 	return NewShape;
 }
 
-bool UBaseResourceSystem::AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2)
-{
-
-	for (int i = 0; i < Shape1.Num(); i++)
-	{
-		for (int j = 0; j < Shape2.Num(); i++)
-		{
-			if (UKismetMathLibrary::InRange_FloatFloat(float(Shape1[i].X), float(Shape2[j].X - 1), float(Shape2[j].X + 1)) && UKismetMathLibrary::InRange_FloatFloat(float(Shape1[i].Y), float(Shape2[j].Y - 1), float(Shape2[j].Y + 1)))
-			{
-				return true;
-			}
-		}
-	}
-	
-	return false;
-}
+//Deprecated function to check if 2 shapes are adjacent to each other.
+//bool UBaseResourceSystem::AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2)
+//{
+//
+//	for (int i = 0; i < Shape1.Num(); i++)
+//	{
+//		for (int j = 0; j < Shape2.Num(); i++)
+//		{
+//			if (UKismetMathLibrary::InRange_FloatFloat(float(Shape1[i].X), float(Shape2[j].X - 1), float(Shape2[j].X + 1)) && UKismetMathLibrary::InRange_FloatFloat(float(Shape1[i].Y), float(Shape2[j].Y - 1), float(Shape2[j].Y + 1)))
+//			{
+//				return true;
+//			}
+//		}
+//	}
+//	
+//	return false;
+//}
 
 TEnumAsByte<EResourceType> UBaseResourceSystem::GetType()
 {
@@ -172,7 +232,6 @@ TEnumAsByte<EResourceType> UBaseResourceSystem::GetType()
 
 void UBaseResourceSystem::SetType(TEnumAsByte<EResourceType> Type)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("New Resource System Type = %i"), Type.GetValue());
 	SystemType = Type;
 }
 

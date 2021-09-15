@@ -19,11 +19,11 @@ UPartGridComponent::UPartGridComponent()
 	GridSize = FIntPoint(50);
 	
 	PartGrid = TMap<FIntPoint, FPartData>();
-	GridScale = 1;
-	/*if (!GridScale)
+
+	if (!GridScale)
 	{
 		GridScale = 1;
-	}*/
+	}
 	// ...
 }
 
@@ -46,13 +46,15 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	TMap<FIntPoint, float> NewHeatMap;
 	for (auto& Data : PartGrid)
 	{
-		float HeatAdded = 0;
+		float NewHeat = 0;
 		for (int i = 0; i < 4; i++)
 		{
 			FIntPoint TargetPoint = (i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1);
-			HeatAdded += PartGrid.FindRef(TargetPoint + Data.Key).Temperature / 8 * DeltaTime;
+			NewHeat += PartGrid.FindRef(TargetPoint + Data.Key).Temperature / 8;
 		}
-		NewHeatMap.Emplace(Data.Key, Data.Value.Temperature / 2*DeltaTime + HeatAdded < .05 ? Data.Value.Temperature / 2 + HeatAdded : 0);
+		NewHeat = Data.Value.Temperature / 2 + NewHeat;
+		//NewHeat = FMath::Lerp(Data.Value.Temperature, NewHeat, DeltaTime);
+		NewHeatMap.Emplace(Data.Key, NewHeat < .05 ? NewHeat : 0);
 	}
 
 	for (auto& Data : PartGrid)
@@ -72,7 +74,7 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 //Adds a compleate part to the part grid
 bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace)
 {
-	TArray<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape();
+	TArray<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
 	return AddPart(PartialPartShape, PartType, Location, Rotation, bAlwaysPlace);
 }
 //Adds a partial part to PartPrid
@@ -80,11 +82,11 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 {
 	//Create Part
 	UBasePart* Part = NewObject<UBasePart>(this, PartType);
-	Part->InitilizeVariables(Location, Rotation, this, PartType);
+	Part->InitializeVariables(Location, Rotation, this, PartType);
 
 	//Initalize Variables
-	TArray<FIntPoint> DesiredShape = Part->GetDesiredShape(Rotation);
-	FArrayBounds PartBounds = Part->GetPartBounds(Rotation);
+	TArray<FIntPoint> DesiredShape = Part->GetDesiredShape();
+	FArrayBounds PartBounds = Part->GetPartBounds();
 
 	//Detect if placement is in valid position
 	if (GridSize.X >= Location.X + PartBounds.UpperBounds.X && -GridSize.X <= Location.X + PartBounds.LowerBounds.X
@@ -130,11 +132,9 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 				PartGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), FPartData(Part, 0.f, Cast<UStaticMeshComponent>(NewPlane)));
 			}
 		}
-		Part->InitizlizeFuntionality();
+		Part->InitializeFunctionality();
 		return true;
 	}
-
-	Part->DestroyPart();
 	return false;
 }
 
@@ -170,14 +170,15 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 }
 void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)
 {
-	PartGrid.Find(FIntPoint(0, 0))->SetTemperature(PartGrid.Find(FIntPoint(0, 0))->Temperature + HeatToApply);
+	ApplyHeatAtLocation(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint());
+		
 	//PartGrid.FindRef(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).RoundToVector().IntPoint()).SetTemperature(HeatToApply);
 }
 void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float HeatToApply)
 {
 	if (PartGrid.Contains(RelativeLocation))
 	{
-		PartGrid.FindRef(RelativeLocation).SetTemperature(HeatToApply);
+		PartGrid.Find(RelativeLocation)->SetTemperature(PartGrid.Find(RelativeLocation)->Temperature + HeatToApply);
 	}
 	
 }
