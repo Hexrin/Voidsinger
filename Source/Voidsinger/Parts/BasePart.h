@@ -235,7 +235,7 @@ private:
 	UPROPERTY()
 	bool bIsBeingDestroyed;
 
-	/*Instanced  Variables* \
+	/*Instanced  Variables*\
 	\*--------------------*/
 
 	//Stores this parts rotation
