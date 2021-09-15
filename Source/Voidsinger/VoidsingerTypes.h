@@ -31,7 +31,7 @@ enum EResourceType
 UENUM(BlueprintType)
 enum EVoidsongs
 {
-	Collection		UMETA(DisplayName = "Collection"),
+	Gravity			UMETA(DisplayName = "Gravity"),
 	Greed			UMETA(DisplayName = "Greed"),
 	Anger			UMETA(DisplayName = "Anger"),
 	Peace			UMETA(DisplayName = "Peace"),
