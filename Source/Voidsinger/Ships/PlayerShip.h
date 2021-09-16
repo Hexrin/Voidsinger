@@ -83,6 +83,10 @@ public:
 	UFUNCTION()
 	void AddVoidsongInput(int input);
 
+	//Plays a voidsong with a given activation sequence
+	UFUNCTION()
+	void PlayVoidsong(TArray<int> Sequence);
+
 	//Clears the Voidsong combo so if the player doesn't play for a bit it will just reset
 	UFUNCTION()
 	void ResetVoidsong();
@@ -100,8 +104,8 @@ public:
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
 
 
-	/*Voidsong Timer*\
-	\*--------------*/
+	/*Voidsong Timers*\
+	\*---------------*/
 
 	//The time the player has to wait without playing to reset the Voidsong combo
 	UPROPERTY(EditDefaultsOnly)
@@ -113,7 +117,16 @@ public:
 
 	//Boolean for the Voidsong Timer
 	UPROPERTY()
-	bool ShouldVoidsongTimerTick = false;
+	bool ShouldResetVoidsongTimerTick = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	float PlayVoidsongDelay = 1.0;
+
+	UPROPERTY()
+	float PlayVoidsongTimer = 0;
+
+	UPROPERTY()
+	bool ShouldPlayVoidsongTimerTick = false;
 
 	/*Voidsong Management*\
 	\*-------------------*/
