@@ -168,29 +168,39 @@ void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float H
 }
 void UPartGridComponent::DistrubuteHeat()
 {
-	TMap<FIntPoint, float> NewHeatMap;
+	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
+	NewHeatMap.Reserve(PartGrid.Num());
 	for (auto& Data : PartGrid)
 	{
 		float NewHeat = 0;
 		for (int i = 0; i < 4; i++)
 		{
-			FIntPoint TargetPoint = (i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1);
-			NewHeat += PartGrid.FindRef(TargetPoint + Data.Key).Temperature * HeatPropagationFactor / (4);
+			FIntPoint TargetPoint = ((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
+			
+			if (PartGrid.Contains(TargetPoint + Data.Key))
+			{
+				NewHeat += PartGrid.FindRef(TargetPoint + Data.Key).Temperature * HeatPropagationFactor / (4);
+			}
 		}
 		NewHeat = Data.Value.Temperature * (1-HeatPropagationFactor) + NewHeat;
-		NewHeatMap.Emplace(Data.Key, NewHeat < .05 ? NewHeat : 0);
+		NewHeatMap.Emplace(Data.Key, NewHeat > .05 ? NewHeat : 0);
 	}
 
+	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
 	for (auto& Data : PartGrid)
 	{
 		if (NewHeatMap.FindRef(Data.Key) > 2)
 		{
-			DestroyPixel(Data.Key);
+			KeysToDestroy.Emplace(Data.Key);
 		}
 		else
 		{
 			Data.Value.SetTemperature(NewHeatMap.FindRef(Data.Key));
 		}
+	}
+	for (FIntPoint Val : KeysToDestroy)
+	{
+		DestroyPixel(Val);
 	}
 }
 bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart)
