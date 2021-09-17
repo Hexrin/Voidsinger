@@ -186,16 +186,21 @@ void UPartGridComponent::DistrubuteHeat()
 		NewHeatMap.Emplace(Data.Key, NewHeat > .05 ? NewHeat : 0);
 	}
 
+	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
 	for (auto& Data : PartGrid)
 	{
 		if (NewHeatMap.FindRef(Data.Key) > 2)
 		{
-			DestroyPixel(Data.Key);
+			KeysToDestroy.Emplace(Data.Key);
 		}
 		else
 		{
 			Data.Value.SetTemperature(NewHeatMap.FindRef(Data.Key));
 		}
+	}
+	for (FIntPoint Val : KeysToDestroy)
+	{
+		DestroyPixel(Val);
 	}
 }
 bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart)
