@@ -24,7 +24,9 @@ UPartGridComponent::UPartGridComponent()
 		GridScale = 1;
 	}
 	
-	TimesSinceHeatTick = 0;
+	TimesSinceHeatTick = 0.f;
+	HeatTickRate = 0.5f;
+	HeatPropagationFactor = 0.5f;
 }
 
 

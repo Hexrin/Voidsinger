@@ -53,7 +53,7 @@ private:
 	void DistrubuteHeat();
 
 	//---Save Ship---
-
+public:
 	UFUNCTION(BlueprintCallable)
 	void BuildShip(TArray<FSavePartInfo> Parts);
 
