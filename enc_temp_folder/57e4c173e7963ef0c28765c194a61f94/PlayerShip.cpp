@@ -25,10 +25,10 @@ APlayerShip::APlayerShip()
     //static ConstructorHelpers::FObjectFinder<USoundBase> Sound(TEXT("MetaSoundSource'/Game/Sound/VoidsongInstrument.VoidsongInstrument'"));
     USoundBase* Sound = LoadObject<USoundBase>(this, TEXT("MetaSoundSource'/Game/Sound/VoidsongInstrument.VoidsongInstrument'"));
     VoidsongInstrument = UGameplayStatics::SpawnSound2D(this, Sound);
-    /*if (IsValid(Sound))
+    if (IsValid(Sound))
     {
         UE_LOG(LogTemp, Warning, TEXT("okay so it's valid"));
-    }*/
+    }
 }
 
 void APlayerShip::Tick(float DeltaTime)
