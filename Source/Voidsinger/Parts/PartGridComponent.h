@@ -48,10 +48,12 @@ public:
 	void ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply = 1);
 	void ApplyHeatAtLocation(FIntPoint RelativeLocation, float HeatToApply = 1);
 
-
+private:
+	UFUNCTION()
+	void DistrubuteHeat();
 
 	//---Save Ship---
-
+public:
 	UFUNCTION(BlueprintCallable)
 	void BuildShip(TArray<FSavePartInfo> Parts);
 
@@ -89,6 +91,14 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class UStaticMesh* PixelMesh;
+
+	UPROPERTY(EditAnywhere)
+	float HeatTickRate;
+	UPROPERTY(EditAnywhere, meta=(ClampMin="0", ClampMax="1"))
+	float HeatPropagationFactor;
+
+	UPROPERTY()
+	float TimesSinceHeatTick;
 
 	UFUNCTION()
 	bool const CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape);
