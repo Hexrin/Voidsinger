@@ -27,13 +27,23 @@ void APlayerShip::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    if (ShouldVoidsongTimerTick)
+    if (ShouldResetVoidsongTimerTick)
     {
         ResetVoidsongTimer += DeltaTime;
         if (ResetVoidsongTimer >= VoidsongResetDelay)
         {
             ResetVoidsong();
             ResetVoidsongTimer = 0.0;
+        }
+    }
+
+    if (ShouldPlayVoidsongTimerTick)
+    {
+        PlayVoidsongTimer += DeltaTime;
+        if (PlayVoidsongTimer >= PlayVoidsongDelay)
+        {
+            PlayVoidsong(VoidsongCombo);
+            PlayVoidsongTimer = 0.0;
         }
     }
 }
@@ -72,6 +82,7 @@ void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void APlayerShip::Voidsong1Call()
 {
+    UE_LOG(LogTemp, Warning, TEXT("is it not recieving input?"));
     AddVoidsongInput(1);
 }
 
@@ -98,36 +109,41 @@ void APlayerShip::Voidsong5Call()
 void APlayerShip::AddVoidsongInput(int input)
 {
     VoidsongCombo.Emplace(input);
-    ResetVoidsongTimer = 0;
-    ShouldVoidsongTimerTick = true;
 
+    ResetVoidsongTimer = 0;
+    ShouldResetVoidsongTimerTick = true;
+
+    PlayVoidsongTimer = 0;
+    ShouldPlayVoidsongTimerTick = true;
+
+}
+
+void APlayerShip::PlayVoidsong(TArray<int> Sequence)
+{
+    ShouldPlayVoidsongTimerTick = false;
     for (auto& i : AvailableVoidsongs)
     {
-        for (auto& j : i->ActivationCombo)
-        {
-        }
-        if (i->ActivationCombo == VoidsongCombo)
+        if (i->ActivationCombo == Sequence)
         {
             UE_LOG(LogTemp, Warning, TEXT("Activate should be called"));
             i->Activate();
             ResetVoidsong();
         }
     }
-
 }
 
 void APlayerShip::ResetVoidsong()
 {
     UE_LOG(LogTemp, Warning, TEXT("ResetVoidsong"));
     VoidsongCombo.Empty();
-    ShouldVoidsongTimerTick = false;
+    ShouldResetVoidsongTimerTick = false;
 }
 
 void APlayerShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
 {
     for (auto& i : Voidsongs)
     {
-        AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(i));
+        AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(this, i));
     }
 }
 
@@ -135,5 +151,9 @@ void APlayerShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 {
     UBaseVoidsong* bruhVar = NewObject<UBaseVoidsong>(this, Voidsong);
     AvailableVoidsongs.Emplace(bruhVar);
+    if (IsValid(bruhVar))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("It is valid though"));
+    }
 }
 
