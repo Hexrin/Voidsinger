@@ -17,40 +17,28 @@ class VOIDSINGER_API UBaseThrusterPart : public UBasePart
 	
 
 public:
-	UFUNCTION(BlueprintPure)
-	TArray<FThrusterData> GetThrustSources();
+	UBaseThrusterPart();
 
+	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintPure)
+	const float GetThrustForce();
+
+	//Apply force in the direction of the thruster 
 	UFUNCTION(BlueprintCallable)
-	bool ThrustInDirection(float ThrustForce, float ThrustDirection);
+	void Thrust();
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	TArray<FThrusterData> ThrustSources;
-};
+	float ThrustForce;
 
-USTRUCT(BlueprintType)
-struct VOIDSINGER_API FThrusterData
-{
-	GENERATED_BODY()
+	UPROPERTY(EditDefaultsOnly)
+	FVector2D ThrustLocaion;
 
+	UPROPERTY(EditDefaultsOnly)
+	float ThrustRotation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float ThrustForce = 1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector2D RelativeThrustLoaction = FVector2D();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float RelativeThrustRotation = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UBaseThrusterPart* ThrusterRef = nullptr;
-
-	FThrusterData(float Force, FVector2D RelativeLocation, float RelativeRotation, class UBaseThrusterPart* Thruster)
-	{
-		ThrustForce = Force;
-		RelativeThrustLoaction = RelativeLocation;
-		RelativeThrustRotation = RelativeRotation;
-		ThrusterRef = Thruster;
-	}
+private:
+	UPROPERTY()
+	bool bIsThrusting;
 };

@@ -14,7 +14,6 @@
  */
 
 class UBaseResourceSystem;
-enum EPartRotation;
 
 UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject
@@ -43,7 +42,7 @@ public:
 
 	//Used to inialize variables. Called before part is placed onto the part grid
 	UFUNCTION()
-	void InitializeVariables(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
+	void InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
 
 	//Used to initize funtionality once the part has been placed onto the part grid
 	UFUNCTION()
@@ -94,7 +93,7 @@ public:
 	//Gets the desired shape of the part ignoring any damage the part may have taken
 	UFUNCTION(BlueprintPure)
 	const TArray<FIntPoint> GetDesiredShape();
-	const TArray<FIntPoint> GetDesiredShape(TEnumAsByte<EPartRotation> Rot);
+	const TArray<FIntPoint> GetDesiredShape(float Rot);
 
 	//Gets the curent shape of the part accounting for damage
 	UFUNCTION(BlueprintPure)
@@ -103,7 +102,7 @@ public:
 	//Gets the outer bounds of the part
 	UFUNCTION(BlueprintPure)
 	const FArrayBounds GetPartBounds();
-	const FArrayBounds GetPartBounds(TEnumAsByte<EPartRotation> Rot);
+	const FArrayBounds GetPartBounds(float Rot);
 
 	//Gets the location of the origin of the part relative to the part grid
 	UFUNCTION(BlueprintPure)
@@ -111,7 +110,7 @@ public:
 
 	//Gets the rotaion of the part
 	UFUNCTION(BlueprintPure)
-	const TEnumAsByte<EPartRotation> GetRotation();
+	const float GetRotation();
 
 	//Gets the mass of a single pixel for this part
 	UFUNCTION(BlueprintPure)
@@ -245,7 +244,7 @@ private:
 
 	//Stores this parts rotation
 	UPROPERTY()
-	TEnumAsByte<EPartRotation> Rotation;
+	float Rotation;
 
 	//Stores this parts location relative to the part grid
 	UPROPERTY()

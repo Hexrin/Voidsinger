@@ -36,7 +36,7 @@ void UShipMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		{
 			LeverDirection = DeltaVelocity.GetSafeNormal();
 		}
-		UE_LOG(LogTemp, Warning, TEXT("line dot=%f"), FVector2D::DotProduct(LeverDirection, DeltaVelocity));
+		//UE_LOG(LogTemp, Warning, TEXT("line dot=%f"), FVector2D::DotProduct(LeverDirection, DeltaVelocity));
 
 		LinearVelocity += ((FVector2D::DotProduct(LeverDirection, DeltaVelocity) * LeverDirection) / Ship->PartGrid->GetMass()).GetRotated(GetOwner()->GetActorRotation().Yaw);
 		AngularVelocity -= FVector2D::DotProduct(LeverDirection.GetRotated(90), DeltaVelocity) * (Ship->PartGrid->GetCenterOfMass() - CenterOfThrust).Size() / Ship->PartGrid->GetMass();
