@@ -2,17 +2,17 @@
 
 
 #include "ShipMovementComponent.h"
-#include "BaseShip.h"
+#include "Voidsinger/Parts/BaseThrusterPart.h"
+#include "ShipMovementComponent.h"
 
 // Sets default values for this component's properties
 UShipMovementComponent::UShipMovementComponent()
 {
-
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	Ship = (ABaseShip*)GetOwner();
-	AngularVelocity = 0;
-	LinearVelocity = FVector2D(0, 0);
 
+	// ...
 }
 
 
@@ -20,59 +20,65 @@ UShipMovementComponent::UShipMovementComponent()
 void UShipMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// ...
 	
 }
 
 
-//Called every tick
+// Called every frame
 void UShipMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (!DeltaVelocity.IsNearlyZero(DeltaTime / 25))
+
+	// ...
+}
+
+void UShipMovementComponent::UpdateThrusterCatagories()
+{
+	ForwardThrusters.Empty();
+	BackwardThrusters.Empty();
+	RightThrusters.Empty();
+	LeftThrusters.Empty();
+	ClockwiseThrusters.Empty();
+	CClockwiseThrusters.Empty();
+
+	UPartGridComponent* PartGrid = Cast<ABaseShip>(GetOwner())->PartGrid;
+	for (auto& Val : PartGrid->GetPartGrid())
 	{
-		FVector2D LeverDirection = (Ship->PartGrid->GetCenterOfMass() - CenterOfThrust).GetSafeNormal();
-		if (LeverDirection.IsNearlyZero())
+		if (Cast<UBaseThrusterPart>(Val.Value.Part))
 		{
-			LeverDirection = DeltaVelocity.GetSafeNormal();
+			GetDirectionalArray(FVector2D(1, 0).GetRotated(Val.Value.Part->GetRotation())).Emplace(Cast<UBaseThrusterPart>(Val.Value.Part));
 		}
-		//UE_LOG(LogTemp, Warning, TEXT("line dot=%f"), FVector2D::DotProduct(LeverDirection, DeltaVelocity));
-
-		LinearVelocity += ((FVector2D::DotProduct(LeverDirection, DeltaVelocity) * LeverDirection) / Ship->PartGrid->GetMass()).GetRotated(GetOwner()->GetActorRotation().Yaw);
-		AngularVelocity -= FVector2D::DotProduct(LeverDirection.GetRotated(90), DeltaVelocity) * (Ship->PartGrid->GetCenterOfMass() - CenterOfThrust).Size() / Ship->PartGrid->GetMass();
-		//transform the ship by the velocity and angular velocity
-		
 	}
-	Ship->SetActorLocation(Ship->GetActorLocation() + FVector(LinearVelocity.X, LinearVelocity.Y, 0) * DeltaTime);
-	Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0) * DeltaTime);
-
-	DeltaVelocity.Set(0, 0);
-	CenterOfThrust.Set(0, 0);
 }
 
-//When a force is added to the ship
-void UShipMovementComponent::AddForce(FVector2D RelativeForceLocation, FVector2D RelativeForce)
+void UShipMovementComponent::RotateShip(bool Clockwise)
 {
-	if (!RelativeForce.IsZero())
+}
+
+void UShipMovementComponent::Move(FVector2D Direction)
+{
+}
+
+TSet<UBaseThrusterPart*> UShipMovementComponent::GetDirectionalArray(FVector2D Direction)
+{
+	if (Direction.X > 0)
 	{
-		float VelocityShare = RelativeForce.Size();
-		VelocityShare = VelocityShare / (VelocityShare + DeltaVelocity.Size());
-		//DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation() + FVector(RelativeForceLocation, 0), (GetOwner()->GetActorLocation() + FVector(RelativeForceLocation, 0)) + FVector(RelativeForce.GetRotated(GetOwner()->GetActorRotation().Yaw), 0) * 10, FColor::Emerald, false, -1.0F, 0U, 1);
-
-
-		CenterOfThrust = (1 - VelocityShare) * CenterOfThrust + RelativeForceLocation * VelocityShare;
-
-		UE_LOG(LogTemp, Warning, TEXT("share =%f"), VelocityShare);
-		DeltaVelocity += RelativeForce;
+		return ForwardThrusters;
 	}
+	if (Direction.X != 0)
+	{
+		return BackwardThrusters;
+	}
+	if (Direction.Y > 0)
+	{
+		return RightThrusters;
+	}
+	if (Direction.Y != 0)
+	{
+		return LeftThrusters;
+	}
+	return TSet<UBaseThrusterPart*>();
 }
 
-FVector2D UShipMovementComponent::GetVelocity()
-{
-	return LinearVelocity;
-}
-
-float UShipMovementComponent::GetAngularVelocity()
-{
-	return AngularVelocity;
-}

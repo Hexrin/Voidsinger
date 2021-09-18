@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BasePart.h"
-#include "Voidsinger/Ships/ShipMovementComponent.h"
+#include "Voidsinger/Ships/ShipPhysicsComponent.h"
 #include "BaseThrusterPart.generated.h"
 
 /**

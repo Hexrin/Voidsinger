@@ -12,7 +12,7 @@ ABaseShip::ABaseShip()
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
 	RootComponent = SceneRoot;
 
-	MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));
+	PhysicsComponent = CreateDefaultSubobject<UShipPhysicsComponent>(TEXT("Movement Component"));
 	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
 	
 }

@@ -6,7 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/Parts/PartGridComponent.h"
-#include "ShipMovementComponent.h"
+#include "ShipPhysicsComponent.h"
 #include "Components/SceneComponent.h"
 #include "BaseShip.generated.h"
 
@@ -55,5 +55,5 @@ public:
 	class UPartGridComponent* PartGrid;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class UShipMovementComponent* MovementComponent;
+	class UShipPhysicsComponent* PhysicsComponent;
 };
