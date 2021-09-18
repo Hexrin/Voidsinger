@@ -139,9 +139,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UAudioComponent* VoidsongInstrument;
 
-	UPROPERTY(EditAnywhere)
-	TSoftObjectPtr<USoundBase> VoidsongInstrumentTest;
-
 	//idk about everythings after this so liam should commnt these
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
