@@ -82,19 +82,11 @@ void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void APlayerShip::BeginPlay()
 {
     Super::BeginPlay();
-    UE_LOG(LogTemp, Warning, TEXT("Begin play is called"));
-    if (VoidsongInstrumentAsset.IsPending())
-    {
-        const FSoftObjectPath& AssetRef = VoidsongInstrumentAsset.ToString();
-        UE_LOG(LogTemp, Warning, TEXT("It should load"));
-        //VoidsongInstrumentAsset = Cast<USoundBase>(VoidsongInstrumentAsset.LoadSynchronous());
-        VoidsongInstrument = UGameplayStatics::SpawnSound2D(this, Cast<USoundBase>(VoidsongInstrumentAsset.LoadSynchronous()));
-    }
+    VoidsongInstrument = UGameplayStatics::SpawnSound2D(this, Cast<USoundBase>(VoidsongInstrumentAsset.LoadSynchronous()));
 }
 
 void APlayerShip::Voidsong1Call()
 {
-    UE_LOG(LogTemp, Warning, TEXT("is it not recieving input?"));
     AddVoidsongInput(1);
 }
 
@@ -134,7 +126,6 @@ void APlayerShip::PlayVoidsong(TArray<int> Sequence)
     {
         if (i->ActivationCombo == Sequence)
         {
-            UE_LOG(LogTemp, Warning, TEXT("Activate should be called"));
             i->Activate();
             ResetVoidsong();
         }
@@ -148,7 +139,6 @@ void APlayerShip::ActivateVoidsong()
 
 void APlayerShip::ResetVoidsong()
 {
-    UE_LOG(LogTemp, Warning, TEXT("ResetVoidsong"));
     VoidsongCombo.Empty();
     ShouldResetVoidsongTimerTick = false;
 }
@@ -165,9 +155,5 @@ void APlayerShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 {
     UBaseVoidsong* bruhVar = NewObject<UBaseVoidsong>(this, Voidsong);
     AvailableVoidsongs.Emplace(bruhVar);
-    if (IsValid(bruhVar))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("It is valid though"));
-    }
 }
 
