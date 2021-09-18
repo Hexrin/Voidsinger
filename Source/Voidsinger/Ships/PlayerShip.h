@@ -95,8 +95,8 @@ public:
 	//Activates the voidsong
 	void ActivateVoidsong();
 
-	//Clears the Voidsong combo so if the player doesn't play for a bit it will just reset
-	UFUNCTION()
+	//Clears the sequence of inputs that the player has made
+	UFUNCTION(BlueprintCallable)
 	void ResetVoidsong();
 
 	//Creates Voidsong objects with the given classes of Voidsongs and adds them to the AvaialableVoidsongs. Will be useful for loading from a save game.
@@ -138,17 +138,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UBaseVoidsong*> AvailableVoidsongs;
 
-	//Metasound for voidsong instrument
+	//The spawned metasound to set parameters on
 	UPROPERTY(EditAnywhere)
 	UAudioComponent* VoidsongInstrument;
 
-	//UPROPERTY(EditAnywhere)
-	//FSoftObjectPath VoidsongInstrumentTest = "MetaSoundSource'/Game/Sound/VoidsongInstrument.VoidsongInstrument'";
-
+	//The voidsong instrument reference. Is set through blueprint.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Building)
 	TSoftObjectPtr<USoundBase> VoidsongInstrumentAsset;
 
-	//idk about everythings after this so liam should commnt these
+	//idk about everythings after this so liam should comment these
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 

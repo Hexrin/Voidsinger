@@ -21,20 +21,13 @@ APlayerShip::APlayerShip()
 
     AutoPossessPlayer = EAutoReceiveInput::Player0;
 
-    //Make the metasound
-    //static ConstructorHelpers::FObjectFinder<USoundBase> Sound(TEXT("MetaSoundSource'/Game/Sound/VoidsongInstrument.VoidsongInstrument'"));
-    /*USoundBase* Sound = Cast<USoundBase>(VoidsongInstrumentTest.TryLoad());
-    if (IsValid(Sound))
-    {
-        VoidsongInstrument = UGameplayStatics::SpawnSound2D(this, Sound);
-    }*/
-
 }
 
 void APlayerShip::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    //Deals with the timer for resetting the voidsong inputs. 
     if (ShouldResetVoidsongTimerTick)
     {
         ResetVoidsongTimer += DeltaTime;
@@ -44,6 +37,27 @@ void APlayerShip::Tick(float DeltaTime)
             ResetVoidsongTimer = 0.0;
         }
     }
+}
+
+void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+    //Set up Voidsong bindings
+    InputComponent->BindAction("Voidsong1", IE_Pressed, this, &APlayerShip::Voidsong1Call);
+    InputComponent->BindAction("Voidsong2", IE_Pressed, this, &APlayerShip::Voidsong2Call);
+    InputComponent->BindAction("Voidsong3", IE_Pressed, this, &APlayerShip::Voidsong3Call);
+    InputComponent->BindAction("Voidsong4", IE_Pressed, this, &APlayerShip::Voidsong4Call);
+    InputComponent->BindAction("Voidsong5", IE_Pressed, this, &APlayerShip::Voidsong5Call);
+    InputComponent->BindAction("VoidsongActivate", IE_Pressed, this, &APlayerShip::ActivateVoidsong);
+}
+
+void APlayerShip::BeginPlay()
+{
+    Super::BeginPlay();
+
+    //Spawns the voidsong instrument
+    VoidsongInstrument = UGameplayStatics::SpawnSound2D(this, Cast<USoundBase>(VoidsongInstrumentAsset.LoadSynchronous()));
 }
 
 TMap<TEnumAsByte<EResourceType>, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
@@ -66,25 +80,7 @@ UStarSystemData* APlayerShip::GetCurrentStarSystem()
     return CurrentStarSystem;
 }
 
-void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-    Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-    //Set up Voidsong bindings
-    InputComponent->BindAction("Voidsong1", IE_Pressed, this, &APlayerShip::Voidsong1Call);
-    InputComponent->BindAction("Voidsong2", IE_Pressed, this, &APlayerShip::Voidsong2Call);
-    InputComponent->BindAction("Voidsong3", IE_Pressed, this, &APlayerShip::Voidsong3Call);
-    InputComponent->BindAction("Voidsong4", IE_Pressed, this, &APlayerShip::Voidsong4Call);
-    InputComponent->BindAction("Voidsong5", IE_Pressed, this, &APlayerShip::Voidsong5Call);
-    InputComponent->BindAction("VoidsongActivate", IE_Pressed, this, &APlayerShip::ActivateVoidsong);
-}
-
-void APlayerShip::BeginPlay()
-{
-    Super::BeginPlay();
-    VoidsongInstrument = UGameplayStatics::SpawnSound2D(this, Cast<USoundBase>(VoidsongInstrumentAsset.LoadSynchronous()));
-}
-
+//Voidsong inputs
 void APlayerShip::Voidsong1Call()
 {
     AddVoidsongInput(1);
@@ -112,16 +108,20 @@ void APlayerShip::Voidsong5Call()
 
 void APlayerShip::AddVoidsongInput(int input)
 {
+    //Add the input to the list of inputs
     VoidsongCombo.Emplace(input);
 
+    //Reset the reset voidsong timer
     ResetVoidsongTimer = 0;
     ShouldResetVoidsongTimerTick = true;
 
+    //Play the voidsong instrument
     VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(input)));
 }
 
 void APlayerShip::PlayVoidsong(TArray<int> Sequence)
 {
+    //Check the available voidsongs and see if their activation sequence matches the sequence inputted. If so, activate that voidsong.
     for (auto& i : AvailableVoidsongs)
     {
         if (i->ActivationCombo == Sequence)
@@ -134,17 +134,20 @@ void APlayerShip::PlayVoidsong(TArray<int> Sequence)
 
 void APlayerShip::ActivateVoidsong()
 {
+    //Calls play voidsong with the player's current sequence of inputs
     PlayVoidsong(VoidsongCombo);
 }
 
 void APlayerShip::ResetVoidsong()
 {
+    //Empties the sequence of inputs
     VoidsongCombo.Empty();
     ShouldResetVoidsongTimerTick = false;
 }
 
 void APlayerShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
 {
+    //Creates voidsong objects with the list of voidsongs given. Adds them to available voidsongs
     for (auto& i : Voidsongs)
     {
         AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(this, i));
@@ -153,7 +156,7 @@ void APlayerShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
 
 void APlayerShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 {
-    UBaseVoidsong* bruhVar = NewObject<UBaseVoidsong>(this, Voidsong);
-    AvailableVoidsongs.Emplace(bruhVar);
+    //Creates the voidsong object from the given class and adds it to available voidsongs
+    AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(this, Voidsong));
 }
 
