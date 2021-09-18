@@ -23,12 +23,12 @@ APlayerShip::APlayerShip()
 
     //Make the metasound
     //static ConstructorHelpers::FObjectFinder<USoundBase> Sound(TEXT("MetaSoundSource'/Game/Sound/VoidsongInstrument.VoidsongInstrument'"));
-    USoundBase* Sound = LoadObject<USoundBase>(this, TEXT("MetaSoundSource'/Game/Sound/VoidsongInstrument.VoidsongInstrument'"));
-    VoidsongInstrument = UGameplayStatics::SpawnSound2D(this, Sound);
-    /*if (IsValid(Sound))
+    /*USoundBase* Sound = Cast<USoundBase>(VoidsongInstrumentTest.TryLoad());
+    if (IsValid(Sound))
     {
-        UE_LOG(LogTemp, Warning, TEXT("okay so it's valid"));
+        VoidsongInstrument = UGameplayStatics::SpawnSound2D(this, Sound);
     }*/
+
 }
 
 void APlayerShip::Tick(float DeltaTime)
@@ -79,6 +79,19 @@ void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
     InputComponent->BindAction("VoidsongActivate", IE_Pressed, this, &APlayerShip::ActivateVoidsong);
 }
 
+void APlayerShip::BeginPlay()
+{
+    Super::BeginPlay();
+    UE_LOG(LogTemp, Warning, TEXT("Begin play is called"));
+    if (VoidsongInstrumentAsset.IsPending())
+    {
+        const FSoftObjectPath& AssetRef = VoidsongInstrumentAsset.ToString();
+        UE_LOG(LogTemp, Warning, TEXT("It should load"));
+        //VoidsongInstrumentAsset = Cast<USoundBase>(VoidsongInstrumentAsset.LoadSynchronous());
+        VoidsongInstrument = UGameplayStatics::SpawnSound2D(this, Cast<USoundBase>(VoidsongInstrumentAsset.LoadSynchronous()));
+    }
+}
+
 void APlayerShip::Voidsong1Call()
 {
     UE_LOG(LogTemp, Warning, TEXT("is it not recieving input?"));
@@ -112,7 +125,7 @@ void APlayerShip::AddVoidsongInput(int input)
     ResetVoidsongTimer = 0;
     ShouldResetVoidsongTimerTick = true;
 
-    VoidsongInstrument->GetParameterInterface()->Trigger(FName(TEXT("%i"), input));
+    VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(input)));
 }
 
 void APlayerShip::PlayVoidsong(TArray<int> Sequence)

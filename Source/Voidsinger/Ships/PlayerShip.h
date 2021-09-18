@@ -41,6 +41,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//Begin play
+	virtual void BeginPlay() override;
+
 	/*Getter Functions*\
 	\*----------------*/
 
@@ -139,8 +142,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	UAudioComponent* VoidsongInstrument;
 
-	UPROPERTY(EditAnywhere)
-	TSoftObjectPtr<USoundBase> VoidsongInstrumentTest;
+	//UPROPERTY(EditAnywhere)
+	//FSoftObjectPath VoidsongInstrumentTest = "MetaSoundSource'/Game/Sound/VoidsongInstrument.VoidsongInstrument'";
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Building)
+	TSoftObjectPtr<USoundBase> VoidsongInstrumentAsset;
 
 	//idk about everythings after this so liam should commnt these
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
