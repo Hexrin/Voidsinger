@@ -34,51 +34,42 @@ void UShipMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
-void UShipMovementComponent::UpdateThrusterCatagories()
+void UShipMovementComponent::UpdateThrusters()
 {
-	ForwardThrusters.Empty();
-	BackwardThrusters.Empty();
-	RightThrusters.Empty();
-	LeftThrusters.Empty();
-	ClockwiseThrusters.Empty();
-	CClockwiseThrusters.Empty();
-
+	Thrusters.Empty();
 	UPartGridComponent* PartGrid = Cast<ABaseShip>(GetOwner())->PartGrid;
 	for (auto& Val : PartGrid->GetPartGrid())
 	{
-		if (Cast<UBaseThrusterPart>(Val.Value.Part))
+		UBaseThrusterPart* Thruster = Cast<UBaseThrusterPart>(Val.Value.Part);
+		if (Thruster)
 		{
-			GetDirectionalArray(FVector2D(1, 0).GetRotated(Val.Value.Part->GetRotation())).Emplace(Cast<UBaseThrusterPart>(Val.Value.Part));
+			Thrusters.Emplace(Thruster);
 		}
 	}
 }
 
 void UShipMovementComponent::RotateShip(bool Clockwise)
 {
+	
+	for (UBaseThrusterPart* Thruster : Thrusters)
+	{
+		FVector2D ThrustDirection = FVector2D(1, 0).GetRotated(+ Thruster->GetThrustRotation());
+		FVector2D ThrusterLocation = FVector2D(Thruster->GetThrustLocation()).GetSafeNormal();
+		if ((FVector2D::CrossProduct(ThrustDirection, ThrusterLocation) > 0) ^ Clockwise)
+		{
+			Thruster->Thrust();
+		}
+	}
 }
 
 void UShipMovementComponent::Move(FVector2D Direction)
 {
+	Direction = Direction.GetSafeNormal();
+	for (UBaseThrusterPart* Thruster : Thrusters)
+	{
+		if (FVector2D::DotProduct(FVector2D(1, 0).GetRotated(Thruster->GetThrustRotation()), Direction) >= .5)
+		{
+			Thruster->Thrust();
+		}
+	}
 }
-
-TSet<UBaseThrusterPart*> UShipMovementComponent::GetDirectionalArray(FVector2D Direction)
-{
-	if (Direction.X > 0)
-	{
-		return ForwardThrusters;
-	}
-	if (Direction.X != 0)
-	{
-		return BackwardThrusters;
-	}
-	if (Direction.Y > 0)
-	{
-		return RightThrusters;
-	}
-	if (Direction.Y != 0)
-	{
-		return LeftThrusters;
-	}
-	return TSet<UBaseThrusterPart*>();
-}
-

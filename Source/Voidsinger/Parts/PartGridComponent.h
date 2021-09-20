@@ -10,6 +10,7 @@
 #include "PartGridComponent.generated.h"
 
 class UBasePart;
+class UBaseThrusterPart;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
 class VOIDSINGER_API UPartGridComponent : public UActorComponent

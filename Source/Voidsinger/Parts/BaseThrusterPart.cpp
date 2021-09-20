@@ -5,13 +5,23 @@
 UBaseThrusterPart::UBaseThrusterPart()
 {
 	ThrustForce = 10;
-	ThrustLocaion = FVector2D();
+	ThrustLocation = FVector2D();
 	ThrustRotation = 0;
 	bIsThrusting = false;
 }
 const float UBaseThrusterPart::GetThrustForce()
 {
 	return ThrustForce;
+}
+
+const float UBaseThrusterPart::GetThrustRotation()
+{
+	return ThrustRotation + GetRotation();
+}
+
+const FVector2D UBaseThrusterPart::GetThrustLocation()
+{
+	return ThrustLocation + GetLocation();
 }
 
 void UBaseThrusterPart::Thrust()
@@ -24,7 +34,8 @@ void UBaseThrusterPart::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (bIsThrusting)
 	{
-		Cast<ABaseShip>(GetPartGrid()->GetOwner())->PhysicsComponent->AddForce(FVector2D(GetLocation()) + ThrustLocaion.GetRotated(GetRotation()), FVector2D(ThrustForce, 0).GetRotated(GetRotation() + ThrustRotation) * DeltaTime);
+		Cast<ABaseShip>(GetPartGrid()->GetOwner())->PhysicsComponent->AddForce(FVector2D(GetLocation()) + ThrustLocation.GetRotated(GetRotation()), FVector2D(ThrustForce, 0).GetRotated(GetRotation() + ThrustRotation) * DeltaTime);
+		bIsThrusting = false;
 	}
 }
 

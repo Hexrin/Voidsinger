@@ -27,7 +27,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateThrusterCatagories();
+	void UpdateThrusters();
 
 	UFUNCTION(BlueprintCallable)
 	void RotateShip(bool Clockwise);
@@ -36,21 +36,6 @@ public:
 	void Move(FVector2D Direction);
 
 private:
-
-	UFUNCTION()
-	TSet<UBaseThrusterPart*> GetDirectionalArray(FVector2D Direction);
-
 	UPROPERTY()
-	TSet<UBaseThrusterPart*> RightThrusters;
-	UPROPERTY()
-	TSet<UBaseThrusterPart*> LeftThrusters;
-	UPROPERTY()
-	TSet<UBaseThrusterPart*> ForwardThrusters;
-	UPROPERTY()
-	TSet<UBaseThrusterPart*> BackwardThrusters;
-
-	UPROPERTY()
-	TSet<UBaseThrusterPart*> ClockwiseThrusters;
-	UPROPERTY()
-	TSet<UBaseThrusterPart*> CClockwiseThrusters;
+	TSet<UBaseThrusterPart*> Thrusters;
 };
