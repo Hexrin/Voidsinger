@@ -4,57 +4,53 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "DrawDebugHelpers.h" //remove this once debuging is compleate
-#include "Voidsinger/FunctionLibrary.h"
 #include "ShipMovementComponent.generated.h"
 
-//Forward Declaration read these: https://forums.unrealengine.com/t/circular-dependency-detected-for-filename/45749/2 & https://answers.unrealengine.com/questions/62540/calling-a-function-in-my-gamemode-from-an-actor-cy.html
-class ABaseShip;
+class UBaseThrusterPart;
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VOIDSINGER_API UShipMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-
+	// Sets default values for this component's properties
 	UShipMovementComponent();
 
 protected:
-
+	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:	
-
-	
+	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	//declare functions
+
 	UFUNCTION(BlueprintCallable)
-	void AddForce(FVector2D ForceLocation, FVector2D Force);
+	void UpdateThrusterCatagories();
 
-	UFUNCTION(BlueprintPure)
-	FVector2D GetVelocity();
+	UFUNCTION(BlueprintCallable)
+	void RotateShip(bool Clockwise);
 
-	UFUNCTION(BlueprintPure)
-	float GetAngularVelocity();
+	UFUNCTION(BlueprintCallable)
+	void Move(FVector2D Direction);
+
 private:
 
-	//declare private variables
-	//UPROPERTY()
-	ABaseShip* Ship;
+	UFUNCTION()
+	TSet<UBaseThrusterPart*> GetDirectionalArray(FVector2D Direction);
 
 	UPROPERTY()
-	FVector2D LinearVelocity;
+	TSet<UBaseThrusterPart*> RightThrusters;
+	UPROPERTY()
+	TSet<UBaseThrusterPart*> LeftThrusters;
+	UPROPERTY()
+	TSet<UBaseThrusterPart*> ForwardThrusters;
+	UPROPERTY()
+	TSet<UBaseThrusterPart*> BackwardThrusters;
 
 	UPROPERTY()
-	FVector2D DeltaVelocity;
-
+	TSet<UBaseThrusterPart*> ClockwiseThrusters;
 	UPROPERTY()
-	FVector2D CenterOfThrust;
-
-	UPROPERTY()
-	float AngularVelocity;
-
+	TSet<UBaseThrusterPart*> CClockwiseThrusters;
 };

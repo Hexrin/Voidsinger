@@ -11,7 +11,7 @@
 UBasePart::UBasePart()
 {
 	//Initalize All Variables
-	Rotation = EPartRotation::Degrees0;
+	Rotation = 0;
 	Location = FIntPoint();
 	TotalPartMass = 1;
 	Cost = 1;
@@ -23,10 +23,10 @@ UBasePart::UBasePart()
 	bIsBeingDestroyed = false;
 }
 
-void UBasePart::InitializeVariables(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
+void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
 {
 	//Initalize Variables
-	Rotation = Rot;
+	Rotation = FMath::GridSnap<float>(Rot, 90);
 	Location = Loc;
 	PartGridComponent = PartGrid;
 	ActualShape = GetDesiredShape();
@@ -208,13 +208,13 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape()
 	
 	return GetDesiredShape(Rotation);
 }
-const TArray<FIntPoint> UBasePart::GetDesiredShape(TEnumAsByte<EPartRotation> Rot)
+const TArray<FIntPoint> UBasePart::GetDesiredShape(float Rot)
 {
 	TArray<FIntPoint> RotatedShape = TArray<FIntPoint>();
-		for (FIntPoint PixelLoc : DesiredShape)
-		{
-			RotatedShape.Emplace(UFunctionLibrary::RotateIntPoint(PixelLoc, Rot));
-		}
+	for (FIntPoint PixelLoc : DesiredShape)
+	{
+		RotatedShape.Emplace(FVector2D(PixelLoc).GetRotated(FMath::GridSnap<float>(Rot, 90)).RoundToVector().IntPoint());
+	}
 	return RotatedShape;
 }
 
@@ -227,7 +227,7 @@ const FArrayBounds UBasePart::GetPartBounds()
 {
 	return GetPartBounds(Rotation);
 }
-const FArrayBounds UBasePart::GetPartBounds(TEnumAsByte<EPartRotation> Rot)
+const FArrayBounds UBasePart::GetPartBounds(float Rot)
 {
 	if ((Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds) || this == this->GetClass()->GetDefaultObject())
 	{
@@ -261,7 +261,7 @@ const FIntPoint UBasePart::GetLocation()
 	return Location;
 }
 
-const TEnumAsByte<EPartRotation> UBasePart::GetRotation()
+const float UBasePart::GetRotation()
 {
 	return Rotation;
 }
@@ -304,14 +304,15 @@ TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 		IntPointArray.Empty();
 		for (auto& j : i.Value.IntPointArray)
 		{
-			if (GetShape().Contains(UFunctionLibrary::RotateIntPoint(j, GetRotation()) + GetLocation()))
+			FIntPoint AdjLocation = FVector2D(j).GetRotated(GetRotation()).RoundToVector().IntPoint() + GetLocation();
+			if (GetShape().Contains(AdjLocation))
 			{
-				IntPointArray.Add(UFunctionLibrary::RotateIntPoint(j, GetRotation()) + GetLocation());
+				IntPointArray.Emplace(AdjLocation);
 			}
 		}
 		if (!IntPointArray.IsEmpty())
 		{
-			ReturnValue.Add(i.Key, FIntPointArray(IntPointArray));
+			ReturnValue.Emplace(i.Key, FIntPointArray(IntPointArray));
 		}
 	}
 	return ReturnValue;

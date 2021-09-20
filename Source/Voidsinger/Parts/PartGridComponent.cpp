@@ -54,13 +54,13 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 
 //Adds a compleate part to the part grid
-bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace)
+bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 {
 	TArray<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
 	return AddPart(PartialPartShape, PartType, Location, Rotation, bAlwaysPlace);
 }
 //Adds a partial part to PartPrid
-bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace)
+bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 {
 	//Create Part
 	UBasePart* Part = NewObject<UBasePart>(this, PartType);
