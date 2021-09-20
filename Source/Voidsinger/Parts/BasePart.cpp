@@ -318,6 +318,11 @@ TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 	return ReturnValue;
 }
 
+int UBasePart::GetStrength()
+{
+	return Strength;
+}
+
 
 
 

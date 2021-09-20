@@ -132,6 +132,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	TMap<TEnumAsByte<EResourceType>, FIntPointArray> GetResourceTypes();
 
+	//Gets the strength of the part
+	UFUNCTION(BlueprintPure)
+	int GetStrength();
 
 
 
@@ -215,6 +218,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ResourceTypes;
 
+	UPROPERTY(EditDefaultsOnly)
+	int Strength;
 
 	/*Function Return Vals*\
 	\*--------------------*/

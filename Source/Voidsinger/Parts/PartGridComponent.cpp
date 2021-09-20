@@ -166,6 +166,31 @@ void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float H
 	}
 	
 }
+void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius)
+{
+	FVector FloatRelativeLoc = WorldLocation + GetOwner()->GetActorLocation();
+	float CheckX = -ExplosionRadius;
+	float CheckY = -ExplosionRadius;
+	FIntPoint CheckGridLocation;
+
+	while (ExplosionRadius < CheckY)
+	{
+		CheckGridLocation = FVector2D(FVector(CheckX + FloatRelativeLoc.X, CheckY + FloatRelativeLoc.Y, 0) - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint();
+		if (PartGrid.Contains(CheckGridLocation) && CheckX * CheckX + CheckY * CheckY <= (ExplosionRadius/PartGrid.Find(CheckGridLocation)->Part->GetStrength()) * (ExplosionRadius/PartGrid.Find(CheckGridLocation)->Part->GetStrength()))
+		{
+			DestroyPixel(CheckGridLocation);
+		}
+		CheckX += 1;
+		if (CheckX >= ExplosionRadius)
+		{
+			CheckY += 1;
+			CheckX = -ExplosionRadius;
+		}
+	}
+
+	//FIntPoint IntRelativeLoc = FVector2D(FloatRelativeLoc).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint());
+}
+
 void UPartGridComponent::DistrubuteHeat()
 {
 	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
