@@ -176,8 +176,42 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 	while (ExplosionRadius < CheckY)
 	{
 		CheckGridLocation = FVector2D(FVector(CheckX + FloatRelativeLoc.X, CheckY + FloatRelativeLoc.Y, 0) - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint();
-		if (PartGrid.Contains(CheckGridLocation) && CheckX * CheckX + CheckY * CheckY <= (ExplosionRadius/PartGrid.Find(CheckGridLocation)->Part->GetStrength()) * (ExplosionRadius/PartGrid.Find(CheckGridLocation)->Part->GetStrength()))
+		if (PartGrid.Contains(CheckGridLocation) && CheckX * CheckX + CheckY * CheckY <= ExplosionRadius * ExplosionRadius)
 		{
+			// PartGrid.Find(CheckGridLocation)->Part->GetStrength())
+			//y = mx + b
+			// Assume for a second FloatRelativeLoc is the origin of the ship ((0,0) on the part grid) and the part is somewhere between directly above and directly to the right
+			// of the FloatRelativeLoc
+			// b is 0
+			//slope will be CheckGridLocation.Y/CheckGridLocation.X
+			//How to figure out what parts to check?
+			//assume for a second the CheckGridLocation is (1,2)
+			//Slope is 2
+			//y = 2x
+			//if we just go by integers of the slope next point checked is the origin. not super helpful
+			// Alternate x and y, but if the pixel doesn't contain something in the slope check the other?
+			// Check X - 1 from the CheckGridLocation, if the bounds of the pixel do not contain something in the slope, check y - 1
+			// How to check if bounds of pixel contain something in the slope?
+			// in this case, if top left location Y is > the Y with the slope of the line at that X location 
+			// and bottom right Y is < the Y with the slop of the line at that X location
+			// Divide radius by the strength of the pixel found, then check y-1 x-1. Divide by that strength then check y-2 x-1
+			// and so on till you get to origin. So there needs to be a recursive function. or maybe a while()? Yes, while(Location checking does not contain origin)
+			//So separate slope rise and slope run.
+			// What if FloatRelativeLoc is not 0,0 (still assuming part is up and to the right)
+			//slope rise and run will be (CheckGridLocation.Y - FloatRelativeLoc.Y) and (CheckGridLocation.X - FloatRelativeLoc.X)
+			// Check X - 1 from the CheckGridLocation, if the bounds of the pixel do not contain something in the slope, check y - 1
+			// Divide radius by the strength of all the pixels found
+			//and so on until you get to the location that contains the FloatRelativeLoc. So there should also be a check for each location if it contains the FloatRelativeLoc
+			//How to check if it contains the FloatRelativeLoc?
+			//Top left of location X is < FloatRelativeLoc.X and Y is > FloatRelativeLoc.Y,
+			//and bottom right of location X is > FloatRelationLoc.X and Y is < FloatRelativeLoc.Y
+			//What if the part is not up and to the right?
+			//Need to figure out what quadrant the part is in or what axis it's on
+			//If slope rise == 0 
+			//	if X < FloatRelativeLoc.X
+			//		return left
+
+
 			DestroyPixel(CheckGridLocation);
 		}
 		CheckX += 1;
