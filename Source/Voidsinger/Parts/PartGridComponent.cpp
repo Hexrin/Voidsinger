@@ -2,6 +2,7 @@
 
 
 #include "PartGridComponent.h"
+#include "BaseThrusterPart.h"
 #include "BasePart.h"
 
 // Sets default values for this component's properties
@@ -115,6 +116,10 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			}
 		}
 		Part->InitializeFunctionality();
+		if (Cast<UBaseThrusterPart>(Part))
+		{
+			Cast<ABaseShip>(GetOwner())->MovementComponent->UpdateThrusters();
+		}
 		return true;
 	}
 
@@ -150,6 +155,10 @@ bool UPartGridComponent::RemovePart(FIntPoint Location)
 bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 {
 	class UBasePart* DamagedPart = NewObject<UBasePart>(this);
+	if (Cast<UBaseThrusterPart>(DamagedPart))
+	{
+		Cast<ABaseShip>(GetOwner())->MovementComponent->UpdateThrusters();
+	}
 	return DestroyPixel(Location, DamagedPart);
 }
 void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)

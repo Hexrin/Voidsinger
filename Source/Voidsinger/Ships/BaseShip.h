@@ -7,6 +7,7 @@
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/Parts/PartGridComponent.h"
 #include "ShipPhysicsComponent.h"
+#include "ShipMovementComponent.h"
 #include "Components/SceneComponent.h"
 #include "BaseShip.generated.h"
 
@@ -56,4 +57,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UShipPhysicsComponent* PhysicsComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class UShipMovementComponent* MovementComponent;
+
 };

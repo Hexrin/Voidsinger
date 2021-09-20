@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BasePart.h"
+#include "DrawDebugHelpers.h" //remove this once debuging is compleate
 #include "Voidsinger/Ships/ShipPhysicsComponent.h"
 #include "BaseThrusterPart.generated.h"
 
@@ -24,6 +25,12 @@ public:
 	UFUNCTION(BlueprintPure)
 	const float GetThrustForce();
 
+	UFUNCTION(BlueprintPure)
+	const float GetThrustRotation();
+
+	UFUNCTION(BlueprintPure)
+	const FVector2D GetThrustLocation();
+
 	//Apply force in the direction of the thruster 
 	UFUNCTION(BlueprintCallable)
 	void Thrust();
@@ -33,7 +40,7 @@ protected:
 	float ThrustForce;
 
 	UPROPERTY(EditDefaultsOnly)
-	FVector2D ThrustLocaion;
+	FVector2D ThrustLocation;
 
 	UPROPERTY(EditDefaultsOnly)
 	float ThrustRotation;
