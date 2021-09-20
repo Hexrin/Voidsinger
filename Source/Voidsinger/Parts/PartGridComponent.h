@@ -52,6 +52,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius);
 
+	UFUNCTION()
+	bool BoxContainsLocation(FVector2D TopLeft, FVector2D BottomRight, FVector2D Location);
+
+	//Returns the quadrant the location is in. If the location is on an axis, then it will return 5 for positive X, 6 for positive y, 7 for negative x, and 8 for negative y. Returns 0 if the Location and origin are equal.
+	UFUNCTION()
+	int GetQuadrantFromLocation(FVector2D Location, FVector2D origin);
+
+	//Returns true if the slope intersects the box.
+	UFUNCTION()
+	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, float YIntercept);
+	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float XIntercept);
+
 private:
 	UFUNCTION()
 	void DistrubuteHeat();
