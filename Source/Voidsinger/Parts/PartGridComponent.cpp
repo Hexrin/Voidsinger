@@ -176,15 +176,20 @@ void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float H
 	
 }
 void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius)
-{
+ {
 	FVector FloatRelativeLoc = WorldLocation + GetOwner()->GetActorLocation();
 	float CheckX = -ExplosionRadius;
 	float CheckY = -ExplosionRadius;
 	FIntPoint CheckGridLocation;
 	TArray<FIntPoint> LocationsToBeDestroyed;
+	DrawDebugPoint(GetWorld(), WorldLocation, ExplosionRadius * 50, FColor::Red, false, 2.0F);
 
-	while (ExplosionRadius < CheckY)
+	//UE_LOG(LogTemp, Warning, TEXT("Explosion %f"), ExplosionRadius);
+	//UE_LOG(LogTemp, Warning, TEXT("CheckY %f"), CheckY);
+
+	while (ExplosionRadius > CheckY)
 	{
+		//UE_LOG(LogTemp, Warning, TEXT("Sigh"));
 		CheckGridLocation = FVector2D(FVector(CheckX + FloatRelativeLoc.X, CheckY + FloatRelativeLoc.Y, 0) - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint();
 		if (PartGrid.Contains(CheckGridLocation) && CheckX * CheckX + CheckY * CheckY <= ExplosionRadius * ExplosionRadius)
 		{
@@ -231,7 +236,7 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 				float SlopeRise = CheckGridLocation.Y - FloatRelativeLoc.Y;
 				float SlopeRun = CheckGridLocation.X - FloatRelativeLoc.X;
 
-				switch (GetQuadrantFromLocation(CheckGridLocation, FVector2D(FloatRelativeLoc)))
+				switch (GetQuadrantFromLocation(FVector2D(CheckX, CheckY), FVector2D(FloatRelativeLoc)))
 				{
 
 				case 0:
@@ -241,23 +246,31 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 				case 1:
 					XDirection = -1;
 					YDirection = -1;
+					break;
 				case 2:
 					XDirection = 1;
 					YDirection = -1;
+					break;
 				case 3:
 					XDirection = 1;
 					YDirection = 1;
+					break;
 				case 4:
 					XDirection = -1;
 					YDirection = 1;
+					break;
 				case 5:
 					XDirection = -1;
+					break;
 				case 6:
 					YDirection = -1;
+					break;
 				case 7:
 					XDirection = 1;
+					break;
 				case 8:
 					YDirection = 1;
+					break;
 				}
 
 				int XLocation = CheckGridLocation.X;
@@ -279,19 +292,39 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 					}
 					else if (YDirection != 0)
 					{
-						if (DoesLineIntersectBox(FVector2D(float(XLocation + XDirection) - GridScale / 2, float(YLocation) + GridScale / 2), FVector2D(float(XLocation + XDirection) + GridScale / 2, float(YLocation) - GridScale / 2), SlopeRise, SlopeRun, FloatRelativeLoc.Y))
+						if (XDirection != 0)
 						{
-							XLocation += XDirection;
-							if (PartGrid.Contains(FIntPoint(XLocation, YLocation)))
+							if (DoesLineIntersectBox(FVector2D(float(XLocation + XDirection) - GridScale / 2, float(YLocation) + GridScale / 2), FVector2D(float(XLocation + XDirection) + GridScale / 2, float(YLocation) - GridScale / 2), SlopeRise, SlopeRun, FloatRelativeLoc.Y))
 							{
-								NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation, YLocation))->Part->GetStrength();
+								XLocation += XDirection;
+								if (PartGrid.Contains(FIntPoint(XLocation, YLocation)))
+								{
+									NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation, YLocation))->Part->GetStrength();
+								}
+							}
+							else if (BoxContainsLocation(FVector2D(float(XLocation) - GridScale / 2, float(YLocation + YDirection) + GridScale / 2), FVector2D(float(XLocation) + GridScale / 2, float(YLocation + YDirection) - GridScale / 2), FVector2D(FloatRelativeLoc)))
+							{
+								if (PartGrid.Contains(FIntPoint(XLocation, YLocation + YDirection)))
+								{
+									NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation, YLocation + YDirection))->Part->GetStrength();
+								}
+								StopChecking = true;
+								break;
+							}
+							else if (DoesLineIntersectBox(FVector2D(float(XLocation) - GridScale / 2, float(YLocation + YDirection) + GridScale / 2), FVector2D(float(XLocation) + GridScale / 2, float(YLocation + YDirection) - GridScale / 2), SlopeRise, SlopeRun, FloatRelativeLoc.Y))
+							{
+								YLocation += YDirection;
+								if (PartGrid.Contains(FIntPoint(XLocation, YLocation)))
+								{
+									NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation, YLocation))->Part->GetStrength();
+								}
 							}
 						}
 						else if (BoxContainsLocation(FVector2D(float(XLocation) - GridScale / 2, float(YLocation + YDirection) + GridScale / 2), FVector2D(float(XLocation) + GridScale / 2, float(YLocation + YDirection) - GridScale / 2), FVector2D(FloatRelativeLoc)))
 						{
 							if (PartGrid.Contains(FIntPoint(XLocation, YLocation + YDirection)))
 							{
-								NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation + XDirection, YLocation))->Part->GetStrength();
+								NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation, YLocation + YDirection))->Part->GetStrength();
 							}
 							StopChecking = true;
 							break;
@@ -438,7 +471,7 @@ bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D Botto
 			}
 		}
 	}
-	if (TopLeft.Y > (SlopeRise / SlopeRun) * (TopLeft.X) + YIntercept && BottomRight.Y < (SlopeRise / SlopeRun) * (BottomRight.X) + YIntercept)
+	if (TopLeft.Y >= (SlopeRise / SlopeRun) * (TopLeft.X) + YIntercept && BottomRight.Y <= (SlopeRise / SlopeRun) * (BottomRight.X) + YIntercept)
 	{
 		return true;
 	}
@@ -552,10 +585,18 @@ void UPartGridComponent::SaveShip(FString ShipName)
 
 }
 
-void UPartGridComponent::LoadSavedShip(FString ShipName)
+bool UPartGridComponent::LoadSavedShip(FString ShipName)
 {
 	USaveGame* SaveGameInstance = UGameplayStatics::LoadGameFromSlot(ShipName, 0);
-	BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);
+	if (IsValid(SaveGameInstance))
+	{
+		BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 

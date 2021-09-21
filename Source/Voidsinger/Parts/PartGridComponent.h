@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Voidsinger/SaveShip.h"
+#include "DrawDebugHelpers.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "PartGridComponent.generated.h"
 
@@ -77,7 +78,7 @@ public:
 	void SaveShip(FString ShipName);
 
 	UFUNCTION(BlueprintCallable)
-	void LoadSavedShip(FString ShipName);
+	bool LoadSavedShip(FString ShipName);
 
 
 
