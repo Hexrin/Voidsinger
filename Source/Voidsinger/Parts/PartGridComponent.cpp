@@ -116,6 +116,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			}
 		}
 		Part->InitializeFunctionality();
+		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
 		if (Cast<UBaseThrusterPart>(Part))
 		{
 			Cast<ABaseShip>(GetOwner())->MovementComponent->UpdateThrusters();
@@ -510,6 +511,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& Dama
 		PartGrid.FindRef(Location).PixelMesh->DestroyComponent();
 
 		PartGrid.Remove(Location);
+		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
 		return true;
 	}
 	else
@@ -576,6 +578,17 @@ const FVector2D UPartGridComponent::GetCenterOfMass()
 	
 	
 	return Center;
+}
+
+const float UPartGridComponent::GetMomentOfInertia()
+{
+	float ReturnValue = 0;
+	FVector2D CenterOfMass = GetCenterOfMass();
+	for (auto& Part : PartGrid)
+	{
+		ReturnValue += (Part.Value.Part->GetMass() / 6) + (FVector2D(Part.Value.Part->GetLocation()) - CenterOfMass).SizeSquared();
+	}
+	return ReturnValue;
 }
 
 //Gets the mass of the PartGrid

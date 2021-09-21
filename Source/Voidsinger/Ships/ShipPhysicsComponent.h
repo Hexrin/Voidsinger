@@ -37,6 +37,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	FVector2D GetVelocity();
 
+	UFUNCTION()
+	void UpdateMassCalculations();
+
 	UFUNCTION(BlueprintPure)
 	float GetAngularVelocity();
 private:
@@ -49,10 +52,13 @@ private:
 	FVector2D LinearVelocity;
 
 	UPROPERTY()
-	FVector2D DeltaVelocity;
+	float Mass;
 
 	UPROPERTY()
-	FVector2D CenterOfThrust;
+	FVector2D CenterOfMass;
+
+	UPROPERTY()
+	float MomentOfInertia;
 
 	UPROPERTY()
 	float AngularVelocity;
