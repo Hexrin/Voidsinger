@@ -88,6 +88,9 @@ public:
 	const FVector2D GetCenterOfMass();
 
 	UFUNCTION(BlueprintPure)
+	const float GetMomentOfInertia();
+
+	UFUNCTION(BlueprintPure)
 	const float GetMass();
 
 	UFUNCTION(BlueprintPure)
