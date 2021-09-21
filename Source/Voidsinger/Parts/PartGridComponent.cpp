@@ -249,7 +249,7 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 					YDirection = -1;
 					break;
 				case 2:
-					XDirection = 1;
+					XDirection = -1;
 					YDirection = 1;
 					break;
 				case 3:
@@ -261,16 +261,16 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 					YDirection = -1;
 					break;
 				case 5:
-					XDirection = -1;
-					break;
-				case 6:
 					YDirection = -1;
 					break;
+				case 6:
+					XDirection = -1;
+					break;
 				case 7:
-					XDirection = 1;
+					YDirection = 1;
 					break;
 				case 8:
-					YDirection = 1;
+					XDirection = 1;
 					break;
 				}
 
@@ -341,7 +341,7 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 					}
 					else
 					{
-						if (DoesLineIntersectBox(FVector2D(float(XLocation + XDirection) - GridScale / 2, float(YLocation) + GridScale / 2), FVector2D(float(XLocation + XDirection) + GridScale /2), FloatRelativeLoc.Y))
+						if (DoesLineIntersectBox(FVector2D(float(XLocation + XDirection) + GridScale / 2, float(YLocation) - GridScale / 2), FVector2D(float(XLocation + XDirection) - GridScale /2, float(YLocation) + GridScale / 2), FloatRelativeLoc.Y))
 						{
 							XLocation += XDirection;
 							if (PartGrid.Contains(FIntPoint(XLocation, YLocation)))
@@ -462,7 +462,7 @@ bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D Botto
 			FVector2D BottomLeft = FVector2D(BottomRight.X, TopLeft.Y);
 			FVector2D TopRight = FVector2D(TopLeft.X, BottomRight.Y);
 
-			if (BottomLeft.X < (SlopeRise / SlopeRun) * (BottomLeft.Y) + XIntercept && TopRight.X > (SlopeRise/SlopeRun) * (TopRight.Y) + XIntercept)
+			if (BottomLeft.X <= (SlopeRise / SlopeRun) * (BottomLeft.Y) + XIntercept && TopRight.X >= (SlopeRise/SlopeRun) * (TopRight.Y) + XIntercept)
 			{
 				return true;
 			}
@@ -484,14 +484,7 @@ bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D Botto
 
 bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float YIntercept)
 {
-	if (TopLeft.Y < YIntercept && BottomRight.Y > YIntercept)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return TopLeft.Y < YIntercept&& BottomRight.Y > YIntercept;
 }
 
 void UPartGridComponent::DistrubuteHeat()
