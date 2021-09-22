@@ -181,7 +181,7 @@ void UBasePart::DestroyPart()
 \*--------------------*/
 void UBasePart::Tick(float DeltaTime)
 {
-	if (!bIsBeingDestroyed && IsValid(this))
+	if (!bIsBeingDestroyed)
 	{
 		//Call Blueprint Implementable Event
 		OnTick(DeltaTime);
