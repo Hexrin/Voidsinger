@@ -6,7 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Voidsinger/SaveShip.h"
+#include "DrawDebugHelpers.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "PartGridComponent.generated.h"
 
 class UBasePart;
@@ -61,7 +63,7 @@ public:
 
 	//Returns true if the slope intersects the box.
 	UFUNCTION()
-	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, float YIntercept);
+	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, FVector2D origin);
 	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float XIntercept);
 
 private:
@@ -77,7 +79,7 @@ public:
 	void SaveShip(FString ShipName);
 
 	UFUNCTION(BlueprintCallable)
-	void LoadSavedShip(FString ShipName);
+	bool LoadSavedShip(FString ShipName);
 
 
 
