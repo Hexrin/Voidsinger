@@ -64,5 +64,32 @@ void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
 	}
 }
 
+void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
+{
+	//Creates the voidsong object from the given class and adds it to available voidsongs
+	AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(this, Voidsong));
+}
+
+void ABaseShip::PlayVoidsong(TArray<int> Sequence)
+{
+	//Check the available voidsongs and see if their activation sequence matches the sequence inputted. If so, activate that voidsong.
+	for (auto& i : AvailableVoidsongs)
+	{
+		if (i->ActivationCombo == Sequence)
+		{
+			i->Activate();
+		}
+	}
+}
+
+void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
+{
+	//Creates voidsong objects with the list of voidsongs given. Adds them to available voidsongs
+	for (auto& i : Voidsongs)
+	{
+		AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(this, i));
+	}
+}
+
 
 
