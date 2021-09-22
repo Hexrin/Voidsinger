@@ -181,11 +181,13 @@ void UBasePart::DestroyPart()
 \*--------------------*/
 void UBasePart::Tick(float DeltaTime)
 {
-	if (!bIsBeingDestroyed && IsValid(this))
+	if (!bIsBeingDestroyed)
 	{
 		//Call Blueprint Implementable Event
 		OnTick(DeltaTime);
 	}
+	else
+		UE_LOG(LogTemp, Warning, TEXT("NotTicking"));
 }
 
 bool UBasePart::IsTickable() const
