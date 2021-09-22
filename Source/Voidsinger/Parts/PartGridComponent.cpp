@@ -178,7 +178,7 @@ void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float H
 }
 void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius)
  {
-	//FVector FloatRelativeLoc = WorldLocation + GetOwner()->GetActorLocation();
+
 	FVector FloatRelativeLoc = UKismetMathLibrary::InverseTransformLocation(GetOwner()->GetActorTransform(), WorldLocation);
 	float CheckX = -ExplosionRadius;
 	float CheckY = -ExplosionRadius;
@@ -239,11 +239,10 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 				float SlopeRise = CheckGridLocation.X - FloatRelativeLoc.X;
 				float SlopeRun = CheckGridLocation.Y - FloatRelativeLoc.Y;
 
-				switch (GetQuadrantFromLocation(FVector2D(CheckGridLocation.X, CheckGridLocation.Y), FVector2D(FloatRelativeLoc)))
+ 				switch (GetQuadrantFromLocation(FVector2D(CheckGridLocation.X, CheckGridLocation.Y), FVector2D(FloatRelativeLoc)))
 				{
 
 				case 0:
-					DestroyPixel(CheckGridLocation);
 					StopChecking = true;
 					break;
 				case 1:
@@ -297,7 +296,7 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 					{
 						if (XDirection != 0)
 						{
-							if (DoesLineIntersectBox(FVector2D(float(XLocation + XDirection) + GridScale / 2, float(YLocation) - GridScale / 2), FVector2D(float(XLocation + XDirection) - GridScale / 2, float(YLocation) + GridScale / 2), SlopeRise, SlopeRun, FloatRelativeLoc.X))
+							if (DoesLineIntersectBox(FVector2D(float(XLocation + XDirection) + GridScale / 2, float(YLocation) - GridScale / 2), FVector2D(float(XLocation + XDirection) - GridScale / 2, float(YLocation) + GridScale / 2), SlopeRise, SlopeRun, FVector2D(FloatRelativeLoc)))
 							{
 								XLocation += XDirection;
 								if (PartGrid.Contains(FIntPoint(XLocation, YLocation)))
@@ -314,7 +313,7 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 								StopChecking = true;
 								break;
 							}
-							else if (DoesLineIntersectBox(FVector2D(float(XLocation) + GridScale / 2, float(YLocation + YDirection) - GridScale / 2), FVector2D(float(XLocation) - GridScale / 2, float(YLocation + YDirection) + GridScale / 2), SlopeRise, SlopeRun, FloatRelativeLoc.X))
+							else if (DoesLineIntersectBox(FVector2D(float(XLocation) + GridScale / 2, float(YLocation + YDirection) - GridScale / 2), FVector2D(float(XLocation) - GridScale / 2, float(YLocation + YDirection) + GridScale / 2), SlopeRise, SlopeRun, FVector2D(FloatRelativeLoc)))
 							{
 								YLocation += YDirection;
 								if (PartGrid.Contains(FIntPoint(XLocation, YLocation)))
@@ -332,7 +331,7 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 							StopChecking = true;
 							break;
 						}
-						else if (DoesLineIntersectBox(FVector2D(float(XLocation) + GridScale / 2, float(YLocation + YDirection) - GridScale / 2), FVector2D(float(XLocation) - GridScale / 2, float(YLocation + YDirection) + GridScale / 2), SlopeRise, SlopeRun, FloatRelativeLoc.X))
+						else if (DoesLineIntersectBox(FVector2D(float(XLocation) + GridScale / 2, float(YLocation + YDirection) - GridScale / 2), FVector2D(float(XLocation) - GridScale / 2, float(YLocation + YDirection) + GridScale / 2), SlopeRise, SlopeRun, FVector2D(FloatRelativeLoc)))
 						{
 							YLocation += YDirection;
 							if (PartGrid.Contains(FIntPoint(XLocation, YLocation)))
@@ -444,11 +443,15 @@ int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D or
 	}
 }
 
-bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, float XIntercept)
+bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, FVector2D origin)
 {
+	float XIntercept = 0;
+	FVector2D LocalTopLeft = TopLeft - origin;
+	FVector2D LocalBottomRight = BottomRight - origin;
+
 	if (SlopeRise == 0)
 	{
-		if (TopLeft.X > XIntercept && BottomRight.X < XIntercept)
+		if (LocalTopLeft.X > XIntercept && LocalBottomRight.X < XIntercept)
 		{
 			return true;
 		}
@@ -461,10 +464,10 @@ bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D Botto
 	{
 		if (!(SlopeRise < 0 && SlopeRun < 0))
 		{
-			FVector2D BottomLeft = FVector2D(BottomRight.X, TopLeft.Y);
-			FVector2D TopRight = FVector2D(TopLeft.X, BottomRight.Y);
+			FVector2D LocalBottomLeft = FVector2D(LocalBottomRight.X, LocalTopLeft.Y);
+			FVector2D LocalTopRight = FVector2D(LocalTopLeft.X, LocalBottomRight.Y);
 
-			if (BottomLeft.X <= (SlopeRise / SlopeRun) * (BottomLeft.Y) + XIntercept && TopRight.X >= (SlopeRise/SlopeRun) * (TopRight.Y) + XIntercept)
+			if (LocalBottomLeft.X <= (SlopeRise / SlopeRun) * (LocalBottomLeft.Y) + XIntercept && LocalTopRight.X >= (SlopeRise/SlopeRun) * (LocalTopRight.Y) + XIntercept)
 			{
 				return true;
 			}
@@ -474,7 +477,7 @@ bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D Botto
 			}
 		}
 	}
-	if (TopLeft.X >= (SlopeRise / SlopeRun) * (TopLeft.Y) + XIntercept && BottomRight.X <= (SlopeRise / SlopeRun) * (BottomRight.Y) + XIntercept)
+	if (LocalTopLeft.X >= (SlopeRise / SlopeRun) * (LocalTopLeft.Y) + XIntercept && LocalBottomRight.X <= (SlopeRise / SlopeRun) * (LocalBottomRight.Y) + XIntercept)
 	{
 		return true;
 	}

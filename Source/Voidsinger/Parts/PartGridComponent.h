@@ -63,7 +63,7 @@ public:
 
 	//Returns true if the slope intersects the box.
 	UFUNCTION()
-	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, float YIntercept);
+	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, FVector2D origin);
 	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float XIntercept);
 
 private:
