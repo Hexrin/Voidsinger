@@ -283,6 +283,15 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 					//XLocation += XDirection;
 					//YLocation += YDirection;
 
+					if (BoxContainsLocation(FVector2D(float(XLocation) + GridScale / 2, float(YLocation) - GridScale / 2), FVector2D(float(XLocation) - GridScale / 2, float(YLocation) + GridScale / 2), FVector2D(FloatRelativeLoc)))
+					{
+						if (PartGrid.Contains(FIntPoint(XLocation + XDirection, YLocation)))
+						{
+							NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation + XDirection, YLocation))->Part->GetStrength();
+						}
+						StopChecking = true;
+						break;
+					}
 					if (BoxContainsLocation(FVector2D(float(XLocation + XDirection) + GridScale / 2, float(YLocation) - GridScale / 2), FVector2D(float(XLocation + XDirection) - GridScale / 2, float(YLocation) + GridScale / 2), FVector2D(FloatRelativeLoc)))
 					{
 						if (PartGrid.Contains(FIntPoint(XLocation + XDirection, YLocation)))
