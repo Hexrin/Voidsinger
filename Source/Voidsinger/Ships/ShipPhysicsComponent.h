@@ -48,8 +48,7 @@ private:
 	//UPROPERTY()
 	ABaseShip* Ship;
 
-	UPROPERTY()
-	FVector2D LinearVelocity;
+	
 
 	UPROPERTY()
 	float Mass;
@@ -63,4 +62,12 @@ private:
 	UPROPERTY()
 	float AngularVelocity;
 
+	UPROPERTY()
+	FVector2D LinearVelocity;
+
+	UPROPERTY()
+	float DeltaAngularVelocity;
+
+	UPROPERTY()
+	FVector2D DeltaLinearVelocity;
 };

@@ -186,6 +186,8 @@ void UBasePart::Tick(float DeltaTime)
 		//Call Blueprint Implementable Event
 		OnTick(DeltaTime);
 	}
+	else
+		UE_LOG(LogTemp, Warning, TEXT("NotTicking"));
 }
 
 bool UBasePart::IsTickable() const

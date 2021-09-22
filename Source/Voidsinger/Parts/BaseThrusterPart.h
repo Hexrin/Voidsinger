@@ -35,6 +35,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Thrust();
 
+	UFUNCTION(BlueprintPure)
+	const bool IsThrusting();
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	float ThrustForce;
