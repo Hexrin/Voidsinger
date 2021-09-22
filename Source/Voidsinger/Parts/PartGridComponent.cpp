@@ -178,7 +178,8 @@ void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float H
 }
 void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius)
  {
-	FVector FloatRelativeLoc = WorldLocation + GetOwner()->GetActorLocation();
+	//FVector FloatRelativeLoc = WorldLocation + GetOwner()->GetActorLocation();
+	FVector FloatRelativeLoc = UKismetMathLibrary::InverseTransformLocation(GetOwner()->GetActorTransform(), WorldLocation);
 	float CheckX = -ExplosionRadius;
 	float CheckY = -ExplosionRadius;
 	FIntPoint CheckGridLocation;
@@ -191,7 +192,8 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 	while (ExplosionRadius > CheckY)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Sigh"));
-		CheckGridLocation = FVector2D(FVector(CheckX + FloatRelativeLoc.X, CheckY + FloatRelativeLoc.Y, 0) - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint();
+		//CheckGridLocation = FVector2D(FVector(CheckX + FloatRelativeLoc.X, CheckY + FloatRelativeLoc.Y, 0) - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint();
+		CheckGridLocation = FIntPoint(CheckX + FloatRelativeLoc.X, CheckY + FloatRelativeLoc.Y);
 		if (PartGrid.Contains(CheckGridLocation) && CheckX * CheckX + CheckY * CheckY <= ExplosionRadius * ExplosionRadius)
 		{
 			//obviously if it contains the FloatRelativeLoc then it ded
@@ -237,7 +239,7 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 				float SlopeRise = CheckGridLocation.X - FloatRelativeLoc.X;
 				float SlopeRun = CheckGridLocation.Y - FloatRelativeLoc.Y;
 
-				switch (GetQuadrantFromLocation(FVector2D(CheckX, CheckY), FVector2D(FloatRelativeLoc)))
+				switch (GetQuadrantFromLocation(FVector2D(CheckGridLocation.X, CheckGridLocation.Y), FVector2D(FloatRelativeLoc)))
 				{
 
 				case 0:

@@ -8,6 +8,7 @@
 #include "Voidsinger/SaveShip.h"
 #include "DrawDebugHelpers.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "PartGridComponent.generated.h"
 
 class UBasePart;
