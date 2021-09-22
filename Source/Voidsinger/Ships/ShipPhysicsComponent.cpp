@@ -12,7 +12,8 @@ UShipPhysicsComponent::UShipPhysicsComponent()
 	Ship = (ABaseShip*)GetOwner();
 	AngularVelocity = 0;
 	LinearVelocity = FVector2D(0, 0);
-
+	DeltaLinearVelocity = FVector2D(0, 0);
+	DeltaAngularVelocity = 0;
 }
 
 
@@ -29,9 +30,16 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 {
 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
+
+	LinearVelocity += DeltaLinearVelocity.GetRotated(Ship->GetActorRotation().Yaw) * DeltaTime;
+	AngularVelocity += DeltaAngularVelocity * DeltaTime;
+
 	Ship->SetActorLocation(Ship->GetActorLocation() + FVector(LinearVelocity.X, LinearVelocity.Y, 0) * DeltaTime);
 	Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0) * DeltaTime);
+
+	DeltaLinearVelocity = FVector2D(0, 0);
+	DeltaAngularVelocity = 0;
+
 }
 
 //When a force is added to the ship
@@ -39,7 +47,11 @@ void UShipPhysicsComponent::AddForce(FVector2D RelativeForceLocation, FVector2D 
 {
 	if (!RelativeForce.IsZero())
 	{
-		LinearVelocity += RelativeForce / Mass;
+		RelativeForceLocation -= CenterOfMass;
+
+
+		DeltaLinearVelocity += RelativeForce / Mass;
+		DeltaAngularVelocity += (RelativeForceLocation.X * RelativeForce.Y - RelativeForceLocation.Y * RelativeForce.X) / MomentOfInertia;
 	}
 }
 
