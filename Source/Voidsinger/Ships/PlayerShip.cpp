@@ -116,19 +116,13 @@ void APlayerShip::AddVoidsongInput(int input)
     ShouldResetVoidsongTimerTick = true;
 
     //Play the voidsong instrument
-    VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(input)));
-}
-
-void APlayerShip::PlayVoidsong(TArray<int> Sequence)
-{
-    //Check the available voidsongs and see if their activation sequence matches the sequence inputted. If so, activate that voidsong.
-    for (auto& i : AvailableVoidsongs)
+    if (IsValid(VoidsongInstrument))
     {
-        if (i->ActivationCombo == Sequence)
-        {
-            i->Activate();
-            ResetVoidsong();
-        }
+        VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(input)));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("The voidsong instrument isn't valid! Set it on the player ship."));
     }
 }
 
@@ -136,6 +130,7 @@ void APlayerShip::ActivateVoidsong()
 {
     //Calls play voidsong with the player's current sequence of inputs
     PlayVoidsong(VoidsongCombo);
+    ResetVoidsong();
 }
 
 void APlayerShip::ResetVoidsong()
@@ -145,18 +140,6 @@ void APlayerShip::ResetVoidsong()
     ShouldResetVoidsongTimerTick = false;
 }
 
-void APlayerShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
-{
-    //Creates voidsong objects with the list of voidsongs given. Adds them to available voidsongs
-    for (auto& i : Voidsongs)
-    {
-        AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(this, i));
-    }
-}
 
-void APlayerShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
-{
-    //Creates the voidsong object from the given class and adds it to available voidsongs
-    AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(this, Voidsong));
-}
+
 

@@ -8,10 +8,13 @@
 #include "Voidsinger/Parts/PartGridComponent.h"
 #include "ShipPhysicsComponent.h"
 #include "ShipMovementComponent.h"
+#include "Voidsinger/Voidsongs/BaseVoidsong.h"
 #include "Components/SceneComponent.h"
 #include "BaseShip.generated.h"
 
 class UBaseResourceSystem;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, Damage, float, Duration);
 
 UCLASS()
 class VOIDSINGER_API ABaseShip : public APawn
@@ -45,6 +48,22 @@ public:
 	UFUNCTION()
 	void RemoveResourceSystem(UBaseResourceSystem* System);
 
+	//Adds a new Voidsong to the AvailableVoidsongs. Will be useful for gaining a new voidsong.
+	UFUNCTION(BlueprintCallable)
+	void AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong);
+
+	//Plays a voidsong with a given activation sequence
+	UFUNCTION()
+	void PlayVoidsong(TArray<int> Sequence);
+
+	//Creates Voidsong objects with the given classes of Voidsongs and adds them to the AvaialableVoidsongs. Will be useful for loading from a save game.
+	UFUNCTION()
+	void LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs);
+
+	//Event dispatcher for laser.
+	UFUNCTION(BlueprintCallable)
+	void CallLaser(float Damage, float Duration);
+
 	UPROPERTY()
 	TArray<UBaseResourceSystem*> ResourceSystems;
 
@@ -60,5 +79,13 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UShipMovementComponent* MovementComponent;
+
+	//Array of the voidsongs that are available to play
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UBaseVoidsong*> AvailableVoidsongs;
+
+	//For the Event Dispatcher
+	UPROPERTY(BlueprintAssignable)
+	FLaserDelegate OnLaserDelegate;
 
 };

@@ -111,6 +111,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 				//Create Mesh
 				class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
 				Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
+				Cast<UStaticMeshComponent>(NewPlane)->SetMaterial(0, Part->GetPixelMaterial());
 
 				PartGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), FPartData(Part, 0.f, Cast<UStaticMeshComponent>(NewPlane)));
 			}
@@ -155,12 +156,23 @@ bool UPartGridComponent::RemovePart(FIntPoint Location)
 //Remove a single Pixel from the PartGrid. Returns true if a pixel was removed
 bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 {
-	class UBasePart* DamagedPart = NewObject<UBasePart>(this);
-	if (Cast<UBaseThrusterPart>(DamagedPart))
+	if (PartGrid.Contains(Location))
 	{
-		Cast<ABaseShip>(GetOwner())->MovementComponent->UpdateThrusters();
+		//Remove from grid
+		UBasePart* DamagedPart = PartGrid.FindRef(Location).Part;
+		DamagedPart->DestroyPixel(Location - DamagedPart->GetLocation());
+
+		//Destroy Mesh
+		PartGrid.FindRef(Location).PixelMesh->DestroyComponent();
+
+		PartGrid.Remove(Location);
+		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
+		return true;
 	}
-	return DestroyPixel(Location, DamagedPart);
+	else
+	{
+		return false;
+	}
 }
 void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)
 {

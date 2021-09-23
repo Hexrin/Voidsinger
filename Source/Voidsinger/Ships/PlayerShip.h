@@ -88,24 +88,12 @@ public:
 	UFUNCTION()
 	void AddVoidsongInput(int input);
 
-	//Plays a voidsong with a given activation sequence
-	UFUNCTION()
-	void PlayVoidsong(TArray<int> Sequence);
-
 	//Activates the voidsong
 	void ActivateVoidsong();
 
 	//Clears the sequence of inputs that the player has made
 	UFUNCTION(BlueprintCallable)
 	void ResetVoidsong();
-
-	//Creates Voidsong objects with the given classes of Voidsongs and adds them to the AvaialableVoidsongs. Will be useful for loading from a save game.
-	UFUNCTION()
-	void LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs);
-
-	//Adds a new Voidsong to the AvailableVoidsongs. Will be useful for gaining a new voidsong.
-	UFUNCTION(BlueprintCallable)
-	void AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong);
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||
@@ -133,10 +121,6 @@ public:
 	//Array of the inputs that the player has put in to play voidsongs
 	UPROPERTY()
 	TArray<int> VoidsongCombo;
-
-	//Array of the voidsongs that are available to play
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<UBaseVoidsong*> AvailableVoidsongs;
 
 	//The spawned metasound to set parameters on
 	UPROPERTY(EditAnywhere)

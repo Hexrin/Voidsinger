@@ -15,12 +15,12 @@ UBasePart::UBasePart()
 	Location = FIntPoint();
 	TotalPartMass = 1;
 	Cost = 1;
-	DesiredShape = TArray<FIntPoint>();
+	DesiredShape = TSet<FIntPoint>();
 	Bounds = FArrayBounds();
 	//RotatedShape = TArray<FIntPoint>();
 	ActualShape = TArray<FIntPoint>();
 	bFunctional = true;
-	bIsBeingDestroyed = false;
+	bIsPoopBeingDestroyed = false;
 }
 
 void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
@@ -174,18 +174,20 @@ UWorld* UBasePart::GetWorld() const
 
 void UBasePart::DestroyPart()
 {
-	bIsBeingDestroyed = ConditionalBeginDestroy();
+	bIsPoopBeingDestroyed = true/*ConditionalBeginDestroy()*/;
 }
 
 /*--------Tick--------*\
 \*--------------------*/
 void UBasePart::Tick(float DeltaTime)
 {
-	if (!bIsBeingDestroyed && IsValid(this))
+
+	if (!bIsPoopBeingDestroyed)
 	{
 		//Call Blueprint Implementable Event
 		OnTick(DeltaTime);
 	}
+		
 }
 
 bool UBasePart::IsTickable() const
@@ -321,6 +323,11 @@ TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 int UBasePart::GetStrength()
 {
 	return Strength;
+}
+
+UMaterialInterface* UBasePart::GetPixelMaterial()
+{
+	return PixelMaterial;
 }
 
 
