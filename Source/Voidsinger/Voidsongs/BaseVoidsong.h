@@ -28,6 +28,8 @@ public:
 	//Constructor
 	UBaseVoidsong();
 
+	//GetWorld() functionality
+	virtual class UWorld* GetWorld() const override;
 
 	/*--------Tick--------*\
 	\*--------------------*/
