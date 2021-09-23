@@ -91,5 +91,10 @@ void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
 	}
 }
 
+void ABaseShip::CallLaser()
+{
+	OnLaserDelegate.Broadcast();
+}
+
 
 
