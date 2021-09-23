@@ -136,7 +136,8 @@ public:
 	UFUNCTION(BlueprintPure)
 	int GetStrength();
 
-
+	UFUNCTION(BlueprintPure)
+	UMaterialInterface* GetPixelMaterial();
 
 	/*Condtional  Checkers*\
 	\*--------------------*/
@@ -204,7 +205,10 @@ protected:
 
 	//Stores the default shape of the part
 	UPROPERTY(EditDefaultsOnly)
-	TArray<FIntPoint> DesiredShape;
+	TSet<FIntPoint> DesiredShape;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* PixelMaterial;
 
 	//Stores the total mass of the part
 	UPROPERTY(EditDefaultsOnly, NoClear)
@@ -241,8 +245,8 @@ private:
 	UPROPERTY()
 	bool bFunctional;
 
-	UPROPERTY()
-	bool bIsBeingDestroyed;
+	//UPROPERTY()
+	bool bIsPoopBeingDestroyed;
 
 	/*Instanced  Variables*\
 	\*--------------------*/
@@ -263,4 +267,6 @@ private:
 	UPROPERTY()
 	UPartGridComponent* PartGridComponent;
 	
+	
+
 };
