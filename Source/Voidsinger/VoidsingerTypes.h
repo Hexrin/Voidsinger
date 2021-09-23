@@ -28,26 +28,6 @@ enum EResourceType
 	Electricity		UMETA(DisplayName = "Electricity")
 };
 
-UENUM(BlueprintType)
-enum EVoidsongs
-{
-	Gravity			UMETA(DisplayName = "Gravity"),
-	Greed			UMETA(DisplayName = "Greed"),
-	Anger			UMETA(DisplayName = "Anger"),
-	Peace			UMETA(DisplayName = "Peace"),
-	Resolve			UMETA(DisplayName = "Resolve"),
-	Annihilation	UMETA(DisplayName = "Annihilation"),
-	Retreat			UMETA(DisplayName = "Retreat"),
-	Override		UMETA(DisplayName = "Override"),
-	Confusion		UMETA(DisplayName = "Confusion"),
-	Endurance		UMETA(DisplayName = "Endurance"),
-	Healing			UMETA(DisplayName = "Healing"),
-	Teleportation	UMETA(DisplayName = "Teleportation"),
-	Leeching		UMETA(DisplayName = "Leeching"),
-	Automation		UMETA(DisplayName = "Automation"),
-	Reflection		UMETA(DisplayName = "Reflection"),
-};
-
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FPartData
 {

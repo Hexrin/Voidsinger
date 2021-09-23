@@ -28,8 +28,6 @@ public:
 	//Constructor
 	UBaseVoidsong();
 
-	//GetWorld() Override
-	virtual class UWorld* GetWorld() const override;
 
 	/*--------Tick--------*\
 	\*--------------------*/
@@ -92,9 +90,6 @@ public:
 
 	UPROPERTY()
 	bool bIsBeingDestroyed;
-
-	UPROPERTY(EditDefaultsOnly)
-	TEnumAsByte<EVoidsongs> VoidsongType;
 
 	/*Instanced  Variables*\
 	\*--------------------*/
