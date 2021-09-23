@@ -156,12 +156,23 @@ bool UPartGridComponent::RemovePart(FIntPoint Location)
 //Remove a single Pixel from the PartGrid. Returns true if a pixel was removed
 bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 {
-	class UBasePart* DamagedPart = NewObject<UBasePart>(this);
-	if (Cast<UBaseThrusterPart>(DamagedPart))
+	if (PartGrid.Contains(Location))
 	{
-		Cast<ABaseShip>(GetOwner())->MovementComponent->UpdateThrusters();
+		//Remove from grid
+		UBasePart* DamagedPart = PartGrid.FindRef(Location).Part;
+		DamagedPart->DestroyPixel(Location - DamagedPart->GetLocation());
+
+		//Destroy Mesh
+		PartGrid.FindRef(Location).PixelMesh->DestroyComponent();
+
+		PartGrid.Remove(Location);
+		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
+		return true;
 	}
-	return DestroyPixel(Location, DamagedPart);
+	else
+	{
+		return false;
+	}
 }
 void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)
 {
