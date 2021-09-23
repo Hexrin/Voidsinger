@@ -50,9 +50,16 @@ void UBaseVoidsong::Activate()
 		//Make sure the voidsong can't be activated again
 		CanActivateAgain = false;
 
-		//Set a timer for the duration. When it's up the voidsong will deactivate.
+		//Set a timer for the duration. When it's up the voidsong will deactivate. If Duration is 0 then just deactivate immediately.
 		FTimerHandle DurationTimer;
-		GetWorld()->GetTimerManager().SetTimer(DurationTimer, this, &UBaseVoidsong::DurationDelay, Duration);
+		if (Duration != 0)
+		{
+			GetWorld()->GetTimerManager().SetTimer(DurationTimer, this, &UBaseVoidsong::DurationDelay, Duration);
+		}
+		else
+		{
+			DurationDelay();
+		}
 	}
 }
 

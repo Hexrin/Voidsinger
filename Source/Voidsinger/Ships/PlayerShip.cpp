@@ -116,7 +116,14 @@ void APlayerShip::AddVoidsongInput(int input)
     ShouldResetVoidsongTimerTick = true;
 
     //Play the voidsong instrument
-    VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(input)));
+    if (IsValid(VoidsongInstrument))
+    {
+        VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(input)));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("The voidsong instrument isn't valid! Set it on the player ship."));
+    }
 }
 
 void APlayerShip::ActivateVoidsong()
