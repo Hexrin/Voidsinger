@@ -14,6 +14,8 @@
 
 class UBaseResourceSystem;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLaserDelegate);
+
 UCLASS()
 class VOIDSINGER_API ABaseShip : public APawn
 {
@@ -58,6 +60,10 @@ public:
 	UFUNCTION()
 	void LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs);
 
+	//Event dispatcher for laser.
+	UFUNCTION(BlueprintCallable)
+	void CallLaser();
+
 	UPROPERTY()
 	TArray<UBaseResourceSystem*> ResourceSystems;
 
@@ -77,5 +83,9 @@ public:
 	//Array of the voidsongs that are available to play
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UBaseVoidsong*> AvailableVoidsongs;
+
+	//For the Event Dispatcher
+	UPROPERTY(BlueprintAssignable)
+	FLaserDelegate OnLaserDelegate;
 
 };
