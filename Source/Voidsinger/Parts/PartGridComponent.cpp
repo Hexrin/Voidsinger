@@ -196,16 +196,15 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 	float CheckY = -ExplosionRadius;
 	FIntPoint CheckGridLocation;
 	TArray<FIntPoint> LocationsToBeDestroyed;
-	DrawDebugPoint(GetWorld(), WorldLocation, ExplosionRadius * 50, FColor::Red, false, 2.0F);
-	DrawDebugPoint(GetWorld(), FVector(FIntPoint(UKismetMathLibrary::FTrunc(CheckX + FloatRelativeLoc.X), UKismetMathLibrary::FTrunc(CheckY + FloatRelativeLoc.Y))), ExplosionRadius * 50, FColor::Blue, false, 2.0F);
+	//DrawDebugPoint(GetWorld(), WorldLocation, ExplosionRadius * 50, FColor::Red, false, 2.0F);
+	
 	//UE_LOG(LogTemp, Warning, TEXT("Explosion %f"), ExplosionRadius);
 	//UE_LOG(LogTemp, Warning, TEXT("CheckY %f"), CheckY);
 
 	while (ExplosionRadius > CheckY)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Sigh"));
-		//CheckGridLocation = FVector2D(FVector(CheckX + FloatRelativeLoc.X, CheckY + FloatRelativeLoc.Y, 0) - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint();
-		CheckGridLocation = FIntPoint(UKismetMathLibrary::FTrunc(CheckX + FloatRelativeLoc.X), UKismetMathLibrary::FTrunc(CheckY + FloatRelativeLoc.Y));
+		
+		CheckGridLocation = FIntPoint(CheckX + FloatRelativeLoc.X, CheckY + FloatRelativeLoc.Y);
 		if (PartGrid.Contains(CheckGridLocation) && CheckX * CheckX + CheckY * CheckY <= ExplosionRadius * ExplosionRadius)
 		{
 			//obviously if it contains the FloatRelativeLoc then it ded
@@ -396,7 +395,7 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 
 bool UPartGridComponent::BoxContainsLocation(FVector2D TopLeft, FVector2D BottomRight, FVector2D Location)
 {
-	if (TopLeft.X > Location.X && TopLeft.Y < Location.Y && BottomRight.X < Location.X && BottomRight.Y > Location.Y)
+	if (TopLeft.X >= Location.X && TopLeft.Y <= Location.Y && BottomRight.X <= Location.X && BottomRight.Y >= Location.Y)
 	{
 		return true;
 	}
@@ -405,18 +404,17 @@ bool UPartGridComponent::BoxContainsLocation(FVector2D TopLeft, FVector2D Bottom
 
 int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D origin)
 {
-	FVector2D RoundedOrigin = origin.RoundToVector();
 
 	//Check if the location is the origin.
-	if (Location == RoundedOrigin)
+	if (Location == origin)
 	{
 		return 0;
 	}
 
 	//Check if the location is on the Y axis.
-	if (Location.X == RoundedOrigin.X)
+	if (Location.X == origin.X)
 	{
-		if (Location.Y > RoundedOrigin.Y)
+		if (Location.Y > origin.Y)
 		{
 			return 5;
 		}
@@ -427,9 +425,9 @@ int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D or
 	}
 
 	//Check if the location is on the X axis.
-	if (Location.Y == RoundedOrigin.Y)
+	if (Location.Y == origin.Y)
 	{
-		if (Location.X > RoundedOrigin.X)
+		if (Location.X > origin.X)
 		{
 			return 6;
 		}
@@ -440,10 +438,10 @@ int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D or
 	}
 
 	//Check if the location is in the first or second quadrants.
-	if (Location.X > RoundedOrigin.X)
+	if (Location.X > origin.X)
 	{
 		//Check if the location is in the first quadrant.
-		if (Location.Y > RoundedOrigin.Y)
+		if (Location.Y > origin.Y)
 		{
 			return 1;
 		}
@@ -455,7 +453,7 @@ int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D or
 	else
 	{
 		//Check if the location is in the fourth quadrant.
-		if (Location.Y > RoundedOrigin.Y)
+		if (Location.Y > origin.Y)
 		{
 			return 4;
 		}
