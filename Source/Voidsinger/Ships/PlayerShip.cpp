@@ -106,10 +106,10 @@ void APlayerShip::Voidsong5Call()
     AddVoidsongInput(5);
 }
 
-void APlayerShip::AddVoidsongInput(int input)
+void APlayerShip::AddVoidsongInput(int Input)
 {
     //Add the input to the list of inputs
-    VoidsongCombo.Emplace(input);
+    VoidsongCombo.Emplace(Input);
 
     //Reset the reset voidsong timer
     ResetVoidsongTimer = 0;
