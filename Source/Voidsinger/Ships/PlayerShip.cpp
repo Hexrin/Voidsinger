@@ -118,7 +118,7 @@ void APlayerShip::AddVoidsongInput(int Input)
     //Play the voidsong instrument
     if (IsValid(VoidsongInstrument))
     {
-        VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(input)));
+        VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(Input)));
     }
     else
     {
