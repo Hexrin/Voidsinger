@@ -55,6 +55,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius);
 
+	//Checks if a 2d Rectangle contains the location given
 	UFUNCTION()
 	bool BoxContainsLocation(FVector2D TopLeft, FVector2D BottomRight, FVector2D Location);
 
@@ -62,7 +63,7 @@ public:
 	UFUNCTION()
 	int GetQuadrantFromLocation(FVector2D Location, FVector2D origin);
 
-	//Returns true if the slope intersects the box.
+	//Returns true if the line intersects the box.
 	UFUNCTION()
 	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, FVector2D origin);
 	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float XIntercept);
