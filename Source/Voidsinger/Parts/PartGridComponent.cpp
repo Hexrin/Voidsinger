@@ -176,7 +176,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 }
 void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)
 {
-	ApplyHeatAtLocation(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint(), HeatToApply);
+	ApplyHeatAtLocation(FVector2D(WorldLocation - GetOwner()->GetActorLocation() - FVector(GetCenterOfMass(), 0)).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint(), HeatToApply);
 		
 	//PartGrid.FindRef(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).RoundToVector().IntPoint()).SetTemperature(HeatToApply);
 }
