@@ -3,6 +3,7 @@
 
 #include "ShipPhysicsComponent.h"
 #include "BaseShip.h"
+#include "Voidsinger/Parts/BasePart.h"
 
 // Sets default values for this component's properties
 UShipPhysicsComponent::UShipPhysicsComponent()
@@ -65,6 +66,11 @@ void UShipPhysicsComponent::UpdateMassCalculations()
 	Mass = Ship->PartGrid->GetMass();
 	CenterOfMass = Ship->PartGrid->GetCenterOfMass();
 	MomentOfInertia = Ship->PartGrid->GetMomentOfInertia();
+
+	for (auto& Component : Ship->PartGrid->GetPartGrid())
+	{
+		Component.Value.PixelMesh->SetRelativeLocation(FVector(-1 * CenterOfMass + Component.Key, 0));
+	}
 }
 
 float UShipPhysicsComponent::GetAngularVelocity()
