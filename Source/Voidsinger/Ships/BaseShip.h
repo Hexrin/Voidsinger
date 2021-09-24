@@ -101,7 +101,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bCanCreateShips = true;
 
-	//The class that is currently being edited. This is the class that the defaults will change.
+	//The class that is currently being edited. This is the class that the SaveEditorShips() will change.
 	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<ABaseShip> ClassCurrentlyEditing;
 
