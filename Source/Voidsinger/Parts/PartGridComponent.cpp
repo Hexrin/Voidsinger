@@ -176,7 +176,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 }
 void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)
 {
-	ApplyHeatAtLocation(FVector2D(WorldLocation - GetOwner()->GetActorLocation() - FVector(GetCenterOfMass(), 0)).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint(), HeatToApply);
+	ApplyHeatAtLocation((FVector2D(WorldLocation - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw) + GetCenterOfMass()).RoundToVector().IntPoint(), HeatToApply);
 		
 	//PartGrid.FindRef(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).RoundToVector().IntPoint()).SetTemperature(HeatToApply);
 }
@@ -536,6 +536,13 @@ void UPartGridComponent::DistrubuteHeat()
 	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
 	for (auto& Data : PartGrid)
 	{
+		if (NewHeatMap.FindRef(Data.Key) == 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Key X=%i, y=%i     |     Temp =%f"), Data.Key.X, Data.Key.Y, NewHeatMap.FindRef(Data.Key));
+		}
+		else
+			UE_LOG(LogTemp, Error, TEXT("Key X=%i, y=%i     |     Temp =%f"), Data.Key.X, Data.Key.Y, NewHeatMap.FindRef(Data.Key));
+
 		if (NewHeatMap.FindRef(Data.Key) > 2)
 		{
 			KeysToDestroy.Emplace(Data.Key);
