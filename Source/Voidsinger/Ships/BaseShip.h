@@ -60,6 +60,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs);
 
+	//Saves the current part grid to the class defaults of the ClassCurrentlyEditing.
+	UFUNCTION(BlueprintCallable)
+	void SaveEditorShip();
+
 	//Event dispatcher for laser.
 	UFUNCTION(BlueprintCallable)
 	void CallLaser(float Damage, float Duration);
@@ -97,10 +101,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bCanCreateShips = true;
 
+	//The class that is currently being edited. This is the class that the defaults will change.
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	TSubclassOf<ABaseShip> ClassCurrentlyEditing;
-
-	UFUNCTION(BlueprintCallable)
-	void SaveEditorShip();
 
 };
