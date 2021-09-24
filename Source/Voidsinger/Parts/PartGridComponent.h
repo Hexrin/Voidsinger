@@ -51,6 +51,7 @@ public:
 	void ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply = 1);
 	void ApplyHeatAtLocation(FIntPoint RelativeLocation, float HeatToApply = 1);
 
+	//Explodes at the given location with the given radius.
 	UFUNCTION(BlueprintCallable)
 	void ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius);
 
