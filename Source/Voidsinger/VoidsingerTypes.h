@@ -28,37 +28,36 @@ enum EResourceType
 	Electricity		UMETA(DisplayName = "Electricity")
 };
 
-
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FPartData
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UBasePart* Part;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBasePart* Part;
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float Temperature = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Temperature = 0;
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UStaticMeshComponent* PixelMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* PixelMesh;
 
-		FPartData()
-		{
-			FPartData(nullptr, 0, nullptr);
-		}
+	FPartData()
+	{
+		FPartData(nullptr, 0, nullptr);
+	}
 
-		FPartData(UBasePart* PartRef, float Temp, UStaticMeshComponent* MeshRef)
-		{
-			Part = PartRef;
-			Temperature = Temp;
-			PixelMesh = MeshRef;
-		}
+	FPartData(UBasePart* PartRef, float Temp, UStaticMeshComponent* MeshRef)
+	{
+		Part = PartRef;
+		Temperature = Temp;
+		PixelMesh = MeshRef;
+	}
 
-		void SetTemperature(const float NewTemp)
-		{
-			Temperature = NewTemp;
-		}
+	void SetTemperature(const float NewTemp)
+	{
+		Temperature = NewTemp;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -98,8 +97,8 @@ struct VOIDSINGER_API FUBasePartArray
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<UBasePart*> UBasePartArray;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UBasePart*> UBasePartArray;
 
 	FUBasePartArray()
 	{
@@ -111,15 +110,6 @@ struct VOIDSINGER_API FUBasePartArray
 	{
 		UBasePartArray = Array;
 	}
-};
-
-UENUM(BlueprintType)
-enum EPartRotation
-{
-	Degrees0		UMETA(DisplayName = "0 Degrees"),
-	Degrees90		UMETA(DisplayName = "90 Degrees"),
-	Degrees180		UMETA(DisplayName = "180 Degrees"),
-	Degrees270		UMETA(DisplayName = "270 Degrees"),
 };
 
 USTRUCT(BlueprintType)
@@ -134,14 +124,14 @@ struct VOIDSINGER_API FSavePartInfo
 	FIntPoint PartLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TEnumAsByte<EPartRotation> PartRotation;
+	float PartRotation;
 
 	FSavePartInfo()
 	{
-		FSavePartInfo(nullptr, FIntPoint(), EPartRotation::Degrees0);
+		FSavePartInfo(nullptr, FIntPoint(), 0);
 	}
 
-	FSavePartInfo(TSubclassOf<UBasePart> Class, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation)
+	FSavePartInfo(TSubclassOf<UBasePart> Class, FIntPoint Location, float Rotation)
 	{
 
 		PartClass = Class;

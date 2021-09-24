@@ -6,10 +6,13 @@
 #include "Components/ActorComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Voidsinger/SaveShip.h"
+#include "DrawDebugHelpers.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "PartGridComponent.generated.h"
 
 class UBasePart;
+class UBaseThrusterPart;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
 class VOIDSINGER_API UPartGridComponent : public UActorComponent
@@ -30,8 +33,8 @@ public:
 	//---Ship Creation---
 
 	UFUNCTION(BlueprintCallable)
-	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace = false);
-	bool AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace = false);
+	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
+	bool AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
 
 	UFUNCTION(BlueprintCallable)
 	bool RemovePart(FIntPoint Location);
@@ -48,10 +51,27 @@ public:
 	void ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply = 1);
 	void ApplyHeatAtLocation(FIntPoint RelativeLocation, float HeatToApply = 1);
 
+	UFUNCTION(BlueprintCallable)
+	void ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius);
 
+	UFUNCTION()
+	bool BoxContainsLocation(FVector2D TopLeft, FVector2D BottomRight, FVector2D Location);
+
+	//Returns the quadrant the location is in. If the location is on an axis, then it will return 5 for positive X, 6 for positive y, 7 for negative x, and 8 for negative y. Returns 0 if the Location and origin are equal.
+	UFUNCTION()
+	int GetQuadrantFromLocation(FVector2D Location, FVector2D origin);
+
+	//Returns true if the slope intersects the box.
+	UFUNCTION()
+	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, FVector2D origin);
+	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float XIntercept);
+
+private:
+	UFUNCTION()
+	void DistrubuteHeat();
 
 	//---Save Ship---
-
+public:
 	UFUNCTION(BlueprintCallable)
 	void BuildShip(TArray<FSavePartInfo> Parts);
 
@@ -59,7 +79,7 @@ public:
 	void SaveShip(FString ShipName);
 
 	UFUNCTION(BlueprintCallable)
-	void LoadSavedShip(FString ShipName);
+	bool LoadSavedShip(FString ShipName);
 
 
 
@@ -67,6 +87,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	const FVector2D GetCenterOfMass();
+
+	UFUNCTION(BlueprintPure)
+	const float GetMomentOfInertia();
 
 	UFUNCTION(BlueprintPure)
 	const float GetMass();
@@ -89,6 +112,14 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class UStaticMesh* PixelMesh;
+
+	UPROPERTY(EditAnywhere)
+	float HeatTickRate;
+	UPROPERTY(EditAnywhere, meta=(ClampMin="0", ClampMax="1"))
+	float HeatPropagationFactor;
+
+	UPROPERTY()
+	float TimesSinceHeatTick;
 
 	UFUNCTION()
 	bool const CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape);

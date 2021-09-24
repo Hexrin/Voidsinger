@@ -12,8 +12,9 @@ ABaseShip::ABaseShip()
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
 	RootComponent = SceneRoot;
 
-	MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));
+	PhysicsComponent = CreateDefaultSubobject<UShipPhysicsComponent>(TEXT("Physics Component"));
 	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
+	MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));	
 	
 }
 
@@ -61,6 +62,53 @@ void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
 		ResourceSystems.Remove(System);
 
 	}
+}
+
+void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
+{
+	//Creates the voidsong object from the given class and adds it to available voidsongs
+	AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(this, Voidsong));
+}
+
+void ABaseShip::PlayVoidsong(TArray<int> Sequence)
+{
+	//Check the available voidsongs and see if their activation sequence matches the sequence inputted. If so, activate that voidsong.
+	for (auto& i : AvailableVoidsongs)
+	{
+		if (i->ActivationCombo == Sequence)
+		{
+			i->Activate();
+		}
+	}
+}
+
+void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
+{
+	//Creates voidsong objects with the list of voidsongs given. Adds them to available voidsongs
+	for (auto& i : Voidsongs)
+	{
+		AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(this, i));
+	}
+}
+
+void ABaseShip::CallLaser(float Damage, float Duration)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Broadcast should be called...?"))
+	OnLaserDelegate.Broadcast(Damage, Duration);
+}
+
+void ABaseShip::SaveEditorShip()
+{
+
+	TArray<FPartData> OutArray;
+	PartGrid->GetPartGrid().GenerateValueArray(OutArray);
+	TArray<FSavePartInfo> InfoToSave;
+	for (auto& i : OutArray)
+	{
+		InfoToSave.Emplace(FSavePartInfo(i.Part->GetClass(), i.Part->GetLocation(), i.Part->GetRotation()));
+	}
+	GetMutableDefault<ABaseShip>(ClassCurrentlyEditing)->DefaultParts.Empty();
+	GetMutableDefault<ABaseShip>(ClassCurrentlyEditing)->DefaultParts = InfoToSave;
 }
 
 

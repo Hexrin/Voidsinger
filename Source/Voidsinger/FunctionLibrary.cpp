@@ -4,30 +4,6 @@
 #include "FunctionLibrary.h"
 #include "Parts/BasePart.h"
 
-FIntPoint UFunctionLibrary::RotateIntPoint(FIntPoint IntPoint, TEnumAsByte<EPartRotation> Rotation) 
-{
-	switch (Rotation)
-	{
-	case Degrees0:
-		return IntPoint;
-
-	case Degrees90:
-
-		return FIntPoint(-IntPoint.Y, IntPoint.X);
-
-	case Degrees180:
-		return IntPoint * -1;
-
-	case Degrees270:
-		return FIntPoint(IntPoint.Y, -IntPoint.X);
-
-	default:
-		
-		return IntPoint;
-	}
-
-}
-
 
 //Returns true if StartPoint and EndPoint are connected via PartGrid
 bool UFunctionLibrary::PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint)
@@ -123,4 +99,10 @@ bool UFunctionLibrary::PointsConnectedWithFunctionality(TMap<FIntPoint, FPartDat
 
 
 	return ReturnValue;
+}
+
+
+FVector UFunctionLibrary::SafeDivide(FVector V1, FVector V2)
+{
+	return FVector((V2.X != 0.0f) ? (V1.X / V2.X) : 0.0f, (V2.Y != 0.0f) ? (V1.Y / V2.Y) : 0.0f, (V2.Z != 0.0f) ? (V1.Z / V2.Z) : 0.0f);
 }

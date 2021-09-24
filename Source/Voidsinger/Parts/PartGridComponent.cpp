@@ -2,6 +2,7 @@
 
 
 #include "PartGridComponent.h"
+#include "BaseThrusterPart.h"
 #include "BasePart.h"
 
 // Sets default values for this component's properties
@@ -19,12 +20,14 @@ UPartGridComponent::UPartGridComponent()
 	GridSize = FIntPoint(50);
 	
 	PartGrid = TMap<FIntPoint, FPartData>();
-
 	if (!GridScale)
 	{
 		GridScale = 1;
 	}
-	// ...
+	
+	TimesSinceHeatTick = 0.f;
+	HeatTickRate = 0.5f;
+	HeatPropagationFactor = 0.5f;
 }
 
 
@@ -43,48 +46,30 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	// ...
-	TMap<FIntPoint, float> NewHeatMap;
-	for (auto& Data : PartGrid)
+	for (int i = 0; i < TimesSinceHeatTick / HeatTickRate; TimesSinceHeatTick -= HeatTickRate)
 	{
-		float HeatAdded = 0;
-		for (int i = 0; i < 4; i++)
-		{
-			FIntPoint TargetPoint = (i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1);
-			HeatAdded += PartGrid.FindRef(TargetPoint + Data.Key).Temperature / 8 * DeltaTime;
-		}
-		NewHeatMap.Emplace(Data.Key, Data.Value.Temperature / 2*DeltaTime + HeatAdded < .05 ? Data.Value.Temperature / 2 + HeatAdded : 0);
+		DistrubuteHeat();
 	}
-
-	for (auto& Data : PartGrid)
-	{
-		if (NewHeatMap.FindRef(Data.Key) > 2)
-		{
-			DestroyPixel(Data.Key);
-		}
-		else
-		{
-			Data.Value.SetTemperature(FMath::Lerp(Data.Value.Temperature, NewHeatMap.FindRef(Data.Key), DeltaTime));
-		}
-	}
+	TimesSinceHeatTick += DeltaTime;
 }
 
 
 //Adds a compleate part to the part grid
-bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace)
+bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 {
-	TArray<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape();
+	TArray<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
 	return AddPart(PartialPartShape, PartType, Location, Rotation, bAlwaysPlace);
 }
 //Adds a partial part to PartPrid
-bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, TEnumAsByte<EPartRotation> Rotation, bool bAlwaysPlace)
+bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 {
 	//Create Part
 	UBasePart* Part = NewObject<UBasePart>(this, PartType);
-	Part->InitilizeVariables(Location, Rotation, this, PartType);
+	Part->InitializeVariables(Location, Rotation, this, PartType);
 
 	//Initalize Variables
-	TArray<FIntPoint> DesiredShape = Part->GetDesiredShape(Rotation);
-	FArrayBounds PartBounds = Part->GetPartBounds(Rotation);
+	TArray<FIntPoint> DesiredShape = Part->GetDesiredShape();
+	FArrayBounds PartBounds = Part->GetPartBounds();
 
 	//Detect if placement is in valid position
 	if (GridSize.X >= Location.X + PartBounds.UpperBounds.X && -GridSize.X <= Location.X + PartBounds.LowerBounds.X
@@ -126,13 +111,21 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 				//Create Mesh
 				class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
 				Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
+				Cast<UStaticMeshComponent>(NewPlane)->SetMaterial(0, Part->GetPixelMaterial());
 
 				PartGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), FPartData(Part, 0.f, Cast<UStaticMeshComponent>(NewPlane)));
 			}
 		}
-		Part->InitizlizeFuntionality();
+		Part->InitializeFunctionality();
+		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
+		if (Cast<UBaseThrusterPart>(Part))
+		{
+			Cast<ABaseShip>(GetOwner())->MovementComponent->UpdateThrusters();
+		}
 		return true;
 	}
+
+	Part->DestroyPart();
 	return false;
 }
 
@@ -163,21 +156,399 @@ bool UPartGridComponent::RemovePart(FIntPoint Location)
 //Remove a single Pixel from the PartGrid. Returns true if a pixel was removed
 bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 {
-	class UBasePart* DamagedPart = NewObject<UBasePart>(this);
-	return DestroyPixel(Location, DamagedPart);
+	if (PartGrid.Contains(Location))
+	{
+		//Remove from grid
+		UBasePart* DamagedPart = PartGrid.FindRef(Location).Part;
+		DamagedPart->DestroyPixel(Location - DamagedPart->GetLocation());
+
+		//Destroy Mesh
+		PartGrid.FindRef(Location).PixelMesh->DestroyComponent();
+
+		PartGrid.Remove(Location);
+		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)
 {
-	PartGrid.Find(FIntPoint(0, 0))->SetTemperature(PartGrid.Find(FIntPoint(0, 0))->Temperature + HeatToApply);
+	ApplyHeatAtLocation(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint(), HeatToApply);
+		
 	//PartGrid.FindRef(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).RoundToVector().IntPoint()).SetTemperature(HeatToApply);
 }
 void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float HeatToApply)
 {
 	if (PartGrid.Contains(RelativeLocation))
 	{
-		PartGrid.FindRef(RelativeLocation).SetTemperature(HeatToApply);
+		PartGrid.Find(RelativeLocation)->SetTemperature(PartGrid.Find(RelativeLocation)->Temperature + HeatToApply);
 	}
 	
+}
+void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius)
+ {
+
+	FVector FloatRelativeLoc = UKismetMathLibrary::InverseTransformLocation(GetOwner()->GetActorTransform(), WorldLocation);
+	float CheckX = -ExplosionRadius;
+	float CheckY = -ExplosionRadius;
+	FIntPoint CheckGridLocation;
+	TArray<FIntPoint> LocationsToBeDestroyed;
+	//DrawDebugPoint(GetWorld(), WorldLocation, ExplosionRadius * 50, FColor::Red, false, 2.0F);
+	
+	//UE_LOG(LogTemp, Warning, TEXT("Explosion %f"), ExplosionRadius);
+	//UE_LOG(LogTemp, Warning, TEXT("CheckY %f"), CheckY);
+
+	while (ExplosionRadius > CheckY)
+	{
+		
+		CheckGridLocation = FIntPoint(CheckX + FloatRelativeLoc.X, CheckY + FloatRelativeLoc.Y);
+		if (PartGrid.Contains(CheckGridLocation) && CheckX * CheckX + CheckY * CheckY <= ExplosionRadius * ExplosionRadius)
+		{
+			//obviously if it contains the FloatRelativeLoc then it ded
+			if (BoxContainsLocation(FVector2D(CheckGridLocation.X - GridScale / 2, CheckGridLocation.Y + GridScale / 2), FVector2D(CheckGridLocation.X + GridScale / 2, CheckGridLocation.Y - GridScale / 2), FVector2D(FloatRelativeLoc)))
+			{
+				LocationsToBeDestroyed.Emplace(CheckGridLocation);
+			}
+			// PartGrid.Find(CheckGridLocation)->Part->GetStrength())
+			//y = mx + b
+			// Assume for a second FloatRelativeLoc is the origin of the ship ((0,0) on the part grid) and the part is somewhere between directly above and directly to the right
+			// of the FloatRelativeLoc
+			// b is 0
+			//slope will be CheckGridLocation.Y/CheckGridLocation.X
+			//How to figure out what parts to check?
+			//assume for a second the CheckGridLocation is (1,2)
+			//Slope is 2
+			//y = 2x
+			//if we just go by integers of the slope next point checked is the origin. not super helpful
+			// Alternate x and y, but if the pixel doesn't contain something in the slope check the other?
+			// Check X - 1 from the CheckGridLocation, if the bounds of the pixel do not contain something in the slope, check y - 1
+			// How to check if bounds of pixel contain something in the slope?
+			// in this case, if top left location Y is > the Y with the slope of the line at that X location 
+			// and bottom right Y is < the Y with the slop of the line at that X location
+			// Divide radius by the strength of the pixel found, then check y-1 x-1. Divide by that strength then check y-2 x-1
+			// and so on till you get to origin. So there needs to be a recursive function. or maybe a while()? Yes, while(Location checking does not contain origin)
+			//So separate slope rise and slope run.
+			// What if FloatRelativeLoc is not 0,0 (still assuming part is up and to the right)
+			//slope rise and run will be (CheckGridLocation.Y - FloatRelativeLoc.Y) and (CheckGridLocation.X - FloatRelativeLoc.X)
+			// Check X - 1 from the CheckGridLocation, if the bounds of the pixel do not contain something in the slope, check y - 1
+			// Divide radius by the strength of all the pixels found
+			//and so on until you get to the location that contains the FloatRelativeLoc. So there should also be a check for each location if it contains the FloatRelativeLoc
+			//How to check if it contains the FloatRelativeLoc?
+			//Top left of location X is < FloatRelativeLoc.X and Y is > FloatRelativeLoc.Y,
+			//and bottom right of location X is > FloatRelationLoc.X and Y is < FloatRelativeLoc.Y
+			//What if the part is not up and to the right?
+			//Need to figure out what quadrant the part is in or what axis it's on compared to the FloatRelativeLoc
+			//Okay so a switch based on the quadrant
+			else
+			{
+				int XDirection = 0;
+				int YDirection = 0;
+				bool StopChecking = false;
+				float SlopeRise = CheckGridLocation.X - FloatRelativeLoc.X;
+				float SlopeRun = CheckGridLocation.Y - FloatRelativeLoc.Y;
+
+ 				switch (GetQuadrantFromLocation(FVector2D(CheckGridLocation.X, CheckGridLocation.Y), FVector2D(FloatRelativeLoc)))
+				{
+
+				case 0:
+					StopChecking = true;
+					break;
+				case 1:
+					XDirection = -1;
+					YDirection = -1;
+					break;
+				case 2:
+					XDirection = -1;
+					YDirection = 1;
+					break;
+				case 3:
+					XDirection = 1;
+					YDirection = 1;
+					break;
+				case 4:
+					XDirection = 1;
+					YDirection = -1;
+					break;
+				case 5:
+					YDirection = -1;
+					break;
+				case 6:
+					XDirection = -1;
+					break;
+				case 7:
+					YDirection = 1;
+					break;
+				case 8:
+					XDirection = 1;
+					break;
+				}
+
+				int XLocation = CheckGridLocation.X;
+				int YLocation = CheckGridLocation.Y;
+				float NewRadius = ExplosionRadius;
+				while (!StopChecking)
+				{
+					//XLocation += XDirection;
+					//YLocation += YDirection;
+
+					if (BoxContainsLocation(FVector2D(float(XLocation) + GridScale / 2, float(YLocation) - GridScale / 2), FVector2D(float(XLocation) - GridScale / 2, float(YLocation) + GridScale / 2), FVector2D(FloatRelativeLoc)))
+					{
+						if (PartGrid.Contains(FIntPoint(XLocation + XDirection, YLocation)))
+						{
+							NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation + XDirection, YLocation))->Part->GetStrength();
+						}
+						StopChecking = true;
+						break;
+					}
+					if (BoxContainsLocation(FVector2D(float(XLocation + XDirection) + GridScale / 2, float(YLocation) - GridScale / 2), FVector2D(float(XLocation + XDirection) - GridScale / 2, float(YLocation) + GridScale / 2), FVector2D(FloatRelativeLoc)))
+					{
+						if (PartGrid.Contains(FIntPoint(XLocation + XDirection, YLocation)))
+						{
+							NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation + XDirection, YLocation))->Part->GetStrength();
+						}
+						StopChecking = true;
+						break;
+					}
+					else if (YDirection != 0)
+					{
+						if (XDirection != 0)
+						{
+							if (DoesLineIntersectBox(FVector2D(float(XLocation + XDirection) + GridScale / 2, float(YLocation) - GridScale / 2), FVector2D(float(XLocation + XDirection) - GridScale / 2, float(YLocation) + GridScale / 2), SlopeRise, SlopeRun, FVector2D(FloatRelativeLoc)))
+							{
+								XLocation += XDirection;
+								if (PartGrid.Contains(FIntPoint(XLocation, YLocation)))
+								{
+									NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation, YLocation))->Part->GetStrength();
+								}
+							}
+							else if (BoxContainsLocation(FVector2D(float(XLocation) + GridScale / 2, float(YLocation + YDirection) - GridScale / 2), FVector2D(float(XLocation) - GridScale / 2, float(YLocation + YDirection) + GridScale / 2), FVector2D(FloatRelativeLoc)))
+							{
+								if (PartGrid.Contains(FIntPoint(XLocation, YLocation + YDirection)))
+								{
+									NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation, YLocation + YDirection))->Part->GetStrength();
+								}
+								StopChecking = true;
+								break;
+							}
+							else if (DoesLineIntersectBox(FVector2D(float(XLocation) + GridScale / 2, float(YLocation + YDirection) - GridScale / 2), FVector2D(float(XLocation) - GridScale / 2, float(YLocation + YDirection) + GridScale / 2), SlopeRise, SlopeRun, FVector2D(FloatRelativeLoc)))
+							{
+								YLocation += YDirection;
+								if (PartGrid.Contains(FIntPoint(XLocation, YLocation)))
+								{
+									NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation, YLocation))->Part->GetStrength();
+								}
+							}
+						}
+						else if (BoxContainsLocation(FVector2D(float(XLocation) + GridScale / 2, float(YLocation + YDirection) - GridScale / 2), FVector2D(float(XLocation) - GridScale / 2, float(YLocation + YDirection) + GridScale / 2), FVector2D(FloatRelativeLoc)))
+						{
+							if (PartGrid.Contains(FIntPoint(XLocation, YLocation + YDirection)))
+							{
+								NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation, YLocation + YDirection))->Part->GetStrength();
+							}
+							StopChecking = true;
+							break;
+						}
+						else if (DoesLineIntersectBox(FVector2D(float(XLocation) + GridScale / 2, float(YLocation + YDirection) - GridScale / 2), FVector2D(float(XLocation) - GridScale / 2, float(YLocation + YDirection) + GridScale / 2), SlopeRise, SlopeRun, FVector2D(FloatRelativeLoc)))
+						{
+							YLocation += YDirection;
+							if (PartGrid.Contains(FIntPoint(XLocation, YLocation)))
+							{
+								NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation, YLocation))->Part->GetStrength();
+							}
+						}
+					}
+					else
+					{
+						if (DoesLineIntersectBox(FVector2D(float(XLocation + XDirection) + GridScale / 2, float(YLocation) - GridScale / 2), FVector2D(float(XLocation + XDirection) - GridScale /2, float(YLocation) + GridScale / 2), FloatRelativeLoc.Y))
+						{
+							XLocation += XDirection;
+							if (PartGrid.Contains(FIntPoint(XLocation, YLocation)))
+							{
+								NewRadius = NewRadius / PartGrid.Find(FIntPoint(XLocation, YLocation))->Part->GetStrength();
+							}
+						}
+					}
+				}
+				if (PartGrid.Contains(CheckGridLocation) && CheckX * CheckX + CheckY * CheckY <= NewRadius * NewRadius)
+				{
+					LocationsToBeDestroyed.Emplace(CheckGridLocation);
+				}
+			}
+		}
+		CheckX += 1;
+		if (CheckX >= ExplosionRadius)
+		{
+			CheckY += 1;
+			CheckX = -ExplosionRadius;
+		}
+	}
+	for (auto& i : LocationsToBeDestroyed)
+	{
+		DestroyPixel(i);
+	}
+
+	//FIntPoint IntRelativeLoc = FVector2D(FloatRelativeLoc).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint());
+}
+
+bool UPartGridComponent::BoxContainsLocation(FVector2D TopLeft, FVector2D BottomRight, FVector2D Location)
+{
+	if (TopLeft.X >= Location.X && TopLeft.Y <= Location.Y && BottomRight.X <= Location.X && BottomRight.Y >= Location.Y)
+	{
+		return true;
+	}
+	return false;
+}
+
+int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D origin)
+{
+
+	//Check if the location is the origin.
+	if (Location == origin)
+	{
+		return 0;
+	}
+
+	//Check if the location is on the Y axis.
+	if (Location.X == origin.X)
+	{
+		if (Location.Y > origin.Y)
+		{
+			return 5;
+		}
+		else
+		{
+			return 7;
+		}
+	}
+
+	//Check if the location is on the X axis.
+	if (Location.Y == origin.Y)
+	{
+		if (Location.X > origin.X)
+		{
+			return 6;
+		}
+		else
+		{
+			return 8;
+		}
+	}
+
+	//Check if the location is in the first or second quadrants.
+	if (Location.X > origin.X)
+	{
+		//Check if the location is in the first quadrant.
+		if (Location.Y > origin.Y)
+		{
+			return 1;
+		}
+		else
+		{
+			return 2;
+		}
+	}
+	else
+	{
+		//Check if the location is in the fourth quadrant.
+		if (Location.Y > origin.Y)
+		{
+			return 4;
+		}
+		else
+		{
+			return 3;
+		}
+	}
+}
+
+bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, FVector2D origin)
+{
+	float XIntercept = 0;
+	FVector2D LocalTopLeft = TopLeft - origin;
+	FVector2D LocalBottomRight = BottomRight - origin;
+
+	if (SlopeRise == 0)
+	{
+		if (LocalTopLeft.X > XIntercept && LocalBottomRight.X < XIntercept)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else if (SlopeRise < 0 || SlopeRun < 0)
+	{
+		if (!(SlopeRise < 0 && SlopeRun < 0))
+		{
+			FVector2D LocalBottomLeft = FVector2D(LocalBottomRight.X, LocalTopLeft.Y);
+			FVector2D LocalTopRight = FVector2D(LocalTopLeft.X, LocalBottomRight.Y);
+
+			if (LocalBottomLeft.X <= (SlopeRise / SlopeRun) * (LocalBottomLeft.Y) + XIntercept && LocalTopRight.X >= (SlopeRise/SlopeRun) * (LocalTopRight.Y) + XIntercept)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	if (LocalTopLeft.X >= (SlopeRise / SlopeRun) * (LocalTopLeft.Y) + XIntercept && LocalBottomRight.X <= (SlopeRise / SlopeRun) * (LocalBottomRight.Y) + XIntercept)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float YIntercept)
+{
+	return TopLeft.Y < YIntercept&& BottomRight.Y > YIntercept;
+}
+
+void UPartGridComponent::DistrubuteHeat()
+{
+	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
+	NewHeatMap.Reserve(PartGrid.Num());
+	for (auto& Data : PartGrid)
+	{
+		float NewHeat = 0;
+		for (int i = 0; i < 4; i++)
+		{
+			FIntPoint TargetPoint = ((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
+			
+			if (PartGrid.Contains(TargetPoint + Data.Key))
+			{
+				NewHeat += PartGrid.FindRef(TargetPoint + Data.Key).Temperature * HeatPropagationFactor / (4);
+			}
+		}
+		NewHeat = Data.Value.Temperature * (1-HeatPropagationFactor) + NewHeat;
+		NewHeatMap.Emplace(Data.Key, NewHeat > .05 ? NewHeat : 0);
+	}
+
+	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
+	for (auto& Data : PartGrid)
+	{
+		if (NewHeatMap.FindRef(Data.Key) > 2)
+		{
+			KeysToDestroy.Emplace(Data.Key);
+		}
+		else
+		{
+			Data.Value.SetTemperature(NewHeatMap.FindRef(Data.Key));
+		}
+	}
+	for (FIntPoint Val : KeysToDestroy)
+	{
+		DestroyPixel(Val);
+	}
 }
 bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart)
 {
@@ -192,6 +563,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& Dama
 		PartGrid.FindRef(Location).PixelMesh->DestroyComponent();
 
 		PartGrid.Remove(Location);
+		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
 		return true;
 	}
 	else
@@ -234,10 +606,18 @@ void UPartGridComponent::SaveShip(FString ShipName)
 
 }
 
-void UPartGridComponent::LoadSavedShip(FString ShipName)
+bool UPartGridComponent::LoadSavedShip(FString ShipName)
 {
 	USaveGame* SaveGameInstance = UGameplayStatics::LoadGameFromSlot(ShipName, 0);
-	BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);
+	if (IsValid(SaveGameInstance))
+	{
+		BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 
@@ -258,6 +638,17 @@ const FVector2D UPartGridComponent::GetCenterOfMass()
 	
 	
 	return Center;
+}
+
+const float UPartGridComponent::GetMomentOfInertia()
+{
+	float ReturnValue = 0;
+	FVector2D CenterOfMass = GetCenterOfMass();
+	for (auto& Part : PartGrid)
+	{
+		ReturnValue += (Part.Value.Part->GetMass() / 6) + (FVector2D(Part.Value.Part->GetLocation()) - CenterOfMass).SizeSquared();
+	}
+	return ReturnValue;
 }
 
 //Gets the mass of the PartGrid

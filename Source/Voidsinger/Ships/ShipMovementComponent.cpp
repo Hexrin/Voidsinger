@@ -2,17 +2,17 @@
 
 
 #include "ShipMovementComponent.h"
-#include "BaseShip.h"
+#include "Voidsinger/Parts/BaseThrusterPart.h"
+#include "ShipMovementComponent.h"
 
 // Sets default values for this component's properties
 UShipMovementComponent::UShipMovementComponent()
 {
-
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	Ship = (ABaseShip*)GetOwner();
-	AngularVelocity = 0;
-	Velocity = FVector2D(0, 0);
 
+	// ...
 }
 
 
@@ -20,59 +20,56 @@ UShipMovementComponent::UShipMovementComponent()
 void UShipMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// ...
 	
 }
 
 
-//Called every tick
+// Called every frame
 void UShipMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//transform the ship by the velocity and angular velocity
-	Ship->SetActorLocation(Ship->GetActorLocation() + FVector(Velocity.X, Velocity.Y, 0) * DeltaTime);
-	Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0) * DeltaTime);
-
+	// ...
 }
 
-//When a force is added to the ship
-void UShipMovementComponent::AddForce(FVector2D ForceLocation, FVector2D Force)
+void UShipMovementComponent::UpdateThrusters()
 {
-	FVector2D AdjForce = Force.GetRotated(-1*GetOwner()->GetActorRotation().Yaw);
-	///UE_LOG(LogTemp, Warning, TEXT("???? x=%f, y=%f"), Ship->PartGrid->GetCenterOfMass().X, Ship->PartGrid->GetCenterOfMass().Y)
-	//Distance vector is the distance from the center of mass to the force location.
-	FVector2D DistanceVector = Ship->PartGrid->GetCenterOfMass() - ForceLocation;
-	//DrawDebugLine(GetWorld(), FVector(Ship->PartGrid->GetCenterOfMass(), 0) + GetOwner()->GetActorLocation(), FVector(DistanceVector, 0) + GetOwner()->GetActorLocation(), FColor::Red, false, 0.f, 0U, .5);
-	//DrawDebugLine(GetWorld(), FVector(ForceLocation, 0)+GetOwner()->GetActorLocation(), FVector(ForceLocation + AdjForce *100, 0) + GetOwner()->GetActorLocation(), FColor::Cyan, false, 0.f,0U, .25);
-
-	//Account for exactly hitting the center of mass, in which case there would be no rotation and the full 
-	//force would be used.
-	if (DistanceVector.IsNearlyZero())
+	Thrusters.Empty();
+	UPartGridComponent* PartGrid = Cast<ABaseShip>(GetOwner())->PartGrid;
+	for (auto& Val : PartGrid->GetPartGrid())
 	{
-		Velocity += Force / Ship->PartGrid->GetMass();
-		//UE_LOG(LogTemp, Warning, TEXT("????????"));
+		UBaseThrusterPart* Thruster = Cast<UBaseThrusterPart>(Val.Value.Part);
+		if (Thruster)
+		{
+			Thrusters.Emplace(Thruster);
+		}
 	}
+}
 
-	//calculate the change in velocity and change in angular velocity based off the force
-	else
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("dot=%f, dist x=%f, y=%f"), FVector2D::DotProduct(DistanceVector.GetSafeNormal(), Force), DistanceVector.GetSafeNormal().X, DistanceVector.GetSafeNormal().Y);
-		//these 2 lines of math took literally 7 hours to figure out.
-		Velocity += ((FVector2D::DotProduct(DistanceVector.GetSafeNormal(), AdjForce) * DistanceVector.GetSafeNormal()) / Ship->PartGrid->GetMass()).GetRotated(GetOwner()->GetActorRotation().Yaw);
-		AngularVelocity -= FVector2D::DotProduct(DistanceVector.GetRotated(90).GetSafeNormal(), AdjForce) * DistanceVector.Size() / Ship->PartGrid->GetMass();
-		//UE_LOG(LogTemp, Warning, TEXT("Linear dot=%f, Angular dot x=%f"), FVector2D::DotProduct(DistanceVector.GetSafeNormal(), AdjForce), FVector2D::DotProduct(DistanceVector.GetRotated(90).GetSafeNormal(), AdjForce));
-	}
-
+void UShipMovementComponent::RotateShip(bool Clockwise)
+{
 	
+	for (UBaseThrusterPart* Thruster : Thrusters)
+	{
+		FVector2D ThrustDirection = FVector2D(1, 0).GetRotated(+ Thruster->GetThrustRotation());
+		FVector2D ThrusterLocation = FVector2D(Thruster->GetThrustLocation()).GetSafeNormal();
+		if ((FVector2D::CrossProduct(ThrustDirection, ThrusterLocation) > 0) ^ Clockwise)
+		{
+			Thruster->Thrust();
+		}
+	}
 }
 
-FVector2D UShipMovementComponent::GetVelocity()
+void UShipMovementComponent::Move(FVector2D Direction)
 {
-	return Velocity;
-}
-
-float UShipMovementComponent::GetAngularVelocity()
-{
-	return AngularVelocity;
+	Direction = Direction.GetSafeNormal();
+	for (UBaseThrusterPart* Thruster : Thrusters)
+	{
+		if (FVector2D::DotProduct(FVector2D(1, 0).GetRotated(Thruster->GetThrustRotation()), Direction) >= .5)
+		{
+			Thruster->Thrust();
+		}
+	}
 }

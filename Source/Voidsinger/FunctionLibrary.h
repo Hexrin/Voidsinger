@@ -18,13 +18,24 @@ class VOIDSINGER_API UFunctionLibrary : public UBlueprintFunctionLibrary
 public:
 
 	UFUNCTION(BlueprintPure)
-	static FIntPoint RotateIntPoint(FIntPoint IntPoint, TEnumAsByte<EPartRotation> Rotation);
-
-	UFUNCTION(BlueprintPure)
 	static bool PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint);
 	static bool PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray);
 
 	UFUNCTION(BlueprintPure)
 	static bool PointsConnectedWithFunctionality(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint);
 	static bool PointsConnectedWithFunctionality(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray);
+
+	UFUNCTION(BlueprintPure)
+	static FVector SafeDivide(FVector V1, FVector V2);
+
+	/*UFUNCTION(BlueprintCallable)
+	static bool SetActorLocationSweepComponets
+	(
+		AActor* Target,
+		FHitResult & Hits,
+		TArray <UPrimitiveComponent*> PrimComps,
+		const FTransform& Start,
+		const FTransform& End,
+		const FComponentQueryParams& Params
+	);*/
 };

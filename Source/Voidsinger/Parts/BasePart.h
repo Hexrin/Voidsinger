@@ -14,7 +14,6 @@
  */
 
 class UBaseResourceSystem;
-enum EPartRotation;
 
 UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject
@@ -35,26 +34,33 @@ class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject
 
 	/*Initializer Funtions*\
 	\*--------------------*/
+
 public:
+
 	//Constructor
 	UBasePart();
 
 	//Used to inialize variables. Called before part is placed onto the part grid
 	UFUNCTION()
-	void InitilizeVariables(FIntPoint Loc, TEnumAsByte<EPartRotation> Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
+	void InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
 
 	//Used to initize funtionality once the part has been placed onto the part grid
 	UFUNCTION()
-	void InitizlizeFuntionality();
+	void InitializeFunctionality();
 	
+	//Used to get world. Also gives child BPs acces to the Kismet Systems Library
 	UWorld* GetWorld() const;
+
+	//Destroys the part. Does not call the blueprint funciton
+	UFUNCTION()
+	void DestroyPart();
 
 protected:
 	//Begin Play for use in blueprints
 	UFUNCTION(BlueprintImplementableEvent)
 	void BeginPlay();
 
-
+	
 
 
 	/*--------Tick--------*\
@@ -63,7 +69,7 @@ public:
 	//Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//Determins if this part ticks
+	//Determines if this part will tick
 	virtual bool IsTickable() const override;
 
 	//Is a nesseary part of tick component
@@ -72,7 +78,7 @@ public:
 protected:
 	//Event Tick for use in blueprints
 	UFUNCTION(BlueprintImplementableEvent)
-	void EventTick(float DeltaTime);
+	void OnTick(float DeltaTime);
 
 	
 
@@ -81,11 +87,13 @@ protected:
 
 	/*--Getter Functions--*\
 	\*--------------------*/
+
 public:
+
 	//Gets the desired shape of the part ignoring any damage the part may have taken
 	UFUNCTION(BlueprintPure)
 	const TArray<FIntPoint> GetDesiredShape();
-	const TArray<FIntPoint> GetDesiredShape(TEnumAsByte<EPartRotation> Rot);
+	const TArray<FIntPoint> GetDesiredShape(float Rot);
 
 	//Gets the curent shape of the part accounting for damage
 	UFUNCTION(BlueprintPure)
@@ -94,7 +102,7 @@ public:
 	//Gets the outer bounds of the part
 	UFUNCTION(BlueprintPure)
 	const FArrayBounds GetPartBounds();
-	const FArrayBounds GetPartBounds(TEnumAsByte<EPartRotation> Rot);
+	const FArrayBounds GetPartBounds(float Rot);
 
 	//Gets the location of the origin of the part relative to the part grid
 	UFUNCTION(BlueprintPure)
@@ -102,7 +110,7 @@ public:
 
 	//Gets the rotaion of the part
 	UFUNCTION(BlueprintPure)
-	const TEnumAsByte<EPartRotation> GetRotation();
+	const float GetRotation();
 
 	//Gets the mass of a single pixel for this part
 	UFUNCTION(BlueprintPure)
@@ -112,25 +120,30 @@ public:
 	UFUNCTION(BlueprintPure)
 	const UPartGridComponent* GetPartGrid();
 
-	//----------idk what this do so Mabel should write this----------------
+	//Gets the resource systems the part is a part of
 	UFUNCTION(BlueprintPure)
 	TArray<UBaseResourceSystem*> GetSystems();
 
-	//----------idk what this do so Mabel should write this----------------
+	//Returns the resource system that the part is a part of with a given type, returns null if there is no system with that resource type
 	UFUNCTION(BlueprintPure)
 	UBaseResourceSystem* GetSystemByType(TEnumAsByte<EResourceType> Type);
 
-	//----------idk what this do so Mabel should write this----------------
+	//Gets the locations and resource types of pixels of the part
 	UFUNCTION(BlueprintPure)
 	TMap<TEnumAsByte<EResourceType>, FIntPointArray> GetResourceTypes();
 
+	//Gets the strength of the part
+	UFUNCTION(BlueprintPure)
+	int GetStrength();
 
-
+	UFUNCTION(BlueprintPure)
+	UMaterialInterface* GetPixelMaterial();
 
 	/*Condtional  Checkers*\
 	\*--------------------*/
 public:
-	//returns true if there is atleast one functional pixel
+
+	//returns true if there is at least one functional pixel
 	UFUNCTION()
 	bool IsFunctional();
 
@@ -144,27 +157,28 @@ public:
 	/*---Misc. Functions--*\
 	\*--------------------*/
 public:
-	//Called when a part is compleatly destroyed
-	UFUNCTION(BlueprintImplementableEvent, meta=(ShortToolTip = "Called when a part is compleatly destroyed"))
-	void EventDestroyed();
+
+	//Called when a part is completely destroyed
+	UFUNCTION(BlueprintImplementableEvent, meta=(ShortToolTip = "Called when a part is completely destroyed"))
+	void OnDestroyed();
 
 	//Called when a part is damaged
 	UFUNCTION(BlueprintImplementableEvent, meta = (ShortToolTip = "Called when a part is damaged"))
-	void EventDamaged();
+	void OnDamaged();
 
-	//Called when a part is damaged in such a way that it fill no longer be functional
-	UFUNCTION(BlueprintImplementableEvent, meta = (ShortToolTip = "Called when a part is damaged in such a way that it fill no longer be functional"))
-	void EventCriticalyDamaged();
+	//Called when a part is damaged in such a way that it will no longer be functional
+	UFUNCTION(BlueprintImplementableEvent, meta = (ShortToolTip = "Called when a part is damaged in such a way that it will no longer be functional"))
+	void OnCriticallyDamaged();
 
 	//Remove a pixel form the actual shape of the part
 	UFUNCTION(BlueprintCallable)
 	void DestroyPixel(FIntPoint RelativeLoc);
 
-	//----------idk what this do so Mabel should write this----------------
+	//Creates a new resource system that the part is a part of
 	UFUNCTION(BlueprintCallable)
 	void CreateNewSystem(TEnumAsByte<EResourceType> ResourceType);
 
-	//----------idk what this do so Mabel should write this----------------
+	//Adds the part to the given resource system
 	UFUNCTION(BlueprintCallable)
 	void AddToSystem(UBaseResourceSystem* System);
 
@@ -188,9 +202,13 @@ public:
 	/*-Blueprint Defaults-*\
 	\*--------------------*/
 protected:
+
 	//Stores the default shape of the part
 	UPROPERTY(EditDefaultsOnly)
-	TArray<FIntPoint> DesiredShape;
+	TSet<FIntPoint> DesiredShape;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* PixelMaterial;
 
 	//Stores the total mass of the part
 	UPROPERTY(EditDefaultsOnly, NoClear)
@@ -200,55 +218,55 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Cost;
 
+	//Stores the locations and resource types of all the pixels of this part, unless the pixel does not have a resource type
+	UPROPERTY(EditDefaultsOnly)
+	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ResourceTypes;
 
-
+	UPROPERTY(EditDefaultsOnly)
+	int Strength;
 
 	/*Function Return Vals*\
 	\*--------------------*/
+
 private:
 	//Stores the curent shape of the part acounting for damage and rotation
 	UPROPERTY()
 	TArray<FIntPoint> ActualShape;
 
 	//Stores the rotated version of DesiredShape 
-	UPROPERTY()
-	TArray<FIntPoint> RotatedShape;
+	//UPROPERTY()
+	//TArray<FIntPoint> RotatedShape;
 
 	//Stores the bounds of the part
 	UPROPERTY()
 	FArrayBounds Bounds;
 
-	//Stores weather or not the part is functional
+	//Stores whether or not the part is functional
 	UPROPERTY()
 	bool bFunctional;
 
-	UPROPERTY()
-	bool bIsBeingDestroyed;
-	/*Instanced  Variables* \
+	//UPROPERTY()
+	bool bIsPoopBeingDestroyed;
+
+	/*Instanced  Variables*\
 	\*--------------------*/
+
 	//Stores this parts rotation
 	UPROPERTY()
-	TEnumAsByte<EPartRotation> Rotation;
+	float Rotation;
 
 	//Stores this parts location relative to the part grid
 	UPROPERTY()
 	FIntPoint Location;
-
-
-
-
-
-
 	
-	//----------idk what this do so Mabel should write this and decide what catagory this falls under----------------
+	//Stores all the resource systems this part is a part of
 	UPROPERTY()
 	TArray<UBaseResourceSystem*> Systems;
-	//----------idk what this do so Mabel should write this and decide what catagory this falls under----------------
+
+	//Stores a reference to the part grid component
 	UPROPERTY()
 	UPartGridComponent* PartGridComponent;
-	//----------idk what this do so Mabel should write this and decide what catagory this falls under----------------
-	UPROPERTY(EditDefaultsOnly)
-	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ResourceTypes;
-
 	
+	
+
 };
