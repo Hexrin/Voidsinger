@@ -97,6 +97,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bCanCreateShips = true;
 
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	TSubclassOf<ABaseShip> ClassCurrentlyEditing;
+
 	UFUNCTION(BlueprintCallable)
 	void SaveEditorShip();
 
