@@ -57,7 +57,7 @@ public:
 	void PlayVoidsong(TArray<int> Sequence);
 
 	//Creates Voidsong objects with the given classes of Voidsongs and adds them to the AvaialableVoidsongs. Will be useful for loading from a save game.
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs);
 
 	//Event dispatcher for laser.
