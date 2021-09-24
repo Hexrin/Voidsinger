@@ -88,4 +88,16 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FLaserDelegate OnLaserDelegate;
 
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FSavePartInfo> DefaultParts;
+
+//Creating ship stuff
+
+	//This allows you to create ships. Should set this to false once we create all the ships.
+	UPROPERTY(BlueprintReadWrite)
+	bool bCanCreateShips = true;
+
+	UFUNCTION(BlueprintCallable)
+	void SaveEditorShip();
+
 };

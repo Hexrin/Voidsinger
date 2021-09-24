@@ -97,5 +97,19 @@ void ABaseShip::CallLaser(float Damage, float Duration)
 	OnLaserDelegate.Broadcast(Damage, Duration);
 }
 
+void ABaseShip::SaveEditorShip()
+{
+
+	TArray<FPartData> OutArray;
+	PartGrid->GetPartGrid().GenerateValueArray(OutArray);
+	TArray<FSavePartInfo> InfoToSave;
+	for (auto& i : OutArray)
+	{
+		InfoToSave.Emplace(FSavePartInfo(i.Part->GetClass(), i.Part->GetLocation(), i.Part->GetRotation()));
+	}
+	GetMutableDefault<ABaseShip>(this->GetClass())->DefaultParts.Empty();
+	GetMutableDefault<ABaseShip>(this->GetClass())->DefaultParts = InfoToSave;
+}
+
 
 
