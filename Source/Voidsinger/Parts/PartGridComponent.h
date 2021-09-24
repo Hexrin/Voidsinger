@@ -59,7 +59,7 @@ public:
 	UFUNCTION()
 	bool BoxContainsLocation(FVector2D TopLeft, FVector2D BottomRight, FVector2D Location);
 
-	//Returns the quadrant the location is in. If the location is on an axis, then it will return 5 for positive X, 6 for positive y, 7 for negative x, and 8 for negative y. Returns 0 if the Location and origin are equal.
+	//Returns the quadrant the location is in with respect to the origin. If the location is on an axis, then it will return 5 for positive Y, 6 for positive X, 7 for negative Y, and 8 for negative X. Remember that unreal is left-handed, so X is vertical and Y is horizontal. Returns 0 if the Location and origin are equal.
 	UFUNCTION()
 	int GetQuadrantFromLocation(FVector2D Location, FVector2D origin);
 
