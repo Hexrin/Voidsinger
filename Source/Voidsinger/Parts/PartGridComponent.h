@@ -119,6 +119,8 @@ private:
 	float HeatTickRate;
 	UPROPERTY(EditAnywhere, meta=(ClampMin="0", ClampMax="1"))
 	float HeatPropagationFactor;
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "1"))
+	float HeatMeltTransferFactor;
 
 	UPROPERTY()
 	float TimesSinceHeatTick;

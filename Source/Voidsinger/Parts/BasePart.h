@@ -136,6 +136,10 @@ public:
 	UFUNCTION(BlueprintPure)
 	int GetStrength();
 
+	//Gets the heat resistance of the part
+	UFUNCTION(BlueprintPure)
+	int GetHeatResistance();
+
 	UFUNCTION(BlueprintPure)
 	UMaterialInterface* GetPixelMaterial();
 
@@ -224,6 +228,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	int Strength;
+
+	UPROPERTY(EditDefaultsOnly)
+	int HeatResistance;
 
 	/*Function Return Vals*\
 	\*--------------------*/

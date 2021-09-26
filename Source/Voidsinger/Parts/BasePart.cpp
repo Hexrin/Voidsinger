@@ -325,6 +325,11 @@ int UBasePart::GetStrength()
 	return Strength;
 }
 
+int UBasePart::GetHeatResistance()
+{
+	return HeatResistance;
+}
+
 UMaterialInterface* UBasePart::GetPixelMaterial()
 {
 	return PixelMaterial;

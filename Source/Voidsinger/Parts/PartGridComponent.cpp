@@ -28,6 +28,7 @@ UPartGridComponent::UPartGridComponent()
 	TimesSinceHeatTick = 0.f;
 	HeatTickRate = 0.5f;
 	HeatPropagationFactor = 0.5f;
+	HeatMeltTransferFactor = 1.f;
 }
 
 
@@ -164,6 +165,13 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 
 		//Destroy Mesh
 		PartGrid.FindRef(Location).PixelMesh->DestroyComponent();
+
+		for (int i = 0; i < 4; i++)
+		{
+			FIntPoint TargetPoint = Location +((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
+
+			ApplyHeatAtLocation(TargetPoint, (PartGrid.Find(Location)->Temperature / 4) * HeatMeltTransferFactor);
+		}
 
 		PartGrid.Remove(Location);
 		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
@@ -536,14 +544,7 @@ void UPartGridComponent::DistrubuteHeat()
 	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
 	for (auto& Data : PartGrid)
 	{
-		if (NewHeatMap.FindRef(Data.Key) == 0)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Key X=%i, y=%i     |     Temp =%f"), Data.Key.X, Data.Key.Y, NewHeatMap.FindRef(Data.Key));
-		}
-		else
-			UE_LOG(LogTemp, Error, TEXT("Key X=%i, y=%i     |     Temp =%f"), Data.Key.X, Data.Key.Y, NewHeatMap.FindRef(Data.Key));
-
-		if (NewHeatMap.FindRef(Data.Key) > 2)
+		if (NewHeatMap.FindRef(Data.Key) > Data.Value.Part->GetHeatResistance())
 		{
 			KeysToDestroy.Emplace(Data.Key);
 		}
@@ -564,19 +565,8 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& Dama
 	{
 		//Remove from grid
 		DamagedPart = PartGrid.FindRef(Location).Part;
-		DamagedPart->DestroyPixel(Location - DamagedPart->GetLocation());
-		
-		//Destroy Mesh
-		PartGrid.FindRef(Location).PixelMesh->DestroyComponent();
-
-		PartGrid.Remove(Location);
-		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
-		return true;
 	}
-	else
-	{
-		return false;
-	}
+	return DestroyPixel(Location);
 }
 
 
