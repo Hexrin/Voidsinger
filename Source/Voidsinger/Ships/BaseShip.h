@@ -57,8 +57,12 @@ public:
 	void PlayVoidsong(TArray<int> Sequence);
 
 	//Creates Voidsong objects with the given classes of Voidsongs and adds them to the AvaialableVoidsongs. Will be useful for loading from a save game.
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs);
+
+	//Saves the current part grid to the class defaults of the ClassCurrentlyEditing.
+	UFUNCTION(BlueprintCallable)
+	void SaveEditorShip();
 
 	//Event dispatcher for laser.
 	UFUNCTION(BlueprintCallable)
@@ -97,10 +101,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bCanCreateShips = true;
 
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	//The class that is currently being edited. This is the class that the SaveEditorShips() will change.
+	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<ABaseShip> ClassCurrentlyEditing;
-
-	UFUNCTION(BlueprintCallable)
-	void SaveEditorShip();
 
 };

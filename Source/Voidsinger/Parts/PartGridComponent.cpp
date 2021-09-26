@@ -402,19 +402,19 @@ bool UPartGridComponent::BoxContainsLocation(FVector2D TopLeft, FVector2D Bottom
 	return false;
 }
 
-int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D origin)
+int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D Origin)
 {
 
 	//Check if the location is the origin.
-	if (Location == origin)
+	if (Location == Origin)
 	{
 		return 0;
 	}
 
 	//Check if the location is on the Y axis.
-	if (Location.X == origin.X)
+	if (Location.X == Origin.X)
 	{
-		if (Location.Y > origin.Y)
+		if (Location.Y > Origin.Y)
 		{
 			return 5;
 		}
@@ -425,9 +425,9 @@ int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D or
 	}
 
 	//Check if the location is on the X axis.
-	if (Location.Y == origin.Y)
+	if (Location.Y == Origin.Y)
 	{
-		if (Location.X > origin.X)
+		if (Location.X > Origin.X)
 		{
 			return 6;
 		}
@@ -438,10 +438,10 @@ int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D or
 	}
 
 	//Check if the location is in the first or second quadrants.
-	if (Location.X > origin.X)
+	if (Location.X > Origin.X)
 	{
 		//Check if the location is in the first quadrant.
-		if (Location.Y > origin.Y)
+		if (Location.Y > Origin.Y)
 		{
 			return 1;
 		}
@@ -453,7 +453,7 @@ int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D or
 	else
 	{
 		//Check if the location is in the fourth quadrant.
-		if (Location.Y > origin.Y)
+		if (Location.Y > Origin.Y)
 		{
 			return 4;
 		}

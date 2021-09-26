@@ -86,7 +86,7 @@ public:
 
 	//Records the incoming voidsong input
 	UFUNCTION()
-	void AddVoidsongInput(int input);
+	void AddVoidsongInput(int Input);
 
 	//Activates the voidsong
 	void ActivateVoidsong();
@@ -107,7 +107,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float VoidsongResetDelay = 3.0;
 
-	//The time for counting to VoidsongResetDelay
+	//The timer for counting to VoidsongResetDelay
 	UPROPERTY()
 	float ResetVoidsongTimer = 0;
 
@@ -127,7 +127,7 @@ public:
 	UAudioComponent* VoidsongInstrument;
 
 	//The voidsong instrument reference. Is set through blueprint.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Building)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSoftObjectPtr<USoundBase> VoidsongInstrumentAsset;
 
 	//idk about everythings after this so liam should comment these
