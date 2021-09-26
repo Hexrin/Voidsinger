@@ -135,3 +135,18 @@ TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
 	return Results;
 }
 
+bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResult& Hit, TArray<UPrimitiveComponent*> PrimComps, const FTransform& Start, const FTransform& End)
+{
+	bool ReturnValue = true;
+	/*for (UPrimitiveComponent* Comp : PrimComps)
+	{
+		ReturnValue = Target->GetWorld()->ComponentSweepMulti(Hit, Comp, )
+	}*/
+
+
+
+
+
+	return ReturnValue;
+}
+
