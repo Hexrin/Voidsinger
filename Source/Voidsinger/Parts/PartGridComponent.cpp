@@ -28,6 +28,7 @@ UPartGridComponent::UPartGridComponent()
 	TimesSinceHeatTick = 0.f;
 	HeatTickRate = 0.5f;
 	HeatPropagationFactor = 0.5f;
+	HeatMeltTransferFactor = 1.f;
 }
 
 
@@ -165,6 +166,13 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 		//Destroy Mesh
 		PartGrid.FindRef(Location).PixelMesh->DestroyComponent();
 
+		for (int i = 0; i < 4; i++)
+		{
+			FIntPoint TargetPoint = Location +((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
+
+			ApplyHeatAtLocation(TargetPoint, (PartGrid.Find(Location)->Temperature / 4) * HeatMeltTransferFactor);
+		}
+
 		PartGrid.Remove(Location);
 		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
 		return true;
@@ -176,7 +184,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 }
 void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)
 {
-	ApplyHeatAtLocation(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint(), HeatToApply);
+	ApplyHeatAtLocation((FVector2D(WorldLocation - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw) + GetCenterOfMass()).RoundToVector().IntPoint(), HeatToApply);
 		
 	//PartGrid.FindRef(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).RoundToVector().IntPoint()).SetTemperature(HeatToApply);
 }
@@ -402,19 +410,19 @@ bool UPartGridComponent::BoxContainsLocation(FVector2D TopLeft, FVector2D Bottom
 	return false;
 }
 
-int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D origin)
+int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D Origin)
 {
 
 	//Check if the location is the origin.
-	if (Location == origin)
+	if (Location == Origin)
 	{
 		return 0;
 	}
 
 	//Check if the location is on the Y axis.
-	if (Location.X == origin.X)
+	if (Location.X == Origin.X)
 	{
-		if (Location.Y > origin.Y)
+		if (Location.Y > Origin.Y)
 		{
 			return 5;
 		}
@@ -425,9 +433,9 @@ int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D or
 	}
 
 	//Check if the location is on the X axis.
-	if (Location.Y == origin.Y)
+	if (Location.Y == Origin.Y)
 	{
-		if (Location.X > origin.X)
+		if (Location.X > Origin.X)
 		{
 			return 6;
 		}
@@ -438,10 +446,10 @@ int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D or
 	}
 
 	//Check if the location is in the first or second quadrants.
-	if (Location.X > origin.X)
+	if (Location.X > Origin.X)
 	{
 		//Check if the location is in the first quadrant.
-		if (Location.Y > origin.Y)
+		if (Location.Y > Origin.Y)
 		{
 			return 1;
 		}
@@ -453,7 +461,7 @@ int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D or
 	else
 	{
 		//Check if the location is in the fourth quadrant.
-		if (Location.Y > origin.Y)
+		if (Location.Y > Origin.Y)
 		{
 			return 4;
 		}
@@ -536,7 +544,7 @@ void UPartGridComponent::DistrubuteHeat()
 	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
 	for (auto& Data : PartGrid)
 	{
-		if (NewHeatMap.FindRef(Data.Key) > 2)
+		if (NewHeatMap.FindRef(Data.Key) > Data.Value.Part->GetHeatResistance())
 		{
 			KeysToDestroy.Emplace(Data.Key);
 		}
@@ -557,19 +565,8 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& Dama
 	{
 		//Remove from grid
 		DamagedPart = PartGrid.FindRef(Location).Part;
-		DamagedPart->DestroyPixel(Location - DamagedPart->GetLocation());
-		
-		//Destroy Mesh
-		PartGrid.FindRef(Location).PixelMesh->DestroyComponent();
-
-		PartGrid.Remove(Location);
-		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
-		return true;
 	}
-	else
-	{
-		return false;
-	}
+	return DestroyPixel(Location);
 }
 
 

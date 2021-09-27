@@ -28,14 +28,10 @@ public:
 	UFUNCTION(BlueprintPure)
 	static FVector SafeDivide(FVector V1, FVector V2);
 
-	/*UFUNCTION(BlueprintCallable)
-	static bool SetActorLocationSweepComponets
-	(
-		AActor* Target,
-		FHitResult & Hits,
-		TArray <UPrimitiveComponent*> PrimComps,
-		const FTransform& Start,
-		const FTransform& End,
-		const FComponentQueryParams& Params
-	);*/
+	//Used for the creation widget. Avoid using this at runtime, it's quite a performance hit. 
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Get Child Classes", Keywords = "Get Child Classes"), Category = Class)
+	static TArray<UClass*> GetClasses(UClass* ParentClass);
+
+	UFUNCTION(BlueprintCallable)
+	static bool SetActorTransformSweepComponets(AActor* Target, FHitResult & Hit, TArray <UPrimitiveComponent*> PrimComps, const FTransform& Start, const FTransform& End);
 };

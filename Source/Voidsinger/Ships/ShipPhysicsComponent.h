@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "DrawDebugHelpers.h" //remove this once debuging is compleate
 #include "Voidsinger/FunctionLibrary.h"
 #include "ShipPhysicsComponent.generated.h"
 

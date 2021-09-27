@@ -106,3 +106,47 @@ FVector UFunctionLibrary::SafeDivide(FVector V1, FVector V2)
 {
 	return FVector((V2.X != 0.0f) ? (V1.X / V2.X) : 0.0f, (V2.Y != 0.0f) ? (V1.Y / V2.Y) : 0.0f, (V2.Z != 0.0f) ? (V1.Z / V2.Z) : 0.0f);
 }
+
+TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
+{
+	UE_LOG(LogTemp, Error, TEXT("Don't Get Classes at runtime!!"));
+	TArray<UClass*> Results;
+
+	// get our parent blueprint class
+	const FString ParentClassName = ParentClass->GetName();
+	UObject* ClassPackage = ANY_PACKAGE;
+	UClass* ParentBPClass = FindObject<UClass>(ClassPackage, *ParentClassName);
+
+	// iterate over UClass, this might be heavy on performance, so keep in mind..
+	// better suggestions for a check are welcome
+	for (TObjectIterator<UClass> It; It; ++It)
+	{
+		if (It->IsChildOf(ParentBPClass))
+		{
+			// It is a child of the Parent Class
+			// make sure we don't include our parent class in the array (weak name check, suggestions welcome)
+			if (It->GetName() != ParentClassName)
+			{
+				Results.Add(*It);
+			}
+		}
+	}
+
+	return Results;
+}
+
+bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResult& Hit, TArray<UPrimitiveComponent*> PrimComps, const FTransform& Start, const FTransform& End)
+{
+	bool ReturnValue = true;
+	/*for (UPrimitiveComponent* Comp : PrimComps)
+	{
+		ReturnValue = Target->GetWorld()->ComponentSweepMulti(Hit, Comp, )
+	}*/
+
+
+
+
+
+	return ReturnValue;
+}
+
