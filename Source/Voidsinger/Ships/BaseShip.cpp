@@ -23,6 +23,8 @@ void ABaseShip::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	PartGrid->BuildShip(DefaultParts);
+
 }
 
 // Called every frame
