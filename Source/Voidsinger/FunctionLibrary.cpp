@@ -138,10 +138,15 @@ TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
 bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResult& Hit, TArray<UPrimitiveComponent*> PrimComps, const FTransform& Start, const FTransform& End)
 {
 	bool ReturnValue = true;
-	/*for (UPrimitiveComponent* Comp : PrimComps)
+	FTransform DeltaTransform = (End.Inverse() * Start);
+	for (UPrimitiveComponent* Comp : PrimComps)
 	{
-		ReturnValue = Target->GetWorld()->ComponentSweepMulti(Hit, Comp, )
-	}*/
+		FVector StartLoc = Comp->GetComponentLocation();
+		FVector EndLoc = DeltaTransform.TransformVector(StartLoc);
+		FRotator Rot = DeltaTransform.Rotator();
+		TArray<FHitResult> Hits;
+		ReturnValue = Target->GetWorld()->ComponentSweepMulti(Hits, Comp, StartLoc, EndLoc, Rot, FComponentQueryParams());
+	}
 
 
 
