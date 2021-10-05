@@ -101,10 +101,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateNewSystem(TArray<UBasePart*> RemovedParts);
 
-	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
-	UFUNCTION()
-	TArray<FIntPoint> FindConnectedShape(TArray<UBasePart*> Parts, TArray<FIntPoint> Shape);
-
 	//Checks 2 shapes to see if they are adjacent. Deprecated for now.
 	//UFUNCTION(BlueprintCallable)
 	//bool AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2);
