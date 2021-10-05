@@ -77,7 +77,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 					Temp.Emplace(NumbersFound[i + 1]);
 					TMap<FIntPoint, FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
 					TSet<UBasePart*> RemovedSet;
-					for (auto& j : UFunctionLibrary::FindConnectedShape(ConnectedParts, Temp, ConnectedPartsMap, true))
+					for (auto& j : UFunctionLibrary::FindConnectedShape(Temp, ConnectedPartsMap, true))
 					{
 						RemovedSet.Emplace(ConnectedPartsMap.Find(j)->Part);
 					}

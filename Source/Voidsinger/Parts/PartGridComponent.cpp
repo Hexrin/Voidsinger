@@ -173,6 +173,79 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 			ApplyHeatAtLocation(TargetPoint, (PartGrid.Find(Location)->Temperature / 4) * HeatMeltTransferFactor);
 		}
 
+		TArray<FIntPoint> NumbersFound;
+
+		//Check for previously adjacent parts
+		/*for (auto& i : ConnectedParts)
+		{
+			if (i->GetShape().Contains(FIntPoint(Pixel.X + 1, Pixel.Y)))
+			{
+				NumbersFound.Add(FIntPoint(Pixel.X + 1, Pixel.Y));
+			}
+			if (i->GetShape().Contains(FIntPoint(Pixel.X - 1, Pixel.Y)))
+			{
+				NumbersFound.Add(FIntPoint(Pixel.X - 1, Pixel.Y));
+			}
+			if (i->GetShape().Contains(FIntPoint(Pixel.X, Pixel.Y + 1)))
+			{
+				NumbersFound.Add(FIntPoint(Pixel.X, Pixel.Y + 1));
+			}
+			if (i->GetShape().Contains(FIntPoint(Pixel.X, Pixel.Y - 1)))
+			{
+				NumbersFound.Add(FIntPoint(Pixel.X, Pixel.Y - 1));
+			}
+		}*/
+
+		if (IsValid(PartGrid.Find(FIntPoint(Location.X + 1, Location.Y))->Part))
+		{
+			NumbersFound.Add(FIntPoint(Location.X + 1, Location.Y));
+		}
+		if (IsValid(PartGrid.Find(FIntPoint(Location.X - 1, Location.Y))->Part))
+		{
+			NumbersFound.Add(FIntPoint(Location.X - 1, Location.Y));
+		}
+		if (IsValid(PartGrid.Find(FIntPoint(Location.X, Location.Y + 1))->Part))
+		{
+			NumbersFound.Add(FIntPoint(Location.X, Location.Y + 1));
+		}
+		if (IsValid(PartGrid.Find(FIntPoint(Location.X, Location.Y - 1))->Part))
+		{
+			NumbersFound.Add(FIntPoint(Location.X, Location.Y - 1));
+		}
+
+		//If NumbersFound is less than 2 then you don't need to bother checking anything since there will be no breaks in the system
+		if (NumbersFound.Num() > 1)
+		{
+
+			//For each in NumbersFound.Num() - 1 because of how PointsConnected works
+			for (int i = 0; i < NumbersFound.Num() - 1; i++)
+			{
+				//This needs to be improved, but right now it checks if the current index is connected to the next index.
+				//actually it might not need to be improved but i need to think about it
+				if (!UFunctionLibrary::PointsConnected(PartGrid, NumbersFound[i], NumbersFound[i + 1]))
+				{
+					//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
+					//also not be connected.
+					TArray<FIntPoint> Temp;
+					Temp.Emplace(NumbersFound[i + 1]);
+					TSet<FPartData*> RemovedSet;
+					for (auto& j : UFunctionLibrary::FindConnectedShape(Temp, PartGrid, true))
+					{
+						RemovedSet.Emplace(PartGrid.Find(j));
+					}
+
+					//Create a new ship with these parts
+
+					ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>(FVector(0, 0, 0), FRotator(1, 1, 1), FActorSpawnParameters());
+					/*for (auto& i : RemovedSet)
+					{
+						NewShip->PartGrid->AddPart(i->Part, i);
+					}*/
+					//since there will never be more than 1 system removed at a time, this should not need to continue after this point
+					break;
+				}
+			}
+		}
 		PartGrid.Remove(Location);
 		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
 		return true;

@@ -150,7 +150,7 @@ bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResul
 	return ReturnValue;
 }
 
-TArray<FIntPoint> UFunctionLibrary::FindConnectedShape(TArray<UBasePart*> Parts, TArray<FIntPoint> Shape, TMap<FIntPoint, FPartData> ConnectedPartsMap, bool CheckFunctionality)
+TArray<FIntPoint> UFunctionLibrary::FindConnectedShape(TArray<FIntPoint> Shape, TMap<FIntPoint, FPartData> ConnectedPartsMap, bool CheckFunctionality)
 {
 
 	//New shape will return the entire connected shape, indcluding the starting shape
@@ -243,7 +243,7 @@ TArray<FIntPoint> UFunctionLibrary::FindConnectedShape(TArray<UBasePart*> Parts,
 	if (NewShape != Shape)
 	{
 		//Continue to check for connections by calling the function recursively.
-		NewShape = FindConnectedShape(Parts, NewShape, ConnectedPartsMap, CheckFunctionality);
+		NewShape = FindConnectedShape(NewShape, ConnectedPartsMap, CheckFunctionality);
 	}
 
 	//Once everything has figured itself out, return the New Shape
