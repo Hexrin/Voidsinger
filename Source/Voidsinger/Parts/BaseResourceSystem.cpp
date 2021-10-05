@@ -77,7 +77,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 					Temp.Emplace(NumbersFound[i + 1]);
 					TMap<FIntPoint, FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
 					TSet<UBasePart*> RemovedSet;
-					for (auto& j : FindConnectedShape(ConnectedParts, Temp))
+					for (auto& j : UFunctionLibrary::FindConnectedShape(ConnectedParts, Temp, ConnectedPartsMap, true))
 					{
 						RemovedSet.Emplace(ConnectedPartsMap.Find(j)->Part);
 					}
@@ -131,81 +131,6 @@ void UBaseResourceSystem::RemoveSection(TArray<UBasePart*> RemovedParts)
 	}
 }
 
-//Finds the shape that is connected to the shape given
-TArray<FIntPoint> UBaseResourceSystem::FindConnectedShape(TArray<UBasePart*> Parts, TArray<FIntPoint> Shape)
-{
-
-	//Initalize ConnectedPartsMap here so GetMapFromConnectedParts doesn't have to be called every single time
-	TMap<FIntPoint, FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
-
-	//New shape will return the entire connected shape, indcluding the starting shape
-	TArray<FIntPoint> NewShape = Shape;
-
-	//Check each pixel of the shape
-	for (auto& i : Shape)
-	{
-		//If the shape does NOT contain the checked location
-		if (!Shape.Contains(FIntPoint(i.X + 1, i.Y)))
-		{
-			//And the connected parts ARE at that location
-			if (ConnectedPartsMap.Contains(FIntPoint(i.X + 1, i.Y)))
-			{
-				//And the pixel at that location is functional
-				if (ConnectedPartsMap.Find(FIntPoint(i.X + 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X + 1, i.Y)))
-				{
-					//Add that location to the new shape, because it is connected
-					NewShape.Emplace(FIntPoint(i.X + 1, i.Y));
-				}
-			}
-		}
-
-		//Do the same thing done for X + 1 for X - 1
-		if (!Shape.Contains(FIntPoint(i.X - 1, i.Y)))
-		{
-			if (ConnectedPartsMap.Contains(FIntPoint(i.X - 1, i.Y)))
-			{
-				if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X - 1, i.Y)))
-				{
-					NewShape.Emplace(FIntPoint(i.X - 1, i.Y));
-				}
-			}
-		}
-
-		//Do the same thing done for X + 1 for Y + 1
-		if (!Shape.Contains(FIntPoint(i.X, i.Y + 1)))
-		{
-			if (ConnectedPartsMap.Contains(FIntPoint(i.X, i.Y + 1)))
-			{
-				if (ConnectedPartsMap.Find(FIntPoint(i.X, i.Y + 1))->Part->IsPixelFunctional(FIntPoint(i.X , i.Y + 1)))
-				{
-					NewShape.Emplace(FIntPoint(i.X, i.Y + 1));
-				}
-			}
-		}
-
-		//Do the same thing done for X + 1 for Y - 1
-		if (!Shape.Contains(FIntPoint(i.X, i.Y - 1)))
-		{
-			if (ConnectedPartsMap.Contains(FIntPoint(i.X, i.Y - 1)))
-			{
-				if (ConnectedPartsMap.Find(FIntPoint(i.X, i.Y - 1))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y - 1)))
-				{
-					NewShape.Emplace(FIntPoint(i.X, i.Y - 1));
-				}
-			}
-		}
-	}
-
-	//If the new shape has changed at all
-	if (NewShape != Shape)
-	{
-		//Continue to check for connections by calling the function recursively.
-		NewShape = FindConnectedShape(Parts, NewShape);
-	}
-
-	//Once everything has figured itself out, return the New Shape
-	return NewShape;
-}
 
 //Deprecated function to check if 2 shapes are adjacent to each other.
 //bool UBaseResourceSystem::AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2)

@@ -34,4 +34,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static bool SetActorTransformSweepComponets(AActor* Target, FHitResult & Hit, TArray <UPrimitiveComponent*> PrimComps, const FTransform& Start, const FTransform& End);
+
+	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
+	UFUNCTION()
+	static TArray<FIntPoint> FindConnectedShape(TArray<UBasePart*> Parts, TArray<FIntPoint> Shape, TMap<FIntPoint, FPartData> ConnectedPartsMap, bool CheckFunctionality = false);
 };
