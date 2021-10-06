@@ -36,6 +36,9 @@ public:
 	FVector2D GetVelocity();
 
 	UFUNCTION()
+	void SetVelocityDirectly(FVector2D NewVelocity);
+
+	UFUNCTION()
 	void UpdateMassCalculations();
 
 	UFUNCTION(BlueprintPure)

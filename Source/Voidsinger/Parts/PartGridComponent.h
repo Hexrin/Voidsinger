@@ -37,15 +37,15 @@ public:
 	bool AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
 
 	UFUNCTION(BlueprintCallable)
-	bool RemovePart(FIntPoint Location);
+	bool RemovePart(FIntPoint Location, bool CheckForBreaks = true);
 
 
 
 	//---Destruction---
 
 	UFUNCTION(BlueprintCallable)
-	bool DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart);
-	bool DestroyPixel(FIntPoint Location);
+	bool DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart, bool CheckForBreaks = true);
+	bool DestroyPixel(FIntPoint Location, bool CheckForBreaks = true);
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply = 1);
