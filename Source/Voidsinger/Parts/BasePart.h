@@ -106,7 +106,11 @@ public:
 
 	//Gets the location of the origin of the part relative to the part grid
 	UFUNCTION(BlueprintPure)
-	const FIntPoint GetLocation();
+	const FIntPoint GetPartGridLocation();
+	UFUNCTION(BlueprintPure)
+	const FVector GetPartWorldLocation();
+	UFUNCTION(BlueprintPure)
+	const FVector GetPartRelativeLocation();
 
 	//Gets the rotaion of the part
 	UFUNCTION(BlueprintPure)
@@ -118,7 +122,9 @@ public:
 
 	//Gets the part grid that this part is attached to
 	UFUNCTION(BlueprintPure)
-	const UPartGridComponent* GetPartGrid();
+	UPartGridComponent* GetPartGrid();
+	UFUNCTION(BlueprintPure)
+	const ABaseShip* GetShip();
 
 	//Gets the resource systems the part is a part of
 	UFUNCTION(BlueprintPure)
