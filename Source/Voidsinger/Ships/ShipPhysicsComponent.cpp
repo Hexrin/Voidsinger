@@ -35,8 +35,17 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	LinearVelocity += DeltaLinearVelocity.GetRotated(Ship->GetActorRotation().Yaw) * DeltaTime;
 	AngularVelocity += DeltaAngularVelocity * DeltaTime;
 
-	Ship->SetActorLocation(Ship->GetActorLocation() + FVector(LinearVelocity.X, LinearVelocity.Y, 0) * DeltaTime);
-	Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0) * DeltaTime);
+	FHitResult Result = FHitResult();
+	TArray<UPrimitiveComponent*> Comps = TArray<UPrimitiveComponent*>();
+	for (UActorComponent* Comp : Ship->GetComponentsByClass(UPrimitiveComponent::StaticClass()))
+	{
+		Comps.Emplace(Cast<UPrimitiveComponent>(Comp));
+	}
+	if (UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, Comps, Ship->GetActorTransform(), Ship->GetActorTransform() + FTransform(FRotator(0, AngularVelocity, 0) * DeltaTime, FVector(LinearVelocity.X, LinearVelocity.Y, 0) * DeltaTime, FVector())))
+	{
+
+	}
+	//Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0) * DeltaTime);
 
 	DeltaLinearVelocity = FVector2D(0, 0);
 	DeltaAngularVelocity = 0;
