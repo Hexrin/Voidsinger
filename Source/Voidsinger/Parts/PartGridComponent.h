@@ -99,6 +99,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	TMap<FIntPoint, FPartData> GetPartGrid();
 
+	UFUNCTION(BlueprintPure)
+	const float GetPartGridScale();
+
 private:
 	UPROPERTY()
 	TMap<FIntPoint, FPartData> PartGrid;

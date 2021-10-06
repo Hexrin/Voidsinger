@@ -136,7 +136,7 @@ bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
 	{
 		//Intialize Variables
 		class UBasePart* PartToRemove = PartGrid.Find(Location)->Part;
-		FIntPoint PartLoc = PartToRemove->GetLocation();
+		FIntPoint PartLoc = PartToRemove->GetPartGridLocation();
 
 		//Iterate though the shape of PartToRemove and remove them from the part grid
 		for (FIntPoint Loc : PartToRemove->GetShape())
@@ -158,7 +158,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 	{
 		//Remove from grid
 		UBasePart* DamagedPart = PartGrid.FindRef(Location).Part;
-		DamagedPart->DestroyPixel(Location - DamagedPart->GetLocation());
+		DamagedPart->DestroyPixel(Location - DamagedPart->GetPartGridLocation());
 
 		//Destroy Mesh
 		PartGrid.FindRef(Location).PixelMesh->DestroyComponent();
@@ -690,7 +690,7 @@ void UPartGridComponent::SaveShip(FString ShipName)
 
 	for (int i = 0; i < Parts.Num(); i++)
 	{
-		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i].Part->GetClass(), Parts[i].Part->GetLocation(), Parts[i].Part->GetRotation()));
+		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i].Part->GetClass(), Parts[i].Part->GetPartGridLocation(), Parts[i].Part->GetRotation()));
 	}
 	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);
 
@@ -735,7 +735,7 @@ const float UPartGridComponent::GetMomentOfInertia()
 	FVector2D CenterOfMass = GetCenterOfMass();
 	for (auto& Part : PartGrid)
 	{
-		ReturnValue += (Part.Value.Part->GetMass() / 6) + (FVector2D(Part.Value.Part->GetLocation()) - CenterOfMass).SizeSquared();
+		ReturnValue += (Part.Value.Part->GetMass() / 6) + (FVector2D(Part.Value.Part->GetPartGridLocation()) - CenterOfMass).SizeSquared();
 	}
 	return ReturnValue;
 }
@@ -761,6 +761,11 @@ const float UPartGridComponent::GetMass()
 TMap<FIntPoint, FPartData> UPartGridComponent::GetPartGrid()
 {
 	return PartGrid;
+}
+
+const float UPartGridComponent::GetPartGridScale()
+{
+	return GridScale;
 }
 
 //Detect if a Part can fit in the PartGrid
