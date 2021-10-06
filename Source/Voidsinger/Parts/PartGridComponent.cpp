@@ -216,7 +216,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 						}
 						for (auto& j : PartsRemoved)
 						{
-							Removed.Emplace(FSavePartInfo(j->GetClass(), j->GetLocation(), j->GetRotation()));
+							Removed.Emplace(FSavePartInfo(j->GetClass(), j->GetPartGridLocation(), j->GetRotation()));
 						}
 
 						//Create a new ship with these parts
@@ -235,7 +235,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 										PartialPartShape.Emplace(k);
 									}
 								}
-								NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetRotation(), j->GetRotation());
+								NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetPartGridLocation(), j->GetRotation());
 							}	
 
 							float Radius = UKismetMathLibrary::Sqrt(FMath::Square(NewShip->PartGrid->GetCenterOfMass().X - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X) + FMath::Square(NewShip->PartGrid->GetCenterOfMass().Y - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y));
