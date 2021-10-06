@@ -258,9 +258,19 @@ const FArrayBounds UBasePart::GetPartBounds(float Rot)
 	return Bounds;
 }
 
-const FIntPoint UBasePart::GetLocation()
+const FIntPoint UBasePart::GetPartGridLocation()
 {
 	return Location;
+}
+
+const FVector UBasePart::GetPartWorldLocation()
+{
+	return GetPartRelativeLocation() + GetShip()->GetActorLocation();
+}
+
+const FVector UBasePart::GetPartRelativeLocation()
+{
+	return FVector((FVector2D(GetPartGridLocation()) * GetPartGrid()->GetPartGridScale()) - GetPartGrid()->GetCenterOfMass(), 0);
 }
 
 const float UBasePart::GetRotation()
@@ -274,9 +284,14 @@ float UBasePart::GetMass()
 	return TotalPartMass / GetDesiredShape().Num();
 }
 
-const UPartGridComponent* UBasePart::GetPartGrid()
+UPartGridComponent* UBasePart::GetPartGrid()
 {
 	return PartGridComponent;
+}
+
+const ABaseShip* UBasePart::GetShip()
+{
+	return Cast<ABaseShip>(GetPartGrid()->GetOwner());
 }
 
 TArray<UBaseResourceSystem*> UBasePart::GetSystems()
@@ -306,7 +321,7 @@ TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 		IntPointArray.Empty();
 		for (auto& j : i.Value.IntPointArray)
 		{
-			FIntPoint AdjLocation = FVector2D(j).GetRotated(GetRotation()).RoundToVector().IntPoint() + GetLocation();
+			FIntPoint AdjLocation = FVector2D(j).GetRotated(GetRotation()).RoundToVector().IntPoint() + GetPartGridLocation();
 			if (GetShape().Contains(AdjLocation))
 			{
 				IntPointArray.Emplace(AdjLocation);
