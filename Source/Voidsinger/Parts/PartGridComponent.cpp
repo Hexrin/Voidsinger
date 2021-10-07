@@ -263,7 +263,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 						}
 						else
 						{
-							UE_LOG(LogTemp, Warning, TEXT("Why is it empty though"));
+							UE_LOG(LogTemp, Error, TEXT("I don't think this should ever happen. Ask Mabel about weird part grid component thing"));
 						}
 						//since there will never be more than 1 system removed at a time, this should not need to continue after this point
 						break;
