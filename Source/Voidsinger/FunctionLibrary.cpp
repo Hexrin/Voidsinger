@@ -174,3 +174,103 @@ bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResul
 	return ReturnValue;
 }
 
+TArray<FIntPoint> UFunctionLibrary::FindConnectedShape(TArray<FIntPoint> Shape, TMap<FIntPoint, FPartData> ConnectedPartsMap, bool CheckFunctionality)
+{
+
+	//New shape will return the entire connected shape, indcluding the starting shape
+	TArray<FIntPoint> NewShape = Shape;
+
+	//Check each pixel of the shape
+	for (auto& i : Shape)
+	{
+		//If the shape does NOT contain the checked location
+		if (!Shape.Contains(FIntPoint(i.X + 1, i.Y)))
+		{
+			//And the connected parts ARE at that location
+			if (ConnectedPartsMap.Contains(FIntPoint(i.X + 1, i.Y)))
+			{
+				if (CheckFunctionality)
+				{
+					//And the pixel at that location is functional
+					if (ConnectedPartsMap.Find(FIntPoint(i.X + 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X + 1, i.Y)))
+					{
+						//Add that location to the new shape, because it is connected
+						NewShape.Emplace(FIntPoint(i.X + 1, i.Y));
+					}
+				}
+				else
+				{
+					NewShape.Emplace(FIntPoint(i.X + 1, i.Y));
+				}
+			}
+		}
+
+		//Do the same thing done for X + 1 for X - 1
+		if (!Shape.Contains(FIntPoint(i.X - 1, i.Y)))
+		{
+			if (ConnectedPartsMap.Contains(FIntPoint(i.X - 1, i.Y)))
+			{
+				if (CheckFunctionality)
+				{
+					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X - 1, i.Y)))
+					{
+						NewShape.Emplace(FIntPoint(i.X - 1, i.Y));
+					}
+				}
+				else
+				{
+					NewShape.Emplace(FIntPoint(i.X - 1, i.Y));
+				}
+			}
+		}
+
+		//Do the same thing done for X + 1 for Y + 1
+		if (!Shape.Contains(FIntPoint(i.X, i.Y + 1)))
+		{
+			if (ConnectedPartsMap.Contains(FIntPoint(i.X, i.Y + 1)))
+			{
+				if (CheckFunctionality)
+				{
+					if (ConnectedPartsMap.Find(FIntPoint(i.X, i.Y + 1))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y + 1)))
+					{
+						NewShape.Emplace(FIntPoint(i.X, i.Y + 1));
+					}
+				}
+				else
+				{
+					NewShape.Emplace(FIntPoint(i.X, i.Y + 1));
+				}
+			}
+		}
+
+		//Do the same thing done for X + 1 for Y - 1
+		if (!Shape.Contains(FIntPoint(i.X, i.Y - 1)))
+		{
+			if (ConnectedPartsMap.Contains(FIntPoint(i.X, i.Y - 1)))
+			{
+				if (CheckFunctionality)
+				{
+					if (ConnectedPartsMap.Find(FIntPoint(i.X, i.Y - 1))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y - 1)))
+					{
+						NewShape.Emplace(FIntPoint(i.X, i.Y - 1));
+					}
+				}
+				else
+				{
+					NewShape.Emplace(FIntPoint(i.X, i.Y - 1));
+				}
+			}
+		}
+	}
+
+	//If the new shape has changed at all
+	if (NewShape != Shape)
+	{
+		//Continue to check for connections by calling the function recursively.
+		NewShape = FindConnectedShape(NewShape, ConnectedPartsMap, CheckFunctionality);
+	}
+
+	//Once everything has figured itself out, return the New Shape
+	return NewShape;
+}
+

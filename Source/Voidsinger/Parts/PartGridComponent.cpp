@@ -29,8 +29,13 @@ UPartGridComponent::UPartGridComponent()
 	HeatTickRate = 0.5f;
 	HeatPropagationFactor = 0.5f;
 	HeatMeltTransferFactor = 1.f;
-}
 
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> PixelMeshAsset(*PathToPixelMesh);
+	if (PixelMeshAsset.Succeeded())
+	{
+		PixelMesh = PixelMeshAsset.Object;
+	}
+}
 
 // Called when the game starts
 void UPartGridComponent::BeginPlay()
@@ -40,7 +45,6 @@ void UPartGridComponent::BeginPlay()
 	// ...
 	
 }
-
 
 // Called every frame
 void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -54,13 +58,13 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	TimesSinceHeatTick += DeltaTime;
 }
 
-
 //Adds a compleate part to the part grid
 bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 {
 	TArray<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
 	return AddPart(PartialPartShape, PartType, Location, Rotation, bAlwaysPlace);
 }
+
 //Adds a partial part to PartPrid
 bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 {
@@ -111,6 +115,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 
 				//Create Mesh
 				class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
+
 				Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
 				Cast<UStaticMeshComponent>(NewPlane)->SetMaterial(0, Part->GetPixelMaterial());
 
@@ -130,9 +135,8 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 	return false;
 }
 
-
 //Remove an entire part. Returns True if a part was destroyed
-bool UPartGridComponent::RemovePart(FIntPoint Location)
+bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
 {
 	//Check if location is valid
 	if (PartGrid.Contains(Location))
@@ -144,7 +148,7 @@ bool UPartGridComponent::RemovePart(FIntPoint Location)
 		//Iterate though the shape of PartToRemove and remove them from the part grid
 		for (FIntPoint Loc : PartToRemove->GetShape())
 		{
-			DestroyPixel(Loc + PartLoc);
+			DestroyPixel(Loc + PartLoc, CheckForBreaks);
 		}
 		return true;
 	}
@@ -155,7 +159,7 @@ bool UPartGridComponent::RemovePart(FIntPoint Location)
 }
 
 //Remove a single Pixel from the PartGrid. Returns true if a pixel was removed
-bool UPartGridComponent::DestroyPixel(FIntPoint Location)
+bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 {
 	if (PartGrid.Contains(Location))
 	{
@@ -173,7 +177,100 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 			ApplyHeatAtLocation(TargetPoint, (PartGrid.Find(Location)->Temperature / 4) * HeatMeltTransferFactor);
 		}
 
+		TArray<FIntPoint> NumbersFound;
 		PartGrid.Remove(Location);
+
+		if (CheckForBreaks)
+		{
+			if (PartGrid.Contains(FIntPoint(Location.X + 1, Location.Y)))
+			{
+				NumbersFound.Add(FIntPoint(Location.X + 1, Location.Y));
+			}
+			if (PartGrid.Contains(FIntPoint(Location.X - 1, Location.Y)))
+			{
+				NumbersFound.Add(FIntPoint(Location.X - 1, Location.Y));
+			}
+			if (PartGrid.Contains(FIntPoint(Location.X, Location.Y + 1)))
+			{
+				NumbersFound.Add(FIntPoint(Location.X, Location.Y + 1));
+			}
+			if (PartGrid.Contains(FIntPoint(Location.X, Location.Y - 1)))
+			{
+				NumbersFound.Add(FIntPoint(Location.X, Location.Y - 1));
+			}
+
+			//If NumbersFound is less than 2 then you don't need to bother checking anything since there will be no breaks
+			if (NumbersFound.Num() > 1)
+			{
+
+				//For each in NumbersFound.Num() - 1 because of how PointsConnected works
+				for (int i = 0; i < NumbersFound.Num() - 1; i++)
+				{
+					//This needs to be improved, but right now it checks if the current index is connected to the next index.
+					//actually it might not need to be improved but i need to think about it
+					if (!UFunctionLibrary::PointsConnected(PartGrid, NumbersFound[i], NumbersFound[i + 1]))
+					{
+						//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
+						//also not be connected.
+						TArray<FIntPoint> Temp;
+						Temp.Emplace(NumbersFound[i + 1]);
+						TArray<FSavePartInfo> Removed;
+						TSet<UBasePart*> PartsRemoved;
+						TArray<FIntPoint> ConnectedShape = UFunctionLibrary::FindConnectedShape(Temp, PartGrid);
+						for (auto& j : ConnectedShape)
+						{
+							PartsRemoved.Emplace(PartGrid.Find(j)->Part);
+						}
+						for (auto& j : PartsRemoved)
+						{
+							Removed.Emplace(FSavePartInfo(j->GetClass(), j->GetPartGridLocation(), j->GetRotation()));
+						}
+
+						//Create a new ship with these parts
+						if (!Removed.IsEmpty())
+						{
+
+							ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>(Cast<AActor>(GetOwner())->GetActorLocation() + FVector(GetCenterOfMass(), 0), FRotator(1, 1, 1), FActorSpawnParameters());
+							int DebugCount = 0;
+							for (auto& j : PartsRemoved)
+							{
+								TArray<FIntPoint> PartialPartShape;
+								for (auto& k : j->GetShape())
+								{
+									if (ConnectedShape.Contains(k))
+									{
+										//UE_LOG(LogTemp, Warning, TEXT("x %i y %i"), k.X, k.Y);
+										PartialPartShape.Emplace(k);
+									}
+								}
+								NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetPartGridLocation(), j->GetRotation());
+							}	
+
+							float Radius = UKismetMathLibrary::Sqrt(FMath::Square(NewShip->PartGrid->GetCenterOfMass().X - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X) + FMath::Square(NewShip->PartGrid->GetCenterOfMass().Y - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y));
+							float VelocityFromRotationMagnitude = FMath::DegreesToRadians(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity()) * Radius;
+							FVector2D VectorBetween = NewShip->PartGrid->GetCenterOfMass() - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass();
+							FVector2D RotatedVector = VectorBetween.GetRotated(90);
+							if (Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity() < 0)
+							{
+								RotatedVector = RotatedVector.GetRotated(180);
+							}
+							RotatedVector.Normalize();
+							NewShip->PhysicsComponent->SetVelocityDirectly(RotatedVector * VelocityFromRotationMagnitude);
+							for (auto& j : ConnectedShape)
+							{
+								DestroyPixel(j);
+							}
+						}
+						else
+						{
+							UE_LOG(LogTemp, Warning, TEXT("Why is it empty though"));
+						}
+						//since there will never be more than 1 system removed at a time, this should not need to continue after this point
+						break;
+					}
+				}
+			}
+		}
 		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
 		return true;
 	}
@@ -181,13 +278,16 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location)
 	{
 		return false;
 	}
+
 }
+
 void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)
 {
 	ApplyHeatAtLocation((FVector2D(WorldLocation - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw) + GetCenterOfMass()).RoundToVector().IntPoint(), HeatToApply);
 		
 	//PartGrid.FindRef(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).RoundToVector().IntPoint()).SetTemperature(HeatToApply);
 }
+
 void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float HeatToApply)
 {
 	if (PartGrid.Contains(RelativeLocation))
@@ -196,10 +296,11 @@ void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float H
 	}
 	
 }
+
 void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius)
  {
 
-	FVector FloatRelativeLoc = UKismetMathLibrary::InverseTransformLocation(GetOwner()->GetActorTransform(), WorldLocation);
+	FVector FloatRelativeLoc = UKismetMathLibrary::InverseTransformLocation(GetOwner()->GetActorTransform(), WorldLocation) + FVector(GetCenterOfMass(), 0);
 	float CheckX = -ExplosionRadius;
 	float CheckY = -ExplosionRadius;
 	FIntPoint CheckGridLocation;
@@ -558,7 +659,8 @@ void UPartGridComponent::DistrubuteHeat()
 		DestroyPixel(Val);
 	}
 }
-bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart)
+
+bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart, bool CheckForBreaks)
 {
 	//Check if pixel is valid
 	if (PartGrid.Contains(Location))
@@ -566,9 +668,8 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& Dama
 		//Remove from grid
 		DamagedPart = PartGrid.FindRef(Location).Part;
 	}
-	return DestroyPixel(Location);
+	return DestroyPixel(Location, CheckForBreaks);
 }
-
 
 void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 {
@@ -578,7 +679,7 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 
 	for (auto& i : AllParts)
 	{
-		RemovePart(i);
+		RemovePart(i, false);
 	}
 	for (int i = 0; i < Parts.Num(); i++)
 	{
@@ -616,7 +717,6 @@ bool UPartGridComponent::LoadSavedShip(FString ShipName)
 		return false;
 	}
 }
-
 
 //Gets the center of mass of the PartGrid
 const FVector2D UPartGridComponent::GetCenterOfMass()

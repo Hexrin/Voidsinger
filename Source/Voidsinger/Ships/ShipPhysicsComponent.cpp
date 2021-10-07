@@ -70,6 +70,11 @@ FVector2D UShipPhysicsComponent::GetVelocity()
 	return LinearVelocity;
 }
 
+void UShipPhysicsComponent::SetVelocityDirectly(FVector2D NewVelocity)
+{
+	LinearVelocity = NewVelocity;
+}
+
 void UShipPhysicsComponent::UpdateMassCalculations()
 {
 	Mass = Ship->PartGrid->GetMass();

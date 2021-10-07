@@ -9,6 +9,8 @@
 #include "DrawDebugHelpers.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Misc/Char.h"
 #include "PartGridComponent.generated.h"
 
 class UBasePart;
@@ -37,15 +39,15 @@ public:
 	bool AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
 
 	UFUNCTION(BlueprintCallable)
-	bool RemovePart(FIntPoint Location);
+	bool RemovePart(FIntPoint Location, bool CheckForBreaks = true);
 
 
 
 	//---Destruction---
 
 	UFUNCTION(BlueprintCallable)
-	bool DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart);
-	bool DestroyPixel(FIntPoint Location);
+	bool DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart, bool CheckForBreaks = true);
+	bool DestroyPixel(FIntPoint Location, bool CheckForBreaks = true);
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply = 1);
@@ -115,8 +117,12 @@ private:
 	UPROPERTY(EditAnywhere)
 	float GridScale; 
 
+	//The path to the pixel mesh. I have to put L in front of it because unreal is dumb.
 	UPROPERTY(EditAnywhere)
-	class UStaticMesh* PixelMesh;
+	FString PathToPixelMesh = TEXT("/Game/Parts/PlaneWithCollision.PlaneWithCollision");
+
+	UPROPERTY()
+	UStaticMesh* PixelMesh;
 
 	UPROPERTY(EditAnywhere)
 	float HeatTickRate;
