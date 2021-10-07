@@ -246,7 +246,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 								NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetPartGridLocation(), j->GetRotation());
 							}	
 
-							float Radius = UKismetMathLibrary::Sqrt(FMath::Square(NewShip->PartGrid->GetCenterOfMass().X - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X) + FMath::Square(NewShip->PartGrid->GetCenterOfMass().Y - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y));
+							float Radius = UKismetMathLibrary::Sqrt(FMath::Square(NewShip->PartGrid->GetCenterOfMass().X + NewShip->GetActorLocation().X - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X + Cast<AActor>(GetOwner())->GetActorLocation().X) + FMath::Square(NewShip->PartGrid->GetCenterOfMass().Y + NewShip->GetActorLocation().Y - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y + Cast<AActor>(GetOwner())->GetActorLocation().Y));
 							float VelocityFromRotationMagnitude = FMath::DegreesToRadians(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity()) * Radius;
 							FVector2D VectorBetween = NewShip->PartGrid->GetCenterOfMass() - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass();
 							FVector2D RotatedVector = VectorBetween.GetRotated(90);
