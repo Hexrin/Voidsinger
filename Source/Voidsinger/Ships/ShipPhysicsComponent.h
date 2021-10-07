@@ -71,4 +71,7 @@ private:
 
 	UPROPERTY()
 	FVector2D DeltaLinearVelocity;
+
+	UPROPERTY()
+	TArray<UPrimitiveComponent*> Comps;
 };

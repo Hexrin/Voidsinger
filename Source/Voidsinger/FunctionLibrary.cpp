@@ -140,11 +140,11 @@ bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResul
 	Hit = FHitResult();
 	TArray<FHitResult> Hits;
 	bool ReturnValue = true;
-	FQuat Rot = Start.Rotator().Quaternion();
+	FQuat Rot = Start.Rotator().GetNormalized().Quaternion();
 	FCollisionShape Shape = FCollisionShape();
 	Shape.MakeBox(FVector(0.5f));
-
 	FTransform DeltaTransform = (End.Inverse() * Start);
+
 	for (UPrimitiveComponent* Comp : PrimComps)
 	{
 		FVector StartLoc = Comp->GetComponentLocation();
