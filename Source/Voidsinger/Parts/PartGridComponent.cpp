@@ -230,10 +230,11 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 						if (!Removed.IsEmpty())
 						{
 
-							ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>(Cast<AActor>(GetOwner())->GetActorLocation() + FVector(GetCenterOfMass(), 0), FRotator(1, 1, 1), FActorSpawnParameters());
+							ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>(Cast<AActor>(GetOwner())->GetActorLocation() - FVector(GetCenterOfMass(), 0), FRotator(1, 1, 1), FActorSpawnParameters());
 							int DebugCount = 0;
 							for (auto& j : PartsRemoved)
 							{
+								UE_LOG(LogTemp, Warning, TEXT("Okay so there are still things in parts removed"))
 								TArray<FIntPoint> PartialPartShape;
 								for (auto& k : j->GetShape())
 								{
@@ -241,6 +242,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 									{
 										//UE_LOG(LogTemp, Warning, TEXT("x %i y %i"), k.X, k.Y);
 										PartialPartShape.Emplace(k);
+										DestroyPixel(k, false);
 									}
 								}
 								NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetPartGridLocation(), j->GetRotation());
@@ -256,10 +258,6 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 							}
 							RotatedVector.Normalize();
 							NewShip->PhysicsComponent->SetVelocityDirectly(RotatedVector * VelocityFromRotationMagnitude);
-							for (auto& j : ConnectedShape)
-							{
-								DestroyPixel(j);
-							}
 						}
 						else
 						{
