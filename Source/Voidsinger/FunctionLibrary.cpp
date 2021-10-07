@@ -137,27 +137,35 @@ TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
 
 bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResult& Hit, TArray<UPrimitiveComponent*> PrimComps, const FTransform& Start, const FTransform& End)
 {
+	//Return Values
 	Hit = FHitResult();
-	TArray<FHitResult> Hits;
+	TArray<FHitResult> Hits = TArray<FHitResult>();
 	bool ReturnValue = true;
-	FQuat Rot = Start.Rotator().GetNormalized().Quaternion();
-	FCollisionShape Shape = FCollisionShape();
-	Shape.MakeBox(FVector(0.5f));
-	FTransform DeltaTransform = (End.Inverse() * Start);
 
+	FQuat Rot = Start.Rotator().GetNormalized().Quaternion();
+
+
+
+	FTransform InverseTransform = End.Inverse();
+	InverseTransform.NormalizeRotation();
+	FTransform DeltaTransform = (InverseTransform * Start);
+	DeltaTransform.NormalizeRotation();
+	FCollisionQueryParams QueryParams = FCollisionQueryParams().DefaultQueryParam;
+	QueryParams.AddIgnoredActor(Target);
 	for (UPrimitiveComponent* Comp : PrimComps)
 	{
 		FVector StartLoc = Comp->GetComponentLocation();
 		FVector EndLoc = DeltaTransform.TransformVector(StartLoc);
 		FHitResult ThisHit = FHitResult();
-		ReturnValue = Target->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, Rot, FCollisionObjectQueryParams(), Shape);
-		if (ReturnValue)
+		
+		if (Target->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, Rot, FCollisionObjectQueryParams::DefaultObjectQueryParam, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))
 		{
+			ReturnValue = false;
 			Hits.Emplace(ThisHit);
 		}
 	}
 
-	if (ReturnValue)
+	if (!ReturnValue)
 	{
 		for (FHitResult Value : Hits)
 		{

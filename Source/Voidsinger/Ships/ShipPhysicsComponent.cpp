@@ -36,10 +36,10 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	FHitResult Result = FHitResult();
 	
-	/*if (!UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, Comps, Ship->GetActorTransform(), Ship->GetActorTransform() + FTransform(FRotator(0, AngularVelocity, 0) * DeltaTime, FVector(LinearVelocity.X, LinearVelocity.Y, 0) * DeltaTime, FVector())))
+	if (!UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, Comps, Ship->GetActorTransform(), Ship->GetActorTransform() + FTransform(FRotator(0, AngularVelocity, 0) * DeltaTime, FVector(LinearVelocity.X, LinearVelocity.Y, 0) * DeltaTime, FVector())))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SweepFaild"));
-	}*/
+	}
 	//Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0) * DeltaTime);
 
 	DeltaLinearVelocity = FVector2D(0, 0);
