@@ -229,7 +229,8 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 						//Create a new ship with these parts
 						if (!Removed.IsEmpty())
 						{
-							ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>(Cast<AActor>(GetOwner())->GetActorLocation(), FRotator(1, 1, 1), FActorSpawnParameters());
+
+							ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>(Cast<AActor>(GetOwner())->GetActorLocation() + FVector(GetCenterOfMass(), 0), FRotator(1, 1, 1), FActorSpawnParameters());
 							int DebugCount = 0;
 							for (auto& j : PartsRemoved)
 							{
@@ -238,7 +239,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 								{
 									if (ConnectedShape.Contains(k))
 									{
-										UE_LOG(LogTemp, Warning, TEXT("x %i y %i"), k.X, k.Y);
+										//UE_LOG(LogTemp, Warning, TEXT("x %i y %i"), k.X, k.Y);
 										PartialPartShape.Emplace(k);
 									}
 								}
