@@ -29,6 +29,12 @@ UPartGridComponent::UPartGridComponent()
 	HeatTickRate = 0.5f;
 	HeatPropagationFactor = 0.5f;
 	HeatMeltTransferFactor = 1.f;
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> PixelMeshAsset(*PathToPixelMesh);
+	if (PixelMeshAsset.Succeeded())
+	{
+		PixelMesh = PixelMeshAsset.Object;
+	}
 }
 
 // Called when the game starts
@@ -109,6 +115,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 
 				//Create Mesh
 				class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
+
 				Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
 				Cast<UStaticMeshComponent>(NewPlane)->SetMaterial(0, Part->GetPixelMaterial());
 

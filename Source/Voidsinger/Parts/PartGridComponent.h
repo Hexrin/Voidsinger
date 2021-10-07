@@ -9,6 +9,8 @@
 #include "DrawDebugHelpers.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Misc/Char.h"
 #include "PartGridComponent.generated.h"
 
 class UBasePart;
@@ -115,8 +117,12 @@ private:
 	UPROPERTY(EditAnywhere)
 	float GridScale; 
 
+	//The path to the pixel mesh. I have to put L in front of it because unreal is dumb.
 	UPROPERTY(EditAnywhere)
-	class UStaticMesh* PixelMesh;
+	FString PathToPixelMesh = TEXT("/Game/Parts/PlaneWithCollision.PlaneWithCollision");
+
+	UPROPERTY()
+	UStaticMesh* PixelMesh;
 
 	UPROPERTY(EditAnywhere)
 	float HeatTickRate;
