@@ -107,7 +107,7 @@ void ABaseShip::SaveEditorShip()
 	TArray<FSavePartInfo> InfoToSave;
 	for (auto& i : OutArray)
 	{
-		InfoToSave.Emplace(FSavePartInfo(i.Part->GetClass(), i.Part->GetLocation(), i.Part->GetRotation()));
+		InfoToSave.Emplace(FSavePartInfo(i.Part->GetClass(), i.Part->GetPartGridLocation(), i.Part->GetRotation()));
 	}
 	GetMutableDefault<ABaseShip>(ClassCurrentlyEditing)->DefaultParts.Empty();
 	GetMutableDefault<ABaseShip>(ClassCurrentlyEditing)->DefaultParts = InfoToSave;
