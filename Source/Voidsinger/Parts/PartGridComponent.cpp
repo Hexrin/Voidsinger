@@ -234,7 +234,6 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 							int DebugCount = 0;
 							for (auto& j : PartsRemoved)
 							{
-								UE_LOG(LogTemp, Warning, TEXT("Okay so there are still things in parts removed"))
 								TArray<FIntPoint> PartialPartShape;
 								for (auto& k : j->GetShape())
 								{
