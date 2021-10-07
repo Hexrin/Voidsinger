@@ -22,7 +22,6 @@ UShipPhysicsComponent::UShipPhysicsComponent()
 void UShipPhysicsComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 
@@ -36,15 +35,11 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	AngularVelocity += DeltaAngularVelocity * DeltaTime;
 
 	FHitResult Result = FHitResult();
-	TArray<UPrimitiveComponent*> Comps = TArray<UPrimitiveComponent*>();
-	for (UActorComponent* Comp : Ship->GetComponentsByClass(UPrimitiveComponent::StaticClass()))
+	
+	/*if (!UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, Comps, Ship->GetActorTransform(), Ship->GetActorTransform() + FTransform(FRotator(0, AngularVelocity, 0) * DeltaTime, FVector(LinearVelocity.X, LinearVelocity.Y, 0) * DeltaTime, FVector())))
 	{
-		Comps.Emplace(Cast<UPrimitiveComponent>(Comp));
-	}
-	if (UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, Comps, Ship->GetActorTransform(), Ship->GetActorTransform() + FTransform(FRotator(0, AngularVelocity, 0) * DeltaTime, FVector(LinearVelocity.X, LinearVelocity.Y, 0) * DeltaTime, FVector())))
-	{
-
-	}
+		UE_LOG(LogTemp, Warning, TEXT("SweepFaild"));
+	}*/
 	//Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0) * DeltaTime);
 
 	DeltaLinearVelocity = FVector2D(0, 0);
@@ -80,11 +75,27 @@ void UShipPhysicsComponent::UpdateMassCalculations()
 	Mass = Ship->PartGrid->GetMass();
 	CenterOfMass = Ship->PartGrid->GetCenterOfMass();
 	MomentOfInertia = Ship->PartGrid->GetMomentOfInertia();
+	FVector DeltaPos = FVector();
 
+	Comps = TArray<UPrimitiveComponent*>();
+	for (UActorComponent* Comp : Ship->GetComponentsByClass(UPrimitiveComponent::StaticClass()))
+	{
+		Comps.Emplace(Cast<UPrimitiveComponent>(Comp));
+	}
+
+	bool HasSetDeltaPos = false;
 	for (auto& Component : Ship->PartGrid->GetPartGrid())
 	{
-		Component.Value.PixelMesh->SetRelativeLocation(FVector(-1 * CenterOfMass + Component.Key, 0));
+		FVector NewLoc = FVector(-1 * CenterOfMass + Component.Key, 0);
+		if (NewLoc != FVector() && !HasSetDeltaPos)
+		{
+			HasSetDeltaPos = true;
+			DeltaPos = Component.Value.PixelMesh->GetRelativeLocation() - NewLoc;
+		}
+		Component.Value.PixelMesh->SetRelativeLocation(NewLoc);
 	}
+
+	Ship->SetActorLocation(Ship->GetActorLocation() + DeltaPos);
 }
 
 float UShipPhysicsComponent::GetAngularVelocity()
