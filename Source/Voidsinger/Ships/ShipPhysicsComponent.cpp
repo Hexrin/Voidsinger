@@ -11,10 +11,10 @@ UShipPhysicsComponent::UShipPhysicsComponent()
 
 	PrimaryComponentTick.bCanEverTick = true;
 	Ship = (ABaseShip*)GetOwner();
-	AngularVelocity = 90;
+	AngularVelocity = 0;
 	LinearVelocity = FVector2D(0, 0);
-	DeltaLinearVelocity = FVector2D(0, 0);
-	DeltaAngularVelocity = 0;
+	LinearAcceleration = FVector2D(0, 0);
+	AngularAcceleration = 0;
 }
 
 
@@ -31,8 +31,8 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	LinearVelocity += DeltaLinearVelocity.GetRotated(Ship->GetActorRotation().Yaw) * DeltaTime;
-	AngularVelocity += DeltaAngularVelocity * DeltaTime;
+	LinearVelocity += LinearAcceleration.GetRotated(Ship->GetActorRotation().Yaw) * DeltaTime;
+	AngularVelocity += AngularAcceleration * DeltaTime;
 
 	FHitResult Result = FHitResult();
 	FTransform NewTransform = (FTransform(FRotator(0, AngularVelocity * DeltaTime + Ship->GetActorTransform().Rotator().Yaw, 0), (FVector(LinearVelocity, 0) * DeltaTime) + Ship->GetActorTransform().GetTranslation(), FVector(1)));
@@ -43,8 +43,8 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	}
 	//Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0) * DeltaTime);
 
-	DeltaLinearVelocity = FVector2D(0, 0);
-	DeltaAngularVelocity = 0;
+	LinearAcceleration = FVector2D(0, 0);
+	AngularAcceleration = 0;
 
 }
 
@@ -53,11 +53,8 @@ void UShipPhysicsComponent::AddForce(FVector2D RelativeForceLocation, FVector2D 
 {
 	if (!RelativeForce.IsZero())
 	{
-		RelativeForceLocation -= CenterOfMass;
-
-
-		DeltaLinearVelocity += RelativeForce / Mass;
-		DeltaAngularVelocity += (RelativeForceLocation.X * RelativeForce.Y - RelativeForceLocation.Y * RelativeForce.X) / MomentOfInertia;
+		LinearAcceleration += RelativeForce / Mass;
+		AngularAcceleration -= (RelativeForceLocation.X * RelativeForce.Y - RelativeForceLocation.Y * RelativeForce.X) / MomentOfInertia;
 	}
 }
 

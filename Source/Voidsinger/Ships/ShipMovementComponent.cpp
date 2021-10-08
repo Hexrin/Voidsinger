@@ -54,7 +54,7 @@ void UShipMovementComponent::RotateShip(bool Clockwise)
 	for (UBaseThrusterPart* Thruster : Thrusters)
 	{
 		FVector2D ThrustDirection = FVector2D(1, 0).GetRotated(+ Thruster->GetThrustRotation());
-		FVector2D ThrusterLocation = FVector2D(Thruster->GetThrustLocation()).GetSafeNormal();
+		FVector2D ThrusterLocation = FVector2D(Thruster->GetThrustRelativeLocation()).GetSafeNormal();
 		if ((FVector2D::CrossProduct(ThrustDirection, ThrusterLocation) > 0) ^ Clockwise)
 		{
 			Thruster->Thrust();

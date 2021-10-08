@@ -29,7 +29,7 @@ public:
 	const float GetThrustRotation();
 
 	UFUNCTION(BlueprintPure)
-	const FVector2D GetThrustLocation();
+	const FVector2D GetThrustRelativeLocation();
 
 	//Apply force in the direction of the thruster 
 	UFUNCTION(BlueprintCallable)
