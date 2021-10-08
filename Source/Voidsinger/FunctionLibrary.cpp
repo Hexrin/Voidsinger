@@ -136,39 +136,35 @@ TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
 	return Results;
 }
 
-bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResult& Hit, TArray<UPrimitiveComponent*> PrimComps, const FTransform& Start, const FTransform& End)
+bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResult& Hit, TArray<UPrimitiveComponent*> PrimComps, const FTransform& NewTransform)
 {
 	//Return Values
 	Hit = FHitResult();
 	TArray<FHitResult> Hits = TArray<FHitResult>();
 	bool ReturnValue = true;
 
-	FQuat Rot = Start.Rotator().GetNormalized().Quaternion();
+	FTransform Start = Target->GetActorTransform();
+	FQuat Rot = (NewTransform.Rotator() - Start.Rotator()).GetNormalized().Quaternion();
 
-
-
-	FTransform InverseTransform = End.Inverse();
-	InverseTransform.NormalizeRotation();
-	FTransform DeltaTransform = (InverseTransform * Start);
-	DeltaTransform.NormalizeRotation();
 	FCollisionQueryParams QueryParams = FCollisionQueryParams().DefaultQueryParam;
+	FVector DeltaTranslation = NewTransform.GetTranslation() - Start.GetTranslation();
 	QueryParams.AddIgnoredActor(Target);
 	for (UPrimitiveComponent* Comp : PrimComps)
 	{
 		FVector StartLoc = Comp->GetComponentLocation();
-		FVector EndLoc = DeltaTransform.TransformVector(StartLoc);
+		FVector EndLoc = DeltaTranslation + Comp->GetComponentLocation();
 		FHitResult ThisHit = FHitResult();
-		
+
 		if (Target->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, Rot, FCollisionObjectQueryParams::DefaultObjectQueryParam, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))
 		{
 			ReturnValue = false;
 			Hits.Emplace(ThisHit);
 			UE_LOG(LogTemp, Warning, TEXT("HIT"));
-			//DrawDebugBox(Target->GetWorld(), EndLoc, FVector(0.5), FColor::Red, false, 5, 0U, 0.2);
+			DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Red, false, 5, 0U, 0.05);
 		}
 		else
 		{
-			//DrawDebugBox(Target->GetWorld(), EndLoc, FVector(0.5), FColor::Green, false, 5, 0U, 0.2);
+			DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Green, false, 5, 0U, 0.05);
 		}
 	}
 
@@ -179,13 +175,15 @@ bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResul
 			if (Value.Time < Hit.Time)
 			{
 				Hit = Value;
+				//DrawDebugDirectionalArrow(Target->GetWorld(), Hit.TraceStart+FVector(0,0,1), Hit.Location + FVector(0, 0, 1), .5f, FColor::Blue, false, 5, 0U, 0.1);
+				UE_LOG(LogTemp, Warning, TEXT("Hit time: %f"), Hit.Time);
 			}
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Set Transform to: %s"), *End.ToString());
-		Target->SetActorTransform(End);
+		//UE_LOG(LogTemp, Warning, TEXT("Set Transform to: %s"), *NewTransform.ToString());
+		Target->SetActorTransform(NewTransform);
 	}
 	return ReturnValue;
 }

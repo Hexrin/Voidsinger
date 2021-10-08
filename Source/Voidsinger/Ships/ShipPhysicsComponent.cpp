@@ -11,7 +11,7 @@ UShipPhysicsComponent::UShipPhysicsComponent()
 
 	PrimaryComponentTick.bCanEverTick = true;
 	Ship = (ABaseShip*)GetOwner();
-	AngularVelocity = 0;
+	AngularVelocity = 90;
 	LinearVelocity = FVector2D(0, 0);
 	DeltaLinearVelocity = FVector2D(0, 0);
 	DeltaAngularVelocity = 0;
@@ -35,8 +35,9 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	AngularVelocity += DeltaAngularVelocity * DeltaTime;
 
 	FHitResult Result = FHitResult();
-	
-	if (!UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, Comps, Ship->GetActorTransform(), Ship->GetActorTransform() + FTransform(FRotator(0, AngularVelocity, 0) * DeltaTime, FVector(LinearVelocity.X, LinearVelocity.Y, 0) * DeltaTime, FVector(0,0,0))))
+	FTransform NewTransform = (FTransform(FRotator(0, AngularVelocity * DeltaTime + Ship->GetActorTransform().Rotator().Yaw, 0), (FVector(LinearVelocity, 0) * DeltaTime) + Ship->GetActorTransform().GetTranslation(), FVector(1)));
+	UE_LOG(LogTemp, Warning, TEXT("\n\tNewTransform: %s"), *NewTransform.ToString());
+	if (!UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, PrimComps, NewTransform))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SweepFaild"));
 	}
@@ -77,10 +78,12 @@ void UShipPhysicsComponent::UpdateMassCalculations()
 	MomentOfInertia = Ship->PartGrid->GetMomentOfInertia();
 	FVector DeltaPos = FVector();
 
-	Comps = TArray<UPrimitiveComponent*>();
-	for (UActorComponent* Comp : Ship->GetComponentsByClass(UPrimitiveComponent::StaticClass()))
+	TArray<UActorComponent*> Comps = TArray<UActorComponent*>();
+	Ship->GetComponents(UPrimitiveComponent::StaticClass(), Comps);
+	PrimComps = TArray<UPrimitiveComponent*>();
+	for (UActorComponent* Comp : Comps)
 	{
-		Comps.Emplace(Cast<UPrimitiveComponent>(Comp));
+		PrimComps.Emplace(Cast<UPrimitiveComponent>(Comp));
 	}
 
 	bool HasSetDeltaPos = false;
