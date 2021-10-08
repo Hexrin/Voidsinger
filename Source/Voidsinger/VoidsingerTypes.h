@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/StaticMeshComponent.h"
 #include "UObject/NoExportTypes.h"
+#include "Engine/DataTable.h"
 #include "VoidsingerTypes.generated.h"
 
 class UBasePart;
@@ -138,4 +139,18 @@ struct VOIDSINGER_API FSavePartInfo
 		PartLocation = Location;
 		PartRotation = Rotation;
 	}
+};
+
+USTRUCT(BlueprintType)
+struct FTextureDataTable : public FTableRowBase
+{
+
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int Index;
+
+	UPROPERTY()
+	UTexture2D* Texture;
+
 };
