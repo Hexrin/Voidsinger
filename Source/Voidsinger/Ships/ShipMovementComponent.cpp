@@ -67,9 +67,9 @@ void UShipMovementComponent::Move(FVector2D Direction)
 	Direction = Direction.GetSafeNormal();
 	for (UBaseThrusterPart* Thruster : Thrusters)
 	{
-		if (FVector2D::DotProduct(FVector2D(1, 0).GetRotated(Thruster->GetThrustRotation()), Direction) >= .5)
-		{
+		//if (FVector2D::DotProduct(FVector2D(1, 0).GetRotated(Thruster->GetThrustRotation()), Direction) >= .5)
+		//{
 			Thruster->Thrust();
-		}
+		//}
 	}
 }
