@@ -230,7 +230,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 						if (!Removed.IsEmpty())
 						{
 
-							ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>(Cast<AActor>(GetOwner())->GetActorLocation() + FVector(GetCenterOfMass(), 0), FRotator(1, 1, 1), FActorSpawnParameters());
+							ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>(Cast<AActor>(GetOwner())->GetActorLocation() - FVector(GetCenterOfMass(), 0), FRotator(1, 1, 1), FActorSpawnParameters());
 							int DebugCount = 0;
 							for (auto& j : PartsRemoved)
 							{
@@ -241,12 +241,13 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 									{
 										//UE_LOG(LogTemp, Warning, TEXT("x %i y %i"), k.X, k.Y);
 										PartialPartShape.Emplace(k);
+										DestroyPixel(k, false);
 									}
 								}
 								NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetPartGridLocation(), j->GetRotation());
 							}	
 
-							float Radius = UKismetMathLibrary::Sqrt(FMath::Square(NewShip->PartGrid->GetCenterOfMass().X - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X) + FMath::Square(NewShip->PartGrid->GetCenterOfMass().Y - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y));
+							float Radius = UKismetMathLibrary::Sqrt(FMath::Square(NewShip->PartGrid->GetCenterOfMass().X + NewShip->GetActorLocation().X - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X + Cast<AActor>(GetOwner())->GetActorLocation().X) + FMath::Square(NewShip->PartGrid->GetCenterOfMass().Y + NewShip->GetActorLocation().Y - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y + Cast<AActor>(GetOwner())->GetActorLocation().Y));
 							float VelocityFromRotationMagnitude = FMath::DegreesToRadians(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity()) * Radius;
 							FVector2D VectorBetween = NewShip->PartGrid->GetCenterOfMass() - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass();
 							FVector2D RotatedVector = VectorBetween.GetRotated(90);
@@ -256,14 +257,10 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 							}
 							RotatedVector.Normalize();
 							NewShip->PhysicsComponent->SetVelocityDirectly(RotatedVector * VelocityFromRotationMagnitude);
-							for (auto& j : ConnectedShape)
-							{
-								DestroyPixel(j);
-							}
 						}
 						else
 						{
-							UE_LOG(LogTemp, Warning, TEXT("Why is it empty though"));
+							UE_LOG(LogTemp, Error, TEXT("I don't think this should ever happen. Ask Mabel about weird part grid component thing"));
 						}
 						//since there will never be more than 1 system removed at a time, this should not need to continue after this point
 						break;
