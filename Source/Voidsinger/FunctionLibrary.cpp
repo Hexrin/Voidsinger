@@ -113,26 +113,31 @@ TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
 	TArray<UClass*> Results;
 
 	// get our parent blueprint class
-	const FString ParentClassName = ParentClass->GetName();
-	UObject* ClassPackage = ANY_PACKAGE;
-	UClass* ParentBPClass = FindObject<UClass>(ClassPackage, *ParentClassName);
-
-	// iterate over UClass, this might be heavy on performance, so keep in mind..
-	// better suggestions for a check are welcome
-	for (TObjectIterator<UClass> It; It; ++It)
+	if (IsValid(ParentClass))
 	{
-		if (It->IsChildOf(ParentBPClass))
+		const FString ParentClassName = ParentClass->GetName();
+		UObject* ClassPackage = ANY_PACKAGE;
+		UClass* ParentBPClass = FindObject<UClass>(ClassPackage, *ParentClassName);
+
+		// iterate over UClass, this might be heavy on performance, so keep in mind..
+		// better suggestions for a check are welcome
+		for (TObjectIterator<UClass> It; It; ++It)
 		{
-			// It is a child of the Parent Class
-			// make sure we don't include our parent class in the array (weak name check, suggestions welcome)
-			if (It->GetName() != ParentClassName)
+			if (It->IsChildOf(ParentBPClass))
 			{
-				Results.Add(*It);
+				// It is a child of the Parent Class
+				// make sure we don't include our parent class in the array (weak name check, suggestions welcome)
+				if (It->GetName() != ParentClassName)
+				{
+					Results.Add(*It);
+				}
 			}
 		}
+
+		return Results;
 	}
 
-	return Results;
+	return TArray<UClass*>();
 }
 
 bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResult& Hit, TArray<UPrimitiveComponent*> PrimComps, const FTransform& Start, const FTransform& End)
