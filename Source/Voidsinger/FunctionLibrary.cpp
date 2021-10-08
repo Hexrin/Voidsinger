@@ -2,6 +2,7 @@
 
 
 #include "FunctionLibrary.h"
+#include "DrawDebugHelpers.h" // Remove this when debugging is done
 #include "Parts/BasePart.h"
 
 
@@ -140,41 +141,59 @@ TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
 	return TArray<UClass*>();
 }
 
-bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResult& Hit, TArray<UPrimitiveComponent*> PrimComps, const FTransform& Start, const FTransform& End)
+bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResult& Hit, TArray<UPrimitiveComponent*> PrimComps, const FTransform& NewTransform)
 {
+	//Return Values
 	Hit = FHitResult();
-	TArray<FHitResult> Hits;
+	TArray<FHitResult> Hits = TArray<FHitResult>();
 	bool ReturnValue = true;
-	FQuat Rot = Start.Rotator().GetNormalized().Quaternion();
-	FCollisionShape Shape = FCollisionShape();
-	Shape.MakeBox(FVector(0.5f));
-	FTransform DeltaTransform = (End.Inverse() * Start);
+
+	FTransform Start = Target->GetActorTransform();
+
+	FQuat DeltaRot = NewTransform.GetRelativeTransform(Start).GetRotation();
+	FVector DeltaTranslation = NewTransform.GetTranslation() - Start.GetTranslation();
+
+	FCollisionQueryParams QueryParams = FCollisionQueryParams().DefaultQueryParam;
+	QueryParams.AddIgnoredActor(Target);
+
+	FQuat TraceRot = Start.GetRotation();
 
 	for (UPrimitiveComponent* Comp : PrimComps)
 	{
 		FVector StartLoc = Comp->GetComponentLocation();
-		FVector EndLoc = DeltaTransform.TransformVector(StartLoc);
+		FVector EndLoc = DeltaTranslation + (Start.GetRotation()*DeltaRot).RotateVector(Comp->GetRelativeLocation()) + Target->GetActorLocation();
 		FHitResult ThisHit = FHitResult();
-		ReturnValue = Target->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, Rot, FCollisionObjectQueryParams(), Shape);
-		if (ReturnValue)
+
+		if (Target->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, TraceRot, FCollisionObjectQueryParams::DefaultObjectQueryParam, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))
 		{
+			ReturnValue = false;
 			Hits.Emplace(ThisHit);
+			UE_LOG(LogTemp, Warning, TEXT("HIT"));
+			///DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Red, false, 5, 0U, 0.05);
+			//DrawDebugBox(Target->GetWorld(), ThisHit.Location, FVector(.5), TraceRot, FColor::Red, false, 5);
 		}
+		/*else
+		{
+			DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Green, false, 5, 0U, 0.05);
+		}*/
 	}
 
-	if (ReturnValue)
+	if (!ReturnValue)
 	{
 		for (FHitResult Value : Hits)
 		{
 			if (Value.Time < Hit.Time)
 			{
 				Hit = Value;
+				//DrawDebugDirectionalArrow(Target->GetWorld(), Hit.TraceStart+FVector(0,0,1), Hit.Location + FVector(0, 0, 1), .5f, FColor::Blue, false, 5, 0U, 0.1);
+				//UE_LOG(LogTemp, Warning, TEXT("Hit time: %f"), Hit.Time);
 			}
 		}
 	}
 	else
 	{
-		Target->SetActorTransform(End);
+		//UE_LOG(LogTemp, Warning, TEXT("Set Transform to: %s"), *NewTransform.ToString());
+		Target->SetActorTransform(NewTransform);
 	}
 	return ReturnValue;
 }

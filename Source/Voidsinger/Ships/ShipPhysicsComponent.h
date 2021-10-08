@@ -67,11 +67,11 @@ private:
 	FVector2D LinearVelocity;
 
 	UPROPERTY()
-	float DeltaAngularVelocity;
+	float AngularAcceleration;
 
 	UPROPERTY()
-	FVector2D DeltaLinearVelocity;
+	FVector2D LinearAcceleration;
 
 	UPROPERTY()
-	TArray<UPrimitiveComponent*> Comps;
+	TArray<UPrimitiveComponent*> PrimComps;
 };

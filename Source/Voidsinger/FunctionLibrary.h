@@ -33,7 +33,7 @@ public:
 	static TArray<UClass*> GetClasses(UClass* ParentClass);
 
 	UFUNCTION(BlueprintCallable)
-	static bool SetActorTransformSweepComponets(AActor* Target, FHitResult & Hit, TArray <UPrimitiveComponent*> PrimComps, const FTransform& Start, const FTransform& End);
+	static bool SetActorTransformSweepComponets(AActor* Target, FHitResult & Hit, TArray <UPrimitiveComponent*> PrimComps, const FTransform& NewTransform);
 
 	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
 	UFUNCTION()
