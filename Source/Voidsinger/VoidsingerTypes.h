@@ -43,16 +43,20 @@ struct VOIDSINGER_API FPartData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* PixelMesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int BitNumber;
+
 	FPartData()
 	{
-		FPartData(nullptr, 0, nullptr);
+		FPartData(nullptr, 0, nullptr, 0);
 	}
 
-	FPartData(UBasePart* PartRef, float Temp, UStaticMeshComponent* MeshRef)
+	FPartData(UBasePart* PartRef, float Temp, UStaticMeshComponent* MeshRef, int Bit)
 	{
 		Part = PartRef;
 		Temperature = Temp;
 		PixelMesh = MeshRef;
+		BitNumber = Bit;
 	}
 
 	void SetTemperature(const float NewTemp)
@@ -147,10 +151,7 @@ struct FTextureDataTable : public FTableRowBase
 
 	GENERATED_BODY()
 
-	UPROPERTY()
-	int Index;
-
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* Texture;
 
 };

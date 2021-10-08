@@ -102,7 +102,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			GridBounds.UpperBounds.Y = Location.Y + PartBounds.UpperBounds.Y;
 		}
 
-		//Iterate though desiered shape and add to part grid
+		//Iterate though desired shape and add to part grid
 		for (int i = 0; i < DesiredShape.Num(); i++)
 		{
 			if (PartialPartShape.Contains(DesiredShape[i]))
@@ -117,9 +117,12 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 				class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(0,0,0), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
 
 				Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
-				Cast<UStaticMeshComponent>(NewPlane)->SetMaterial(0, Part->GetPixelMaterial());
+				//Cast<UStaticMeshComponent>(NewPlane)->SetMaterial(0, Part->GetPixelMaterial());
 
-				PartGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), FPartData(Part, 0.f, Cast<UStaticMeshComponent>(NewPlane)));
+				PartGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), FPartData(Part, 0.f, Cast<UStaticMeshComponent>(NewPlane), 0));
+
+				UpdateMaterials(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), PartType);
+
 			}
 		}
 		Part->InitializeFunctionality();
@@ -772,6 +775,30 @@ TMap<FIntPoint, FPartData> UPartGridComponent::GetPartGrid()
 const float UPartGridComponent::GetPartGridScale()
 {
 	return GridScale;
+}
+
+void UPartGridComponent::UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePart> PartType)
+{
+	for (int i = -1; i++; i < 2)
+	{
+		for (int j = -1; j++; j < 2)
+		{
+			if (FIntPoint(i + Location.X, j + Location.Y) != Location)
+			{
+				if (PartGrid.Contains(FIntPoint(i + Location.X, j + Location.Y)))
+				{
+					if (PartGrid.Contains(FIntPoint(Location)) && PartGrid.Find(FIntPoint(i + Location.X, j + Location.Y))->Part->GetClass() == PartType)
+					{
+						PartGrid.Find(FIntPoint(i = Location.X, j + Location.Y))->BitNumber += UFunctionLibrary::GetBitNumberFromLocation(FIntPoint(i * -1, j * -1));
+					}
+					else if (PartGrid.Find(FIntPoint(i + Location.X, j + Location.Y))->Part->GetClass() == PartType)
+					{
+						PartGrid.Find(FIntPoint(i = Location.X, j + Location.Y))->BitNumber -= UFunctionLibrary::GetBitNumberFromLocation(FIntPoint(i * -1, j * -1));
+					}
+				}
+			}
+		}
+	}
 }
 
 //Detect if a Part can fit in the PartGrid

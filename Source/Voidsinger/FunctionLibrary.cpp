@@ -13,6 +13,7 @@ bool UFunctionLibrary::PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FInt
 	TArray<FIntPoint> ConectivityArray = TArray<FIntPoint>();
 	return PointsConnected(PartGrid, StartPoint, EndPoint, ConectivityArray);
 }
+
 bool UFunctionLibrary::PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray)
 {
 	//Detect if funtion has reached target
@@ -61,6 +62,7 @@ bool UFunctionLibrary::PointsConnectedWithFunctionality(TMap<FIntPoint, FPartDat
 	TArray<FIntPoint> ConectivityArray = TArray<FIntPoint>();
 	return PointsConnected(PartGrid, StartPoint, EndPoint, ConectivityArray);
 }
+
 bool UFunctionLibrary::PointsConnectedWithFunctionality(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray)
 {
 	//Detect if funtion has reached target
@@ -101,7 +103,6 @@ bool UFunctionLibrary::PointsConnectedWithFunctionality(TMap<FIntPoint, FPartDat
 
 	return ReturnValue;
 }
-
 
 FVector UFunctionLibrary::SafeDivide(FVector V1, FVector V2)
 {
@@ -296,5 +297,46 @@ TArray<FIntPoint> UFunctionLibrary::FindConnectedShape(TArray<FIntPoint> Shape, 
 
 	//Once everything has figured itself out, return the New Shape
 	return NewShape;
+}
+
+int UFunctionLibrary::GetBitNumberFromLocation(FIntPoint Location)
+{
+	if (Location == FIntPoint(0, 0))
+	{
+		return 0;
+	}
+	else if (Location == FIntPoint(0, -1))
+	{
+		return 1;
+	}
+	else if (Location == FIntPoint(-1, 0))
+	{
+		return 2;
+	}
+	else if (Location == FIntPoint(0, 1))
+	{
+		return 4;
+	}
+	else if (Location == FIntPoint(1, 0))
+	{
+		return 8;
+	}
+	else if (Location == FIntPoint(-1, -1))
+	{
+		return 16;
+	}
+	else if (Location == FIntPoint(-1, 1))
+	{
+		return 32;
+	}
+	else if (Location == FIntPoint(1, 1))
+	{
+		return 64;
+	}
+	else if (Location == FIntPoint(1, -1))
+	{
+		return 128;
+	}
+	return 0;
 }
 

@@ -41,8 +41,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool RemovePart(FIntPoint Location, bool CheckForBreaks = true);
 
-
-
 	//---Destruction---
 
 	UFUNCTION(BlueprintCallable)
@@ -65,7 +63,7 @@ public:
 	UFUNCTION()
 	int GetQuadrantFromLocation(FVector2D Location, FVector2D Origin);
 
-	//Returns true if the line intersects the box.
+	//Returns true if the given line intersects the given 2d rectangle
 	UFUNCTION()
 	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, FVector2D origin);
 	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float XIntercept);
@@ -76,16 +74,18 @@ private:
 
 	//---Save Ship---
 public:
+
+	//Builds a ship with the given parts
 	UFUNCTION(BlueprintCallable)
 	void BuildShip(TArray<FSavePartInfo> Parts);
 
+	//Saves a ship to a save game object
 	UFUNCTION(BlueprintCallable)
 	void SaveShip(FString ShipName);
 
+	//Loads a ship from a save game object
 	UFUNCTION(BlueprintCallable)
 	bool LoadSavedShip(FString ShipName);
-
-
 
 	//---Getters---
 
@@ -103,6 +103,11 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	const float GetPartGridScale();
+
+	//Misc
+
+	UFUNCTION()
+	void UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePart> PartType);
 
 private:
 	UPROPERTY()
@@ -126,8 +131,10 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float HeatTickRate;
+
 	UPROPERTY(EditAnywhere, meta=(ClampMin="0", ClampMax="1"))
 	float HeatPropagationFactor;
+
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "1"))
 	float HeatMeltTransferFactor;
 

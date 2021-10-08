@@ -20,7 +20,7 @@ UBasePart::UBasePart()
 	//RotatedShape = TArray<FIntPoint>();
 	ActualShape = TArray<FIntPoint>();
 	bFunctional = true;
-	bIsPoopBeingDestroyed = false;
+	bIsBeingDestroyed = false;
 }
 
 void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
@@ -169,12 +169,9 @@ UWorld* UBasePart::GetWorld() const
 	return GetOuter()->GetWorld();
 }
 
-
-
-
 void UBasePart::DestroyPart()
 {
-	bIsPoopBeingDestroyed = true/*ConditionalBeginDestroy()*/;
+	bIsBeingDestroyed = true;
 }
 
 /*--------Tick--------*\
@@ -182,7 +179,7 @@ void UBasePart::DestroyPart()
 void UBasePart::Tick(float DeltaTime)
 {
 
-	if (!bIsPoopBeingDestroyed)
+	if (!bIsBeingDestroyed)
 	{
 		//Call Blueprint Implementable Event
 		OnTick(DeltaTime);
@@ -201,8 +198,6 @@ TStatId UBasePart::GetStatId() const
 }
 
 
-
-
 /*--Getter Functions--*\
 \*--------------------*/
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
@@ -210,6 +205,7 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape()
 	
 	return GetDesiredShape(Rotation);
 }
+
 const TArray<FIntPoint> UBasePart::GetDesiredShape(float Rot)
 {
 	TArray<FIntPoint> RotatedShape = TArray<FIntPoint>();
@@ -229,6 +225,7 @@ const FArrayBounds UBasePart::GetPartBounds()
 {
 	return GetPartBounds(Rotation);
 }
+
 const FArrayBounds UBasePart::GetPartBounds(float Rot)
 {
 	if ((Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds) || this == this->GetClass()->GetDefaultObject())
@@ -350,9 +347,6 @@ UMaterialInterface* UBasePart::GetPixelMaterial()
 	return PixelMaterial;
 }
 
-
-
-
 /*Condtional  Checkers*\
 \*--------------------*/
 bool UBasePart::IsFunctional()
@@ -364,9 +358,6 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 {
 	return false;
 }
-
-
-
 
 /*---Misc. Functions--*\
 \*--------------------*/

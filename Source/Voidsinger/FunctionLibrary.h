@@ -38,4 +38,9 @@ public:
 	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
 	UFUNCTION()
 	static TArray<FIntPoint> FindConnectedShape(TArray<FIntPoint> Shape, TMap<FIntPoint, FPartData> ConnectedPartsMap, bool CheckFunctionality = false);
+
+	//This will return a bit based on the location given. The location given should be relative to the pixel in question.
+	//So -1, -1 will be the bottom left, or 16.
+	UFUNCTION()
+	static int GetBitNumberFromLocation(FIntPoint Location);
 };

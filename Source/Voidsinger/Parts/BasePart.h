@@ -259,7 +259,7 @@ private:
 	bool bFunctional;
 
 	//UPROPERTY()
-	bool bIsPoopBeingDestroyed;
+	bool bIsBeingDestroyed;
 
 	/*Instanced  Variables*\
 	\*--------------------*/
