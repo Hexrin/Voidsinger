@@ -2,6 +2,7 @@
 
 
 #include "FunctionLibrary.h"
+#include "DrawDebugHelpers.h" // Remove this when debugging is done
 #include "Parts/BasePart.h"
 
 
@@ -162,6 +163,12 @@ bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResul
 		{
 			ReturnValue = false;
 			Hits.Emplace(ThisHit);
+			UE_LOG(LogTemp, Warning, TEXT("HIT"));
+			//DrawDebugBox(Target->GetWorld(), EndLoc, FVector(0.5), FColor::Red, false, 5, 0U, 0.2);
+		}
+		else
+		{
+			//DrawDebugBox(Target->GetWorld(), EndLoc, FVector(0.5), FColor::Green, false, 5, 0U, 0.2);
 		}
 	}
 
@@ -177,6 +184,7 @@ bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResul
 	}
 	else
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Set Transform to: %s"), *End.ToString());
 		Target->SetActorTransform(End);
 	}
 	return ReturnValue;
