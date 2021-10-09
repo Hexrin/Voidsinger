@@ -37,6 +37,7 @@ void APlayerShip::Tick(float DeltaTime)
             ResetVoidsongTimer = 0.0;
         }
     }
+    
 }
 
 void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
