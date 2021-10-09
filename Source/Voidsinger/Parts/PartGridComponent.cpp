@@ -68,74 +68,82 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 //Adds a partial part to PartPrid
 bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 {
-	//Create Part
-	UBasePart* Part = NewObject<UBasePart>(this, PartType);
-	Part->InitializeVariables(Location, Rotation, this, PartType);
-
-	//Initalize Variables
-	TArray<FIntPoint> DesiredShape = Part->GetDesiredShape();
-	FArrayBounds PartBounds = Part->GetPartBounds();
-
-	//Detect if placement is in valid position
-	if (GridSize.X >= Location.X + PartBounds.UpperBounds.X && -GridSize.X <= Location.X + PartBounds.LowerBounds.X
-		&&
-		GridSize.Y >= Location.Y + PartBounds.UpperBounds.Y && -GridSize.Y <= Location.Y + PartBounds.LowerBounds.Y
-		&&
-		(bAlwaysPlace || CanShapeFit(Location, DesiredShape)))
+	if (!PartialPartShape.IsEmpty())
 	{
+		//Create Part
+		UBasePart* Part = NewObject<UBasePart>(this, PartType);
+		Part->InitializeVariables(Location, Rotation, this, PartType);
 
-		//Update GridBounds
-		if (Location.X + PartBounds.LowerBounds.X < GridBounds.LowerBounds.X)
-		{
-			GridBounds.LowerBounds.X = Location.X + PartBounds.LowerBounds.X;
-		}
-		if (Location.Y + PartBounds.LowerBounds.Y < GridBounds.LowerBounds.Y)
-		{
-			GridBounds.LowerBounds.Y = Location.Y + PartBounds.LowerBounds.Y;
-		}
-		if (Location.X + PartBounds.UpperBounds.X > GridBounds.UpperBounds.X)
-		{
-			GridBounds.UpperBounds.X = Location.X + PartBounds.UpperBounds.X;
-		}
-		if (Location.Y + PartBounds.UpperBounds.Y > GridBounds.UpperBounds.Y)
-		{
-			GridBounds.UpperBounds.Y = Location.Y + PartBounds.UpperBounds.Y;
-		}
+		//Initalize Variables
+		TArray<FIntPoint> DesiredShape = Part->GetDesiredShape();
+		FArrayBounds PartBounds = Part->GetPartBounds();
 
-		//Iterate though desired shape and add to part grid
-		for (int i = 0; i < DesiredShape.Num(); i++)
+		//Detect if placement is in valid position
+		if (GridSize.X >= Location.X + PartBounds.UpperBounds.X && -GridSize.X <= Location.X + PartBounds.LowerBounds.X
+			&&
+			GridSize.Y >= Location.Y + PartBounds.UpperBounds.Y && -GridSize.Y <= Location.Y + PartBounds.LowerBounds.Y
+			&&
+			(bAlwaysPlace || CanShapeFit(Location, DesiredShape)))
 		{
-			if (PartialPartShape.Contains(DesiredShape[i]))
+
+			//Update GridBounds
+			if (Location.X + PartBounds.LowerBounds.X < GridBounds.LowerBounds.X)
 			{
-				//Remove Overlaping Parts
-				if (bAlwaysPlace)
-				{
-					RemovePart(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y));
-				}
-
-				//Create Mesh
-				class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(0,0,0), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
-
-				Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
-				//Cast<UStaticMeshComponent>(NewPlane)->SetMaterial(0, Part->GetPixelMaterial());
-
-				PartGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), FPartData(Part, 0.f, Cast<UStaticMeshComponent>(NewPlane), 0));
-
-				UpdateMaterials(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), PartType);
-
+				GridBounds.LowerBounds.X = Location.X + PartBounds.LowerBounds.X;
 			}
-		}
-		Part->InitializeFunctionality();
-		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
-		if (Cast<UBaseThrusterPart>(Part))
-		{
-			Cast<ABaseShip>(GetOwner())->MovementComponent->UpdateThrusters();
-		}
-		return true;
-	}
+			if (Location.Y + PartBounds.LowerBounds.Y < GridBounds.LowerBounds.Y)
+			{
+				GridBounds.LowerBounds.Y = Location.Y + PartBounds.LowerBounds.Y;
+			}
+			if (Location.X + PartBounds.UpperBounds.X > GridBounds.UpperBounds.X)
+			{
+				GridBounds.UpperBounds.X = Location.X + PartBounds.UpperBounds.X;
+			}
+			if (Location.Y + PartBounds.UpperBounds.Y > GridBounds.UpperBounds.Y)
+			{
+				GridBounds.UpperBounds.Y = Location.Y + PartBounds.UpperBounds.Y;
+			}
 
-	Part->DestroyPart();
-	return false;
+			//Iterate though desired shape and add to part grid
+			for (int i = 0; i < DesiredShape.Num(); i++)
+			{
+				if (PartialPartShape.Contains(DesiredShape[i]))
+				{
+					//Remove Overlaping Parts
+					if (bAlwaysPlace)
+					{
+						RemovePart(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y));
+					}
+
+					//Create Mesh
+					class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(0, 0, 0), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
+
+					Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
+					//Cast<UStaticMeshComponent>(NewPlane)->SetMaterial(0, Part->GetPixelMaterial());
+
+					PartGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), FPartData(Part, 0.f, Cast<UStaticMeshComponent>(NewPlane), 0));
+
+					UpdateMaterials(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), PartType);
+
+				}
+			}
+			Part->InitializeFunctionality();
+			Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
+			if (Cast<UBaseThrusterPart>(Part))
+			{
+				Cast<ABaseShip>(GetOwner())->MovementComponent->UpdateThrusters();
+			}
+			return true;
+		}
+
+		Part->DestroyPart();
+		return false;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PartialPartShape was empty"));
+		return false;
+	}
 }
 
 //Remove an entire part. Returns True if a part was destroyed
@@ -217,20 +225,15 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 						//also not be connected.
 						TArray<FIntPoint> Temp;
 						Temp.Emplace(NumbersFound[i + 1]);
-						TArray<FSavePartInfo> Removed;
 						TSet<UBasePart*> PartsRemoved;
 						TArray<FIntPoint> ConnectedShape = UFunctionLibrary::FindConnectedShape(Temp, PartGrid);
 						for (auto& j : ConnectedShape)
 						{
 							PartsRemoved.Emplace(PartGrid.Find(j)->Part);
+							UE_LOG(LogTemp, Warning, TEXT("Connected Shape x %i y %i"), j.X, j.Y);
 						}
-						for (auto& j : PartsRemoved)
-						{
-							Removed.Emplace(FSavePartInfo(j->GetClass(), j->GetPartGridLocation(), j->GetRotation()));
-						}
-
 						//Create a new ship with these parts
-						if (!Removed.IsEmpty())
+						if (!PartsRemoved.IsEmpty())
 						{
 
 							ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>(Cast<AActor>(GetOwner())->GetActorLocation() - FVector(GetCenterOfMass(), 0), FRotator(1, 1, 1), FActorSpawnParameters());
@@ -240,13 +243,15 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 								TArray<FIntPoint> PartialPartShape;
 								for (auto& k : j->GetShape())
 								{
-									if (ConnectedShape.Contains(k))
+									UE_LOG(LogTemp, Warning, TEXT("Parts removed shape x %i y %i"), k.X, k.Y);
+									if (ConnectedShape.Contains(k + j->GetPartGridLocation()))
 									{
 										//UE_LOG(LogTemp, Warning, TEXT("x %i y %i"), k.X, k.Y);
 										PartialPartShape.Emplace(k);
-										DestroyPixel(k, false);
+										DestroyPixel(k + j->GetPartGridLocation(), false);
 									}
 								}
+
 								NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetPartGridLocation(), j->GetRotation());
 							}	
 
@@ -265,8 +270,6 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 						{
 							UE_LOG(LogTemp, Error, TEXT("I don't think this should ever happen. Ask Mabel about weird part grid component thing"));
 						}
-						//since there will never be more than 1 system removed at a time, this should not need to continue after this point
-						break;
 					}
 				}
 			}

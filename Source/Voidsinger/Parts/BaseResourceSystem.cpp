@@ -82,9 +82,6 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 						RemovedSet.Emplace(ConnectedPartsMap.Find(j)->Part);
 					}
 					CreateNewSystem(RemovedSet.Array());
-
-					//since there will never be more than 1 system removed at a time, this should not need to continue after this point
-					break;
 				}
 			}
 		}
