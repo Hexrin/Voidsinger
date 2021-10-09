@@ -63,6 +63,11 @@ struct VOIDSINGER_API FPartData
 	{
 		Temperature = NewTemp;
 	}
+
+	void SetBitNumber(int NewBitNumber)
+	{
+		BitNumber = NewBitNumber;
+	}
 };
 
 USTRUCT(BlueprintType)

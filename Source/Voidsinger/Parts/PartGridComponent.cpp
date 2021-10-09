@@ -779,9 +779,9 @@ const float UPartGridComponent::GetPartGridScale()
 
 void UPartGridComponent::UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePart> PartType)
 {
-	for (int i = -1; i++; i < 2)
+	for (int i = -1; i < 2; i++)
 	{
-		for (int j = -1; j++; j < 2)
+		for (int j = -1; j < 2; j++)
 		{
 			if (FIntPoint(i + Location.X, j + Location.Y) != Location)
 			{
@@ -789,11 +789,11 @@ void UPartGridComponent::UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePa
 				{
 					if (PartGrid.Contains(FIntPoint(Location)) && PartGrid.Find(FIntPoint(i + Location.X, j + Location.Y))->Part->GetClass() == PartType)
 					{
-						PartGrid.Find(FIntPoint(i = Location.X, j + Location.Y))->BitNumber += UFunctionLibrary::GetBitNumberFromLocation(FIntPoint(i * -1, j * -1));
+						PartGrid.FindRef(FIntPoint(i + Location.X, j + Location.Y)).SetBitNumber(UFunctionLibrary::GetBitNumberFromLocation(FIntPoint(i * -1, j * -1)) + PartGrid.FindRef(FIntPoint(i + Location.X, j + Location.Y)).BitNumber);
 					}
 					else if (PartGrid.Find(FIntPoint(i + Location.X, j + Location.Y))->Part->GetClass() == PartType)
 					{
-						PartGrid.Find(FIntPoint(i = Location.X, j + Location.Y))->BitNumber -= UFunctionLibrary::GetBitNumberFromLocation(FIntPoint(i * -1, j * -1));
+						PartGrid.FindRef(FIntPoint(i + Location.X, j + Location.Y)).SetBitNumber(PartGrid.FindRef(FIntPoint(i + Location.X, j + Location.Y)).BitNumber - UFunctionLibrary::GetBitNumberFromLocation(FIntPoint(i * -1, j * -1)));
 					}
 				}
 			}
