@@ -36,12 +36,28 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	FHitResult Result = FHitResult();
 	FTransform NewTransform = (FTransform(FRotator(0, AngularVelocity * DeltaTime + Ship->GetActorTransform().Rotator().Yaw, 0), (FVector(LinearVelocity, 0) * DeltaTime) + Ship->GetActorTransform().GetTranslation(), FVector(1)));
-	UE_LOG(LogTemp, Warning, TEXT("\n\tNewTransform: %s"), *NewTransform.ToString());
-	if (!UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, PrimComps, NewTransform))
+	//UE_LOG(LogTemp, Warning, TEXT("\n\tNewTransform: %s"), *NewTransform.ToString());
+
+	if (!FMath::IsNearlyEqual(LinearVelocity.SizeSquared(), 0, 0.01f), !FMath::IsNearlyEqual(AngularVelocity, 0, 0.01f))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SweepFaild"));
+		if (!UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, PrimComps, NewTransform))
+		{
+			ABaseShip* OtherShip = Cast<ABaseShip>(Result.GetActor());
+			if (IsValid(OtherShip))
+			{
+				UShipPhysicsComponent* OtherPhysicsComponent = OtherShip->PhysicsComponent;
+				FVector2D RelativeForce = OtherPhysicsComponent->GetVelocity() - GetVelocity();
+
+				AddForce(FVector2D(Result.Location - GetOwner()->GetActorLocation()), RelativeForce);
+				OtherPhysicsComponent->AddForce(FVector2D(Result.Location - OtherShip->GetActorLocation()), (-1 * RelativeForce));
+			}
+			else
+			{
+				AddForce(FVector2D(Result.Location - GetOwner()->GetActorLocation()), FVector2D(FMath::GetReflectionVector(FVector(GetVelocity(), 0), Result.Normal)));
+			}
+		}
 	}
-	//Ship->SetActorRotation(Ship->GetActorRotation() + FRotator(0, AngularVelocity, 0) * DeltaTime);
+	
 
 	LinearAcceleration = FVector2D(0, 0);
 	AngularAcceleration = 0;
@@ -49,12 +65,13 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 }
 
 //When a force is added to the ship
-void UShipPhysicsComponent::AddForce(FVector2D RelativeForceLocation, FVector2D RelativeForce)
+void UShipPhysicsComponent::AddForce(FVector2D RelativeForceLocation, FVector2D Force)
 {
-	if (!RelativeForce.IsZero())
+	DrawDebugDirectionalArrow(GetWorld(), FVector(RelativeForceLocation, 0) + GetOwner()->GetActorLocation(), FVector(RelativeForceLocation + Force, 0) + GetOwner()->GetActorLocation(), 1, FColor::Cyan);
+	if (!Force.IsZero())
 	{
-		LinearAcceleration += RelativeForce / Mass;
-		AngularAcceleration -= (RelativeForceLocation.X * RelativeForce.Y - RelativeForceLocation.Y * RelativeForce.X) / MomentOfInertia;
+		LinearAcceleration += Force / Mass;
+		AngularAcceleration -= (RelativeForceLocation.X * Force.Y - RelativeForceLocation.Y * Force.X) / MomentOfInertia;
 	}
 }
 

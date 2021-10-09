@@ -145,39 +145,49 @@ bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResul
 {
 	//Return Values
 	Hit = FHitResult();
-	TArray<FHitResult> Hits = TArray<FHitResult>();
 	bool ReturnValue = true;
+	TArray<FHitResult> Hits = TArray<FHitResult>();
 
 	FTransform Start = Target->GetActorTransform();
+	FQuat TraceRot = Start.GetRotation();
 
-	FQuat DeltaRot = NewTransform.GetRelativeTransform(Start).GetRotation();
-	FVector DeltaTranslation = NewTransform.GetTranslation() - Start.GetTranslation();
+	FVector BoundsLocation;
+	FVector BoundsExtent;
+	Target->GetActorBounds(true, BoundsLocation, BoundsExtent);
+	BoundsLocation -= Target->GetActorLocation();
 
 	FCollisionQueryParams QueryParams = FCollisionQueryParams().DefaultQueryParam;
 	QueryParams.AddIgnoredActor(Target);
 
-	FQuat TraceRot = Start.GetRotation();
-
-	for (UPrimitiveComponent* Comp : PrimComps)
+	if (Target->GetWorld()->SweepSingleByObjectType(Hit, Start.GetTranslation() + BoundsLocation, NewTransform.GetTranslation() + BoundsLocation, TraceRot, FCollisionObjectQueryParams::DefaultObjectQueryParam, FCollisionShape::MakeBox(BoundsExtent), QueryParams))
 	{
-		FVector StartLoc = Comp->GetComponentLocation();
-		FVector EndLoc = DeltaTranslation + (Start.GetRotation()*DeltaRot).RotateVector(Comp->GetRelativeLocation()) + Target->GetActorLocation();
-		FHitResult ThisHit = FHitResult();
+		Hit = FHitResult();
 
-		if (Target->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, TraceRot, FCollisionObjectQueryParams::DefaultObjectQueryParam, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))
+		FQuat DeltaRot = NewTransform.GetRelativeTransform(Start).GetRotation();
+		FVector DeltaTranslation = NewTransform.GetTranslation() - Start.GetTranslation();
+
+		for (UPrimitiveComponent* Comp : PrimComps)
 		{
-			ReturnValue = false;
-			Hits.Emplace(ThisHit);
-			UE_LOG(LogTemp, Warning, TEXT("HIT"));
-			///DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Red, false, 5, 0U, 0.05);
-			//DrawDebugBox(Target->GetWorld(), ThisHit.Location, FVector(.5), TraceRot, FColor::Red, false, 5);
+			FVector StartLoc = Comp->GetComponentLocation();
+			FVector EndLoc = DeltaTranslation + (Start.GetRotation()*DeltaRot).RotateVector(Comp->GetRelativeLocation()) + Target->GetActorLocation();
+			FHitResult ThisHit = FHitResult();
+
+			if (Target->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, TraceRot, FCollisionObjectQueryParams::DefaultObjectQueryParam, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))
+			{
+				ReturnValue = false;
+				Hits.Emplace(ThisHit);
+				UE_LOG(LogTemp, Warning, TEXT("HIT"));
+				///DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Red, false, 5, 0U, 0.05);
+				//DrawDebugBox(Target->GetWorld(), ThisHit.Location, FVector(.5), TraceRot, FColor::Red, false, 5);
+			}
+			/*else
+			{
+				DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Green, false, 5, 0U, 0.05);
+			}*/
 		}
-		/*else
-		{
-			DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Green, false, 5, 0U, 0.05);
-		}*/
-	}
 
+	}
+	
 	if (!ReturnValue)
 	{
 		for (FHitResult Value : Hits)
