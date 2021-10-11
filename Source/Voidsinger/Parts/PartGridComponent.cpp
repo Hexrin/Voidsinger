@@ -78,6 +78,12 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 		TArray<FIntPoint> DesiredShape = Part->GetDesiredShape();
 		FArrayBounds PartBounds = Part->GetPartBounds();
 
+		UE_LOG(LogTemp, Warning, TEXT("Location recieved x %i y %i"), Location.X, Location.Y);
+
+		for (auto& i : PartialPartShape)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PartialPartShape recieved x %i y %i"), i.X, i.Y);
+		}
 		//Detect if placement is in valid position
 		if (GridSize.X >= Location.X + PartBounds.UpperBounds.X && -GridSize.X <= Location.X + PartBounds.LowerBounds.X
 			&&
@@ -109,6 +115,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			{
 				if (PartialPartShape.Contains(DesiredShape[i]))
 				{
+					UE_LOG(LogTemp, Warning, TEXT("Desired shape added x %i y %i"), DesiredShape[i].X, DesiredShape[i].Y)
 					//Remove Overlaping Parts
 					if (bAlwaysPlace)
 					{
@@ -126,6 +133,10 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 					UpdateMaterials(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), PartType);
 
 				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Desired shape not added x %i y %i"), DesiredShape[i].X, DesiredShape[i].Y)
+				}
 			}
 			Part->InitializeFunctionality();
 			Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
@@ -135,7 +146,6 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			}
 			return true;
 		}
-
 		Part->DestroyPart();
 		return false;
 	}
@@ -227,26 +237,25 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 						Temp.Emplace(NumbersFound[i + 1]);
 						TSet<UBasePart*> PartsRemoved;
 						TArray<FIntPoint> ConnectedShape = UFunctionLibrary::FindConnectedShape(Temp, PartGrid);
+
 						for (auto& j : ConnectedShape)
 						{
 							PartsRemoved.Emplace(PartGrid.Find(j)->Part);
-							UE_LOG(LogTemp, Warning, TEXT("Connected Shape x %i y %i"), j.X, j.Y);
 						}
+
 						//Create a new ship with these parts
 						if (!PartsRemoved.IsEmpty())
 						{
 
-							ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>(Cast<AActor>(GetOwner())->GetActorLocation() - FVector(GetCenterOfMass(), 0), FRotator(1, 1, 1), FActorSpawnParameters());
-							int DebugCount = 0;
+							ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>((GetOwner()->GetActorLocation(), FRotator(0, 0, 0), FActorSpawnParameters()));
+
 							for (auto& j : PartsRemoved)
 							{
 								TArray<FIntPoint> PartialPartShape;
 								for (auto& k : j->GetShape())
 								{
-									UE_LOG(LogTemp, Warning, TEXT("Parts removed shape x %i y %i"), k.X, k.Y);
 									if (ConnectedShape.Contains(k + j->GetPartGridLocation()))
 									{
-										//UE_LOG(LogTemp, Warning, TEXT("x %i y %i"), k.X, k.Y);
 										PartialPartShape.Emplace(k);
 										DestroyPixel(k + j->GetPartGridLocation(), false);
 									}
@@ -263,6 +272,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 							{
 								RotatedVector = RotatedVector.GetRotated(180);
 							}
+							NewShip->SetActorLocation(GetOwner()->GetActorLocation() + FVector(NewShip->PartGrid->GetCenterOfMass(), 0) - FVector(Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass(), 0));
 							RotatedVector.Normalize();
 							NewShip->PhysicsComponent->SetVelocityDirectly(RotatedVector * VelocityFromRotationMagnitude);
 						}

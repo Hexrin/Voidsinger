@@ -215,11 +215,10 @@ TArray<FIntPoint> UFunctionLibrary::FindConnectedShape(TArray<FIntPoint> Shape, 
 	//New shape will return the entire connected shape, indcluding the starting shape
 	TArray<FIntPoint> NewShape = Shape;
 
-	//Check each pixel of the shape
 	for (auto& i : Shape)
 	{
-		//If the shape does NOT contain the checked location
-		if (!Shape.Contains(FIntPoint(i.X + 1, i.Y)))
+		//If the new shape does NOT contain the checked location
+		if (!NewShape.Contains(FIntPoint(i.X + 1, i.Y)))
 		{
 			//And the connected parts ARE at that location
 			if (ConnectedPartsMap.Contains(FIntPoint(i.X + 1, i.Y)))
@@ -241,7 +240,7 @@ TArray<FIntPoint> UFunctionLibrary::FindConnectedShape(TArray<FIntPoint> Shape, 
 		}
 
 		//Do the same thing done for X + 1 for X - 1
-		if (!Shape.Contains(FIntPoint(i.X - 1, i.Y)))
+		if (!NewShape.Contains(FIntPoint(i.X - 1, i.Y)))
 		{
 			if (ConnectedPartsMap.Contains(FIntPoint(i.X - 1, i.Y)))
 			{
@@ -260,7 +259,7 @@ TArray<FIntPoint> UFunctionLibrary::FindConnectedShape(TArray<FIntPoint> Shape, 
 		}
 
 		//Do the same thing done for X + 1 for Y + 1
-		if (!Shape.Contains(FIntPoint(i.X, i.Y + 1)))
+		if (!NewShape.Contains(FIntPoint(i.X, i.Y + 1)))
 		{
 			if (ConnectedPartsMap.Contains(FIntPoint(i.X, i.Y + 1)))
 			{
@@ -279,7 +278,7 @@ TArray<FIntPoint> UFunctionLibrary::FindConnectedShape(TArray<FIntPoint> Shape, 
 		}
 
 		//Do the same thing done for X + 1 for Y - 1
-		if (!Shape.Contains(FIntPoint(i.X, i.Y - 1)))
+		if (!NewShape.Contains(FIntPoint(i.X, i.Y - 1)))
 		{
 			if (ConnectedPartsMap.Contains(FIntPoint(i.X, i.Y - 1)))
 			{

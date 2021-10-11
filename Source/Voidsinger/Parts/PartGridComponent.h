@@ -122,7 +122,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	float GridScale; 
 
-	//The path to the pixel mesh. I have to put L in front of it because unreal is dumb.
+	//The path to the pixel mesh. 
 	UPROPERTY(EditAnywhere)
 	FString PathToPixelMesh = TEXT("/Game/Parts/PlaneWithCollision.PlaneWithCollision");
 
