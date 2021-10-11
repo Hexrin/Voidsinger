@@ -177,7 +177,7 @@ bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResul
 			{
 				ReturnValue = false;
 				Hits.Emplace(ThisHit);
-				UE_LOG(LogTemp, Warning, TEXT("HIT"));
+				//UE_LOG(LogTemp, Warning, TEXT("HIT"));
 				///DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Red, false, 5, 0U, 0.05);
 				//DrawDebugBox(Target->GetWorld(), ThisHit.Location, FVector(.5), TraceRot, FColor::Red, false, 5);
 			}
@@ -196,16 +196,16 @@ bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResul
 			if (Value.Time < Hit.Time)
 			{
 				Hit = Value;
-				//DrawDebugDirectionalArrow(Target->GetWorld(), Hit.TraceStart+FVector(0,0,1), Hit.Location + FVector(0, 0, 1), .5f, FColor::Blue, false, 5, 0U, 0.1);
+				//DrawDebugDirectionalArrow(Target->GetWorld(), Hit.TraceStart+FVector(0,0,1), Hit.Location + FVector(0, 0, 1), .5f, FColor::Blue, true, 5, 0U, 0.1);
 				//UE_LOG(LogTemp, Warning, TEXT("Hit time: %f"), Hit.Time);
 			}
 		}
 	}
-	else
-	{
+	//else
+	//{
 		//UE_LOG(LogTemp, Warning, TEXT("Set Transform to: %s"), *NewTransform.ToString());
 		Target->SetActorTransform(NewTransform);
-	}
+	//}
 	return ReturnValue;
 }
 
