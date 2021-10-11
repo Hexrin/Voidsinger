@@ -148,6 +148,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 //Remove an entire part. Returns True if a part was destroyed
 bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Remove part Check for breks %i"), CheckForBreaks);
 	//Check if location is valid
 	if (PartGrid.Contains(Location))
 	{
@@ -171,6 +172,7 @@ bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
 //Remove a single Pixel from the PartGrid. Returns true if a pixel was removed
 bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Check for breks %i"), CheckForBreaks);
 	if (PartGrid.Contains(Location))
 	{
 		//Remove from grid
