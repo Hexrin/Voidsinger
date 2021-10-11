@@ -52,8 +52,8 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 				FVector2D RelativeForce = OtherPhysicsComponent->GetVelocity() - GetVelocity();
 				RelativeForce = RelativeForce * RelativeForce * RelativeForce.GetSignVector();
 
-				AddForce(FVector2D(Result.Location - GetOwner()->GetActorLocation()), (0.5 * RelativeForce * OtherPhysicsComponent->GetMass()));
-				OtherPhysicsComponent->AddForce(FVector2D(Result.Location - OtherShip->GetActorLocation()), (-1 * RelativeForce * GetMass()));
+				AddForce(FVector2D(Result.Location - GetOwner()->GetActorLocation()), (0.5 * RelativeForce * OtherPhysicsComponent->GetMass())/(FVector::Dist2D(Result.Location, Result.TraceEnd)));
+				OtherPhysicsComponent->AddForce(FVector2D(Result.Location - OtherShip->GetActorLocation()), (-0.5 * RelativeForce * GetMass()) / (FVector::Dist2D(Result.Location, Result.TraceEnd)));
 				
 			}
 			else
