@@ -78,12 +78,6 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 		TArray<FIntPoint> DesiredShape = Part->GetDesiredShape();
 		FArrayBounds PartBounds = Part->GetPartBounds();
 
-		UE_LOG(LogTemp, Warning, TEXT("Location recieved x %i y %i"), Location.X, Location.Y);
-
-		for (auto& i : PartialPartShape)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("PartialPartShape recieved x %i y %i"), i.X, i.Y);
-		}
 		//Detect if placement is in valid position
 		if (GridSize.X >= Location.X + PartBounds.UpperBounds.X && -GridSize.X <= Location.X + PartBounds.LowerBounds.X
 			&&
@@ -115,7 +109,6 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			{
 				if (PartialPartShape.Contains(DesiredShape[i]))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Desired shape added x %i y %i"), DesiredShape[i].X, DesiredShape[i].Y)
 					//Remove Overlaping Parts
 					if (bAlwaysPlace)
 					{
@@ -132,10 +125,6 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 
 					UpdateMaterials(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), PartType);
 
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Desired shape not added x %i y %i"), DesiredShape[i].X, DesiredShape[i].Y)
 				}
 			}
 			Part->InitializeFunctionality();
@@ -278,12 +267,10 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 
 							Location = RotateLocation - GetOwner()->GetActorRotation().RotateVector(RotateLocation - Location);
 
-							//UE_LOG(LogTemp, Warning, TEXT("Location before rotate %s"), *Location.ToString());
-							//Location = Location.RotateAngleAxis(GetOwner()->GetActorRotation().Yaw, FVector(Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass(), 0));
-							//Location = Location.RotateAngleAxis(GetOwner()->GetActorRotation().Yaw, Location);
-							//UE_LOG(LogTemp, Warning, TEXT("Location after rotate %s"), *Location.ToString());
+
 							NewShip->SetActorLocation(Location);
 							NewShip->SetActorRotation(GetOwner()->GetActorRotation());
+
 							RotatedVector.Normalize();
 							NewShip->PhysicsComponent->SetVelocityDirectly(RotatedVector * VelocityFromRotationMagnitude);
 						}
