@@ -247,7 +247,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 						if (!PartsRemoved.IsEmpty())
 						{
 
-							ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>((GetOwner()->GetActorLocation(), FRotator(0, 0, 0), FActorSpawnParameters()));
+							ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>((GetOwner()->GetActorLocation(), FQuat(), FActorSpawnParameters()));
 
 							for (auto& j : PartsRemoved)
 							{
@@ -272,7 +272,18 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 							{
 								RotatedVector = RotatedVector.GetRotated(180);
 							}
-							NewShip->SetActorLocation(GetOwner()->GetActorLocation() + FVector(NewShip->PartGrid->GetCenterOfMass(), 0) - FVector(Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass(), 0));
+
+							FVector Location = GetOwner()->GetActorLocation() + FVector(NewShip->PartGrid->GetCenterOfMass(), 0) - FVector(Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass(), 0);
+							FVector RotateLocation = GetOwner()->GetActorLocation();
+
+							Location = RotateLocation - GetOwner()->GetActorRotation().RotateVector(RotateLocation - Location);
+
+							//UE_LOG(LogTemp, Warning, TEXT("Location before rotate %s"), *Location.ToString());
+							//Location = Location.RotateAngleAxis(GetOwner()->GetActorRotation().Yaw, FVector(Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass(), 0));
+							//Location = Location.RotateAngleAxis(GetOwner()->GetActorRotation().Yaw, Location);
+							//UE_LOG(LogTemp, Warning, TEXT("Location after rotate %s"), *Location.ToString());
+							NewShip->SetActorLocation(Location);
+							NewShip->SetActorRotation(GetOwner()->GetActorRotation());
 							RotatedVector.Normalize();
 							NewShip->PhysicsComponent->SetVelocityDirectly(RotatedVector * VelocityFromRotationMagnitude);
 						}
