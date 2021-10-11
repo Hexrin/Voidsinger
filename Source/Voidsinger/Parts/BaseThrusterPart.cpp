@@ -39,7 +39,7 @@ void UBaseThrusterPart::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (bIsThrusting)
 	{
-		Cast<ABaseShip>(GetPartGrid()->GetOwner())->PhysicsComponent->AddForce(GetThrustRelativeLocation(), FVector2D(ThrustForce, 0).GetRotated(GetThrustRotation()));
+		Cast<ABaseShip>(GetPartGrid()->GetOwner())->PhysicsComponent->AddForce(GetThrustRelativeLocation(), FVector2D(ThrustForce, 0).GetRotated(GetThrustRotation() + GetShip()->GetActorRotation().Yaw));
 		bIsThrusting = false;
 	}
 }

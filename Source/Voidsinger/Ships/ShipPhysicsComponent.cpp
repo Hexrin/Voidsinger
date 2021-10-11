@@ -15,6 +15,7 @@ UShipPhysicsComponent::UShipPhysicsComponent()
 	LinearVelocity = FVector2D(0, 0);
 	LinearAcceleration = FVector2D(0, 0);
 	AngularAcceleration = 0;
+	DebugColor = FColor(FMath::RoundToInt(FMath::GetMappedRangeValueClamped(FVector2D(0, RAND_MAX), FVector2D(0, 255), FMath::Rand())), FMath::RoundToInt(FMath::GetMappedRangeValueClamped(FVector2D(0, RAND_MAX), FVector2D(0, 255), FMath::Rand())), FMath::RoundToInt(FMath::GetMappedRangeValueClamped(FVector2D(0, RAND_MAX), FVector2D(0, 255), FMath::Rand())));
 }
 
 
@@ -31,9 +32,9 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	LinearVelocity += LinearAcceleration.GetRotated(Ship->GetActorRotation().Yaw) * DeltaTime;
+	LinearVelocity += LinearAcceleration * DeltaTime;
 	AngularVelocity += AngularAcceleration * DeltaTime;
-
+	DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation(), FVector(LinearVelocity, 0) + GetOwner()->GetActorLocation(), 5, DebugColor, false, -1.0F, 0U, 1.f);
 	FHitResult Result = FHitResult();
 	FTransform NewTransform = (FTransform(FRotator(0, AngularVelocity * DeltaTime + Ship->GetActorTransform().Rotator().Yaw, 0), (FVector(LinearVelocity, 0) * DeltaTime) + Ship->GetActorTransform().GetTranslation(), FVector(1)));
 	//UE_LOG(LogTemp, Warning, TEXT("\n\tNewTransform: %s"), *NewTransform.ToString());
@@ -45,11 +46,15 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 			ABaseShip* OtherShip = Cast<ABaseShip>(Result.GetActor());
 			if (IsValid(OtherShip))
 			{
+				UE_LOG(LogTemp, Warning, TEXT("%s Has collided"), *GetReadableName());
+
 				UShipPhysicsComponent* OtherPhysicsComponent = OtherShip->PhysicsComponent;
 				FVector2D RelativeForce = OtherPhysicsComponent->GetVelocity() - GetVelocity();
+				RelativeForce = RelativeForce * RelativeForce * RelativeForce.GetSignVector();
 
-				AddForce(FVector2D(Result.Location - GetOwner()->GetActorLocation()), RelativeForce);
-				OtherPhysicsComponent->AddForce(FVector2D(Result.Location - OtherShip->GetActorLocation()), (-1 * RelativeForce));
+				AddForce(FVector2D(Result.Location - GetOwner()->GetActorLocation()), (0.5 * RelativeForce * OtherPhysicsComponent->GetMass())/(FVector::Dist2D(Result.Location, Result.TraceEnd)));
+				OtherPhysicsComponent->AddForce(FVector2D(Result.Location - OtherShip->GetActorLocation()), (-0.5 * RelativeForce * GetMass()) / (FVector::Dist2D(Result.Location, Result.TraceEnd)));
+				
 			}
 			else
 			{
@@ -67,11 +72,12 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 //When a force is added to the ship
 void UShipPhysicsComponent::AddForce(FVector2D RelativeForceLocation, FVector2D Force)
 {
-	DrawDebugDirectionalArrow(GetWorld(), FVector(RelativeForceLocation, 0) + GetOwner()->GetActorLocation(), FVector(RelativeForceLocation + Force, 0) + GetOwner()->GetActorLocation(), 1, FColor::Cyan);
+	DrawDebugDirectionalArrow(GetWorld(), FVector(RelativeForceLocation, 0) + GetOwner()->GetActorLocation(), FVector(RelativeForceLocation + (Force / Mass), 0) + GetOwner()->GetActorLocation(), 5, DebugColor, true, -1.0F, 0U, 0.5f);
+	UE_LOG(LogTemp, Warning, TEXT("Add Linear Acceleration to %s: %s"), *GetReadableName(), *(Force / Mass).ToString());
 	if (!Force.IsZero())
 	{
 		LinearAcceleration += Force / Mass;
-		AngularAcceleration -= (RelativeForceLocation.X * Force.Y - RelativeForceLocation.Y * Force.X) / MomentOfInertia;
+		AngularAcceleration += (RelativeForceLocation.X * Force.Y - RelativeForceLocation.Y * Force.X) / MomentOfInertia;
 	}
 }
 
@@ -87,6 +93,8 @@ void UShipPhysicsComponent::SetVelocityDirectly(FVector2D NewVelocity)
 
 void UShipPhysicsComponent::UpdateMassCalculations()
 {
+	UE_LOG(LogTemp, Warning, TEXT("%s Has Updated Mass"), *GetReadableName());
+
 	Mass = Ship->PartGrid->GetMass();
 	CenterOfMass = Ship->PartGrid->GetCenterOfMass();
 	MomentOfInertia = Ship->PartGrid->GetMomentOfInertia();
@@ -118,4 +126,9 @@ void UShipPhysicsComponent::UpdateMassCalculations()
 float UShipPhysicsComponent::GetAngularVelocity()
 {
 	return AngularVelocity;
+}
+
+float UShipPhysicsComponent::GetMass()
+{
+	return Mass;
 }

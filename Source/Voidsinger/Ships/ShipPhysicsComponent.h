@@ -43,6 +43,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	float GetAngularVelocity();
+
+	UFUNCTION(BlueprintPure)
+	float GetMass();
 private:
 
 	//declare private variables
@@ -74,4 +77,7 @@ private:
 
 	UPROPERTY()
 	TArray<UPrimitiveComponent*> PrimComps;
+
+	UPROPERTY()
+	FColor DebugColor;
 };
