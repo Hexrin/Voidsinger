@@ -46,6 +46,8 @@ public:
 	UFUNCTION()
 	TMap<FIntPoint, FPartData> GetMapFromConnectedParts();
 
+	UFUNCTION(BlueprintPure)
+	float GetResourceAmount();
 
 	/*--Setter Functions--*\
 	\*--------------------*/

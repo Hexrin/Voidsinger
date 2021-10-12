@@ -71,7 +71,6 @@ void UBasePart::InitializeFunctionality()
 								// that result. 
 								//(although... i may need to think about that)
 
-								UE_LOG(LogTemp, Warning, TEXT("Is this called x + 1"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part->GetSystemByType(i.Key));
 
 								//A system was found!
@@ -84,7 +83,7 @@ void UBasePart::InitializeFunctionality()
 			}
 
 			//Do everything done for X + 1 for Y + 1
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part != this)
+			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y)).Part != this)
 			{
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y)).Part->GetResourceTypes())
 				{
@@ -94,7 +93,6 @@ void UBasePart::InitializeFunctionality()
 						{
 							if (l + PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y)).Part->GetPartGridLocation() == FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y))
 							{
-								UE_LOG(LogTemp, Warning, TEXT("Is this called y + 1"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y)).Part->GetSystemByType(i.Key));
 								SystemFound = true;
 							}
@@ -104,21 +102,17 @@ void UBasePart::InitializeFunctionality()
 			}
 
 			//Do everything done for X + 1 for Y - 1
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part != this)
+			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y)).Part != this)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("where"));
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y)).Part->GetResourceTypes())
 				{
-					UE_LOG(LogTemp, Warning, TEXT("does"));
 					if (k.Key == i.Key)
 					{
-						UE_LOG(LogTemp, Warning, TEXT("y - 1"));
+
 						for (auto& l : k.Value.IntPointArray)
 						{
-							UE_LOG(LogTemp, Warning, TEXT("fail"));
 							if (l + PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y)).Part->GetPartGridLocation() == FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y))
 							{
-								UE_LOG(LogTemp, Warning, TEXT("Is this called y - 1"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y)).Part->GetSystemByType(k.Key));
 								SystemFound = true;
 							}
@@ -128,7 +122,7 @@ void UBasePart::InitializeFunctionality()
 			}
 
 			//Do everything done for X + 1 for X - 1
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part != this)
+			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part != this)
 			{
 				//UE_LOG(LogTemp, Warning, TEXT("x - 1 is valid"));
 				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part->GetResourceTypes())
@@ -139,7 +133,6 @@ void UBasePart::InitializeFunctionality()
 						{
 							if (l + PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part->GetPartGridLocation() == FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y))
 							{
-								UE_LOG(LogTemp, Warning, TEXT("Is this called x - 1"));
 								//UE_LOG(LogTemp, Warning, TEXT("x - 1 system found"));
 								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part->GetSystemByType(k.Key));
 								SystemFound = true;
@@ -153,7 +146,6 @@ void UBasePart::InitializeFunctionality()
 		//If the code gets to this point without finding a system, then it will create a new resource system
 		if (SystemFound == false)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Is this called create new system"));
 			CreateNewSystem(i.Key);
 		}
 	}
@@ -403,7 +395,6 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 //Create a new resource system
 void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 {
-
 	//Make the new system, make sure it's the right type, and add the system to the list of systems on the player character
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
 	NewSystem->SetType(ResourceType);
