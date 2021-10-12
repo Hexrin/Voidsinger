@@ -46,13 +46,20 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	float GetMass();
+
+	UFUNCTION(BlueprintPure)
+	FVector2D GetVelocityOfPoint(FVector2D RelativePointLocation);
 private:
 
 	//declare private variables
 	//UPROPERTY()
 	ABaseShip* Ship;
 
-	
+	UPROPERTY(EditAnywhere)
+	float MaxLinearVelocity{ 100000 };
+
+	UPROPERTY(EditAnywhere)
+	float MaxAngularVelocity{ 10000 };
 
 	UPROPERTY()
 	float Mass;
