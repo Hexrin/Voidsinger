@@ -16,14 +16,30 @@ void UBaseResourceSystem::AddResources(float Amount)
 	ResourceAmount += Amount;
 }
 
-void UBaseResourceSystem::DrawResources(float Amount)
+bool UBaseResourceSystem::DrawResources(float Amount)
 {
-	ResourceAmount -= Amount;
+	if (ResourceAmount - Amount <= 0)
+	{
+		ResourceAmount = 0;
+		return false;
+	}
+	else
+	{
+		ResourceAmount -= 0;
+		return true;
+	}
 }
 
 void UBaseResourceSystem::AddPart(UBasePart* AddedPart)
 {
-	ConnectedParts.Add(AddedPart);
+	if (IsValid(AddedPart))
+	{
+		ConnectedParts.Add(AddedPart);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Why no valid"))
+	}
 }
 
 void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart)
@@ -183,6 +199,11 @@ TMap<FIntPoint, FPartData> UBaseResourceSystem::GetMapFromConnectedParts()
 		}
 	}
 	return Temp;
+}
+
+float UBaseResourceSystem::GetResourceAmount()
+{
+	return ResourceAmount;
 }
 
 

@@ -255,26 +255,33 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 								NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetPartGridLocation(), j->GetRotation());
 							}	
 
-							float Radius = UKismetMathLibrary::Sqrt(FMath::Square(NewShip->PartGrid->GetCenterOfMass().X + NewShip->GetActorLocation().X - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X + Cast<AActor>(GetOwner())->GetActorLocation().X) + FMath::Square(NewShip->PartGrid->GetCenterOfMass().Y + NewShip->GetActorLocation().Y - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y + Cast<AActor>(GetOwner())->GetActorLocation().Y));
+
+							FVector NewLocation = GetOwner()->GetActorLocation() + FVector(NewShip->PartGrid->GetCenterOfMass(), 0) - FVector(Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass(), 0);
+							FVector RotateLocation = GetOwner()->GetActorLocation();
+
+							NewLocation = RotateLocation - GetOwner()->GetActorRotation().RotateVector(RotateLocation - NewLocation);
+
+
+							NewShip->SetActorLocation(NewLocation);
+							NewShip->SetActorRotation(GetOwner()->GetActorRotation());
+
+							float Radius = UKismetMathLibrary::Sqrt(FMath::Square((NewShip->PartGrid->GetCenterOfMass().X + NewShip->GetActorLocation().X) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X + Cast<AActor>(GetOwner())->GetActorLocation().X)) + FMath::Square((NewShip->PartGrid->GetCenterOfMass().Y + NewShip->GetActorLocation().Y) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y + Cast<AActor>(GetOwner())->GetActorLocation().Y)));
 							float VelocityFromRotationMagnitude = FMath::DegreesToRadians(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity()) * Radius;
-							FVector2D VectorBetween = NewShip->PartGrid->GetCenterOfMass() - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass();
+							FVector2D VectorBetween = NewShip->PartGrid->GetCenterOfMass() + FVector2D(NewShip->GetActorLocation()) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass() + FVector2D(Cast<AActor>(GetOwner())->GetActorLocation()));
 							FVector2D RotatedVector = VectorBetween.GetRotated(90);
+
 							if (Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity() < 0)
 							{
 								RotatedVector = RotatedVector.GetRotated(180);
 							}
 
-							FVector Location = GetOwner()->GetActorLocation() + FVector(NewShip->PartGrid->GetCenterOfMass(), 0) - FVector(Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass(), 0);
-							FVector RotateLocation = GetOwner()->GetActorLocation();
-
-							Location = RotateLocation - GetOwner()->GetActorRotation().RotateVector(RotateLocation - Location);
-
-
-							NewShip->SetActorLocation(Location);
-							NewShip->SetActorRotation(GetOwner()->GetActorRotation());
-
 							RotatedVector.Normalize();
-							NewShip->PhysicsComponent->SetVelocityDirectly(RotatedVector * VelocityFromRotationMagnitude);
+
+							UE_LOG(LogTemp, Warning, TEXT("velocity from rotation magnitude %f"), VelocityFromRotationMagnitude);
+							DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Red, true);
+							DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0), 5, FColor::Blue, true);
+							DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0) + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Green, true);
+							NewShip->PhysicsComponent->AddForce(NewShip->PartGrid->GetCenterOfMass(), (RotatedVector * VelocityFromRotationMagnitude) + Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity());
 						}
 						else
 						{

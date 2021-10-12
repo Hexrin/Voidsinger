@@ -46,6 +46,8 @@ public:
 	UFUNCTION()
 	TMap<FIntPoint, FPartData> GetMapFromConnectedParts();
 
+	UFUNCTION(BlueprintPure)
+	float GetResourceAmount();
 
 	/*--Setter Functions--*\
 	\*--------------------*/
@@ -61,9 +63,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddResources(float Amount);
 
-	//remove/use an amount of resource
+	//remove/use an amount of resource, bool returns if the amount was sucessfully drawn
 	UFUNCTION(BlueprintCallable)
-	void DrawResources(float Amount);
+	bool DrawResources(float Amount);
 
 
 	/*--Part Management Functions--*\
