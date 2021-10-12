@@ -277,9 +277,11 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 
 							RotatedVector.Normalize();
 
+							UE_LOG(LogTemp, Warning, TEXT("velocity from rotation magnitude %f"), VelocityFromRotationMagnitude);
 							DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Red, true);
 							DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0), 5, FColor::Blue, true);
-							NewShip->PhysicsComponent->SetVelocityDirectly((RotatedVector * VelocityFromRotationMagnitude) + Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity());
+							DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0) + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Green, true);
+							NewShip->PhysicsComponent->AddForce(NewShip->PartGrid->GetCenterOfMass(), (RotatedVector * VelocityFromRotationMagnitude) + Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity());
 						}
 						else
 						{
