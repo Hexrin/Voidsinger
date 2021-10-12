@@ -16,18 +16,9 @@ void UBaseResourceSystem::AddResources(float Amount)
 	ResourceAmount += Amount;
 }
 
-bool UBaseResourceSystem::DrawResources(float Amount)
+void UBaseResourceSystem::DrawResources(float Amount)
 {
-	if (ResourceAmount - Amount <= 0)
-	{
-		ResourceAmount = 0;
-		return false;
-	}
-	else
-	{
-		Resource Amount -= 0;
-		return true;
-	}
+	ResourceAmount -= Amount;
 }
 
 void UBaseResourceSystem::AddPart(UBasePart* AddedPart)
