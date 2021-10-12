@@ -61,9 +61,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddResources(float Amount);
 
-	//remove/use an amount of resource, bool returns if the amount was sucessfully drawn
+	//remove/use an amount of resource
 	UFUNCTION(BlueprintCallable)
-	bool DrawResources(float Amount);
+	void DrawResources(float Amount);
 
 
 	/*--Part Management Functions--*\
