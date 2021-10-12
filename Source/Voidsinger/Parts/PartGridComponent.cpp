@@ -267,7 +267,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 
 							float Radius = UKismetMathLibrary::Sqrt(FMath::Square((NewShip->PartGrid->GetCenterOfMass().X + NewShip->GetActorLocation().X) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X + Cast<AActor>(GetOwner())->GetActorLocation().X)) + FMath::Square((NewShip->PartGrid->GetCenterOfMass().Y + NewShip->GetActorLocation().Y) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y + Cast<AActor>(GetOwner())->GetActorLocation().Y)));
 							float VelocityFromRotationMagnitude = FMath::DegreesToRadians(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity()) * Radius;
-							FVector2D VectorBetween = NewShip->PartGrid->GetCenterOfMass() - Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass();
+							FVector2D VectorBetween = NewShip->PartGrid->GetCenterOfMass() + FVector2D(NewShip->GetActorLocation()) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass() + FVector2D(Cast<AActor>(GetOwner())->GetActorLocation()));
 							FVector2D RotatedVector = VectorBetween.GetRotated(90);
 
 							if (Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity() < 0)
