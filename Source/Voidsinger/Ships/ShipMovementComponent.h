@@ -34,6 +34,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Move(FVector2D Direction);
+	
+	UFUNCTION(BlueprintPure)
+	float GetLookDirectionTollerance();
+
+protected:
+	UPROPERTY(EditAnywhere)
+	float LookDirectionTollerance{ 0.05 };
+
+
 
 private:
 	UPROPERTY()

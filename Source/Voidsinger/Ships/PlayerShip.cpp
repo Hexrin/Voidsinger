@@ -37,6 +37,24 @@ void APlayerShip::Tick(float DeltaTime)
             ResetVoidsongTimer = 0.0;
         }
     }
+
+    UE_LOG(LogTemp, Warning, TEXT("InputVector = %s"), *InputVector.ToString());
+    if (InputVector.SizeSquared() != 0)
+    {
+        MovementComponent->Move(InputVector);
+    }
+
+    FVector WorldDirection = FVector();
+    FVector WorldLocation = FVector();
+
+    GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+    FVector  MouseWorldLocation = FMath::LinePlaneIntersection(Camera->GetComponentLocation(), Camera->GetComponentLocation() + WorldDirection * 10000, FPlane(GetActorLocation(), FVector(0, 0, 1)));
+    DrawDebugPoint(GetWorld(), MouseWorldLocation, 25, FColor::Red, false);
+    FVector TargetDirection = (MouseWorldLocation - GetActorLocation()).GetSafeNormal2D();
+    if (TargetDirection.Equals(GetActorForwardVector(), MovementComponent->GetLookDirectionTollerance()))
+    {
+        MovementComponent->RotateShip(FVector::DotProduct(TargetDirection, GetActorForwardVector()) / (TargetDirection.Size() * GetActorForwardVector().Size()) < 0);
+    }
     
 }
 
@@ -51,6 +69,18 @@ void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
     InputComponent->BindAction("Voidsong4", IE_Pressed, this, &APlayerShip::Voidsong4Call);
     InputComponent->BindAction("Voidsong5", IE_Pressed, this, &APlayerShip::Voidsong5Call);
     InputComponent->BindAction("VoidsongActivate", IE_Pressed, this, &APlayerShip::ActivateVoidsong);
+
+
+    //Movement Bindings
+    InputComponent->BindAction("MoveForward", IE_Pressed, this, &APlayerShip::MoveForwardPressedCall);
+    InputComponent->BindAction("MoveBackward", IE_Pressed, this, &APlayerShip::MoveBackwardPressedCall);
+    InputComponent->BindAction("MoveRight", IE_Pressed, this, &APlayerShip::MoveRightPressedCall);
+    InputComponent->BindAction("MoveLeft", IE_Pressed, this, &APlayerShip::MoveLeftPressedCall);
+
+    InputComponent->BindAction("MoveForward", IE_Released, this, &APlayerShip::MoveForwardReleasedCall);
+    InputComponent->BindAction("MoveBackward", IE_Released, this, &APlayerShip::MoveBackwardReleasedCall);
+    InputComponent->BindAction("MoveRight", IE_Released, this, &APlayerShip::MoveRightReleasedCall);
+    InputComponent->BindAction("MoveLeft", IE_Released, this, &APlayerShip::MoveLeftReleasedCall);
 }
 
 void APlayerShip::BeginPlay()
@@ -59,6 +89,8 @@ void APlayerShip::BeginPlay()
 
     //Spawns the voidsong instrument
     VoidsongInstrument = UGameplayStatics::SpawnSound2D(this, Cast<USoundBase>(VoidsongInstrumentAsset.LoadSynchronous()));
+
+    
 }
 
 TMap<TEnumAsByte<EResourceType>, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
@@ -105,6 +137,60 @@ void APlayerShip::Voidsong4Call()
 void APlayerShip::Voidsong5Call()
 {
     AddVoidsongInput(5);
+}
+
+void APlayerShip::MoveForwardPressedCall()
+{
+    AddInputVector(FVector2D(1, 0));
+}
+
+void APlayerShip::MoveBackwardPressedCall()
+{
+    AddInputVector(FVector2D(-1, 0));
+}
+
+void APlayerShip::MoveRightPressedCall()
+{
+    AddInputVector(FVector2D(0, 1));
+}
+
+void APlayerShip::MoveLeftPressedCall()
+{
+    AddInputVector(FVector2D(0, -1));
+}
+
+void APlayerShip::MoveForwardReleasedCall()
+{
+    AddInputVector(FVector2D(0, 0));
+}
+
+void APlayerShip::MoveBackwardReleasedCall()
+{
+    AddInputVector(FVector2D(0, 0));
+}
+
+void APlayerShip::MoveRightReleasedCall()
+{
+    AddInputVector(FVector2D(0, 0));
+}
+
+void APlayerShip::MoveLeftReleasedCall()
+{
+    AddInputVector(FVector2D(0, 0));
+}
+
+void APlayerShip::AddInputVector(FVector2D Vector)
+{
+    InputVector.X = FMath::Clamp(Vector.X, -1.f, 1.f);
+    InputVector.Y = FMath::Clamp(Vector.Y, -1.f, 1.f);
+    if (Vector.X != 0 && InputVector.X == 0)
+    {
+        InputVector.Y = 0;
+    }
+    else if (Vector.Y != 0 && InputVector.Y == 0)
+    {
+        InputVector.X = 0;
+    }
 }
 
 void APlayerShip::AddVoidsongInput(int Input)

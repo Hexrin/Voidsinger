@@ -81,6 +81,7 @@ public:
 	UFUNCTION()
 	void Voidsong5Call();
 
+
 	/*Voidsong Management*\
 	\*-------------------*/
 
@@ -94,6 +95,41 @@ public:
 	//Clears the sequence of inputs that the player has made
 	UFUNCTION(BlueprintCallable)
 	void ResetVoidsong();
+
+
+	/*-Movement Bindings-*\
+	\*-------------------*/
+
+	UFUNCTION()
+	void MoveForwardPressedCall();
+
+	UFUNCTION()
+	void MoveBackwardPressedCall();
+
+	UFUNCTION()
+	void MoveRightPressedCall();
+
+	UFUNCTION()
+	void MoveLeftPressedCall();
+
+	UFUNCTION()
+	void MoveForwardReleasedCall();
+
+	UFUNCTION()
+	void MoveBackwardReleasedCall();
+
+	UFUNCTION()
+	void MoveRightReleasedCall();
+
+	UFUNCTION()
+	void MoveLeftReleasedCall();
+
+	/*------Movement-----*\
+	\*-------------------*/
+
+	UFUNCTION()
+	void AddInputVector(FVector2D Vector);
+
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||
@@ -130,17 +166,30 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSoftObjectPtr<USoundBase> VoidsongInstrumentAsset;
 
-	//idk about everythings after this so liam should comment these
+
+
+	/*------Camera-------*\
+	\*-------------------*/
+public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 
 protected:
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int Pixels;
-
 	UPROPERTY(EditAnywhere)
 	float CameraHeight;
+
+	/*-----Movement------*\
+	\*-------------------*/
+private:
+	UPROPERTY()
+	FVector2D InputVector;
+
+
+	/*-------Misc.-------*\
+	\*-------------------*/
+protected:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int Pixels;
 
 	UPROPERTY(VisibleAnywhere)
 	class UStarSystemData* CurrentStarSystem;

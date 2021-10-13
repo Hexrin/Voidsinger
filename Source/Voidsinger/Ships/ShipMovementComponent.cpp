@@ -104,3 +104,8 @@ void UShipMovementComponent::Move(FVector2D Direction)
 		ThrustersForDirection.Emplace(Direction, ThrustersToAdd);
 	}
 }
+
+float UShipMovementComponent::GetLookDirectionTollerance()
+{
+	return LookDirectionTollerance;
+}
