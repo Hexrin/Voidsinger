@@ -38,4 +38,7 @@ public:
 private:
 	UPROPERTY()
 	TSet<UBaseThrusterPart*> Thrusters;
+
+	TMap<bool, TSet<UBaseThrusterPart*>> ThrustersForRotation;
+	TMap<FVector2D, TSet<UBaseThrusterPart*>> ThrustersForDirection;
 };
