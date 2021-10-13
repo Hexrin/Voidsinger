@@ -38,7 +38,7 @@ void APlayerShip::Tick(float DeltaTime)
         }
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("InputVector = %s"), *InputVector.ToString());
+    
     if (InputVector.SizeSquared() != 0)
     {
         MovementComponent->Move(InputVector);
@@ -51,9 +51,10 @@ void APlayerShip::Tick(float DeltaTime)
     FVector  MouseWorldLocation = FMath::LinePlaneIntersection(Camera->GetComponentLocation(), Camera->GetComponentLocation() + WorldDirection * 10000, FPlane(GetActorLocation(), FVector(0, 0, 1)));
     DrawDebugPoint(GetWorld(), MouseWorldLocation, 25, FColor::Red, false);
     FVector TargetDirection = (MouseWorldLocation - GetActorLocation()).GetSafeNormal2D();
-    if (TargetDirection.Equals(GetActorForwardVector(), MovementComponent->GetLookDirectionTollerance()))
+    if (!TargetDirection.Equals(GetActorForwardVector(), MovementComponent->GetLookDirectionTollerance()))
     {
-        MovementComponent->RotateShip(FVector::DotProduct(TargetDirection, GetActorForwardVector()) / (TargetDirection.Size() * GetActorForwardVector().Size()) < 0);
+        UE_LOG(LogTemp, Warning, TEXT("SineThing = %f"), FVector::DotProduct(TargetDirection, GetActorForwardVector()) / (TargetDirection.Size() * GetActorForwardVector().Size()));
+        MovementComponent->RotateShip(FVector::DotProduct(TargetDirection, GetActorForwardVector()) / (TargetDirection.Size() * GetActorForwardVector().Size())-0.5 > 0);
     }
     
 }
