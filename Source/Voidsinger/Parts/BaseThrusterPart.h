@@ -33,7 +33,7 @@ public:
 
 	//Apply force in the direction of the thruster 
 	UFUNCTION(BlueprintCallable)
-	void Thrust();
+	void Thrust(float NewThrottle);
 
 	UFUNCTION(BlueprintPure)
 	const bool IsThrusting();
@@ -50,5 +50,5 @@ protected:
 
 private:
 	UPROPERTY()
-	bool bIsThrusting;
+	float Throttle{ 0 };
 };

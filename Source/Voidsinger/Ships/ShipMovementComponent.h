@@ -30,17 +30,23 @@ public:
 	void UpdateThrusters();
 
 	UFUNCTION(BlueprintCallable)
-	void RotateShip(bool Clockwise);
+	void RotateShip(bool Clockwise, float Throttle);
 
 	UFUNCTION(BlueprintCallable)
-	void Move(FVector2D Direction);
+	void Move(FVector2D Direction, float Throttle);
 	
 	UFUNCTION(BlueprintPure)
 	float GetLookDirectionTollerance();
 
+	UFUNCTION(BlueprintPure)
+	float GetDecelerationPredictionTime();
+
 protected:
 	UPROPERTY(EditAnywhere)
 	float LookDirectionTollerance{ 0.05 };
+
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float DecelerationPredictionTime{ 0.35 };
 
 
 

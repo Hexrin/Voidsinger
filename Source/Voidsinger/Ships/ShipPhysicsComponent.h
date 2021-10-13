@@ -64,6 +64,7 @@ private:
 	//UPROPERTY()
 	ABaseShip* Ship;
 
+public:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MaxLinearVelocity{ 100000 };
 
@@ -79,6 +80,7 @@ private:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "1"))
 	float CollisionElasticity{ 0 };
 
+private:
 	UPROPERTY()
 	float Mass;
 

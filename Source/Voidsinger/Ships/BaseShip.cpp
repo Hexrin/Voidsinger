@@ -32,6 +32,27 @@ void ABaseShip::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bDecelerating && PhysicsComponent->GetVelocity().SizeSquared() > PhysicsComponent->MinLinearVelocity)
+	{
+		SetTargetMoveDirection(-1 * PhysicsComponent->GetVelocity().GetRotated(-1 * GetActorRotation().Yaw));
+		//UE_LOG(LogTemp, Warning, TEXT("Decellerate"));
+	}
+
+	
+
+	FVector FutureForawardVector = FQuat(FVector(0,0,1), PhysicsComponent->GetAngularVelocity() * MovementComponent->GetDecelerationPredictionTime()).RotateVector(GetActorForwardVector());
+	
+	if (TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(FutureForawardVector, MovementComponent->GetLookDirectionTollerance()))
+	{
+		float RotationDirection = FVector::CrossProduct(TargetLookDirection, FutureForawardVector).Z;
+		//UE_LOG(LogTemp, Warning, TEXT("SineThing = %f, TargetLookDirection = %s"), RotationDirection, *TargetLookDirection.ToString());
+		MovementComponent->RotateShip(RotationDirection < 0, FMath::Abs(RotationDirection));
+	}
+
+	if (TargetMoveDirection.SizeSquared() != 0)
+	{
+		MovementComponent->Move(TargetMoveDirection, 1);
+	}
 }
 
 // Called to bind functionality to input
@@ -97,6 +118,16 @@ void ABaseShip::CallLaser(float Damage, float Duration)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Broadcast should be called...?"))
 	OnLaserDelegate.Broadcast(Damage, Duration);
+}
+
+void ABaseShip::SetTargetMoveDirection(FVector2D Vector)
+{
+	TargetMoveDirection = Vector.GetSafeNormal();
+}
+
+FVector2D ABaseShip::GetTargetMoveDirection()
+{
+	return TargetMoveDirection;
 }
 
 void ABaseShip::SaveEditorShip()

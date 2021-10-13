@@ -71,7 +71,6 @@ public:
 	UPROPERTY()
 	TArray<UBaseResourceSystem*> ResourceSystems;
 
-//protected:
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* SceneRoot;
 
@@ -105,4 +104,26 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<ABaseShip> ClassCurrentlyEditing;
 
+
+	/*-Movement Control-*\
+	\*------------------*/
+
+
+public:
+
+
+	UFUNCTION(BlueprintCallable)
+	void SetTargetMoveDirection(FVector2D Vector);
+
+	UFUNCTION(BlueprintPure)
+	FVector2D GetTargetMoveDirection();
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector TargetLookDirection;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bDecelerating{ false };
+private:
+	UPROPERTY()
+	FVector2D TargetMoveDirection;
 };

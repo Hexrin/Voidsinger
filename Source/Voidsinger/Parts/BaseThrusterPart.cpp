@@ -7,11 +7,10 @@ UBaseThrusterPart::UBaseThrusterPart()
 	ThrustForce = 10;
 	ThrustLocation = FVector2D();
 	ThrustRotation = 0;
-	bIsThrusting = false;
 }
 const float UBaseThrusterPart::GetThrustForce()
 {
-	return ThrustForce;
+	return ThrustForce * Throttle;
 }
 
 const float UBaseThrusterPart::GetThrustRotation()
@@ -26,21 +25,21 @@ const FVector2D UBaseThrusterPart::GetThrustRelativeLocation()
 
 const bool UBaseThrusterPart::IsThrusting()
 {
-	return bIsThrusting;
+	return Throttle != 0;
 }
 
-void UBaseThrusterPart::Thrust()
+void UBaseThrusterPart::Thrust(float NewThrottle)
 {
-	bIsThrusting = true;
+	Throttle = FMath::Clamp(NewThrottle, 0.f, 1.f);
 }
 
 void UBaseThrusterPart::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (bIsThrusting)
+	if (Throttle != 0)
 	{
-		Cast<ABaseShip>(GetPartGrid()->GetOwner())->PhysicsComponent->AddImpulse(FVector2D(ThrustForce, 0).GetRotated(GetThrustRotation() + GetShip()->GetActorRotation().Yaw) * DeltaTime, FVector2D(GetShip()->GetActorQuat().RotateVector(FVector(GetThrustRelativeLocation(), 0))));
-		bIsThrusting = false;
+		Cast<ABaseShip>(GetPartGrid()->GetOwner())->PhysicsComponent->AddImpulse(FVector2D(ThrustForce * Throttle, 0).GetRotated(GetThrustRotation() + GetShip()->GetActorRotation().Yaw) * DeltaTime, FVector2D(GetShip()->GetActorQuat().RotateVector(FVector(GetThrustRelativeLocation(), 0))));
+		Throttle = 0;
 	}
 }
 

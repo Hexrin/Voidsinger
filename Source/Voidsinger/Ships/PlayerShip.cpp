@@ -16,6 +16,7 @@ APlayerShip::APlayerShip()
     //Setup Camera
     Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
     Camera->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+    Camera->SetUsingAbsoluteRotation(true);
     Camera->SetRelativeLocation(FVector(0, 0, CameraHeight));
     Camera->SetRelativeRotation(FRotator(-90, -90, 90));
 
@@ -25,6 +26,16 @@ APlayerShip::APlayerShip()
 
 void APlayerShip::Tick(float DeltaTime)
 {
+    FVector WorldDirection = FVector();
+    FVector WorldLocation = FVector();
+
+    GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+    WorldLocation = FMath::LinePlaneIntersection(Camera->GetComponentLocation(), Camera->GetComponentLocation() + WorldDirection * 10000, FPlane(GetActorLocation(), FVector(0, 0, 1)));
+
+    TargetLookDirection = (WorldLocation - GetActorLocation()).GetSafeNormal2D();
+
+    
+
     Super::Tick(DeltaTime);
 
     //Deals with the timer for resetting the voidsong inputs. 
@@ -39,23 +50,7 @@ void APlayerShip::Tick(float DeltaTime)
     }
 
     
-    if (InputVector.SizeSquared() != 0)
-    {
-        MovementComponent->Move(InputVector);
-    }
-
-    FVector WorldDirection = FVector();
-    FVector WorldLocation = FVector();
-
-    GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
-    FVector  MouseWorldLocation = FMath::LinePlaneIntersection(Camera->GetComponentLocation(), Camera->GetComponentLocation() + WorldDirection * 10000, FPlane(GetActorLocation(), FVector(0, 0, 1)));
-    DrawDebugPoint(GetWorld(), MouseWorldLocation, 25, FColor::Red, false);
-    FVector TargetDirection = (MouseWorldLocation - GetActorLocation()).GetSafeNormal2D();
-    if (!TargetDirection.Equals(GetActorForwardVector(), MovementComponent->GetLookDirectionTollerance()))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("SineThing = %f"), FVector::DotProduct(TargetDirection, GetActorForwardVector()) / (TargetDirection.Size() * GetActorForwardVector().Size()));
-        MovementComponent->RotateShip(FVector::DotProduct(TargetDirection, GetActorForwardVector()) / (TargetDirection.Size() * GetActorForwardVector().Size())-0.5 > 0);
-    }
+    
     
 }
 
@@ -142,56 +137,46 @@ void APlayerShip::Voidsong5Call()
 
 void APlayerShip::MoveForwardPressedCall()
 {
-    AddInputVector(FVector2D(1, 0));
+    bDecelerating = false;
+    SetTargetMoveDirection(FVector2D(1, 0));
 }
 
 void APlayerShip::MoveBackwardPressedCall()
 {
-    AddInputVector(FVector2D(-1, 0));
+    bDecelerating = false;
+    SetTargetMoveDirection(FVector2D(-1, 0));
 }
 
 void APlayerShip::MoveRightPressedCall()
 {
-    AddInputVector(FVector2D(0, 1));
+    bDecelerating = false;
+    SetTargetMoveDirection(FVector2D(0, 1));
 }
 
 void APlayerShip::MoveLeftPressedCall()
 {
-    AddInputVector(FVector2D(0, -1));
+    bDecelerating = false;
+    SetTargetMoveDirection(FVector2D(0, -1));
 }
 
 void APlayerShip::MoveForwardReleasedCall()
 {
-    AddInputVector(FVector2D(0, 0));
+    bDecelerating = true;
 }
 
 void APlayerShip::MoveBackwardReleasedCall()
 {
-    AddInputVector(FVector2D(0, 0));
+    bDecelerating = true;
 }
 
 void APlayerShip::MoveRightReleasedCall()
 {
-    AddInputVector(FVector2D(0, 0));
+    bDecelerating = true;
 }
 
 void APlayerShip::MoveLeftReleasedCall()
 {
-    AddInputVector(FVector2D(0, 0));
-}
-
-void APlayerShip::AddInputVector(FVector2D Vector)
-{
-    InputVector.X = FMath::Clamp(Vector.X, -1.f, 1.f);
-    InputVector.Y = FMath::Clamp(Vector.Y, -1.f, 1.f);
-    if (Vector.X != 0 && InputVector.X == 0)
-    {
-        InputVector.Y = 0;
-    }
-    else if (Vector.Y != 0 && InputVector.Y == 0)
-    {
-        InputVector.X = 0;
-    }
+    bDecelerating = true;
 }
 
 void APlayerShip::AddVoidsongInput(int Input)

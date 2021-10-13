@@ -52,13 +52,13 @@ void UShipMovementComponent::UpdateThrusters()
 	}
 }
 
-void UShipMovementComponent::RotateShip(bool Clockwise)
+void UShipMovementComponent::RotateShip(bool Clockwise, float Throttle)
 {
 	if (ThrustersForRotation.Contains(Clockwise))
 	{
 		for (UBaseThrusterPart* Thruster : ThrustersForRotation.FindRef(Clockwise))
 		{
-			Thruster->Thrust();
+			Thruster->Thrust(Throttle);
 		}
 	}
 	else
@@ -71,21 +71,21 @@ void UShipMovementComponent::RotateShip(bool Clockwise)
 			FVector2D ThrusterLocation = FVector2D(Thruster->GetThrustRelativeLocation()).GetSafeNormal();
 			if ((FVector2D::CrossProduct(ThrustDirection, ThrusterLocation) > 0) ^ Clockwise)
 			{
-				Thruster->Thrust();
+				Thruster->Thrust(Throttle);
 				ThrustersToAdd.Emplace(Thruster);
 			}
 		}
 	}
 }
 
-void UShipMovementComponent::Move(FVector2D Direction)
+void UShipMovementComponent::Move(FVector2D Direction, float Throttle)
 {
 	Direction = Direction.GetSafeNormal();
 	if (ThrustersForDirection.Contains(Direction))
 	{
 		for (UBaseThrusterPart* Thruster : ThrustersForDirection.FindRef(Direction))
 		{
-			Thruster->Thrust();
+			Thruster->Thrust(Throttle);
 		}
 	}
 	else
@@ -96,7 +96,7 @@ void UShipMovementComponent::Move(FVector2D Direction)
 		{
 			if (FVector2D::DotProduct(FVector2D(1, 0).GetRotated(Thruster->GetThrustRotation()), Direction) >= .5)
 			{
-				Thruster->Thrust();
+				Thruster->Thrust(Throttle);
 				ThrustersToAdd.Emplace(Thruster);
 			}
 		}
@@ -108,4 +108,9 @@ void UShipMovementComponent::Move(FVector2D Direction)
 float UShipMovementComponent::GetLookDirectionTollerance()
 {
 	return LookDirectionTollerance;
+}
+
+float UShipMovementComponent::GetDecelerationPredictionTime()
+{
+	return DecelerationPredictionTime;
 }

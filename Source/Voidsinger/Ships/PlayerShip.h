@@ -124,12 +124,6 @@ public:
 	UFUNCTION()
 	void MoveLeftReleasedCall();
 
-	/*------Movement-----*\
-	\*-------------------*/
-
-	UFUNCTION()
-	void AddInputVector(FVector2D Vector);
-
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||
@@ -180,9 +174,7 @@ protected:
 
 	/*-----Movement------*\
 	\*-------------------*/
-private:
-	UPROPERTY()
-	FVector2D InputVector;
+
 
 
 	/*-------Misc.-------*\
