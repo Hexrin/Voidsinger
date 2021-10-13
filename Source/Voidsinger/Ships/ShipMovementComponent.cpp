@@ -37,7 +37,11 @@ void UShipMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 void UShipMovementComponent::UpdateThrusters()
 {
 	Thrusters.Empty();
+	ThrustersForDirection.Empty();
+	ThrustersForRotation.Empty();
+
 	UPartGridComponent* PartGrid = Cast<ABaseShip>(GetOwner())->PartGrid;
+
 	for (auto& Val : PartGrid->GetPartGrid())
 	{
 		UBaseThrusterPart* Thruster = Cast<UBaseThrusterPart>(Val.Value.Part);
@@ -50,14 +54,26 @@ void UShipMovementComponent::UpdateThrusters()
 
 void UShipMovementComponent::RotateShip(bool Clockwise)
 {
-	
-	for (UBaseThrusterPart* Thruster : Thrusters)
+	if (ThrustersForRotation.Contains(Clockwise))
 	{
-		FVector2D ThrustDirection = FVector2D(1, 0).GetRotated(+ Thruster->GetThrustRotation());
-		FVector2D ThrusterLocation = FVector2D(Thruster->GetThrustRelativeLocation()).GetSafeNormal();
-		if ((FVector2D::CrossProduct(ThrustDirection, ThrusterLocation) > 0) ^ Clockwise)
+		for (UBaseThrusterPart* Thruster : ThrustersForRotation.FindRef(Clockwise))
 		{
 			Thruster->Thrust();
+		}
+	}
+	else
+	{
+		TSet<UBaseThrusterPart*> ThrustersToAdd = TSet<UBaseThrusterPart*>();
+
+		for (UBaseThrusterPart* Thruster : Thrusters)
+		{
+			FVector2D ThrustDirection = FVector2D(1, 0).GetRotated(+Thruster->GetThrustRotation());
+			FVector2D ThrusterLocation = FVector2D(Thruster->GetThrustRelativeLocation()).GetSafeNormal();
+			if ((FVector2D::CrossProduct(ThrustDirection, ThrusterLocation) > 0) ^ Clockwise)
+			{
+				Thruster->Thrust();
+				ThrustersToAdd.Emplace(Thruster);
+			}
 		}
 	}
 }
@@ -65,11 +81,26 @@ void UShipMovementComponent::RotateShip(bool Clockwise)
 void UShipMovementComponent::Move(FVector2D Direction)
 {
 	Direction = Direction.GetSafeNormal();
-	for (UBaseThrusterPart* Thruster : Thrusters)
+	if (ThrustersForDirection.Contains(Direction))
 	{
-		//if (FVector2D::DotProduct(FVector2D(1, 0).GetRotated(Thruster->GetThrustRotation()), Direction) >= .5)
-		//{
+		for (UBaseThrusterPart* Thruster : ThrustersForDirection.FindRef(Direction))
+		{
 			Thruster->Thrust();
-		//}
+		}
+	}
+	else
+	{
+		TSet<UBaseThrusterPart*> ThrustersToAdd = TSet<UBaseThrusterPart*>();
+
+		for (UBaseThrusterPart* Thruster : Thrusters)
+		{
+			if (FVector2D::DotProduct(FVector2D(1, 0).GetRotated(Thruster->GetThrustRotation()), Direction) >= .5)
+			{
+				Thruster->Thrust();
+				ThrustersToAdd.Emplace(Thruster);
+			}
+		}
+
+		ThrustersForDirection.Emplace(Direction, ThrustersToAdd);
 	}
 }

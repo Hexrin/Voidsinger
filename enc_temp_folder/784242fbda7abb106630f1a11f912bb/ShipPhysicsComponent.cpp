@@ -41,7 +41,7 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	FTransform NewTransform = FTransform(FRotator(0, FMath::RadiansToDegrees(AngularVelocity) * DeltaTime + Ship->GetActorRotation().Yaw, 0), (FVector(LinearVelocity, 0) * DeltaTime) + Ship->GetActorTransform().GetTranslation(), FVector(1));
 	//UE_LOG(LogTemp, Warning, TEXT("\n\tNewTransform: %s"), *NewTransform.ToString());
 
-	if (!FMath::IsNearlyEqual(LinearVelocity.SizeSquared(), 0, MinLinearVelocity) || !FMath::IsNearlyEqual(AngularVelocity, 0, MinAngularVelocity))
+	if (!FMath::IsNearlyEqual(LinearVelocity.SizeSquared(), 0, 0.01f) || !FMath::IsNearlyEqual(AngularVelocity, 0, 0.01f))
 	{
 		if (!UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, PrimComps, NewTransform))
 		{
