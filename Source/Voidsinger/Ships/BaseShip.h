@@ -9,7 +9,7 @@
 #include "ShipPhysicsComponent.h"
 #include "ShipMovementComponent.h"
 #include "Voidsinger/Voidsongs/BaseVoidsong.h"
-#include "Components/SceneComponent.h"
+#include "ProceduralMeshComponent.h"
 #include "BaseShip.generated.h"
 
 class UBaseResourceSystem;
@@ -72,7 +72,7 @@ public:
 	TArray<UBaseResourceSystem*> ResourceSystems;
 
 	UPROPERTY(VisibleAnywhere)
-	class USceneComponent* SceneRoot;
+	class UProceduralMeshComponent* MeshComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UPartGridComponent* PartGrid;
