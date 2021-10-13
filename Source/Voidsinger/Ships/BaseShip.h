@@ -91,7 +91,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FLaserDelegate OnLaserDelegate;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FSavePartInfo> DefaultParts;
 
 //Creating ship stuff
