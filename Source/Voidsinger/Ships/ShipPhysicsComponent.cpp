@@ -32,36 +32,47 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	LinearVelocity + FMath::Clamp( LinearVelocity + LinearAcceleration * DeltaTime, FVector2D(-1* MaxLinearVelocity), FVector2D(MaxLinearVelocity));
-	AngularVelocity + FMath::Clamp(AngularVelocity + AngularAcceleration * DeltaTime, -1 * MaxAngularVelocity, MaxAngularVelocity);
+	SetLinearVelocity(LinearVelocity + LinearAcceleration * DeltaTime);
+	SetAngularVelocity(AngularVelocity + AngularAcceleration * DeltaTime);
 
 	DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation(), FVector(LinearVelocity, 0) + GetOwner()->GetActorLocation(), 5, DebugColor, false, -1.0F, 0U, 1.f);
 
 	FHitResult Result = FHitResult();
-	FTransform NewTransform = (FTransform(FRotator(0, AngularVelocity * DeltaTime + Ship->GetActorTransform().Rotator().Yaw, 0), (FVector(LinearVelocity, 0) * DeltaTime) + Ship->GetActorTransform().GetTranslation(), FVector(1)));
+	FTransform NewTransform = FTransform(FRotator(0, FMath::RadiansToDegrees(AngularVelocity) * DeltaTime + Ship->GetActorRotation().Yaw, 0), (FVector(LinearVelocity, 0) * DeltaTime) + Ship->GetActorTransform().GetTranslation(), FVector(1));
 	//UE_LOG(LogTemp, Warning, TEXT("\n\tNewTransform: %s"), *NewTransform.ToString());
 
-	if (!FMath::IsNearlyEqual(LinearVelocity.SizeSquared(), 0, 0.01f), !FMath::IsNearlyEqual(AngularVelocity, 0, 0.01f))
+	if (!FMath::IsNearlyEqual(LinearVelocity.SizeSquared(), 0, 0.01f) || !FMath::IsNearlyEqual(AngularVelocity, 0, 0.01f))
 	{
 		if (!UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, PrimComps, NewTransform))
 		{
-			ABaseShip* OtherShip = Cast<ABaseShip>(Result.GetActor());
-			if (IsValid(OtherShip))
+			FVector2D RelativeHitLocation = FVector2D(Result.Location - GetOwner()->GetActorLocation());
+
+			FVector2D ImpactNormal = FVector2D(Result.Normal);
+			ImpactNormal.Normalize();
+
+			if (FVector2D::DotProduct(GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) < 0)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("%s Has collided"), *GetReadableName());
+				ABaseShip* OtherShip = Cast<ABaseShip>(Result.GetActor());
 
-				UShipPhysicsComponent* OtherPhysicsComponent = OtherShip->PhysicsComponent;
-				FVector2D RelativeForce = OtherPhysicsComponent->GetVelocityOfPoint(FVector2D(Result.Location - OtherShip->GetActorLocation()) - GetVelocityOfPoint(FVector2D(Result.Location - GetOwner()->GetActorLocation());
+				float CollisionImpulseFactor;
 
-				if (FVector2D::DotProduct(FVector2D(Result.Normal), RelativeForce) > 0)
+				if (IsValid(OtherShip))
 				{
-					AddForce(FVector2D(Result.Location - GetOwner()->GetActorLocation()), (0.5 * RelativeForce * OtherPhysicsComponent->GetMass()) / (FVector::Dist2D(Result.Location, Result.TraceEnd)));
-					OtherPhysicsComponent->AddForce(FVector2D(Result.Location - OtherShip->GetActorLocation()), (-0.5 * RelativeForce * GetMass()) / (FVector::Dist2D(Result.Location, Result.TraceEnd)));
-				}			
-			}
-			else
-			{
-				AddForce(FVector2D(Result.Location - GetOwner()->GetActorLocation()), FVector2D(FMath::GetReflectionVector(FVector(GetVelocity(), 0), Result.Normal)));
+					UShipPhysicsComponent* OtherPhysicsComponent = OtherShip->PhysicsComponent;
+					FVector2D OtherRelativeHitLocation = FVector2D(Result.Location - OtherShip->GetActorLocation());
+
+					CollisionImpulseFactor = FVector2D::DotProduct(-1 * (1 + CollisionElasticity) * GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) /
+						(1 / GetMass() + 1 / OtherPhysicsComponent->GetMass() + FMath::Square(FVector2D::CrossProduct(RelativeHitLocation, ImpactNormal)) / GetMomentOfInertia() + FMath::Square(FVector2D::CrossProduct(OtherRelativeHitLocation, ImpactNormal)) / OtherPhysicsComponent->GetMomentOfInertia());
+
+					OtherPhysicsComponent->AddImpulse(-1 * CollisionImpulseFactor * ImpactNormal, OtherRelativeHitLocation);
+				}
+				else
+				{
+					CollisionImpulseFactor = FVector2D::DotProduct(-1 * (1 + CollisionElasticity) * GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) /
+						(1 / GetMass() + FMath::Square(FVector2D::CrossProduct(RelativeHitLocation, ImpactNormal)) / GetMomentOfInertia());
+				}
+
+				AddImpulse(CollisionImpulseFactor * ImpactNormal, RelativeHitLocation);
 			}
 		}
 	}
@@ -78,26 +89,36 @@ void UShipPhysicsComponent::AddForce(FVector2D RelativeForceLocation, FVector2D 
 	if (!Force.IsZero())
 	{
 		RelativeForceLocation = RelativeForceLocation.GetRotated(GetOwner()->GetActorRotation().Yaw);
-		DrawDebugDirectionalArrow(GetWorld(), FVector(RelativeForceLocation, 0) + GetOwner()->GetActorLocation(), FVector(RelativeForceLocation + (Force / Mass), 0) + GetOwner()->GetActorLocation(), 5, DebugColor, true, -1.0F, 0U, 0.5f);
+		DrawDebugDirectionalArrow(GetWorld(), FVector(RelativeForceLocation, 0) + GetOwner()->GetActorLocation(), FVector(RelativeForceLocation + (Force / Mass), 0) + GetOwner()->GetActorLocation(), 5, DebugColor, true, -1.0F, 0U, 0.1f);
 		UE_LOG(LogTemp, Warning, TEXT("Add Linear Acceleration to %s: %s"), *GetReadableName(), *(Force / Mass).ToString());
 		LinearAcceleration += Force / Mass;
-		AngularAcceleration += FMath::RadiansToDegrees((RelativeForceLocation.X * Force.Y - RelativeForceLocation.Y * Force.X) / MomentOfInertia);
+		AngularAcceleration += ((RelativeForceLocation.X * Force.Y - RelativeForceLocation.Y * Force.X) / GetMomentOfInertia());
 	}
+}
+
+void UShipPhysicsComponent::AddImpulse(FVector2D Impulse, FVector2D RelativeImpulseLocation)
+{
+	SetLinearVelocity(LinearVelocity + Impulse / GetMass());
+	SetAngularVelocity(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation, Impulse) / GetMomentOfInertia());
 }
 
 FVector2D UShipPhysicsComponent::GetVelocity()
 {
 	return LinearVelocity;
 }
-FVector2D UShipPhysicsComponent::GetVelocityOfPoint(FVector2D RelativePointLocation)
+void UShipPhysicsComponent::SetLinearVelocity(FVector2D NewVelocity)
 {
-	float AngularVelocity = FMath::DegreesToRadians(GetAngularVelocity());
-	return GetVelocity() + FVector2D(-1 * AngularVelocity * RelativePointLocation.Y, AngularVelocity * RelativePointLocation.X);
+	LinearVelocity = FMath::Clamp(NewVelocity, FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
 }
 
-void UShipPhysicsComponent::SetVelocityDirectly(FVector2D NewVelocity)
+void UShipPhysicsComponent::SetAngularVelocity(float NewVelocity)
 {
-	LinearVelocity = NewVelocity;
+	AngularVelocity = FMath::Clamp(NewVelocity, -1 * MaxAngularVelocity, MaxAngularVelocity);
+}
+FVector2D UShipPhysicsComponent::GetVelocityOfPoint(FVector2D RelativePointLocation)
+{
+	float AngularVelocityRadians = FMath::DegreesToRadians(GetAngularVelocity());
+	return GetVelocity() + FVector2D(-1 * AngularVelocityRadians * RelativePointLocation.Y, AngularVelocityRadians * RelativePointLocation.X);
 }
 
 void UShipPhysicsComponent::UpdateMassCalculations()
@@ -141,3 +162,9 @@ float UShipPhysicsComponent::GetMass()
 {
 	return Mass;
 }
+
+float UShipPhysicsComponent::GetMomentOfInertia()
+{
+	return MomentOfInertia * 2000;
+}
+////////// CHAGE THIS BACK TO JUST return MomentOfInertia; (when done testing)\\\\\\\\\\\\\\

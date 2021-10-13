@@ -32,11 +32,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddForce(FVector2D ForceLocation, FVector2D Force);
 
+	UFUNCTION(BlueprintCallable)
+	void AddImpulse(FVector2D Impulse, FVector2D RelativeImpulseLocation);
+
 	UFUNCTION(BlueprintPure)
 	FVector2D GetVelocity();
 
-	UFUNCTION()
-	void SetVelocityDirectly(FVector2D NewVelocity);
+	UFUNCTION(BlueprintCallable)
+	void SetLinearVelocity(FVector2D NewVelocity);
+
+	UFUNCTION(BlueprintCallable)
+	void SetAngularVelocity(float NewVelocity);
 
 	UFUNCTION()
 	void UpdateMassCalculations();
@@ -46,6 +52,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	float GetMass();
+
+	UFUNCTION(BlueprintPure)
+	float GetMomentOfInertia();
 
 	UFUNCTION(BlueprintPure)
 	FVector2D GetVelocityOfPoint(FVector2D RelativePointLocation);
@@ -60,6 +69,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float MaxAngularVelocity{ 10000 };
+
+	UPROPERTY(EditAnywhere)
+	float CollisionElasticity{ 1 };
 
 	UPROPERTY()
 	float Mass;
@@ -87,4 +99,6 @@ private:
 
 	UPROPERTY()
 	FColor DebugColor;
+
+	
 };
