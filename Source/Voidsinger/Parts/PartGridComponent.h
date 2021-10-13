@@ -15,6 +15,7 @@
 
 class UBasePart;
 class UBaseThrusterPart;
+class UCorePart;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
 class VOIDSINGER_API UPartGridComponent : public UActorComponent
@@ -140,6 +141,9 @@ private:
 
 	UPROPERTY()
 	float TimesSinceHeatTick;
+
+	UPROPERTY()
+	UCorePart* CorePart;
 
 	UFUNCTION()
 	bool const CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape);

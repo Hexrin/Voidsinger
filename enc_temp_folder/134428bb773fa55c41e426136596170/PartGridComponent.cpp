@@ -277,13 +277,13 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 									RotatedVector.Normalize();
 
 									//Debug stuff
-									/*UE_LOG(LogTemp, Warning, TEXT("velocity from rotation magnitude %f"), VelocityFromRotationMagnitude);
+									UE_LOG(LogTemp, Warning, TEXT("velocity from rotation magnitude %f"), VelocityFromRotationMagnitude);
 									UE_LOG(LogTemp, Warning, TEXT("angular velocity of the ship %f"), Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity());
 									UE_LOG(LogTemp, Warning, TEXT("radius %f"), Radius);
 									DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Red, true);
 									DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0), 5, FColor::Blue, true);
 									DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0) + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Green, true);
-									DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + FVector(VectorBetween, 0), 5, FColor::Yellow, true);*/
+									DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + FVector(VectorBetween, 0), 5, FColor::Yellow, true);
 
 
 									NewShip->PhysicsComponent->AddImpulse((RotatedVector * VelocityFromRotationMagnitude) + Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), NewShip->PartGrid->GetCenterOfMass());
