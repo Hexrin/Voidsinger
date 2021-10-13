@@ -165,6 +165,6 @@ float UShipPhysicsComponent::GetMass()
 
 float UShipPhysicsComponent::GetMomentOfInertia()
 {
-	return MomentOfInertia * 2000;
+	return MomentOfInertia;
 }
 ////////// CHAGE THIS BACK TO JUST return MomentOfInertia; (when done testing)\\\\\\\\\\\\\\

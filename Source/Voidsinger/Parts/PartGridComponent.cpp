@@ -764,7 +764,7 @@ const float UPartGridComponent::GetMomentOfInertia()
 	for (auto& Part : PartGrid)
 	{
 		float PartMass = Part.Value.Part->GetMass();
-		ReturnValue += PartMass * ((1 / 12) + (FVector2D(Part.Value.Part->GetPartGridLocation()) - CenterOfMass).SizeSquared());
+		ReturnValue += (1 / 12) + PartMass * (FVector2D(Part.Value.Part->GetPartRelativeLocation())).SizeSquared();
 	}
 	return ReturnValue;
 }
