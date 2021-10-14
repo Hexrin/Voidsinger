@@ -143,7 +143,6 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			return true;
 		}
 		Part->DestroyPart();
-		UE_LOG(LogTemp, Warning, TEXT("??????"))
 		return false;
 	}
 	else
@@ -179,7 +178,6 @@ bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
 //Remove a single Pixel from the PartGrid. Returns true if a pixel was removed
 bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Location %s"), *Location.ToString())
 	if (PartGrid.Contains(Location))
 	{
 		//Remove from grid
@@ -561,25 +559,36 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 		DestroyPixel(i, true, true, WorldLocation, ExplosionRadius);
 	}
 
-	//for (float i = 0; i <= 360; i += 30)
-	//{
-	//	FVector EndLocation = FVector(0, 0, 0);
-	//	EndLocation.X = (ExplosionRadius + GridScale) * cos(UKismetMathLibrary::DegreesToRadians(i)) + WorldLocation.X;
-	//	EndLocation.Y = (ExplosionRadius + GridScale) * sin(UKismetMathLibrary::DegreesToRadians(i)) + WorldLocation.Y;
+	for (float i = 0; i <= 360; i += 30)
+	{
+		FVector EndLocation = FVector(0, 0, 0);
+		EndLocation.X = (ExplosionRadius + GridScale) * cos(UKismetMathLibrary::DegreesToRadians(i)) + WorldLocation.X;
+		EndLocation.Y = (ExplosionRadius + GridScale) * sin(UKismetMathLibrary::DegreesToRadians(i)) + WorldLocation.Y;
 
-	//	FHitResult OutHit;
+		FHitResult OutHit;
 
-	//	UE_LOG(LogTemp, Warning, TEXT("End Location %s"), *EndLocation.ToString())
-	//	DrawDebugDirectionalArrow(GetOwner()->GetWorld(), WorldLocation, EndLocation, 5, FColor::Red, true);
-	//	GetOwner()->GetWorld()->LineTraceSingleByChannel(OutHit, WorldLocation, EndLocation, ECollisionChannel::ECC_WorldDynamic);
+		UE_LOG(LogTemp, Warning, TEXT("End Location %s"), *EndLocation.ToString())
+		//DrawDebugDirectionalArrow(GetOwner()->GetWorld(), WorldLocation, EndLocation, 5, FColor::Red, true);
 
-	//	if (IsValid(Cast<ABaseShip>(OutHit.GetActor())))
-	//	{
-	//		UE_LOG(LogTemp, Warning, TEXT("Impulse %s"), *FVector2D(EndLocation.X - WorldLocation.X, EndLocation.Y - WorldLocation.Y).ToString())
-	//		Cast<ABaseShip>(OutHit.GetActor())->PhysicsComponent->AddImpulse(FVector2D(EndLocation.X - WorldLocation.X, EndLocation.Y - WorldLocation.Y) * 2, FVector2D(WorldLocation));
-	//	}
-	//}
-	//FIntPoint IntRelativeLoc = FVector2D(FloatRelativeLoc).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint());
+		const FName TraceTag("MyTraceTag");
+
+		GetOwner()->GetWorld()->DebugDrawTraceTag = TraceTag;
+
+		FCollisionQueryParams CollisionParams;
+		CollisionParams.TraceTag = TraceTag;
+
+		GetOwner()->GetWorld()->LineTraceSingleByChannel(OutHit, WorldLocation, EndLocation, ECollisionChannel::ECC_WorldDynamic, CollisionParams);
+
+		if (OutHit.bBlockingHit)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("There is a blocking hit"));
+		}
+		if (IsValid(Cast<ABaseShip>(OutHit.GetActor())))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Impulse %s"), *FVector2D(EndLocation.X - WorldLocation.X, EndLocation.Y - WorldLocation.Y).ToString())
+			Cast<ABaseShip>(OutHit.GetActor())->PhysicsComponent->AddImpulse(FVector2D(EndLocation.X - WorldLocation.X, EndLocation.Y - WorldLocation.Y) * 2, FVector2D(WorldLocation));
+		}
+	}
 }
 
 bool UPartGridComponent::BoxContainsLocation(FVector2D TopLeft, FVector2D BottomRight, FVector2D Location)
