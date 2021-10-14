@@ -44,9 +44,14 @@ public:
 
 	//---Destruction---
 
+	//Destroys a pixel at a given location.
 	UFUNCTION(BlueprintCallable)
-	bool DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart, bool CheckForBreaks = true);
-	bool DestroyPixel(FIntPoint Location, bool CheckForBreaks = true);
+	bool DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart, bool CheckForBreaks = true, bool FromExplosion = false, FVector ExplosionLocation = FVector(0, 0, 0), float ExplosionRadius = 0.0f);
+	bool DestroyPixel(FIntPoint Location, bool CheckForBreaks = true, bool FromExplosion = false, FVector ExplosionLocation = FVector(0, 0, 0), float ExplosionRadius = 0.0f);
+
+	//Removes the given shape from the part grid and create a new base ship with them.
+	UFUNCTION()
+	void RemoveDisconnectedShape(TArray<FIntPoint> Shape, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius);
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply = 1);

@@ -25,7 +25,7 @@ bool UBaseResourceSystem::DrawResources(float Amount)
 	}
 	else
 	{
-		ResourceAmount -= 0;
+		ResourceAmount -= Amount;
 		return true;
 	}
 }

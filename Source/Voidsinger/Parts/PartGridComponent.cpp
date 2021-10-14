@@ -176,7 +176,7 @@ bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
 }
 
 //Remove a single Pixel from the PartGrid. Returns true if a pixel was removed
-bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
+bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius)
 {
 	if (PartGrid.Contains(Location))
 	{
@@ -229,69 +229,9 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 							{
 								TArray<FIntPoint> Temp;
 								Temp.Emplace(i);
-								TSet<UBasePart*> PartsRemoved;
 								TArray<FIntPoint> ConnectedShape = UFunctionLibrary::FindConnectedShape(Temp, PartGrid);
 
-
-								for (auto& j : ConnectedShape)
-								{
-									PartsRemoved.Emplace(PartGrid.Find(j)->Part);
-								}
-
-								//Create a new ship with these parts
-								if (!PartsRemoved.IsEmpty())
-								{
-
-									ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>((GetOwner()->GetActorLocation(), FQuat(), FActorSpawnParameters()));
-
-									for (auto& j : PartsRemoved)
-									{
-										TArray<FIntPoint> PartialPartShape;
-										for (auto& k : j->GetShape())
-										{
-											if (ConnectedShape.Contains(k + j->GetPartGridLocation()))
-											{
-												PartialPartShape.Emplace(k);
-												DestroyPixel(k + j->GetPartGridLocation(), false);
-											}
-										}
-
-										NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetPartGridLocation(), j->GetRotation());
-									}
-
-
-									FVector NewLocation = GetOwner()->GetActorLocation() + FVector(NewShip->PartGrid->GetCenterOfMass(), 0) - FVector(Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass(), 0);
-									FVector RotateLocation = GetOwner()->GetActorLocation();
-
-									NewLocation = RotateLocation - GetOwner()->GetActorRotation().RotateVector(RotateLocation - NewLocation);
-
-
-									NewShip->SetActorLocation(NewLocation);
-									NewShip->SetActorRotation(GetOwner()->GetActorRotation());
-
-									float Radius = UKismetMathLibrary::Sqrt(FMath::Square((NewShip->PartGrid->GetCenterOfMass().X + NewShip->GetActorLocation().X) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X + Cast<AActor>(GetOwner())->GetActorLocation().X)) + FMath::Square((NewShip->PartGrid->GetCenterOfMass().Y + NewShip->GetActorLocation().Y) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y + Cast<AActor>(GetOwner())->GetActorLocation().Y)));
-									float VelocityFromRotationMagnitude = Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity() * Radius;
-									FVector2D VectorBetween = NewShip->PartGrid->GetCenterOfMass() + FVector2D(NewShip->GetActorLocation()) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass() + FVector2D(Cast<AActor>(GetOwner())->GetActorLocation()));
-									FVector2D RotatedVector = VectorBetween.GetRotated(90);
-
-									RotatedVector.Normalize();
-
-									//Debug stuff
-									/*UE_LOG(LogTemp, Warning, TEXT("velocity from rotation magnitude %f"), VelocityFromRotationMagnitude);
-									UE_LOG(LogTemp, Warning, TEXT("angular velocity of the ship %f"), Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity());
-									UE_LOG(LogTemp, Warning, TEXT("radius %f"), Radius);
-									DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Red, true);
-									DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0), 5, FColor::Blue, true);
-									DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0) + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Green, true);
-									DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + FVector(VectorBetween, 0), 5, FColor::Yellow, true);*/
-
-
-									NewShip->PhysicsComponent->AddImpulse((RotatedVector * VelocityFromRotationMagnitude) + Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), NewShip->PartGrid->GetCenterOfMass());
-								}
-								else
-								{
-									UE_LOG(LogTemp, Error, TEXT("I don't think this should ever happen. Ask Mabel about weird part grid component thing"));
-								}
+								RemoveDisconnectedShape(ConnectedShape, FromExplosion, ExplosionLocation, ExplosionRadius);
 							}
 						}
 					}
@@ -311,68 +251,10 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 								//also not be connected.
 								TArray<FIntPoint> Temp;
 								Temp.Emplace(NumbersFound[i + 1]);
-								TSet<UBasePart*> PartsRemoved;
 								TArray<FIntPoint> ConnectedShape = UFunctionLibrary::FindConnectedShape(Temp, PartGrid);
 
-								for (auto& j : ConnectedShape)
-								{
-									PartsRemoved.Emplace(PartGrid.Find(j)->Part);
-								}
+								RemoveDisconnectedShape(ConnectedShape, FromExplosion, ExplosionLocation, ExplosionRadius);
 
-								//Create a new ship with these parts
-								if (!PartsRemoved.IsEmpty())
-								{
-
-									ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>((GetOwner()->GetActorLocation(), FQuat(), FActorSpawnParameters()));
-
-									for (auto& j : PartsRemoved)
-									{
-										TArray<FIntPoint> PartialPartShape;
-										for (auto& k : j->GetShape())
-										{
-											if (ConnectedShape.Contains(k + j->GetPartGridLocation()))
-											{
-												PartialPartShape.Emplace(k);
-												DestroyPixel(k + j->GetPartGridLocation(), false);
-											}
-										}
-
-										NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetPartGridLocation(), j->GetRotation());
-									}
-
-
-									FVector NewLocation = GetOwner()->GetActorLocation() + FVector(NewShip->PartGrid->GetCenterOfMass(), 0) - FVector(Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass(), 0);
-									FVector RotateLocation = GetOwner()->GetActorLocation();
-
-									NewLocation = RotateLocation - GetOwner()->GetActorRotation().RotateVector(RotateLocation - NewLocation);
-
-
-									NewShip->SetActorLocation(NewLocation);
-									NewShip->SetActorRotation(GetOwner()->GetActorRotation());
-
-									float Radius = UKismetMathLibrary::Sqrt(FMath::Square((NewShip->PartGrid->GetCenterOfMass().X + NewShip->GetActorLocation().X) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X + Cast<AActor>(GetOwner())->GetActorLocation().X)) + FMath::Square((NewShip->PartGrid->GetCenterOfMass().Y + NewShip->GetActorLocation().Y) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y + Cast<AActor>(GetOwner())->GetActorLocation().Y)));
-									float VelocityFromRotationMagnitude = Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity() * Radius;
-									FVector2D VectorBetween = NewShip->PartGrid->GetCenterOfMass() + FVector2D(NewShip->GetActorLocation()) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass() + FVector2D(Cast<AActor>(GetOwner())->GetActorLocation()));
-									FVector2D RotatedVector = VectorBetween.GetRotated(90);
-
-									RotatedVector.Normalize();
-
-									//Debug stuff
-									/*UE_LOG(LogTemp, Warning, TEXT("velocity from rotation magnitude %f"), VelocityFromRotationMagnitude);
-									UE_LOG(LogTemp, Warning, TEXT("angular velocity of the ship %f"), Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity());
-									UE_LOG(LogTemp, Warning, TEXT("radius %f"), Radius);
-									DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Red, true);
-									DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0), 5, FColor::Blue, true);
-									DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0) + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Green, true);
-									DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + FVector(VectorBetween, 0), 5, FColor::Yellow, true);*/
-
-
-									NewShip->PhysicsComponent->AddImpulse((RotatedVector * VelocityFromRotationMagnitude) + Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), NewShip->PartGrid->GetCenterOfMass());
-								}
-								else
-								{
-									UE_LOG(LogTemp, Error, TEXT("I don't think this should ever happen. Ask Mabel about weird part grid component thing"));
-								}
 							}
 						}
 					}
@@ -387,6 +269,75 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 		return false;
 	}
 
+}
+
+void UPartGridComponent::RemoveDisconnectedShape(TArray<FIntPoint> ConnectedShape, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius)
+{
+	TSet<UBasePart*> PartsRemoved;
+
+	for (auto& j : ConnectedShape)
+	{
+		PartsRemoved.Emplace(PartGrid.Find(j)->Part);
+	}
+
+	//Create a new ship with these parts
+	if (!PartsRemoved.IsEmpty())
+	{
+
+		ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>((GetOwner()->GetActorLocation(), FQuat(), FActorSpawnParameters()));
+
+		for (auto& j : PartsRemoved)
+		{
+			TArray<FIntPoint> PartialPartShape;
+			for (auto& k : j->GetShape())
+			{
+				if (ConnectedShape.Contains(k + j->GetPartGridLocation()))
+				{
+					PartialPartShape.Emplace(k);
+					DestroyPixel(k + j->GetPartGridLocation(), false);
+				}
+			}
+
+			NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetPartGridLocation(), j->GetRotation());
+		}
+
+
+		FVector NewLocation = GetOwner()->GetActorLocation() + FVector(NewShip->PartGrid->GetCenterOfMass(), 0) - FVector(Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass(), 0);
+		FVector RotateLocation = GetOwner()->GetActorLocation();
+
+		NewLocation = RotateLocation - GetOwner()->GetActorRotation().RotateVector(RotateLocation - NewLocation);
+
+
+		NewShip->SetActorLocation(NewLocation);
+		NewShip->SetActorRotation(GetOwner()->GetActorRotation());
+
+		float Radius = UKismetMathLibrary::Sqrt(FMath::Square((NewShip->PartGrid->GetCenterOfMass().X + NewShip->GetActorLocation().X) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X + Cast<AActor>(GetOwner())->GetActorLocation().X)) + FMath::Square((NewShip->PartGrid->GetCenterOfMass().Y + NewShip->GetActorLocation().Y) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y + Cast<AActor>(GetOwner())->GetActorLocation().Y)));
+		float VelocityFromRotationMagnitude = Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity() * Radius;
+		FVector2D VectorBetween = NewShip->PartGrid->GetCenterOfMass() + FVector2D(NewShip->GetActorLocation()) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass() + FVector2D(Cast<AActor>(GetOwner())->GetActorLocation()));
+		FVector2D RotatedVector = VectorBetween.GetRotated(90);
+
+		RotatedVector.Normalize();
+
+		//Debug stuff
+		/*UE_LOG(LogTemp, Warning, TEXT("velocity from rotation magnitude %f"), VelocityFromRotationMagnitude);
+		UE_LOG(LogTemp, Warning, TEXT("angular velocity of the ship %f"), Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity());
+		UE_LOG(LogTemp, Warning, TEXT("radius %f"), Radius);
+		DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Red, true);
+		DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0), 5, FColor::Blue, true);
+		DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0) + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Green, true);
+		DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + FVector(VectorBetween, 0), 5, FColor::Yellow, true);*/
+
+		if (FromExplosion)
+		{
+			NewShip->PartGrid->ExplodeAtLocation(ExplosionLocation, ExplosionRadius);
+		}
+
+		NewShip->PhysicsComponent->AddImpulse((RotatedVector * VelocityFromRotationMagnitude) + Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), NewShip->PartGrid->GetCenterOfMass());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("I don't think this should ever happen. Ask Mabel about weird part grid component thing"));
+	}
 }
 
 void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)
@@ -413,6 +364,7 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 	float CheckY = -ExplosionRadius;
 	FIntPoint CheckGridLocation;
 	TArray<FIntPoint> LocationsToBeDestroyed;
+
 	//DrawDebugPoint(GetWorld(), WorldLocation, ExplosionRadius * 50, FColor::Red, false, 2.0F);
 	
 	//UE_LOG(LogTemp, Warning, TEXT("Explosion %f"), ExplosionRadius);
@@ -604,9 +556,16 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 	}
 	for (auto& i : LocationsToBeDestroyed)
 	{
-		DestroyPixel(i);
+		DestroyPixel(i, true, true, WorldLocation, ExplosionRadius);
 	}
 
+	for (float i = 0; i <= 360; i += 30)
+	{
+		FVector EndLocation;
+		UKismetMathLibrary::DegreesToRadians(i);
+		FHitResult OutHit;
+		//GetOwner()->GetWorld()->LineTraceSingleByChannel(OutHit, WorldLocation, );
+	}
 	//FIntPoint IntRelativeLoc = FVector2D(FloatRelativeLoc).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint());
 }
 
@@ -768,7 +727,7 @@ void UPartGridComponent::DistrubuteHeat()
 	}
 }
 
-bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart, bool CheckForBreaks)
+bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart, bool CheckForBreaks, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius)
 {
 	//Check if pixel is valid
 	if (PartGrid.Contains(Location))
@@ -776,7 +735,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& Dama
 		//Remove from grid
 		DamagedPart = PartGrid.FindRef(Location).Part;
 	}
-	return DestroyPixel(Location, CheckForBreaks);
+	return DestroyPixel(Location, CheckForBreaks, FromExplosion, ExplosionLocation, ExplosionRadius);
 }
 
 void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)

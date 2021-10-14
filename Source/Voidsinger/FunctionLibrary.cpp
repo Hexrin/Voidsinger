@@ -211,8 +211,6 @@ bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResul
 
 void UFunctionLibrary::ExplodeAtWorldLocation(const UObject* WorldContextObject, FVector WorldLocation, float ExplosionRadius)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Explodd Globally"));
-	UE_LOG(LogTemp, Warning, TEXT("Explosion radius %f"), ExplosionRadius);
 	TArray <TEnumAsByte<EObjectTypeQuery>> ObjectTypeArray;
 	TArray<AActor*> OutActors;
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
