@@ -559,7 +559,7 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 		DestroyPixel(i, true, true, WorldLocation, ExplosionRadius);
 	}
 
-	for (float i = 0; i <= 360; i += 30)
+	for (float i = 0; i < 360; i += 30)
 	{
 		FVector EndLocation = FVector(0, 0, 0);
 		EndLocation.X = (ExplosionRadius + GridScale) * cos(UKismetMathLibrary::DegreesToRadians(i)) + WorldLocation.X;
@@ -567,22 +567,19 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 
 		FHitResult OutHit;
 
-		UE_LOG(LogTemp, Warning, TEXT("End Location %s"), *EndLocation.ToString())
+		//UE_LOG(LogTemp, Warning, TEXT("End Location %s"), *EndLocation.ToString())
 		//DrawDebugDirectionalArrow(GetOwner()->GetWorld(), WorldLocation, EndLocation, 5, FColor::Red, true);
 
-		const FName TraceTag("MyTraceTag");
-
-		GetOwner()->GetWorld()->DebugDrawTraceTag = TraceTag;
-
 		FCollisionQueryParams CollisionParams;
-		CollisionParams.TraceTag = TraceTag;
+
+		//Debug
+		/*const FName TraceTag("MyTraceTag");
+		GetOwner()->GetWorld()->DebugDrawTraceTag = TraceTag;
+		CollisionParams.TraceTag = TraceTag;*/
+
 
 		GetOwner()->GetWorld()->LineTraceSingleByChannel(OutHit, WorldLocation, EndLocation, ECollisionChannel::ECC_WorldDynamic, CollisionParams);
 
-		if (OutHit.bBlockingHit)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("There is a blocking hit"));
-		}
 		if (IsValid(Cast<ABaseShip>(OutHit.GetActor())))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Impulse %s"), *FVector2D(EndLocation.X - WorldLocation.X, EndLocation.Y - WorldLocation.Y).ToString())
