@@ -372,17 +372,11 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 	//UE_LOG(LogTemp, Warning, TEXT("Explosion %f"), ExplosionRadius);
 	//UE_LOG(LogTemp, Warning, TEXT("CheckY %f"), CheckY);
 
-	while (ExplosionRadius > CheckY)
+	while (ExplosionRadius >= CheckY)
 	{
-		
-		UE_LOG(LogTemp, Warning, TEXT("Check x top %f"), CheckX);
-		UE_LOG(LogTemp, Warning, TEXT("FloatRelativeLoc.X %f"), FloatRelativeLoc.X);
-		UE_LOG(LogTemp, Warning, TEXT("CheckX + floatrelativeloc.x %f"), CheckX + FloatRelativeLoc.X)
-		CheckGridLocation = FIntPoint(CheckX + FloatRelativeLoc.X, CheckY + FloatRelativeLoc.Y);
-		UE_LOG(LogTemp, Warning, TEXT("CheckGridLocation %s"), *CheckGridLocation.ToString())
+		CheckGridLocation = FIntPoint(FGenericPlatformMath::RoundToInt(CheckX + FloatRelativeLoc.X), FGenericPlatformMath::RoundToInt(CheckY + FloatRelativeLoc.Y));
 		if (PartGrid.Contains(CheckGridLocation) && CheckX * CheckX + CheckY * CheckY <= ExplosionRadius * ExplosionRadius)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("went in if statement"));
 			//obviously if it contains the FloatRelativeLoc then it ded
 			if (BoxContainsLocation(FVector2D(CheckGridLocation.X - GridScale / 2, CheckGridLocation.Y + GridScale / 2), FVector2D(CheckGridLocation.X + GridScale / 2, CheckGridLocation.Y - GridScale / 2), FVector2D(FloatRelativeLoc)))
 			{
@@ -554,10 +548,9 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 				}
 			}
 		}
-		UE_LOG(LogTemp, Warning, TEXT("Check x %f"), CheckX);
+
 		CheckX += 1;
-		UE_LOG(LogTemp, Warning, TEXT("Check x %f"), CheckX);
-		if (CheckX >= ExplosionRadius)
+		if (CheckX > ExplosionRadius)
 		{
 			CheckY += 1;
 			CheckX = -ExplosionRadius;
