@@ -16,6 +16,13 @@ ABaseShip::ABaseShip()
 	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
 	MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));	
 	
+
+	UVs = TArray<TArray<FVector2D>>();
+	UVs.Emplace(TArray<FVector2D>());
+	UVs.Emplace(TArray<FVector2D>());
+
+	Vertices = TArray<FVector>();
+	Triangles = TArray<int32>();
 }
 
 // Called when the game starts or when spawned
@@ -128,6 +135,49 @@ void ABaseShip::SetTargetMoveDirection(FVector2D Vector)
 FVector2D ABaseShip::GetTargetMoveDirection()
 {
 	return TargetMoveDirection;
+}
+
+void ABaseShip::AddMeshAtLocation(FIntPoint Location)
+{
+	TArray<int32> Indices = TArray<int32>();
+	for (FVector Vetex : GetVerticesAroundLocation(FVector2D(Location)))
+	{
+		Indices.Emplace(Vertices.AddUnique(Vetex));
+	}
+
+	AddTriangles(Indices[2], Indices[1], Indices[0]);
+	AddTriangles(Indices[2], Indices[3], Indices[1]);
+
+
+	MeshComponent->CreateMeshSection(0, Vertices, Triangles, TArray<FVector>(), UVs[0], UVs[1], TArray<FVector2D>(), TArray<FVector2D>(), TArray<FColor>(), TArray<FProcMeshTangent>(), false);
+}
+
+void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
+{
+}
+
+void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
+{
+}
+
+TSet<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
+{
+	TSet<FVector> ReturnValue = TSet<FVector>();
+	for (int i = 0; i < 4; i++)
+	{
+		float AdjustmentValue1 = PartGrid->GetPartGridScale() / (i < 2 ? 2 : -2);
+		float AdjustmentValue2 = PartGrid->GetPartGridScale() / ((i % 2 == 1) ? 2 : -2);
+		ReturnValue.Emplace(FVector(Location, 0) + FVector(AdjustmentValue1, AdjustmentValue2, 0));
+	}
+	
+	return ReturnValue;
+}
+
+void ABaseShip::AddTriangles(int32 A, int32 B, int32 C)
+{
+	Triangles.Emplace(A);
+	Triangles.Emplace(B);
+	Triangles.Emplace(C);
 }
 
 void ABaseShip::SaveEditorShip()

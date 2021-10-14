@@ -123,7 +123,7 @@ FVector2D UShipPhysicsComponent::GetVelocityOfPoint(FVector2D RelativePointLocat
 
 void UShipPhysicsComponent::UpdateMassCalculations()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s Has Updated Mass"), *GetReadableName());
+	//UE_LOG(LogTemp, Warning, TEXT("%s Has Updated Mass"), *GetReadableName());
 
 	Mass = Ship->PartGrid->GetMass();
 	CenterOfMass = Ship->PartGrid->GetCenterOfMass();
@@ -137,20 +137,6 @@ void UShipPhysicsComponent::UpdateMassCalculations()
 	{
 		PrimComps.Emplace(Cast<UPrimitiveComponent>(Comp));
 	}
-
-	bool HasSetDeltaPos = false;
-	for (auto& Component : Ship->PartGrid->GetPartGrid())
-	{
-		FVector NewLoc = FVector(-1 * CenterOfMass + Component.Key, 0);
-		if (NewLoc != FVector() && !HasSetDeltaPos)
-		{
-			HasSetDeltaPos = true;
-			DeltaPos = Component.Value.PixelMesh->GetRelativeLocation() - NewLoc;
-		}
-		Component.Value.PixelMesh->SetRelativeLocation(NewLoc);
-	}
-
-	Ship->SetActorLocation(Ship->GetActorLocation() + DeltaPos);
 }
 
 float UShipPhysicsComponent::GetAngularVelocity()

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/StaticMeshComponent.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
 #include "VoidsingerTypes.generated.h"
@@ -41,21 +40,17 @@ struct VOIDSINGER_API FPartData
 	float Temperature = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UStaticMeshComponent* PixelMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int BitNumber;
 
 	FPartData()
 	{
-		FPartData(nullptr, 0, nullptr, 0);
+		FPartData(nullptr, 0, 0);
 	}
 
-	FPartData(UBasePart* PartRef, float Temp, UStaticMeshComponent* MeshRef, int Bit)
+	FPartData(UBasePart* PartRef, float Temp, int Bit)
 	{
 		Part = PartRef;
 		Temperature = Temp;
-		PixelMesh = MeshRef;
 		BitNumber = Bit;
 	}
 

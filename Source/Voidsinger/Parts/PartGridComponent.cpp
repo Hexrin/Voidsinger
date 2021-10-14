@@ -110,22 +110,18 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			{
 				if (PartialPartShape.Contains(DesiredShape[i]))
 				{
+					FIntPoint CurrentLoc = FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y);
 					//Remove Overlaping Parts
 					if (bAlwaysPlace)
 					{
-						RemovePart(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y));
+						RemovePart(CurrentLoc);
 					}
 
 					//Create Mesh
-					class UActorComponent* NewPlane = GetOwner()->AddComponentByClass(UStaticMeshComponent::StaticClass(), false, FTransform(FRotator(0, 0, 0), FVector(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y, 0) * GridScale, FVector(GridScale)), false);
+					Cast<ABaseShip>(GetOwner())->AddMeshAtLocation(CurrentLoc);
 
-					Cast<UStaticMeshComponent>(NewPlane)->SetStaticMesh(PixelMesh);
-					//Cast<UStaticMeshComponent>(NewPlane)->SetMaterial(0, Part->GetPixelMaterial());
 
-					PartGrid.Emplace(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), FPartData(Part, 0.f, Cast<UStaticMeshComponent>(NewPlane), 0));
-
-					UpdateMaterials(FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y), PartType);
-
+					PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0));
 				}
 			}
 			Part->InitializeFunctionality();
@@ -185,7 +181,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks)
 		DamagedPart->DestroyPixel(Location - DamagedPart->GetPartGridLocation());
 
 		//Destroy Mesh
-		PartGrid.FindRef(Location).PixelMesh->DestroyComponent();
+		Cast<ABaseShip>(GetOwner())->RemoveMeshAtLocation(Location);
 
 		for (int i = 0; i < 4; i++)
 		{
