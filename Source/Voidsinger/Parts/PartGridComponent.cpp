@@ -364,6 +364,7 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 	float CheckY = -ExplosionRadius;
 	FIntPoint CheckGridLocation;
 	TArray<FIntPoint> LocationsToBeDestroyed;
+
 	//DrawDebugPoint(GetWorld(), WorldLocation, ExplosionRadius * 50, FColor::Red, false, 2.0F);
 	
 	//UE_LOG(LogTemp, Warning, TEXT("Explosion %f"), ExplosionRadius);
@@ -558,6 +559,13 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 		DestroyPixel(i, true, true, WorldLocation, ExplosionRadius);
 	}
 
+	for (float i = 0; i <= 360; i += 30)
+	{
+		FVector EndLocation;
+		UKismetMathLibrary::DegreesToRadians(i);
+		FHitResult OutHit;
+		//GetOwner()->GetWorld()->LineTraceSingleByChannel(OutHit, WorldLocation, );
+	}
 	//FIntPoint IntRelativeLoc = FVector2D(FloatRelativeLoc).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint());
 }
 
