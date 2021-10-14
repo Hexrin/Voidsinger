@@ -26,7 +26,8 @@ enum EResourceType
 	Hydrogen		UMETA(DisplayName = "Hydrogen"),
 	InertGas		UMETA(DisplayName = "InertGas"),
 	Coolent			UMETA(DisplayName = "Coolent"),
-	Electricity		UMETA(DisplayName = "Electricity")
+	Electricity		UMETA(DisplayName = "Electricity"),
+	Ammo			UMETA(DisplayName = "Ammo"),
 };
 
 USTRUCT(BlueprintType)
