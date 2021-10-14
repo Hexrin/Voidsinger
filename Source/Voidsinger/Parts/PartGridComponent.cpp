@@ -407,7 +407,7 @@ void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float H
 
 void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius)
  {
-
+	UE_LOG(LogTemp, Warning, TEXT("explodd but part grid"))
 	FVector FloatRelativeLoc = UKismetMathLibrary::InverseTransformLocation(GetOwner()->GetActorTransform(), WorldLocation) + FVector(GetCenterOfMass(), 0);
 	float CheckX = -ExplosionRadius;
 	float CheckY = -ExplosionRadius;
