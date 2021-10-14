@@ -216,7 +216,7 @@ void UFunctionLibrary::ExplodeAtWorldLocation(const UObject* WorldContextObject,
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
 	UKismetSystemLibrary::SphereOverlapActors(World, WorldLocation, ExplosionRadius, ObjectTypeArray, ABaseShip::StaticClass(),TArray<AActor*>(), OutActors);
 
-	DrawDebugSphere(World, WorldLocation, ExplosionRadius, 32, FColor::Red, true);
+	//DrawDebugSphere(World, WorldLocation, ExplosionRadius, 32, FColor::Red, true);
 
 	for (auto& i : OutActors)
 	{

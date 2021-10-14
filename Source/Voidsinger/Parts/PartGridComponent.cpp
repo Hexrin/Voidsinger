@@ -143,6 +143,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			return true;
 		}
 		Part->DestroyPart();
+		UE_LOG(LogTemp, Warning, TEXT("??????"))
 		return false;
 	}
 	else
@@ -178,6 +179,7 @@ bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
 //Remove a single Pixel from the PartGrid. Returns true if a pixel was removed
 bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Location %s"), *Location.ToString())
 	if (PartGrid.Contains(Location))
 	{
 		//Remove from grid
@@ -373,9 +375,14 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 	while (ExplosionRadius > CheckY)
 	{
 		
+		UE_LOG(LogTemp, Warning, TEXT("Check x top %f"), CheckX);
+		UE_LOG(LogTemp, Warning, TEXT("FloatRelativeLoc.X %f"), FloatRelativeLoc.X);
+		UE_LOG(LogTemp, Warning, TEXT("CheckX + floatrelativeloc.x %f"), CheckX + FloatRelativeLoc.X)
 		CheckGridLocation = FIntPoint(CheckX + FloatRelativeLoc.X, CheckY + FloatRelativeLoc.Y);
+		UE_LOG(LogTemp, Warning, TEXT("CheckGridLocation %s"), *CheckGridLocation.ToString())
 		if (PartGrid.Contains(CheckGridLocation) && CheckX * CheckX + CheckY * CheckY <= ExplosionRadius * ExplosionRadius)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("went in if statement"));
 			//obviously if it contains the FloatRelativeLoc then it ded
 			if (BoxContainsLocation(FVector2D(CheckGridLocation.X - GridScale / 2, CheckGridLocation.Y + GridScale / 2), FVector2D(CheckGridLocation.X + GridScale / 2, CheckGridLocation.Y - GridScale / 2), FVector2D(FloatRelativeLoc)))
 			{
@@ -547,7 +554,9 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 				}
 			}
 		}
+		UE_LOG(LogTemp, Warning, TEXT("Check x %f"), CheckX);
 		CheckX += 1;
+		UE_LOG(LogTemp, Warning, TEXT("Check x %f"), CheckX);
 		if (CheckX >= ExplosionRadius)
 		{
 			CheckY += 1;
@@ -559,13 +568,24 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 		DestroyPixel(i, true, true, WorldLocation, ExplosionRadius);
 	}
 
-	for (float i = 0; i <= 360; i += 30)
-	{
-		FVector EndLocation;
-		UKismetMathLibrary::DegreesToRadians(i);
-		FHitResult OutHit;
-		//GetOwner()->GetWorld()->LineTraceSingleByChannel(OutHit, WorldLocation, );
-	}
+	//for (float i = 0; i <= 360; i += 30)
+	//{
+	//	FVector EndLocation = FVector(0, 0, 0);
+	//	EndLocation.X = (ExplosionRadius + GridScale) * cos(UKismetMathLibrary::DegreesToRadians(i)) + WorldLocation.X;
+	//	EndLocation.Y = (ExplosionRadius + GridScale) * sin(UKismetMathLibrary::DegreesToRadians(i)) + WorldLocation.Y;
+
+	//	FHitResult OutHit;
+
+	//	UE_LOG(LogTemp, Warning, TEXT("End Location %s"), *EndLocation.ToString())
+	//	DrawDebugDirectionalArrow(GetOwner()->GetWorld(), WorldLocation, EndLocation, 5, FColor::Red, true);
+	//	GetOwner()->GetWorld()->LineTraceSingleByChannel(OutHit, WorldLocation, EndLocation, ECollisionChannel::ECC_WorldDynamic);
+
+	//	if (IsValid(Cast<ABaseShip>(OutHit.GetActor())))
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("Impulse %s"), *FVector2D(EndLocation.X - WorldLocation.X, EndLocation.Y - WorldLocation.Y).ToString())
+	//		Cast<ABaseShip>(OutHit.GetActor())->PhysicsComponent->AddImpulse(FVector2D(EndLocation.X - WorldLocation.X, EndLocation.Y - WorldLocation.Y) * 2, FVector2D(WorldLocation));
+	//	}
+	//}
 	//FIntPoint IntRelativeLoc = FVector2D(FloatRelativeLoc).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw).RoundToVector().IntPoint());
 }
 

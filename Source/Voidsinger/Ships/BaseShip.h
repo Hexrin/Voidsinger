@@ -68,6 +68,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CallLaser(float Damage, float Duration);
 
+	UFUNCTION(BlueprintPure)
+	TArray<UBaseResourceSystem*> GetResourceSystems();
+
 	UPROPERTY()
 	TArray<UBaseResourceSystem*> ResourceSystems;
 

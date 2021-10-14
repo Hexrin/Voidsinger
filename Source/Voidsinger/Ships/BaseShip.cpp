@@ -120,6 +120,11 @@ void ABaseShip::CallLaser(float Damage, float Duration)
 	OnLaserDelegate.Broadcast(Damage, Duration);
 }
 
+TArray<UBaseResourceSystem*> ABaseShip::GetResourceSystems()
+{
+	return ResourceSystems;
+}
+
 void ABaseShip::SetTargetMoveDirection(FVector2D Vector)
 {
 	TargetMoveDirection = Vector.GetSafeNormal();
