@@ -18,7 +18,7 @@ void UBaseResourceSystem::AddResources(float Amount)
 
 bool UBaseResourceSystem::DrawResources(float Amount)
 {
-	if (ResourceAmount - Amount <= 0)
+	if (ResourceAmount - Amount < 0)
 	{
 		ResourceAmount = 0;
 		return false;
