@@ -154,52 +154,22 @@ void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 	UVs[2].SetNum(Vertices.Num());
 	UVs[3].SetNum(Vertices.Num());
 
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-		//	FPartData PartData = PartGrid->GetPartGrid().FindRef(Location);
-		FVector2D UVToAdd = FVector2D(j<2?1:0, j%2==0?1:0);
-		//	if (/*IsValid(Cast<UBaseFreespacePart>(PartData.Part))*/ true)
-		//	{
-		//		if (i == (Location.X + Location.Y) % 2)
-		//		{
-		//			UVToAdd = FVector2D((PartData.BitNumber + j % 2)/256, j < 2 ? 0 : 1);
-		//		}
-		//		else
-		//		{
-		//			UVToAdd = FVector2D(-1);
-		//		}
-		//	}
-		//	else
-		//	{
-		//		if (i < 2)
-		//		{
-		//			UVToAdd = FVector2D(-1);
-		//		}
-		//		else
-		//		{
-		//			UVToAdd = FVector2D(Location - PartData.Part->GetPartGridLocation() - PartData.Part->GetPartBounds().LowerBounds);
-		//		}
-		//	}
-			if (i == (abs(Location.X) % 2) + 2*(abs(Location.Y) % 2))
-			{
-				UE_LOG(LogTemp, Warning, TEXT("%s UV%i #%i = %s"), *Location.ToString(), i, Indices[j], *UVToAdd.ToString());
-
-				UVs[i][Indices[j]] = UVToAdd;
-			}
-		}
-	}
-
-	MeshComponent->CreateMeshSection(0, Vertices, Triangles, TArray<FVector>(), UVs[0], UVs[1], UVs[2], UVs[3], TArray<FColor>(), TArray<FProcMeshTangent>(), false);
+	MeshComponent->CreateMeshSection(0, Vertices, Triangles, TArray<FVector>(), UVs[0], TArray<FColor>(), TArray<FProcMeshTangent>(), false);
 }
 
 void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 {
+	
 }
 
 void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
 {
+	TArray<FVector> AdjVertices = TArray<FVector>();
+	AdjVertices.SetNum(Vertices.Num());
+	for (int i = 0; i < Vertices.Num(); i++)
+	{
+		AdjVertices[i] = Vertices[i] + FVector(Location, 0);
+	}
 }
 
 TSet<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)

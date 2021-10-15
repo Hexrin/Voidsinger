@@ -57,6 +57,9 @@ public:
 	float GetMomentOfInertia();
 
 	UFUNCTION(BlueprintPure)
+	FVector2D GetCenterOfMass();
+
+	UFUNCTION(BlueprintPure)
 	FVector2D GetVelocityOfPoint(FVector2D RelativePointLocation);
 private:
 
