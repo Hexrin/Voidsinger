@@ -114,10 +114,10 @@ void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
 	}
 }
 
-void ABaseShip::CallLaser(float Damage, float Duration)
+void ABaseShip::CallLaser(float DamageMultiplier, float DurationMultiplier)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Broadcast should be called...?"))
-	OnLaserDelegate.Broadcast(Damage, Duration);
+	OnLaserDelegate.Broadcast(DamageMultiplier, DurationMultiplier);
 }
 
 TArray<UBaseResourceSystem*> ABaseShip::GetResourceSystems()

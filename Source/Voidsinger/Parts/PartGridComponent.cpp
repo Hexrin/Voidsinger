@@ -219,7 +219,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 			//If NumbersFound is less than 2 then you don't need to bother checking anything since there will be no breaks
 			if (NumbersFound.Num() > 1)
 			{
-				if (IsValid(CorePart))
+				if (IsValid(CorePart) && !CorePart->GetShape().IsEmpty())
 				{
 					for (auto& i : NumbersFound)
 					{

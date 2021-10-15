@@ -14,7 +14,7 @@
 
 class UBaseResourceSystem;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, Damage, float, Duration);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, DamageMultiplier, float, DurationMultiplier);
 
 UCLASS()
 class VOIDSINGER_API ABaseShip : public APawn
@@ -66,7 +66,7 @@ public:
 
 	//Event dispatcher for laser.
 	UFUNCTION(BlueprintCallable)
-	void CallLaser(float Damage, float Duration);
+	void CallLaser(float DamageMultiplier, float DurationMultiplier);
 
 	UFUNCTION(BlueprintPure)
 	TArray<UBaseResourceSystem*> GetResourceSystems();
