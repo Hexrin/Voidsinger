@@ -185,7 +185,8 @@ void APlayerShip::AddVoidsongInput(int Input)
     VoidsongCombo.Emplace(Input);
 
     //Call the event dispatcher
-    OnVoidsongInputDelegate.Broadcast(VoidsongCombo);
+    OnVoidsongInputDelegate.Broadcast(FIntArray(VoidsongCombo));
+    //OnSTUPIDVoidsongInputDelegate.Broadcast(FIntArray(VoidsongCombo));
 
     //Reset the reset voidsong timer
     ResetVoidsongTimer = 0;
