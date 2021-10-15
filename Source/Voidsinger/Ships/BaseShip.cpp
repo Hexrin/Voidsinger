@@ -90,7 +90,9 @@ void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
 void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 {
 	//Creates the voidsong object from the given class and adds it to available voidsongs
-	AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(this, Voidsong));
+	UBaseVoidsong* NewVoidsong = NewObject<UBaseVoidsong>(this, Voidsong);
+	AvailableVoidsongs.Emplace(NewVoidsong);
+	OnAddVoidsongDelegate.Broadcast(NewVoidsong);
 }
 
 void ABaseShip::PlayVoidsong(TArray<int> Sequence)

@@ -16,6 +16,8 @@
  * 
  */
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVoidsongInputDelegate, TArray<int>, CurrentInput);
+
 UCLASS()
 class VOIDSINGER_API APlayerShip : public ABaseShip
 {
@@ -183,7 +185,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int Pixels;
 
+	UPROPERTY(BlueprintAssignable)
+	FVoidsongInputDelegate OnVoidsongInputDelegate;
+
 	UPROPERTY(VisibleAnywhere)
 	class UStarSystemData* CurrentStarSystem;
-	
+
 };

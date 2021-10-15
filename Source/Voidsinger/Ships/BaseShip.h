@@ -15,6 +15,7 @@
 class UBaseResourceSystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, DamageMultiplier, float, DurationMultiplier);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*, AddedVoidsong);
 
 UCLASS()
 class VOIDSINGER_API ABaseShip : public APawn
@@ -90,9 +91,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UBaseVoidsong*> AvailableVoidsongs;
 
-	//For the Event Dispatcher
+	//For the laser Event Dispatcher
 	UPROPERTY(BlueprintAssignable)
 	FLaserDelegate OnLaserDelegate;
+
+	//For the add voidsong event dispatcher
+	UPROPERTY(BlueprintAssignable)
+	FAddVoidsongDelegate OnAddVoidsongDelegate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FSavePartInfo> DefaultParts;

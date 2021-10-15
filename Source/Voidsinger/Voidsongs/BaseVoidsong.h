@@ -48,6 +48,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void EventTick(float DeltaTime);
 
+	/*Getters*\
+	\*-------*/
+
+	//Gets the activation combo of this voidsong
+	UFUNCTION(BlueprintPure)
+	TArray<int> GetActivationCombo();
+
 	/*Voidsong Functions*\
 	\*------------------*/
 

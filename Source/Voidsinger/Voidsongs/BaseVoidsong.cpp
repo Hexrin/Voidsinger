@@ -40,6 +40,10 @@ TStatId UBaseVoidsong::GetStatId() const
 {
 	return TStatId();
 }
+TArray<int> UBaseVoidsong::GetActivationCombo()
+{
+	return ActivationCombo;
+}
 void UBaseVoidsong::Activate()
 {
 	if (CanActivateAgain)
