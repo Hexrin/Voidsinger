@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "VoidsingerTypes.h"
+#include "DrawDebugHelpers.h"
 #include "FunctionLibrary.generated.h"
 
 /**
@@ -34,6 +35,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static bool SetActorTransformSweepComponets(AActor* Target, FHitResult & Hit, TArray <UPrimitiveComponent*> PrimComps, const FTransform& NewTransform);
+
+	//Explode at a global location, affecting all part grids in the radius
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"))
+	static void ExplodeAtWorldLocation(const UObject* WorldContextObject, FVector WorldLocation, float ExplosionRadius);
 
 	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
 	UFUNCTION()

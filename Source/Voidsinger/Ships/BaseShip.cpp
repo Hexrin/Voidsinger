@@ -51,12 +51,12 @@ void ABaseShip::Tick(float DeltaTime)
 
 	FVector FutureForawardVector = FQuat(FVector(0,0,1), PhysicsComponent->GetAngularVelocity() * MovementComponent->GetDecelerationPredictionTime()).RotateVector(GetActorForwardVector());
 	
-	if (TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(FutureForawardVector, MovementComponent->GetLookDirectionTollerance()))
-	{
-		float RotationDirection = FVector::CrossProduct(TargetLookDirection, FutureForawardVector).Z;
-		//UE_LOG(LogTemp, Warning, TEXT("SineThing = %f, TargetLookDirection = %s"), RotationDirection, *TargetLookDirection.ToString());
-		MovementComponent->RotateShip(RotationDirection < 0, FMath::Abs(RotationDirection));
-	}
+	//if (TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(FutureForawardVector, MovementComponent->GetLookDirectionTollerance()))
+	//{
+	//	float RotationDirection = FVector::CrossProduct(TargetLookDirection, FutureForawardVector).Z;
+	//	//UE_LOG(LogTemp, Warning, TEXT("SineThing = %f, TargetLookDirection = %s"), RotationDirection, *TargetLookDirection.ToString());
+	//	MovementComponent->RotateShip(RotationDirection < 0, FMath::Abs(RotationDirection));
+	//}
 
 	if (TargetMoveDirection.SizeSquared() != 0)
 	{
@@ -99,7 +99,9 @@ void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
 void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 {
 	//Creates the voidsong object from the given class and adds it to available voidsongs
-	AvailableVoidsongs.Emplace(NewObject<UBaseVoidsong>(this, Voidsong));
+	UBaseVoidsong* NewVoidsong = NewObject<UBaseVoidsong>(this, Voidsong);
+	AvailableVoidsongs.Emplace(NewVoidsong);
+	OnAddVoidsongDelegate.Broadcast(NewVoidsong);
 }
 
 void ABaseShip::PlayVoidsong(TArray<int> Sequence)
@@ -123,10 +125,15 @@ void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
 	}
 }
 
-void ABaseShip::CallLaser(float Damage, float Duration)
+void ABaseShip::CallLaser(float DamageMultiplier, float DurationMultiplier)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Broadcast should be called...?"))
-	OnLaserDelegate.Broadcast(Damage, Duration);
+	OnLaserDelegate.Broadcast(DamageMultiplier, DurationMultiplier);
+}
+
+TArray<UBaseResourceSystem*> ABaseShip::GetResourceSystems()
+{
+	return ResourceSystems;
 }
 
 void ABaseShip::SetTargetMoveDirection(FVector2D Vector)

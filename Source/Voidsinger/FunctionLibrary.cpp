@@ -209,6 +209,24 @@ bool UFunctionLibrary::SetActorTransformSweepComponets(AActor* Target, FHitResul
 	return ReturnValue;
 }
 
+void UFunctionLibrary::ExplodeAtWorldLocation(const UObject* WorldContextObject, FVector WorldLocation, float ExplosionRadius)
+{
+	TArray <TEnumAsByte<EObjectTypeQuery>> ObjectTypeArray;
+	TArray<AActor*> OutActors;
+	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+	UKismetSystemLibrary::SphereOverlapActors(World, WorldLocation, ExplosionRadius, ObjectTypeArray, ABaseShip::StaticClass(),TArray<AActor*>(), OutActors);
+
+	//DrawDebugSphere(World, WorldLocation, ExplosionRadius, 32, FColor::Red, true);
+
+	for (auto& i : OutActors)
+	{
+		if (IsValid(Cast<ABaseShip>(i)))
+		{
+			Cast<ABaseShip>(i)->PartGrid->ExplodeAtLocation(WorldLocation, ExplosionRadius);
+		}
+	}
+}
+
 TArray<FIntPoint> UFunctionLibrary::FindConnectedShape(TArray<FIntPoint> Shape, TMap<FIntPoint, FPartData> ConnectedPartsMap, bool CheckFunctionality)
 {
 

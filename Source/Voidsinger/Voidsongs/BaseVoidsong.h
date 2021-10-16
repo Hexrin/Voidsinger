@@ -48,6 +48,17 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void EventTick(float DeltaTime);
 
+	/*Getters*\
+	\*-------*/
+
+	//Gets the activation combo of this voidsong
+	UFUNCTION(BlueprintPure)
+	TArray<int> GetActivationCombo();
+
+	//Gets the display text of the Voidsong
+	UFUNCTION(BlueprintPure)
+	FText GetVoidsongDisplayText();
+
 	/*Voidsong Functions*\
 	\*------------------*/
 
@@ -90,11 +101,15 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<int> ActivationCombo;
 
-	UPROPERTY()
-	bool bIsBeingDestroyed;
+	//The name of the Voidsong that the player will see.
+	UPROPERTY(EditDefaultsOnly)
+	FText VoidsongDisplayText;
 
 	/*Instanced  Variables*\
 	\*--------------------*/
+
+	UPROPERTY()
+	bool bIsBeingDestroyed;
 
 private:
 	//Used to check if the voidsong is off cooldown.

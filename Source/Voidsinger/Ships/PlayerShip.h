@@ -16,6 +16,28 @@
  * 
  */
 
+USTRUCT(BlueprintType)
+struct FIntArray
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	TArray<int> IntArray;
+
+	FIntArray()
+	{
+		UE_LOG(LogTemp, Warning, TEXT("hello, I am an FIntArray struct. I have to exist because dynamic multicasts are dumb. I don't call my other constructor because I am dumb."))
+	}
+
+	FIntArray(TArray<int> NewInts)
+	{
+		IntArray = NewInts;
+	}
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVoidsongInputDelegate, FIntArray, CurrentInput);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSTUPIDVoidsongInputDelegate, TArray<int>, CurrentInput);
+
 UCLASS()
 class VOIDSINGER_API APlayerShip : public ABaseShip
 {
@@ -197,7 +219,12 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int Pixels;
 
+	UPROPERTY(BlueprintAssignable)
+	FVoidsongInputDelegate OnVoidsongInputDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FSTUPIDVoidsongInputDelegate OnSTUPIDVoidsongInputDelegate;
+	
 	UPROPERTY(VisibleAnywhere)
 	class UStarSystemData* CurrentStarSystem;
-	
 };
