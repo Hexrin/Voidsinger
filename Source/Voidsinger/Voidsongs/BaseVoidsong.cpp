@@ -44,6 +44,10 @@ TArray<int> UBaseVoidsong::GetActivationCombo()
 {
 	return ActivationCombo;
 }
+FText UBaseVoidsong::GetVoidsongDisplayText()
+{
+	return VoidsongDisplayText;
+}
 void UBaseVoidsong::Activate()
 {
 	if (CanActivateAgain)
