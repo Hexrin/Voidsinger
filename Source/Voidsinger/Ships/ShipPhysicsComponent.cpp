@@ -43,7 +43,7 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	if (!FMath::IsNearlyEqual(LinearVelocity.SizeSquared(), 0, MinLinearVelocity) || !FMath::IsNearlyEqual(AngularVelocity, 0, MinAngularVelocity))
 	{
-		if (!UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, PrimComps, NewTransform))
+		if (!GetOwner()->SetActorTransform(NewTransform, true, &Result))
 		{
 			FVector2D RelativeHitLocation = FVector2D(Result.Location - GetOwner()->GetActorLocation());
 
@@ -126,17 +126,12 @@ void UShipPhysicsComponent::UpdateMassCalculations()
 	//UE_LOG(LogTemp, Warning, TEXT("%s Has Updated Mass"), *GetReadableName());
 
 	Mass = Ship->PartGrid->GetMass();
+	FVector2D DeltaCoM = Ship->PartGrid->GetCenterOfMass() - CenterOfMass;
 	CenterOfMass = Ship->PartGrid->GetCenterOfMass();
 	MomentOfInertia = Ship->PartGrid->GetMomentOfInertia();
-	FVector DeltaPos = FVector();
 
-	TArray<UActorComponent*> Comps = TArray<UActorComponent*>();
-	Ship->GetComponents(UPrimitiveComponent::StaticClass(), Comps);
-	PrimComps = TArray<UPrimitiveComponent*>();
-	for (UActorComponent* Comp : Comps)
-	{
-		PrimComps.Emplace(Cast<UPrimitiveComponent>(Comp));
-	}
+	Ship->SetMeshRelativeLocation(CenterOfMass);
+	Ship->AddActorWorldOffset(FVector(-1 * DeltaCoM, 0));
 }
 
 float UShipPhysicsComponent::GetAngularVelocity()

@@ -172,13 +172,27 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float CameraHeight;
 
-	/*-----Movement------*\
+	/*-----Building------*\
 	\*-------------------*/
+public:
+	UFUNCTION(BlueprintCallable)
+	void SetBuildMode(bool NewBuildMode);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OpenBuildMenu();
+
+	UFUNCTION(BlueprintPure)
+	bool IsInBuildMode();
+
+private:
+	UPROPERTY()
+	bool bBuildMode{ false };
 
 
 
 	/*-------Misc.-------*\
 	\*-------------------*/
+
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int Pixels;

@@ -24,6 +24,7 @@ ABaseShip::ABaseShip()
 	
 	Vertices = TArray<FVector>();
 	Triangles = TArray<int32>();
+	RelativeMeshLocation = FVector2D();
 }
 
 // Called when the game starts or when spawned
@@ -146,8 +147,7 @@ void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 		Indices.Emplace(Vertices.AddUnique(Vetex));
 	}
 
-	AddTriangles(Indices[2], Indices[1], Indices[0]);
-	AddTriangles(Indices[2], Indices[3], Indices[1]);
+	AddTrianglesForSquare(Indices[0], Indices[1], Indices[2], Indices[3], Location);
 
 	UVs[0].SetNum(Vertices.Num());
 	UVs[1].SetNum(Vertices.Num());
@@ -159,17 +159,53 @@ void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 
 void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 {
+	TArray<int32> NewTriangles = TArray<int32>();
 	
+	for (int i = 0; i < Triangles.Num(); i++)
+	{
+		if (TriangleIndices.FindRef(Location) < i && i < TriangleIndices.FindRef(Location) + 2)
+		{
+			NewTriangles.Emplace(Triangles[i]);
+		}		
+	}
+	TriangleIndices.Remove(Location);
+	Triangles = NewTriangles;
+
+	TSet<FVector> VerticesToRemove = GetVerticesAroundLocation(Location);
+	for (int i = 0; i < 4; i++)
+	{
+		FIntPoint Adjustment = FIntPoint(i < 2 ? 1 : -1, i % 2 == 0 ? 1 : -1);
+		if (TriangleIndices.Contains(Location + Adjustment))
+		{
+			for (int j = 0; j < 6; j++)
+			{
+				VerticesToRemove.Remove(Vertices[TriangleIndices.FindRef(Location + Adjustment) + j]);
+			}
+		}
+	}
+	MeshComponent->CreateMeshSection(0, Vertices, Triangles, TArray<FVector>(), UVs[0], TArray<FColor>(), TArray<FProcMeshTangent>(), false);
 }
 
 void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
 {
+	RelativeMeshLocation = Location;
+
 	TArray<FVector> AdjVertices = TArray<FVector>();
 	AdjVertices.SetNum(Vertices.Num());
+
+	TArray<FVector2D> AdjUV = TArray<FVector2D>();
+	AdjUV.SetNum(Vertices.Num());
+
 	for (int i = 0; i < Vertices.Num(); i++)
 	{
 		AdjVertices[i] = Vertices[i] + FVector(Location, 0);
+		AdjUV[i] = UVs[0][i] - Location;
 	}
+	MeshComponent->UpdateMeshSection(0, AdjVertices, TArray<FVector>(), AdjUV, TArray<FColor>(), TArray<FProcMeshTangent>());
+}
+void ABaseShip::SetMeshRelativeLocation()
+{
+	SetMeshRelativeLocation(RelativeMeshLocation);
 }
 
 TSet<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
@@ -178,18 +214,22 @@ TSet<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
 	for (int i = 0; i < 4; i++)
 	{
 		float AdjustmentValue1 = PartGrid->GetPartGridScale() / (i < 2 ? 2 : -2);
-		float AdjustmentValue2 = PartGrid->GetPartGridScale() / ((i % 2 == 1) ? 2 : -2);
+		float AdjustmentValue2 = PartGrid->GetPartGridScale() / ((i % 2 == 0) ? 2 : -2);
 		ReturnValue.Emplace(FVector(Location, 0) + FVector(AdjustmentValue1, AdjustmentValue2, 0));
 	}
 	
 	return ReturnValue;
 }
 
-void ABaseShip::AddTriangles(int32 A, int32 B, int32 C)
+void ABaseShip::AddTrianglesForSquare(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft, FIntPoint Location)
 {
-	Triangles.Emplace(A);
-	Triangles.Emplace(B);
-	Triangles.Emplace(C);
+	TriangleIndices.Emplace(Location, Triangles.Emplace(UpperRight));
+	Triangles.Emplace(UpperLeft);
+	Triangles.Emplace(LowerLeft);
+
+	Triangles.Emplace(LowerLeft);
+	Triangles.Emplace(LowerRight);
+	Triangles.Emplace(UpperRight);
 }
 
 void ABaseShip::SaveEditorShip()

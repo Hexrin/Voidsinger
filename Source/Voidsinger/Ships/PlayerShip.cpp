@@ -26,13 +26,17 @@ APlayerShip::APlayerShip()
 
 void APlayerShip::Tick(float DeltaTime)
 {
-    FVector WorldDirection = FVector();
-    FVector WorldLocation = FVector();
+    if (!bBuildMode)
+    {
+        FVector WorldDirection = FVector();
+        FVector WorldLocation = FVector();
 
-    GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
-    WorldLocation = FMath::LinePlaneIntersection(Camera->GetComponentLocation(), Camera->GetComponentLocation() + WorldDirection * 10000, FPlane(GetActorLocation(), FVector(0, 0, 1)));
+        GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+        WorldLocation = FMath::LinePlaneIntersection(Camera->GetComponentLocation(), Camera->GetComponentLocation() + WorldDirection * 10000, FPlane(GetActorLocation(), FVector(0, 0, 1)));
 
-    TargetLookDirection = (WorldLocation - GetActorLocation()).GetSafeNormal2D();
+        TargetLookDirection = (WorldLocation - GetActorLocation()).GetSafeNormal2D();
+    }
+    
 
     
 
@@ -177,6 +181,17 @@ void APlayerShip::MoveRightReleasedCall()
 void APlayerShip::MoveLeftReleasedCall()
 {
     bDecelerating = true;
+}
+
+void APlayerShip::SetBuildMode(bool NewBuildMode)
+{
+    bBuildMode = NewBuildMode;
+    OpenBuildMenu();
+}
+
+bool APlayerShip::IsInBuildMode()
+{
+    return bBuildMode;
 }
 
 void APlayerShip::AddVoidsongInput(int Input)

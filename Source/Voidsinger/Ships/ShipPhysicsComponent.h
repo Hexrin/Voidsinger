@@ -106,9 +106,6 @@ private:
 	FVector2D LinearAcceleration;
 
 	UPROPERTY()
-	TArray<UPrimitiveComponent*> PrimComps;
-
-	UPROPERTY()
 	FColor DebugColor;
 
 	

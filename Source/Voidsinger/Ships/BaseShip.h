@@ -135,13 +135,14 @@ public:
 
 	UFUNCTION()
 	void SetMeshRelativeLocation(FVector2D Location);
+	void SetMeshRelativeLocation();
 
 private:
 	UFUNCTION()
 	TSet<FVector> GetVerticesAroundLocation(FVector2D Location);
 
 	UFUNCTION()
-	void AddTriangles(int32 A, int32 B, int32 C);
+	void AddTrianglesForSquare(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft, FIntPoint Location);
 
 	UPROPERTY()
 	TArray<FVector> Vertices;
@@ -150,4 +151,8 @@ private:
 	TArray<int32> Triangles;
 
 	TArray<TArray<FVector2D>> UVs;
+
+	FVector2D RelativeMeshLocation;
+
+	TMap<FIntPoint, int32> TriangleIndices;
 };
