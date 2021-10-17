@@ -10,7 +10,7 @@ UBaseThrusterPart::UBaseThrusterPart()
 }
 const float UBaseThrusterPart::GetThrustForce()
 {
-	return ThrustForce * Throttle;
+	return ThrustForce;
 }
 
 const float UBaseThrusterPart::GetThrustRotation()
