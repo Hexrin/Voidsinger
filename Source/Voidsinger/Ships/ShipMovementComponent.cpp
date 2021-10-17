@@ -118,8 +118,10 @@ TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForRotation(bool Cl
 		{
 			FVector2D ThrustDirection = FVector2D(1, 0).GetRotated(+Thruster->GetThrustRotation());
 			FVector2D ThrusterLocation = FVector2D(Thruster->GetThrustRelativeLocation()).GetSafeNormal();
-			if ((FVector2D::CrossProduct(ThrustDirection, ThrusterLocation) > 0) ^ Clockwise)
+			float CrossProduct = FVector2D::CrossProduct(ThrustDirection, ThrusterLocation);
+			if (!FMath::IsNearlyZero(CrossProduct, 0.001f) && ((CrossProduct > 0) ^ Clockwise))
 			{
+				UE_LOG(LogTemp, Warning, TEXT("Is Rotatable: %s   |   Because: %f"), *Thruster->GetThrustRelativeLocation().ToString(), CrossProduct);
 				ThrustersToAdd.Emplace(Thruster);
 			}
 		}
