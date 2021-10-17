@@ -106,7 +106,7 @@ TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForDirection(FVecto
 TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForRotation(bool Clockwise)
 {
 
-	if (ThrustersForRotation.Contains(Clockwise))
+	if (!ThrustersForRotation.Contains(Clockwise))
 	{
 		return ThrustersForRotation.FindRef(Clockwise);
 	}
@@ -118,10 +118,8 @@ TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForRotation(bool Cl
 		{
 			FVector2D ThrustDirection = FVector2D(1, 0).GetRotated(+Thruster->GetThrustRotation());
 			FVector2D ThrusterLocation = FVector2D(Thruster->GetThrustRelativeLocation()).GetSafeNormal();
-			float CrossProduct = FVector2D::CrossProduct(ThrustDirection, ThrusterLocation);
-			if (!FMath::IsNearlyZero(CrossProduct, 0.001f) && ((CrossProduct > 0) ^ Clockwise))
+			if ((FVector2D::CrossProduct(ThrustDirection, ThrusterLocation) > 0) ^ Clockwise)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Is Rotatable: %s   |   Because: %f"), *Thruster->GetThrustRelativeLocation().ToString(), CrossProduct);
 				ThrustersToAdd.Emplace(Thruster);
 			}
 		}
