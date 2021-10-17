@@ -42,12 +42,12 @@ void ABaseShip::Tick(float DeltaTime)
 
 	FVector FutureForawardVector = FQuat(FVector(0,0,1), PhysicsComponent->GetAngularVelocity() * MovementComponent->GetDecelerationPredictionTime()).RotateVector(GetActorForwardVector());
 	
-	//if (TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(FutureForawardVector, MovementComponent->GetLookDirectionTollerance()))
-	//{
-	//	float RotationDirection = FVector::CrossProduct(TargetLookDirection, FutureForawardVector).Z;
-	//	//UE_LOG(LogTemp, Warning, TEXT("SineThing = %f, TargetLookDirection = %s"), RotationDirection, *TargetLookDirection.ToString());
-	//	MovementComponent->RotateShip(RotationDirection < 0, FMath::Abs(RotationDirection));
-	//}
+	if (TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(FutureForawardVector, MovementComponent->GetLookDirectionTollerance()))
+	{
+		float RotationDirection = FVector::CrossProduct(TargetLookDirection, FutureForawardVector).Z;
+		//UE_LOG(LogTemp, Warning, TEXT("SineThing = %f, TargetLookDirection = %s"), RotationDirection, *TargetLookDirection.ToString());
+		MovementComponent->RotateShip(RotationDirection < 0, FMath::Abs(RotationDirection));
+	}
 
 	if (TargetMoveDirection.SizeSquared() != 0)
 	{
