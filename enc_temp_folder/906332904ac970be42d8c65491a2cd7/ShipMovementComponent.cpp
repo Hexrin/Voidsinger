@@ -106,7 +106,7 @@ TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForDirection(FVecto
 TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForRotation(bool Clockwise)
 {
 
-	if (ThrustersForRotation.Contains(Clockwise))
+	if (!ThrustersForRotation.Contains(Clockwise))
 	{
 		return ThrustersForRotation.FindRef(Clockwise);
 	}
