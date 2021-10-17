@@ -41,10 +41,23 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetDecelerationPredictionTime();
 
+	UFUNCTION(BlueprintPure)
+	TSet<UBaseThrusterPart*> GetThrustersForDirection(FVector2D Direction);
+
+	UFUNCTION(BlueprintPure)
+	TSet<UBaseThrusterPart*> GetThrustersForRotation(bool Clockwise);
+
+	UFUNCTION(BlueprintPure)
+	float GetMaximumAccelerationInDirection(FVector2D Direction);
+
+	UFUNCTION(BlueprintPure)
+	float GetMaximumAccelerationInRotation(bool Clockwise);
+
 protected:
 	UPROPERTY(EditAnywhere)
 	float LookDirectionTollerance{ 0.05 };
 
+	//The time into the future used to predict when to stop roatating 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float DecelerationPredictionTime{ 0.35 };
 
