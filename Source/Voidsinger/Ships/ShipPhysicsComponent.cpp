@@ -131,7 +131,7 @@ void UShipPhysicsComponent::UpdateMassCalculations()
 	MomentOfInertia = Ship->PartGrid->GetMomentOfInertia();
 
 	Ship->SetMeshRelativeLocation(CenterOfMass);
-	Ship->AddActorWorldOffset(FVector(-1 * DeltaCoM, 0));
+	Ship->AddActorWorldOffset(-1 * FVector(DeltaCoM, 0));
 }
 
 float UShipPhysicsComponent::GetAngularVelocity()

@@ -51,12 +51,12 @@ void ABaseShip::Tick(float DeltaTime)
 
 	FVector FutureForawardVector = FQuat(FVector(0,0,1), PhysicsComponent->GetAngularVelocity() * MovementComponent->GetDecelerationPredictionTime()).RotateVector(GetActorForwardVector());
 	
-	//if (TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(FutureForawardVector, MovementComponent->GetLookDirectionTollerance()))
-	//{
-	//	float RotationDirection = FVector::CrossProduct(TargetLookDirection, FutureForawardVector).Z;
-	//	//UE_LOG(LogTemp, Warning, TEXT("SineThing = %f, TargetLookDirection = %s"), RotationDirection, *TargetLookDirection.ToString());
-	//	MovementComponent->RotateShip(RotationDirection < 0, FMath::Abs(RotationDirection));
-	//}
+	if (TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(FutureForawardVector, MovementComponent->GetLookDirectionTollerance()))
+	{
+		float RotationDirection = FVector::CrossProduct(TargetLookDirection, FutureForawardVector).Z;
+		//UE_LOG(LogTemp, Warning, TEXT("SineThing = %f, TargetLookDirection = %s"), RotationDirection, *TargetLookDirection.ToString());
+		MovementComponent->RotateShip(RotationDirection < 0, FMath::Abs(RotationDirection));
+	}
 
 	if (TargetMoveDirection.SizeSquared() != 0)
 	{
@@ -184,19 +184,29 @@ void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 		FIntPoint Adjustment = FIntPoint(i < 2 ? 1 : -1, i % 2 == 0 ? 1 : -1);
 		if (TriangleIndices.Contains(Location + Adjustment))
 		{
-			for (int j = 0; j < 6; j++)
+			for (int j = 0; j < FMath::Clamp(6, 0, FMath::Max(0, Triangles.Num()-1)); j++)
 			{
-				VerticesToRemove.Remove(Vertices[TriangleIndices.FindRef(Location + Adjustment) + j]);
+				FVector VertexNotToRemove = Vertices[Triangles[TriangleIndices.FindRef(Location + Adjustment)] + j];
+				if (VerticesToRemove.Contains(VertexNotToRemove))
+				{
+					VerticesToRemove.Remove(VertexNotToRemove);
+				}
 			}
 		}
 	}
+	for (FVector Vertex : VerticesToRemove)
+	{
+		Vertices.Remove(Vertex);
+	}
+
 	MeshComponent->CreateMeshSection(0, Vertices, Triangles, TArray<FVector>(), UVs[0], TArray<FColor>(), TArray<FProcMeshTangent>(), false);
+	SetMeshRelativeLocation();
 }
 
 void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
 {
 	RelativeMeshLocation = Location;
-
+	DrawDebugPoint(GetWorld(), FVector(Location, 0), 10, FColor::Purple, true);
 	TArray<FVector> AdjVertices = TArray<FVector>();
 	AdjVertices.SetNum(Vertices.Num());
 
