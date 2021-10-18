@@ -43,7 +43,7 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	if (!FMath::IsNearlyEqual(LinearVelocity.SizeSquared(), 0, MinLinearVelocity) || !FMath::IsNearlyEqual(AngularVelocity, 0, MinAngularVelocity))
 	{
-		if (!GetOwner()->SetActorTransform(NewTransform, true, &Result))
+		if (GetOwner()->SetActorTransform(NewTransform, true, &Result))
 		{
 			FVector2D RelativeHitLocation = FVector2D(Result.Location - GetOwner()->GetActorLocation());
 
@@ -73,6 +73,7 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 				}
 
 				AddImpulse(CollisionImpulseFactor * ImpactNormal, RelativeHitLocation);
+				GetOwner()->SetActorTransform(NewTransform);
 			}
 		}
 	}

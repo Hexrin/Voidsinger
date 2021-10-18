@@ -143,9 +143,12 @@ public:
 
 	UFUNCTION()
 	void SetMeshRelativeLocation(FVector2D Location);
-	void SetMeshRelativeLocation();
+
 
 private:
+	UFUNCTION()
+	void UpdateMesh(bool MeshChanged = true);
+
 	UFUNCTION()
 	TSet<FVector> GetVerticesAroundLocation(FVector2D Location);
 
@@ -159,6 +162,8 @@ private:
 	TArray<int32> Triangles;
 
 	TArray<TArray<FVector2D>> UVs;
+
+	TMap<FIntPoint, TArray<FVector>> CollisionMeshes;
 
 	FVector2D RelativeMeshLocation;
 
