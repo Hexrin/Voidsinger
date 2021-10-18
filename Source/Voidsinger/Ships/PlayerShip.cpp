@@ -141,26 +141,38 @@ void APlayerShip::Voidsong5Call()
 
 void APlayerShip::MoveForwardPressedCall()
 {
-    bDecelerating = false;
-    SetTargetMoveDirection(FVector2D(1, 0));
+    if (!bBuildMode)
+    {
+        bDecelerating = false;
+        SetTargetMoveDirection(FVector2D(1, 0));
+    }
 }
 
 void APlayerShip::MoveBackwardPressedCall()
 {
-    bDecelerating = false;
-    SetTargetMoveDirection(FVector2D(-1, 0));
+    if (!bBuildMode)
+    {
+        bDecelerating = false;
+        SetTargetMoveDirection(FVector2D(-1, 0));
+    }
 }
 
 void APlayerShip::MoveRightPressedCall()
 {
-    bDecelerating = false;
-    SetTargetMoveDirection(FVector2D(0, 1));
+    if (!bBuildMode)
+    {
+        bDecelerating = false;
+        SetTargetMoveDirection(FVector2D(0, 1));
+    }
 }
 
 void APlayerShip::MoveLeftPressedCall()
 {
-    bDecelerating = false;
-    SetTargetMoveDirection(FVector2D(0, -1));
+    if (!bBuildMode)
+    {
+        bDecelerating = false;
+        SetTargetMoveDirection(FVector2D(0, -1));
+    }
 }
 
 void APlayerShip::MoveForwardReleasedCall()
@@ -186,7 +198,10 @@ void APlayerShip::MoveLeftReleasedCall()
 void APlayerShip::SetBuildMode(bool NewBuildMode)
 {
     bBuildMode = NewBuildMode;
-    OpenBuildMenu();
+    if (bBuildMode)
+    {
+        OpenBuildMenu();
+    }
 }
 
 bool APlayerShip::IsInBuildMode()

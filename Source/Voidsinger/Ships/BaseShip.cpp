@@ -170,7 +170,7 @@ void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 	
 	for (int i = 0; i < Triangles.Num(); i++)
 	{
-		if (TriangleIndices.FindRef(Location) < i && i < TriangleIndices.FindRef(Location) + 2)
+		if (TriangleIndices.FindRef(Location) > i || i > TriangleIndices.FindRef(Location) + 1)
 		{
 			NewTriangles.Emplace(Triangles[i]);
 		}		
@@ -178,7 +178,7 @@ void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 	TriangleIndices.Remove(Location);
 	Triangles = NewTriangles;
 
-	TSet<FVector> VerticesToRemove = GetVerticesAroundLocation(Location);
+	/*TSet<FVector> VerticesToRemove = GetVerticesAroundLocation(Location);
 	for (int i = 0; i < 4; i++)
 	{
 		FIntPoint Adjustment = FIntPoint(i < 2 ? 1 : -1, i % 2 == 0 ? 1 : -1);
@@ -197,7 +197,7 @@ void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 	for (FVector Vertex : VerticesToRemove)
 	{
 		Vertices.Remove(Vertex);
-	}
+	}*/
 
 	MeshComponent->CreateMeshSection(0, Vertices, Triangles, TArray<FVector>(), UVs[0], TArray<FColor>(), TArray<FProcMeshTangent>(), false);
 	SetMeshRelativeLocation();
