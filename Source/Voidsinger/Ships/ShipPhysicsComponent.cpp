@@ -157,4 +157,4 @@ FVector2D UShipPhysicsComponent::GetCenterOfMass()
 {
 	return CenterOfMass;
 }
-////////// CHAGE THIS BACK TO JUST return MomentOfInertia; (when done testing)\\\\\\\\\\\\\\
+////////// CHANGE THIS BACK TO JUST return MomentOfInertia; (when done testing)\\\\\\\\\\\\\\
