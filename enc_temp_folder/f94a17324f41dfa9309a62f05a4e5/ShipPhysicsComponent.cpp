@@ -43,11 +43,10 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	if (!FMath::IsNearlyEqual(LinearVelocity.SizeSquared(), 0, MinLinearVelocity) || !FMath::IsNearlyEqual(AngularVelocity, 0, MinAngularVelocity))
 	{
-		TArray<FHitResult> Results = TArray<FHitResult>();
-		Results.Emplace();
-		if (GetWorld()->ComponentSweepMulti(Results, Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent()), GetOwner()->GetActorLocation(), NewTransform.GetLocation(), NewTransform.Rotator(), FComponentQueryParams()))
+		TArray<UPrimitiveComponent*> Comp = TArray<UPrimitiveComponent*>();
+		Comp.Emplace(Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent()));
+		if (UFunctionLibrary::SetActorTransformSweepComponets(GetOwner(), Result, Comp, NewTransform))
 		{
-			Result = Results[0];
 			DrawDebugPoint(GetWorld(), Result.Location, 25, FColor::Orange, true);
 			FVector2D RelativeHitLocation = FVector2D(Result.Location - GetOwner()->GetActorLocation());
 
@@ -76,9 +75,9 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 						(1 / GetMass() + FMath::Square(FVector2D::CrossProduct(RelativeHitLocation, ImpactNormal)) / GetMomentOfInertia());
 				}
 
-				AddImpulse(CollisionImpulseFactor * ImpactNormal, RelativeHitLocation);				
+				AddImpulse(CollisionImpulseFactor * ImpactNormal, RelativeHitLocation);
+				GetOwner()->SetActorTransform(NewTransform);
 			}
-			GetOwner()->SetActorTransform(NewTransform);
 		}
 	}
 	

@@ -75,7 +75,7 @@ public:
 	float MaxAngularVelocity{ 10000 };
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float MinLinearVelocity{ 0.001 };
+	float MinLinearVelocity{ 0.05 };
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MinAngularVelocity{ 0.001 };
