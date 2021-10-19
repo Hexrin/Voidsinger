@@ -15,8 +15,7 @@ UPartGridComponent::UPartGridComponent()
 	PrimaryComponentTick.TickInterval = .5;
 
 	//Initiate Variables
-	GridBounds.UpperBounds = FIntPoint();
-	GridBounds.LowerBounds = FIntPoint();
+	GridBounds = FArrayBounds(FIntPoint(0, 0), FIntPoint(0, 0));
 
 	GridSize = FIntPoint(50);
 	
@@ -42,7 +41,7 @@ UPartGridComponent::UPartGridComponent()
 void UPartGridComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	GridBounds = FArrayBounds(FIntPoint(0, 0), FIntPoint(0, 0));
 	// ...
 	
 }
@@ -88,22 +87,9 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 		{
 
 			//Update GridBounds
-			if (Location.X + PartBounds.LowerBounds.X < GridBounds.LowerBounds.X)
-			{
-				GridBounds.LowerBounds.X = Location.X + PartBounds.LowerBounds.X;
-			}
-			if (Location.Y + PartBounds.LowerBounds.Y < GridBounds.LowerBounds.Y)
-			{
-				GridBounds.LowerBounds.Y = Location.Y + PartBounds.LowerBounds.Y;
-			}
-			if (Location.X + PartBounds.UpperBounds.X > GridBounds.UpperBounds.X)
-			{
-				GridBounds.UpperBounds.X = Location.X + PartBounds.UpperBounds.X;
-			}
-			if (Location.Y + PartBounds.UpperBounds.Y > GridBounds.UpperBounds.Y)
-			{
-				GridBounds.UpperBounds.Y = Location.Y + PartBounds.UpperBounds.Y;
-			}
+			GridBounds.LowerBounds = GridBounds.LowerBounds.ComponentMin(Location + PartBounds.LowerBounds);
+			GridBounds.UpperBounds = GridBounds.UpperBounds.ComponentMax(Location + PartBounds.UpperBounds);
+
 
 			//Iterate though desired shape and add to part grid
 			for (int i = 0; i < DesiredShape.Num(); i++)
@@ -857,6 +843,11 @@ TMap<FIntPoint, FPartData> UPartGridComponent::GetPartGrid()
 const float UPartGridComponent::GetPartGridScale()
 {
 	return GridScale;
+}
+
+const FArrayBounds UPartGridComponent::GetPartGridBounds()
+{
+	return GridBounds;
 }
 
 void UPartGridComponent::UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePart> PartType)

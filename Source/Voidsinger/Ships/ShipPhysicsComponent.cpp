@@ -140,20 +140,22 @@ bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult
 {
 	//Return Values
 	Hit = FHitResult();
-	bool ReturnValue = true;
+	bool ReturnValue = false;
 	TArray<FHitResult> Hits = TArray<FHitResult>();
 
 	FTransform Start = Ship->GetActorTransform();
 	FQuat TraceRot = Start.GetRotation();
 
-	FVector BoundsLocation;
-	FVector BoundsExtent;
-	Ship->GetActorBounds(true, BoundsLocation, BoundsExtent);
-	BoundsLocation -= Ship->GetActorLocation();
+	FArrayBounds ShipBounds = Ship->PartGrid->GetPartGridBounds();
+
+	FVector BoundsExtent = FVector(FVector2D(ShipBounds.UpperBounds - ShipBounds.LowerBounds) / 2, 0.5);
+	FVector BoundsLocation = BoundsExtent - FVector(ShipBounds.UpperBounds, 0.5);
 
 	FCollisionQueryParams QueryParams = FCollisionQueryParams().DefaultQueryParam;
 	QueryParams.AddIgnoredActor(Ship);
+	QueryParams.bTraceComplex = false;
 
+	//DrawDebugBox(Ship->GetWorld(), NewTransform.GetTranslation() + BoundsLocation, BoundsExtent, TraceRot, FColor::Emerald, false, 5);
 	if (Ship->GetWorld()->SweepSingleByObjectType(Hit, Start.GetTranslation() + BoundsLocation, NewTransform.GetTranslation() + BoundsLocation, TraceRot, FCollisionObjectQueryParams::DefaultObjectQueryParam, FCollisionShape::MakeBox(BoundsExtent), QueryParams))
 	{
 		Hit = FHitResult();
@@ -169,21 +171,21 @@ bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult
 
 			if (Ship->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, TraceRot, FCollisionObjectQueryParams::AllObjects, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))
 			{
-				ReturnValue = false;
+				ReturnValue = true;
 				Hits.Emplace(ThisHit);
-				//UE_LOG(LogTemp, Warning, TEXT("HIT"));
+				UE_LOG(LogTemp, Warning, TEXT("HIT"));
 				///DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Red, false, 5, 0U, 0.05);
-				//DrawDebugBox(Target->GetWorld(), ThisHit.Location, FVector(.5), TraceRot, FColor::Red, false, 5);
+				//DrawDebugBox(Ship->GetWorld(), ThisHit.Location, FVector(.5), TraceRot, FColor::Red, false, 5);
 			}
-			/*else
+			else
 			{
-				DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Green, false, 5, 0U, 0.05);
-			}*/
+				//DrawDebugDirectionalArrow(Ship->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Green, false, 5, 0U, 0.05);
+			}
 		}
 
 	}
 
-	if (!ReturnValue)
+	if (ReturnValue)
 	{
 		for (FHitResult Value : Hits)
 		{

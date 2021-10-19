@@ -110,6 +110,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	const float GetPartGridScale();
 
+	UFUNCTION(BlueprintPure)
+	const FArrayBounds GetPartGridBounds();
+
 	//Misc
 
 	UFUNCTION()

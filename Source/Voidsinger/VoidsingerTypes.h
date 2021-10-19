@@ -72,10 +72,28 @@ struct VOIDSINGER_API FArrayBounds
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FIntPoint LowerBounds = FIntPoint();
+	FIntPoint LowerBounds = FIntPoint(0);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FIntPoint UpperBounds = FIntPoint();
+	FIntPoint UpperBounds = FIntPoint(0);
+
+	FArrayBounds()
+	{
+		LowerBounds = FIntPoint(0, 0);
+		UpperBounds = FIntPoint(0, 0);
+	}
+
+	FArrayBounds(FIntPoint Lower, FIntPoint Upper)
+	{
+		LowerBounds = Lower;
+		UpperBounds = Upper;
+	}
+
+	FArrayBounds(int32 LowerX, int32 LowerY, int32 UpperX, int32 UpperY)
+	{
+		LowerBounds = FIntPoint(LowerX, LowerY);
+		UpperBounds = FIntPoint(UpperX, UpperY);
+	}
 };
 
 USTRUCT(BlueprintType)
