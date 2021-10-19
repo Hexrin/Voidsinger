@@ -46,7 +46,7 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 		GetOwner()->SetActorTransform(NewTransform);
 		if (UShipPhysicsComponent::SweepShip(NewTransform, Result))
 		{
-			DrawDebugPoint(GetWorld(), Result.Location, 25, FColor::Orange, true);
+			//DrawDebugPoint(GetWorld(), Result.Location, 25, FColor::Orange, true);
 			FVector2D RelativeHitLocation = FVector2D(Result.Location - GetOwner()->GetActorLocation());
 
 			FVector2D ImpactNormal = FVector2D(Result.Normal);
@@ -173,7 +173,7 @@ bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult
 			{
 				ReturnValue = true;
 				Hits.Emplace(ThisHit);
-				UE_LOG(LogTemp, Warning, TEXT("HIT"));
+				//UE_LOG(LogTemp, Warning, TEXT("HIT"));
 				///DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Red, false, 5, 0U, 0.05);
 				//DrawDebugBox(Ship->GetWorld(), ThisHit.Location, FVector(.5), TraceRot, FColor::Red, false, 5);
 			}
