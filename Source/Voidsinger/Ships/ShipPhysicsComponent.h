@@ -48,6 +48,9 @@ public:
 	void UpdateMassCalculations();
 
 	UFUNCTION(BlueprintPure)
+	bool SweepShip(const FTransform& NewTransform, FHitResult& Hit);
+
+	UFUNCTION(BlueprintPure)
 	float GetAngularVelocity();
 
 	UFUNCTION(BlueprintPure)

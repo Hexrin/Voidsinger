@@ -33,9 +33,6 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Get Child Classes", Keywords = "Get Child Classes"), Category = Class)
 	static TArray<UClass*> GetClasses(UClass* ParentClass);
 
-	UFUNCTION(BlueprintCallable)
-	static bool SetActorTransformSweepComponets(AActor* Target, FHitResult & Hit, TArray <UPrimitiveComponent*> PrimComps, const FTransform& NewTransform);
-
 	//Explode at a global location, affecting all part grids in the radius
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"))
 	static void ExplodeAtWorldLocation(const UObject* WorldContextObject, FVector WorldLocation, float ExplosionRadius);
