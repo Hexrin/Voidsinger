@@ -171,6 +171,7 @@ void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 	MeshComponent->CreateMeshSection(SectionIndex, GetVerticesAroundLocation(Location), CreateTrianglesForSquare(), TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>(), false);
 
 	MeshData.Emplace(Location, SectionIndex);
+	UpdateMesh();
 }
 
 
@@ -188,14 +189,11 @@ void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
 
 void ABaseShip::UpdateMesh(bool MeshChanged)
 {
-	MeshComponent->ClearCollisionConvexMeshes();
-
 	for (auto& Data : MeshData)
 	{
-		if (MeshComponent->GetProcMeshSection(Data.Value)->ProcIndexBuffer.Num() == 4)
+		if (MeshComponent->GetProcMeshSection(Data.Value)->ProcVertexBuffer.Num() == 4)
 		{
 			TArray<FVector> AdjVertices = GetVerticesAroundLocation(Data.Key);
-			AdjVertices.SetNum(4);
 
 			TArray<FVector> CollsionVertices = TArray<FVector>();
 			CollsionVertices.Reserve(8);
@@ -208,31 +206,9 @@ void ABaseShip::UpdateMesh(bool MeshChanged)
 				CollsionVertices.Emplace(AdjVertices[i] + FVector(0, 0, 0.5));
 				CollsionVertices.Emplace(AdjVertices[i] + FVector(0, 0, -0.5));
 			}
-			MeshComponent->AddCollisionConvexMesh(CollsionVertices);
 			MeshComponent->UpdateMeshSection(Data.Value, AdjVertices, TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>());
 		}
 	}
-	//if (MeshChanged)
-	//{
-	//	MeshComponent->CreateMeshSection(0, AdjVertices, Triangles, TArray<FVector>(), AdjUV, TArray<FColor>(), TArray<FProcMeshTangent>(), false);
-	//}
-	//else
-	//{
-	//	MeshComponent->UpdateMeshSection(0, AdjVertices, TArray<FVector>(), AdjUV, TArray<FColor>(), TArray<FProcMeshTangent>());
-	//}
-
-	//MeshComponent->ClearCollisionConvexMeshes();
-	//for (auto& Val : CollisionMeshes)
-	//{
-	//	TArray<FVector> AdjCollision = TArray<FVector>();
-	//	//AdjCollision.SetNum(Val.Value.Num());
-	//	for (FVector Vertex : Val.Value)
-	//	{
-	//		AdjCollision.Emplace(Vertex + FVector(RelativeMeshLocation, 0));
-	//	}
-
-	//	MeshComponent->AddCollisionConvexMesh(AdjCollision);
-	//}
 }
 
 TArray<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)

@@ -158,3 +158,43 @@ private:
 
 
 };
+
+USTRUCT(BlueprintType)
+struct VOIDSINGER_API FPartData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBasePart* Part;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBasePart* Part;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Temperature = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int BitNumber;
+
+	FPartData()
+	{
+		FPartData(nullptr, 0, 0);
+	}
+
+	FPartData(UBasePart* PartRef, float Temp, int Bit)
+	{
+		Part = PartRef;
+		Temperature = Temp;
+		BitNumber = Bit;
+	}
+
+	void SetTemperature(const float NewTemp)
+	{
+		Temperature = NewTemp;
+	}
+
+	void SetBitNumber(int NewBitNumber)
+	{
+		BitNumber = NewBitNumber;
+	}
+};
