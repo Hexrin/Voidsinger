@@ -183,7 +183,11 @@ void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 		if (TriangleIndices.FindRef(Location) > i || i > TriangleIndices.FindRef(Location) + 1)
 		{
 			NewTriangles.Emplace(Triangles[i]);
-		}		
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s was removed index :%i"), *Location.ToString(), i);
+		}
 	}
 	TriangleIndices.Remove(Location);
 	Triangles = NewTriangles;
