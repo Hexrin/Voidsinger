@@ -97,10 +97,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float Cooldown;
 
-	//The activation key combo of the voidsong.
-	UPROPERTY(EditDefaultsOnly)
-	TArray<int> ActivationCombo;
-
 	//The name of the Voidsong that the player will see.
 	UPROPERTY(EditDefaultsOnly)
 	FText VoidsongDisplayText;
@@ -112,7 +108,20 @@ public:
 	bool bIsBeingDestroyed;
 
 private:
+
 	//Used to check if the voidsong is off cooldown.
 	UPROPERTY()
 	bool CanActivateAgain = true;
+
+	/*Set Defaults*\
+	\*------------*/
+
+	//The length of Voidsongs. 
+	static const int VoidsongLength = 3;
+
+public:
+
+	//The activation key combo of the voidsong.
+	UPROPERTY(EditDefaultsOnly)
+	TArray<int> ActivationCombo;
 };

@@ -5,6 +5,7 @@
 
 UBaseVoidsong::UBaseVoidsong()
 {
+	ActivationCombo.SetNum(VoidsongLength);
 }
 
 UWorld* UBaseVoidsong::GetWorld() const

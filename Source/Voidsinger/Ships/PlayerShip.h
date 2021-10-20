@@ -182,8 +182,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSoftObjectPtr<USoundBase> VoidsongInstrumentAsset;
 
-
-
 	/*------Camera-------*\
 	\*-------------------*/
 public:
