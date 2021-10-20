@@ -156,16 +156,36 @@ private:
 	void AddTrianglesForSquare(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft, FIntPoint Location);
 
 	UPROPERTY()
-	TArray<FVector> Vertices;
+	TMap<FIntPoint, FPartMeshData> MeshData;
+
+	/*UPROPERTY()
+	static TArray<FVector2D> UV{ TArray<FVector2D>() };*/
 
 	UPROPERTY()
-	TArray<int32> Triangles;
-
-	TArray<TArray<FVector2D>> UVs;
-
-	TMap<FIntPoint, TArray<FVector>> CollisionMeshes;
-
 	FVector2D RelativeMeshLocation;
+};
 
-	TMap<FIntPoint, int32> TriangleIndices;
+
+USTRUCT(BlueprintType)
+struct VOIDSINGER_API FPartMeshData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 SectionIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FVector> Verticies;
+
+	FPartMeshData()
+	{
+		SectionIndex = 0;
+		Verticies = TArray<FVector>();
+	}
+
+	FPartMeshData(int32 Index, TArray<FVector> Vertices)
+	{
+		SectionIndex = Index;
+		Vertices = Vertices;
+	}
 };

@@ -18,15 +18,7 @@ ABaseShip::ABaseShip()
 	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
 	MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));	
 	
-
-	UVs = TArray<TArray<FVector2D>>();
-	for (int i = 0; i < 4; i++)
-		UVs.Emplace(TArray<FVector2D>());
-	
-	Vertices = TArray<FVector>();
-	Triangles = TArray<int32>();
-	TriangleIndices = TMap<FIntPoint, int32>();
-	CollisionMeshes = TMap<FIntPoint, TArray<FVector>>();
+	MeshData = TMap<FIntPoint, FPartMeshData>();
 	RelativeMeshLocation = FVector2D();
 }
 
@@ -151,69 +143,19 @@ FVector2D ABaseShip::GetTargetMoveDirection()
 
 void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 {
-	TArray<int32> Indices = TArray<int32>();
-	TArray<FVector> CollisionMesh = TArray<FVector>();
-
-	for (FVector Vetex : GetVerticesAroundLocation(FVector2D(Location)))
+	//MeshComponent->CreateMeshSection()
+	if (MeshData.Contains(Location))
 	{
-		Indices.Emplace(Vertices.AddUnique(Vetex));
-		CollisionMesh.Emplace(Vetex + FVector(0, 0, 0.5));
-		CollisionMesh.Emplace(Vetex + FVector(0, 0, -0.5));
+		RemoveMeshAtLocation(Location);
 	}
 
-	AddTrianglesForSquare(Indices[0], Indices[1], Indices[2], Indices[3], Location);
-
-	CollisionMeshes.Emplace(Location, CollisionMesh);
-
-	UVs[0].SetNum(Vertices.Num());
-	UVs[1].SetNum(Vertices.Num());
-	UVs[2].SetNum(Vertices.Num());
-	UVs[3].SetNum(Vertices.Num());
-
-	UpdateMesh();
+	
 }
 
 
 void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 {
-	TArray<int32> NewTriangles = TArray<int32>();
 	
-	for (int i = 0; i < Triangles.Num(); i++)
-	{
-		if (TriangleIndices.FindRef(Location) > i || i > TriangleIndices.FindRef(Location) + 1)
-		{
-			NewTriangles.Emplace(Triangles[i]);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%s was removed index :%i"), *Location.ToString(), i);
-		}
-	}
-	TriangleIndices.Remove(Location);
-	Triangles = NewTriangles;
-
-	/*TSet<FVector> VerticesToRemove = GetVerticesAroundLocation(Location);
-	for (int i = 0; i < 4; i++)
-	{
-		FIntPoint Adjustment = FIntPoint(i < 2 ? 1 : -1, i % 2 == 0 ? 1 : -1);
-		if (TriangleIndices.Contains(Location + Adjustment))
-		{
-			for (int j = 0; j < FMath::Clamp(6, 0, FMath::Max(0, Triangles.Num()-1)); j++)
-			{
-				FVector VertexNotToRemove = Vertices[Triangles[TriangleIndices.FindRef(Location + Adjustment)] + j];
-				if (VerticesToRemove.Contains(VertexNotToRemove))
-				{
-					VerticesToRemove.Remove(VertexNotToRemove);
-				}
-			}
-		}
-	}
-	for (FVector Vertex : VerticesToRemove)
-	{
-		Vertices.Remove(Vertex);
-	}*/
-
-	UpdateMesh();
 }
 
 void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
@@ -224,40 +166,40 @@ void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
 
 void ABaseShip::UpdateMesh(bool MeshChanged)
 {
-	DrawDebugPoint(GetWorld(), FVector(RelativeMeshLocation, 0), 10, FColor::Purple, true);
-	TArray<FVector> AdjVertices = TArray<FVector>();
-	AdjVertices.SetNum(Vertices.Num());
+	//DrawDebugPoint(GetWorld(), FVector(RelativeMeshLocation, 0), 10, FColor::Purple, true);
+	//TArray<FVector> AdjVertices = TArray<FVector>();
+	//AdjVertices.SetNum(Vertices.Num());
 
-	TArray<FVector2D> AdjUV = TArray<FVector2D>();
-	AdjUV.SetNum(Vertices.Num());
+	//TArray<FVector2D> AdjUV = TArray<FVector2D>();
+	//AdjUV.SetNum(Vertices.Num());
 
-	for (int i = 0; i < Vertices.Num(); i++)
-	{
-		AdjVertices[i] = Vertices[i] + FVector(RelativeMeshLocation, 0);
-		AdjUV[i] = UVs[0][i] - RelativeMeshLocation;
-	}
+	//for (int i = 0; i < Vertices.Num(); i++)
+	//{
+	//	AdjVertices[i] = Vertices[i] + FVector(RelativeMeshLocation, 0);
+	//	AdjUV[i] = UVs[0][i] - RelativeMeshLocation;
+	//}
 
-	if (MeshChanged)
-	{
-		MeshComponent->CreateMeshSection(0, AdjVertices, Triangles, TArray<FVector>(), AdjUV, TArray<FColor>(), TArray<FProcMeshTangent>(), false);
-	}
-	else
-	{
-		MeshComponent->UpdateMeshSection(0, AdjVertices, TArray<FVector>(), AdjUV, TArray<FColor>(), TArray<FProcMeshTangent>());
-	}
+	//if (MeshChanged)
+	//{
+	//	MeshComponent->CreateMeshSection(0, AdjVertices, Triangles, TArray<FVector>(), AdjUV, TArray<FColor>(), TArray<FProcMeshTangent>(), false);
+	//}
+	//else
+	//{
+	//	MeshComponent->UpdateMeshSection(0, AdjVertices, TArray<FVector>(), AdjUV, TArray<FColor>(), TArray<FProcMeshTangent>());
+	//}
 
-	MeshComponent->ClearCollisionConvexMeshes();
-	for (auto& Val : CollisionMeshes)
-	{
-		TArray<FVector> AdjCollision = TArray<FVector>();
-		//AdjCollision.SetNum(Val.Value.Num());
-		for (FVector Vertex : Val.Value)
-		{
-			AdjCollision.Emplace(Vertex + FVector(RelativeMeshLocation, 0));
-		}
+	//MeshComponent->ClearCollisionConvexMeshes();
+	//for (auto& Val : CollisionMeshes)
+	//{
+	//	TArray<FVector> AdjCollision = TArray<FVector>();
+	//	//AdjCollision.SetNum(Val.Value.Num());
+	//	for (FVector Vertex : Val.Value)
+	//	{
+	//		AdjCollision.Emplace(Vertex + FVector(RelativeMeshLocation, 0));
+	//	}
 
-		MeshComponent->AddCollisionConvexMesh(AdjCollision);
-	}
+	//	MeshComponent->AddCollisionConvexMesh(AdjCollision);
+	//}
 }
 
 TSet<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
