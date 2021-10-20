@@ -5,7 +5,6 @@
 
 UBaseVoidsong::UBaseVoidsong()
 {
-	ActivationCombo.SetNum(VoidsongLength);
 }
 
 UWorld* UBaseVoidsong::GetWorld() const
@@ -43,7 +42,7 @@ TStatId UBaseVoidsong::GetStatId() const
 }
 TArray<int> UBaseVoidsong::GetActivationCombo()
 {
-	return ActivationCombo;
+	return ActivationCombo.GetInputsAsArray();
 }
 FText UBaseVoidsong::GetVoidsongDisplayText()
 {

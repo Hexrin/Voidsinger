@@ -12,11 +12,11 @@
  * 
  */
 
-/*USTRUCT(BlueprintType, Blueprintable)
+USTRUCT(BlueprintType, Blueprintable)
 struct FVoidsongInputs
 {
 	GENERATED_BODY()
-
+	
 	//The inputs
 	UPROPERTY(EditDefaultsOnly)
 	int Input1;
@@ -54,7 +54,7 @@ struct FVoidsongInputs
 		return OutArray;
 	}
 
-};*/
+};
 
 UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBaseVoidsong : public UObject, public FTickableGameObject
@@ -167,6 +167,6 @@ private:
 public:
 
 	//The activation key combo of the voidsong.
-	//UPROPERTY(EditDefaultsOnly)
-	//FVoidsongInputs ActivationCombo;
+	UPROPERTY(EditDefaultsOnly)
+	FVoidsongInputs ActivationCombo;
 };

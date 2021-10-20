@@ -100,7 +100,7 @@ void ABaseShip::PlayVoidsong(TArray<int> Sequence)
 	//Check the available voidsongs and see if their activation sequence matches the sequence inputted. If so, activate that voidsong.
 	for (auto& i : AvailableVoidsongs)
 	{
-		if (i->ActivationCombo == Sequence)
+		if (i->GetActivationCombo() == Sequence)
 		{
 			i->Activate();
 		}
