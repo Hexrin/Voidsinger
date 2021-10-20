@@ -41,7 +41,7 @@ struct FVoidsongInputs
 		Input3 = New3;
 	}
 
-	int GetNumOfInputs()
+	static int GetNumOfInputs()
 	{
 		return NumOfInputs;
 	}
@@ -104,43 +104,12 @@ public:
 	UFUNCTION(BlueprintPure)
 	FText GetVoidsongDisplayText();
 
-	/*Voidsong Functions*\
-	\*------------------*/
-
-	//Used to activate the voidsong.
-	UFUNCTION(BlueprintCallable)
-	void Activate();
-
-	//This will do the effect of the voidsong. It's called within Activate. Needs to be implemented for each Voidsong.
-	UFUNCTION(BlueprintImplementableEvent)
-	void Effect();
-
-	//This will undo the effect of the voidsong. It's also called within activate, after a delay for the duration. Needs to be implemented for each Voidsong. 
-	UFUNCTION(BlueprintImplementableEvent)
-	void Deactivate();
-
-	//This function is for the delay of the duration.
-	UFUNCTION()
-	void DurationDelay();
-
-	//This function is for the delay of the cooldown.
-	UFUNCTION()
-	void CooldownDelay();
-
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
 
 	/*Blueprint Defaults*\
 	\*------------------*/
-
-	//The duration of the voidsong.
-	UPROPERTY(EditDefaultsOnly)
-	float Duration;
-
-	//The cooldown of the voidsong.
-	UPROPERTY(EditDefaultsOnly)
-	float Cooldown;
 
 	//The name of the Voidsong that the player will see.
 	UPROPERTY(EditDefaultsOnly)
@@ -151,20 +120,6 @@ public:
 
 	UPROPERTY()
 	bool bIsBeingDestroyed;
-
-private:
-
-	//Used to check if the voidsong is off cooldown.
-	UPROPERTY()
-	bool CanActivateAgain = true;
-
-	/*Set Defaults*\
-	\*------------*/
-
-	//The length of Voidsongs. 
-	//static const int VoidsongLength = 3;
-
-public:
 
 	//The activation key combo of the voidsong.
 	UPROPERTY(EditDefaultsOnly)
