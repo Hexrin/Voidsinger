@@ -18,8 +18,17 @@ ABaseShip::ABaseShip()
 	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
 	MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));	
 	
-	MeshData = TMap<FIntPoint, FPartMeshData>();
+	MeshData = TMap<FIntPoint, int32>();
 	RelativeMeshLocation = FVector2D();
+
+	if (UV.Num() == 0)
+	{
+		UV = TArray<FVector2D>();
+		UV.Emplace(FVector2D(1, 1));
+		UV.Emplace(FVector2D(1, 0));
+		UV.Emplace(FVector2D(0, 1));
+		UV.Emplace(FVector2D(0, 0));
+	}
 }
 
 // Called when the game starts or when spawned
@@ -144,18 +153,31 @@ FVector2D ABaseShip::GetTargetMoveDirection()
 void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 {
 	//MeshComponent->CreateMeshSection()
+	
+
+	int32 SectionIndex = 0; 
+	
 	if (MeshData.Contains(Location))
 	{
+		SectionIndex = MeshData.FindRef(Location);
 		RemoveMeshAtLocation(Location);
 	}
+	else
+	{
+		TArray<FIntPoint> Keys = TArray<FIntPoint>();
+		MeshData.GenerateKeyArray(Keys);
+		SectionIndex = Keys.Num();
+	}
+	MeshComponent->CreateMeshSection(SectionIndex, GetVerticesAroundLocation(Location), CreateTrianglesForSquare(), TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>(), false);
 
-	
+	MeshData.Emplace(Location, SectionIndex);
 }
 
 
 void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 {
-	
+	MeshComponent->ClearMeshSection(MeshData.FindRef(Location));
+	UpdateMesh();
 }
 
 void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
@@ -166,19 +188,30 @@ void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
 
 void ABaseShip::UpdateMesh(bool MeshChanged)
 {
-	//DrawDebugPoint(GetWorld(), FVector(RelativeMeshLocation, 0), 10, FColor::Purple, true);
-	//TArray<FVector> AdjVertices = TArray<FVector>();
-	//AdjVertices.SetNum(Vertices.Num());
+	MeshComponent->ClearCollisionConvexMeshes();
 
-	//TArray<FVector2D> AdjUV = TArray<FVector2D>();
-	//AdjUV.SetNum(Vertices.Num());
+	for (auto& Data : MeshData)
+	{
+		if (MeshComponent->GetProcMeshSection(Data.Value)->ProcIndexBuffer.Num() == 4)
+		{
+			TArray<FVector> AdjVertices = GetVerticesAroundLocation(Data.Key);
+			AdjVertices.SetNum(4);
 
-	//for (int i = 0; i < Vertices.Num(); i++)
-	//{
-	//	AdjVertices[i] = Vertices[i] + FVector(RelativeMeshLocation, 0);
-	//	AdjUV[i] = UVs[0][i] - RelativeMeshLocation;
-	//}
+			TArray<FVector> CollsionVertices = TArray<FVector>();
+			CollsionVertices.Reserve(8);
 
+
+			for (int i = 0; i < AdjVertices.Num(); i++)
+			{
+				AdjVertices[i] = AdjVertices[i] + FVector(RelativeMeshLocation, 0);
+
+				CollsionVertices.Emplace(AdjVertices[i] + FVector(0, 0, 0.5));
+				CollsionVertices.Emplace(AdjVertices[i] + FVector(0, 0, -0.5));
+			}
+			MeshComponent->AddCollisionConvexMesh(CollsionVertices);
+			MeshComponent->UpdateMeshSection(Data.Value, AdjVertices, TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>());
+		}
+	}
 	//if (MeshChanged)
 	//{
 	//	MeshComponent->CreateMeshSection(0, AdjVertices, Triangles, TArray<FVector>(), AdjUV, TArray<FColor>(), TArray<FProcMeshTangent>(), false);
@@ -202,9 +235,9 @@ void ABaseShip::UpdateMesh(bool MeshChanged)
 	//}
 }
 
-TSet<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
+TArray<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
 {
-	TSet<FVector> ReturnValue = TSet<FVector>();
+	TArray<FVector> ReturnValue = TArray<FVector>();
 	for (int i = 0; i < 4; i++)
 	{
 		float AdjustmentValue1 = PartGrid->GetPartGridScale() / (i < 2 ? 2 : -2);
@@ -215,15 +248,17 @@ TSet<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
 	return ReturnValue;
 }
 
-void ABaseShip::AddTrianglesForSquare(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft, FIntPoint Location)
+TArray<int32> ABaseShip::CreateTrianglesForSquare(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft)
 {
-	TriangleIndices.Emplace(Location, Triangles.Emplace(UpperRight));
+	TArray<int32> Triangles = TArray<int32>();
+	Triangles.Emplace(UpperRight);
 	Triangles.Emplace(UpperLeft);
 	Triangles.Emplace(LowerLeft);
 
 	Triangles.Emplace(LowerLeft);
 	Triangles.Emplace(LowerRight);
 	Triangles.Emplace(UpperRight);
+	return Triangles;
 }
 
 void ABaseShip::SaveEditorShip()

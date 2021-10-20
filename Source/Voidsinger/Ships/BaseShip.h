@@ -150,42 +150,17 @@ private:
 	void UpdateMesh(bool MeshChanged = true);
 
 	UFUNCTION()
-	TSet<FVector> GetVerticesAroundLocation(FVector2D Location);
+	TArray<FVector> GetVerticesAroundLocation(FVector2D Location);
 
 	UFUNCTION()
-	void AddTrianglesForSquare(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft, FIntPoint Location);
+	TArray<int32> CreateTrianglesForSquare(int32 UpperRight = 0, int32 UpperLeft = 1, int32 LowerRight = 2, int32 LowerLeft =3);
 
 	UPROPERTY()
-	TMap<FIntPoint, FPartMeshData> MeshData;
-
-	/*UPROPERTY()
-	static TArray<FVector2D> UV{ TArray<FVector2D>() };*/
+	TMap<FIntPoint, int32> MeshData;
 
 	UPROPERTY()
 	FVector2D RelativeMeshLocation;
-};
 
-
-USTRUCT(BlueprintType)
-struct VOIDSINGER_API FPartMeshData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 SectionIndex;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FVector> Verticies;
-
-	FPartMeshData()
-	{
-		SectionIndex = 0;
-		Verticies = TArray<FVector>();
-	}
-
-	FPartMeshData(int32 Index, TArray<FVector> Vertices)
-	{
-		SectionIndex = Index;
-		Vertices = Vertices;
-	}
+	UPROPERTY()
+	TArray<FVector2D> UV;
 };
