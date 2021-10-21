@@ -17,6 +17,44 @@ class UBasePart;
 class UBaseThrusterPart;
 class UCorePart;
 
+
+USTRUCT(BlueprintType)
+struct VOIDSINGER_API FPartData
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UBasePart* Part;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Temperature = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int BitNumber;
+
+	FPartData()
+	{
+		FPartData(nullptr, 0, 0);
+	}
+
+	FPartData(UBasePart* PartRef, float Temp, int Bit)
+	{
+		Part = PartRef;
+		Temperature = Temp;
+		BitNumber = Bit;
+	}
+
+	void SetTemperature(const float NewTemp)
+	{
+		Temperature = NewTemp;
+	}
+
+	void SetBitNumber(int NewBitNumber)
+	{
+		BitNumber = NewBitNumber;
+	}
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
 class VOIDSINGER_API UPartGridComponent : public UActorComponent
 {
@@ -156,45 +194,15 @@ private:
 	UFUNCTION()
 	bool const CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape);
 
+	/*Static Functions*\
+	\*----------------*/
+public:
+	UFUNCTION(BlueprintPure)
+	static bool PointsConnected(TMap<FIntPoint, FPartData> Grid, FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality = false);
+	static bool PointsConnected(TMap<FIntPoint, FPartData> Grid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality = false);
 
-};
+	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
+	UFUNCTION()
+	static TArray<FIntPoint> FindConnectedShape(TArray<FIntPoint> Shape, TMap<FIntPoint, FPartData> ConnectedPartsMap, bool CheckFunctionality = false);
 
-USTRUCT(BlueprintType)
-struct VOIDSINGER_API FPartData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UBasePart* Part;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UBasePart* Part;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Temperature = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int BitNumber;
-
-	FPartData()
-	{
-		FPartData(nullptr, 0, 0);
-	}
-
-	FPartData(UBasePart* PartRef, float Temp, int Bit)
-	{
-		Part = PartRef;
-		Temperature = Temp;
-		BitNumber = Bit;
-	}
-
-	void SetTemperature(const float NewTemp)
-	{
-		Temperature = NewTemp;
-	}
-
-	void SetBitNumber(int NewBitNumber)
-	{
-		BitNumber = NewBitNumber;
-	}
 };

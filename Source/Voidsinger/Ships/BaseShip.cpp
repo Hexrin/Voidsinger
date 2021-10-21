@@ -12,7 +12,7 @@ ABaseShip::ABaseShip()
 	PrimaryActorTick.bCanEverTick = true;
 	MeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Mesh Component"));
 	RootComponent = MeshComponent;
-	MeshComponent->bUseComplexAsSimpleCollision = false;
+	MeshComponent->bUseComplexAsSimpleCollision = true;
 
 	PhysicsComponent = CreateDefaultSubobject<UShipPhysicsComponent>(TEXT("Physics Component"));
 	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
@@ -25,8 +25,12 @@ ABaseShip::ABaseShip()
 	{
 		UV = TArray<FVector2D>();
 		UV.Emplace(FVector2D(1, 1));
+		UV.Emplace(FVector2D(1, 1));
+		UV.Emplace(FVector2D(1, 0));
 		UV.Emplace(FVector2D(1, 0));
 		UV.Emplace(FVector2D(0, 1));
+		UV.Emplace(FVector2D(0, 1));
+		UV.Emplace(FVector2D(0, 0));
 		UV.Emplace(FVector2D(0, 0));
 	}
 }
@@ -168,7 +172,21 @@ void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 		MeshData.GenerateKeyArray(Keys);
 		SectionIndex = Keys.Num();
 	}
-	MeshComponent->CreateMeshSection(SectionIndex, GetVerticesAroundLocation(Location), CreateTrianglesForSquare(), TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>(), false);
+
+	TArray<FVector> Vertices = TArray<FVector>();
+	for (FVector Vertex : GetVerticesAroundLocation(Location))
+	{
+		Vertices.Emplace(FVector(Vertex.X, Vertex.Y, 0.5));
+		Vertices.Emplace(FVector(Vertex.X, Vertex.Y, -0.5));
+	}
+	TArray<int32> Triangles = CreateTrianglesForSquare(0,2,4,6);
+	//Triangles += CreateTrianglesForSquare(3, 1, 7, 5);
+	Triangles += CreateTrianglesForSquare(2, 0, 3, 1);
+	Triangles += CreateTrianglesForSquare(0, 4, 1, 5);
+	Triangles += CreateTrianglesForSquare(4, 6, 5, 7);
+	Triangles += CreateTrianglesForSquare(6, 2, 7, 3);
+
+	MeshComponent->CreateMeshSection(SectionIndex, Vertices, Triangles, TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
 
 	MeshData.Emplace(Location, SectionIndex);
 	UpdateMesh();
@@ -184,10 +202,10 @@ void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
 {
 	RelativeMeshLocation = Location;
-	UpdateMesh(false);
+	UpdateMesh();
 }
 
-void ABaseShip::UpdateMesh(bool MeshChanged)
+void ABaseShip::UpdateMesh()
 {
 	for (auto& Data : MeshData)
 	{

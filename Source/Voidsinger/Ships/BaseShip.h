@@ -147,7 +147,7 @@ public:
 
 private:
 	UFUNCTION()
-	void UpdateMesh(bool MeshChanged = true);
+	void UpdateMesh();
 
 	UFUNCTION()
 	TArray<FVector> GetVerticesAroundLocation(FVector2D Location);
