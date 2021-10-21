@@ -37,6 +37,9 @@ public:
 	UFUNCTION()
 	void DurationDelay();
 
+	/*Getters*\
+	\--------*/
+
 private:
 
 	/*Instanced  Variables*\

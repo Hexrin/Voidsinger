@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/Voidsongs/BaseVoidsong.h"
+#include "Kismet/GameplayStatics.h"
 #include "BaseWhoVoidsong.generated.h"
 
 /**
@@ -16,7 +17,10 @@ class VOIDSINGER_API UBaseWhoVoidsong : public UBaseVoidsong
 	
 public:
 
+	UFUNCTION(BlueprintPure)
+	TArray<AActor*> GetWhos();
+
 	UPROPERTY(EditDefaultsOnly)
-	UClass* Who;
+	TSubclassOf<AActor> Who;
 
 };

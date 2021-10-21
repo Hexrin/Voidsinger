@@ -9,10 +9,15 @@
 /**
  * 
  */
+
+class UBasePart;
+
 UCLASS()
 class VOIDSINGER_API UBaseNounVoidsong : public UBaseVoidsong
 {
 	GENERATED_BODY()
+
+public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UBasePart> Noun;
