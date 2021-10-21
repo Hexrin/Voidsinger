@@ -23,21 +23,21 @@ struct VOIDSINGER_API FPartData
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UBasePart* Part;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UBasePart* Part;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float Temperature = 0;
+	float Temperature = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int BitNumber;
+	int32 BitNumber = 0;
 
 	FPartData()
 	{
 		FPartData(nullptr, 0, 0);
 	}
 
-	FPartData(UBasePart* PartRef, float Temp, int Bit)
+	FPartData(UBasePart* PartRef, float Temp, int Bit, UMaterialInterface* Material)
 	{
 		Part = PartRef;
 		Temperature = Temp;
