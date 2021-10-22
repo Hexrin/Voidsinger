@@ -3,3 +3,13 @@
 
 #include "VoidGameMode.h"
 
+AVoidGameMode::AVoidGameMode()
+{
+	//LoadConfig();
+}
+
+int AVoidGameMode::PrintTestaroo()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Testaroo = %i"), Testaroo)
+	return Testaroo;
+}
