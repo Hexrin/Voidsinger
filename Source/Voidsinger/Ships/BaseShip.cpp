@@ -104,6 +104,7 @@ void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
 	}
 }
 
+//Adds a new voidsong
 void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 {
 	//Creates the voidsong object from the given class and adds it to available voidsongs
@@ -112,16 +113,51 @@ void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 	OnAddVoidsongDelegate.Broadcast(NewVoidsong);
 }
 
+//Plays the voidsong sequence
 void ABaseShip::PlayVoidsong(TArray<int> Sequence)
 {
-	//Check the available voidsongs and see if their activation sequence matches the sequence inputted. If so, activate that voidsong.
-	for (auto& i : AvailableVoidsongs)
+	//Figures out all the voidsongs played and the duration based on the sequence.
+
+	float NumOfVoidsongs = Sequence.Num() / FVoidsongInputs::GetNumOfInputs();
+	NumOfVoidsongs = FGenericPlatformMath::TruncToInt(NumOfVoidsongs);
+	TArray<UBaseWhoVoidsong*> Whos;
+	TArray<UBaseNounVoidsong*> Nouns;
+	TArray<UBaseVerbVoidsong*> Verbs;
+
+	for (int i = 0; i <= NumOfVoidsongs; i++)
 	{
-		if (i->ActivationCombo == Sequence)
+		TArray<int> Temp;
+
+		for (int j = 0; j <= FVoidsongInputs::GetNumOfInputs();j++)
 		{
-			i->Activate();
+			Temp.Emplace(Sequence[j + i * FVoidsongInputs::GetNumOfInputs()]);
+		}
+
+		for (auto& k : AvailableVoidsongs)
+		{
+			if (k->GetActivationCombo() == Temp)
+			{
+				if (IsValid(Cast<UBaseWhoVoidsong>(k)))
+				{
+					Whos.Emplace(Cast<UBaseWhoVoidsong>(k));
+				}
+				else if (IsValid(Cast<UBaseNounVoidsong>(k)))
+				{
+					Nouns.Emplace(Cast<UBaseNounVoidsong>(k));
+				}
+				else if (IsValid(Cast<UBaseVerbVoidsong>(k)))
+				{
+					Verbs.Emplace(Cast<UBaseVerbVoidsong>(k));
+				}
+			}
 		}
 	}
+
+	for (auto& k : Verbs)
+	{
+		k->Activate(Whos, Nouns);
+	}
+
 }
 
 void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
