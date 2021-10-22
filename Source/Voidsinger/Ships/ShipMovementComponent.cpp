@@ -4,6 +4,7 @@
 #include "ShipMovementComponent.h"
 #include "Voidsinger/Parts/BaseThrusterPart.h"
 #include "ShipMovementComponent.h"
+#include "Voidsinger/Ships/BaseShip.h"
 
 // Sets default values for this component's properties
 UShipMovementComponent::UShipMovementComponent()

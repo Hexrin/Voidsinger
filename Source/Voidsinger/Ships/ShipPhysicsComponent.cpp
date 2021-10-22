@@ -43,8 +43,10 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	if (!FMath::IsNearlyEqual(LinearVelocity.SizeSquared(), 0, MinLinearVelocity) || !FMath::IsNearlyEqual(AngularVelocity, 0, MinAngularVelocity))
 	{
-		if (!UFunctionLibrary::SetActorTransformSweepComponets(Ship, Result, PrimComps, NewTransform))
+		GetOwner()->SetActorTransform(NewTransform);
+		if (UShipPhysicsComponent::SweepShip(NewTransform, Result))
 		{
+			//DrawDebugPoint(GetWorld(), Result.Location, 25, FColor::Orange, true);
 			FVector2D RelativeHitLocation = FVector2D(Result.Location - GetOwner()->GetActorLocation());
 
 			FVector2D ImpactNormal = FVector2D(Result.Normal);
@@ -72,7 +74,7 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 						(1 / GetMass() + FMath::Square(FVector2D::CrossProduct(RelativeHitLocation, ImpactNormal)) / GetMomentOfInertia());
 				}
 
-				AddImpulse(CollisionImpulseFactor * ImpactNormal, RelativeHitLocation);
+				AddImpulse(CollisionImpulseFactor * ImpactNormal, RelativeHitLocation);				
 			}
 		}
 	}
@@ -123,34 +125,80 @@ FVector2D UShipPhysicsComponent::GetVelocityOfPoint(FVector2D RelativePointLocat
 
 void UShipPhysicsComponent::UpdateMassCalculations()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s Has Updated Mass"), *GetReadableName());
+	//UE_LOG(LogTemp, Warning, TEXT("%s Has Updated Mass"), *GetReadableName());
 
 	Mass = Ship->PartGrid->GetMass();
+	FVector2D DeltaCoM = Ship->PartGrid->GetCenterOfMass() - CenterOfMass;
 	CenterOfMass = Ship->PartGrid->GetCenterOfMass();
 	MomentOfInertia = Ship->PartGrid->GetMomentOfInertia();
-	FVector DeltaPos = FVector();
 
-	TArray<UActorComponent*> Comps = TArray<UActorComponent*>();
-	Ship->GetComponents(UPrimitiveComponent::StaticClass(), Comps);
-	PrimComps = TArray<UPrimitiveComponent*>();
-	for (UActorComponent* Comp : Comps)
-	{
-		PrimComps.Emplace(Cast<UPrimitiveComponent>(Comp));
-	}
+	Ship->SetMeshRelativeLocation(CenterOfMass);
+	Ship->AddActorWorldOffset(-1 * FVector(DeltaCoM, 0));
+}
 
-	bool HasSetDeltaPos = false;
-	for (auto& Component : Ship->PartGrid->GetPartGrid())
+bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult& Hit)
+{
+	//Return Values
+	Hit = FHitResult();
+	bool ReturnValue = false;
+	TArray<FHitResult> Hits = TArray<FHitResult>();
+
+	FTransform Start = Ship->GetActorTransform();
+	FQuat TraceRot = Start.GetRotation();
+
+	FArrayBounds ShipBounds = Ship->PartGrid->GetPartGridBounds();
+
+	FVector BoundsExtent = FVector(FVector2D(ShipBounds.UpperBounds - ShipBounds.LowerBounds) / 2, 0.5);
+	FVector BoundsLocation = BoundsExtent - FVector(ShipBounds.UpperBounds, 0.5);
+
+	FCollisionQueryParams QueryParams = FCollisionQueryParams().DefaultQueryParam;
+	QueryParams.AddIgnoredActor(Ship);
+	QueryParams.bTraceComplex = false;
+
+	//DrawDebugBox(Ship->GetWorld(), NewTransform.GetTranslation() + BoundsLocation, BoundsExtent, TraceRot, FColor::Emerald, false, 5);
+	if (Ship->GetWorld()->SweepSingleByObjectType(Hit, Start.GetTranslation() + BoundsLocation, NewTransform.GetTranslation() + BoundsLocation, TraceRot, FCollisionObjectQueryParams::DefaultObjectQueryParam, FCollisionShape::MakeBox(BoundsExtent), QueryParams))
 	{
-		FVector NewLoc = FVector(-1 * CenterOfMass + Component.Key, 0);
-		if (NewLoc != FVector() && !HasSetDeltaPos)
+		Hit = FHitResult();
+
+		FQuat DeltaRot = NewTransform.GetRelativeTransform(Start).GetRotation();
+		FVector DeltaTranslation = NewTransform.GetTranslation() - Start.GetTranslation();
+
+		for (auto& Pixel : Ship->PartGrid->GetPartGrid())
 		{
-			HasSetDeltaPos = true;
-			DeltaPos = Component.Value.PixelMesh->GetRelativeLocation() - NewLoc;
+			FVector StartLoc = FVector(FVector2D(Pixel.Key).GetRotated(Ship->GetActorRotation().Yaw), 0) + Ship->GetActorLocation();
+			FVector EndLoc = DeltaTranslation + (Start.GetRotation() * DeltaRot).RotateVector(FVector(FVector2D(Pixel.Key), 0)) + Ship->GetActorLocation();
+			FHitResult ThisHit = FHitResult();
+
+			if (Ship->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, TraceRot, FCollisionObjectQueryParams::AllObjects, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))
+			{
+				ReturnValue = true;
+				Hits.Emplace(ThisHit);
+				//UE_LOG(LogTemp, Warning, TEXT("HIT"));
+				///DrawDebugDirectionalArrow(Target->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Red, false, 5, 0U, 0.05);
+				//DrawDebugBox(Ship->GetWorld(), ThisHit.Location, FVector(.5), TraceRot, FColor::Red, false, 5);
+			}
+			else
+			{
+				//DrawDebugDirectionalArrow(Ship->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Green, false, 5, 0U, 0.05);
+			}
 		}
-		Component.Value.PixelMesh->SetRelativeLocation(NewLoc);
+
 	}
 
-	Ship->SetActorLocation(Ship->GetActorLocation() + DeltaPos);
+	if (ReturnValue)
+	{
+		for (FHitResult Value : Hits)
+		{
+			if (Value.Time < Hit.Time)
+			{
+				Hit = Value;
+				//DrawDebugDirectionalArrow(Target->GetWorld(), Hit.TraceStart+FVector(0,0,1), Hit.Location + FVector(0, 0, 1), .5f, FColor::Blue, true, 5, 0U, 0.1);
+				//UE_LOG(LogTemp, Warning, TEXT("Hit time: %f"), Hit.Time);
+			}
+		}
+	}
+	
+	return ReturnValue;
 }
 
 float UShipPhysicsComponent::GetAngularVelocity()
@@ -167,4 +215,8 @@ float UShipPhysicsComponent::GetMomentOfInertia()
 {
 	return MomentOfInertia;
 }
-////////// CHAGE THIS BACK TO JUST return MomentOfInertia; (when done testing)\\\\\\\\\\\\\\
+FVector2D UShipPhysicsComponent::GetCenterOfMass()
+{
+	return CenterOfMass;
+}
+////////// CHANGE THIS BACK TO JUST return MomentOfInertia; (when done testing)\\\\\\\\\\\\\\

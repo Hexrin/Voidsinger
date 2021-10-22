@@ -48,6 +48,9 @@ public:
 	void UpdateMassCalculations();
 
 	UFUNCTION(BlueprintPure)
+	bool SweepShip(const FTransform& NewTransform, FHitResult& Hit);
+
+	UFUNCTION(BlueprintPure)
 	float GetAngularVelocity();
 
 	UFUNCTION(BlueprintPure)
@@ -55,6 +58,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	float GetMomentOfInertia();
+
+	UFUNCTION(BlueprintPure)
+	FVector2D GetCenterOfMass();
 
 	UFUNCTION(BlueprintPure)
 	FVector2D GetVelocityOfPoint(FVector2D RelativePointLocation);
@@ -72,7 +78,7 @@ public:
 	float MaxAngularVelocity{ 10000 };
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float MinLinearVelocity{ 0.001 };
+	float MinLinearVelocity{ 0.05 };
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MinAngularVelocity{ 0.001 };
@@ -101,9 +107,6 @@ private:
 
 	UPROPERTY()
 	FVector2D LinearAcceleration;
-
-	UPROPERTY()
-	TArray<UPrimitiveComponent*> PrimComps;
 
 	UPROPERTY()
 	FColor DebugColor;

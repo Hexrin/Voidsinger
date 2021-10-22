@@ -118,11 +118,7 @@ public:
 
 	/*-Movement Control-*\
 	\*------------------*/
-
-
 public:
-
-
 	UFUNCTION(BlueprintCallable)
 	void SetTargetMoveDirection(FVector2D Vector);
 
@@ -133,8 +129,43 @@ public:
 	FVector TargetLookDirection;
 
 	UPROPERTY(BlueprintReadWrite)
-	bool bDecelerating{ false };
+	bool bDecelerating{ true };
 private:
 	UPROPERTY()
 	FVector2D TargetMoveDirection;
+
+
+	/*---Mesh Control---*\
+	\*------------------*/
+public:
+	UFUNCTION()
+	void AddMeshAtLocation(FIntPoint Location);
+
+	UFUNCTION()
+	void RemoveMeshAtLocation(FIntPoint Location);
+
+	UFUNCTION()
+	void SetMeshRelativeLocation(FVector2D Location);
+
+	UFUNCTION()
+	void SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material);
+
+private:
+	UFUNCTION()
+	void UpdateMesh();
+
+	UFUNCTION()
+	TArray<FVector> GetVerticesAroundLocation(FVector2D Location);
+
+	UFUNCTION()
+	TArray<int32> CreateTrianglesForSquare(int32 UpperRight = 0, int32 UpperLeft = 1, int32 LowerRight = 2, int32 LowerLeft =3);
+
+	UPROPERTY()
+	TMap<FIntPoint, int32> MeshData;
+
+	UPROPERTY()
+	FVector2D RelativeMeshLocation;
+
+	UPROPERTY()
+	TArray<FVector2D> UV;
 };

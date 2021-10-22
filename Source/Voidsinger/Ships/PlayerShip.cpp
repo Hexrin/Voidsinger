@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerShip.h"
-
+#include "Voidsinger/Parts/BasePart.h"
 
 APlayerShip::APlayerShip()
 {
@@ -26,13 +26,17 @@ APlayerShip::APlayerShip()
 
 void APlayerShip::Tick(float DeltaTime)
 {
-    FVector WorldDirection = FVector();
-    FVector WorldLocation = FVector();
+    if (!bBuildMode)
+    {
+        FVector WorldDirection = FVector();
+        FVector WorldLocation = FVector();
 
-    GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
-    WorldLocation = FMath::LinePlaneIntersection(Camera->GetComponentLocation(), Camera->GetComponentLocation() + WorldDirection * 10000, FPlane(GetActorLocation(), FVector(0, 0, 1)));
+        GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+        WorldLocation = FMath::LinePlaneIntersection(Camera->GetComponentLocation(), Camera->GetComponentLocation() + WorldDirection * 10000, FPlane(GetActorLocation(), FVector(0, 0, 1)));
 
-    TargetLookDirection = (WorldLocation - GetActorLocation()).GetSafeNormal2D();
+        TargetLookDirection = (WorldLocation - GetActorLocation()).GetSafeNormal2D();
+    }
+    
 
     
 
@@ -137,26 +141,38 @@ void APlayerShip::Voidsong5Call()
 
 void APlayerShip::MoveForwardPressedCall()
 {
-    bDecelerating = false;
-    SetTargetMoveDirection(FVector2D(1, 0));
+    if (!bBuildMode)
+    {
+        bDecelerating = false;
+        SetTargetMoveDirection(FVector2D(1, 0));
+    }
 }
 
 void APlayerShip::MoveBackwardPressedCall()
 {
-    bDecelerating = false;
-    SetTargetMoveDirection(FVector2D(-1, 0));
+    if (!bBuildMode)
+    {
+        bDecelerating = false;
+        SetTargetMoveDirection(FVector2D(-1, 0));
+    }
 }
 
 void APlayerShip::MoveRightPressedCall()
 {
-    bDecelerating = false;
-    SetTargetMoveDirection(FVector2D(0, 1));
+    if (!bBuildMode)
+    {
+        bDecelerating = false;
+        SetTargetMoveDirection(FVector2D(0, 1));
+    }
 }
 
 void APlayerShip::MoveLeftPressedCall()
 {
-    bDecelerating = false;
-    SetTargetMoveDirection(FVector2D(0, -1));
+    if (!bBuildMode)
+    {
+        bDecelerating = false;
+        SetTargetMoveDirection(FVector2D(0, -1));
+    }
 }
 
 void APlayerShip::MoveForwardReleasedCall()
@@ -177,6 +193,20 @@ void APlayerShip::MoveRightReleasedCall()
 void APlayerShip::MoveLeftReleasedCall()
 {
     bDecelerating = true;
+}
+
+void APlayerShip::SetBuildMode(bool NewBuildMode)
+{
+    bBuildMode = NewBuildMode;
+    if (bBuildMode)
+    {
+        OpenBuildMenu();
+    }
+}
+
+bool APlayerShip::IsInBuildMode()
+{
+    return bBuildMode;
 }
 
 void APlayerShip::AddVoidsongInput(int Input)

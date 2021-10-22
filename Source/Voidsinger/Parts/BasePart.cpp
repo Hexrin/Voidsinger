@@ -3,7 +3,11 @@
 
 #include "BasePart.h"
 #include "BaseResourceSystem.h"
+#include "Voidsinger/Parts/PartGridComponent.h"
+#include "BaseThrusterPart.h"
+#include "BaseResourceSystem.h"
 #include "Engine/Engine.h"
+#include "Voidsinger/Ships/BaseShip.h"
 
 
 /*Initializer Funtions*\
@@ -335,12 +339,12 @@ TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 	return ReturnValue;
 }
 
-int UBasePart::GetStrength()
+const int UBasePart::GetStrength()
 {
 	return Strength;
 }
 
-int UBasePart::GetHeatResistance()
+const int UBasePart::GetHeatResistance()
 {
 	return HeatResistance;
 }

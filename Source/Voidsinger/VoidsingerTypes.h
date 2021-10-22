@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/StaticMeshComponent.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
 #include "VoidsingerTypes.generated.h"
@@ -31,56 +30,33 @@ enum EResourceType
 };
 
 USTRUCT(BlueprintType)
-struct VOIDSINGER_API FPartData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UBasePart* Part;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Temperature = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UStaticMeshComponent* PixelMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int BitNumber;
-
-	FPartData()
-	{
-		FPartData(nullptr, 0, nullptr, 0);
-	}
-
-	FPartData(UBasePart* PartRef, float Temp, UStaticMeshComponent* MeshRef, int Bit)
-	{
-		Part = PartRef;
-		Temperature = Temp;
-		PixelMesh = MeshRef;
-		BitNumber = Bit;
-	}
-
-	void SetTemperature(const float NewTemp)
-	{
-		Temperature = NewTemp;
-	}
-
-	void SetBitNumber(int NewBitNumber)
-	{
-		BitNumber = NewBitNumber;
-	}
-};
-
-USTRUCT(BlueprintType)
 struct VOIDSINGER_API FArrayBounds
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FIntPoint LowerBounds = FIntPoint();
+	FIntPoint LowerBounds = FIntPoint(0);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FIntPoint UpperBounds = FIntPoint();
+	FIntPoint UpperBounds = FIntPoint(0);
+
+	FArrayBounds()
+	{
+		LowerBounds = FIntPoint(0, 0);
+		UpperBounds = FIntPoint(0, 0);
+	}
+
+	FArrayBounds(FIntPoint Lower, FIntPoint Upper)
+	{
+		LowerBounds = Lower;
+		UpperBounds = Upper;
+	}
+
+	FArrayBounds(int32 LowerX, int32 LowerY, int32 UpperX, int32 UpperY)
+	{
+		LowerBounds = FIntPoint(LowerX, LowerY);
+		UpperBounds = FIntPoint(UpperX, UpperY);
+	}
 };
 
 USTRUCT(BlueprintType)

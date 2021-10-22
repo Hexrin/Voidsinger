@@ -5,8 +5,6 @@
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/FunctionLibrary.h"
-#include "Voidsinger/Ships/BaseShip.h"
-#include "Voidsinger/Parts/PartGridComponent.h"
 #include "BasePart.generated.h"
 
 /**
@@ -14,6 +12,8 @@
  */
 
 class UBaseResourceSystem;
+class UBaseThrusterPart;
+class UPartGridComponent;
 
 UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject
@@ -140,11 +140,11 @@ public:
 
 	//Gets the strength of the part
 	UFUNCTION(BlueprintPure)
-	int GetStrength();
+	const int GetStrength();
 
 	//Gets the heat resistance of the part
 	UFUNCTION(BlueprintPure)
-	int GetHeatResistance();
+	const int GetHeatResistance();
 
 	UFUNCTION(BlueprintPure)
 	UMaterialInterface* GetPixelMaterial();

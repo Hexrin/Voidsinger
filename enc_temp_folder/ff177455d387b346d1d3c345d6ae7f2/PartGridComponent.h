@@ -65,7 +65,7 @@ public:
 	void SetAdjacencyIndex(int32 NewAdjacencyIndex)
 	{
 		AdjacencyIndex = NewAdjacencyIndex;
-		DynamicMat->SetScalarParameterValue("Adjacency Index", AdjacencyIndex);
+		DynamicMat->SetScalarParameterValue("AdjacencyIndex", AdjacencyIndex);
 	}
 
 	const int32 GetAdjacencyIndex()

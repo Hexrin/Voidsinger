@@ -88,14 +88,14 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 				{
 					//This needs to be improved, but right now it checks if the current index is connected to the next index.
 					//actually it might not need to be improved but i need to think about it
-					if (!UFunctionLibrary::PointsConnectedWithFunctionality(ConnectedPartsMap, NumbersFound[i], NumbersFound[i + 1]))
+					if (!UPartGridComponent::PointsConnected(ConnectedPartsMap, NumbersFound[i], NumbersFound[i + 1]), true)
 					{
 						//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
 						//also not be connected.
 						TArray<FIntPoint> Temp;
 						Temp.Emplace(NumbersFound[i + 1]);
 						TSet<UBasePart*> RemovedSet;
-						for (auto& j : UFunctionLibrary::FindConnectedShape(Temp, ConnectedPartsMap, true))
+						for (auto& j : UPartGridComponent::FindConnectedShape(Temp, ConnectedPartsMap, true))
 						{
 							RemovedSet.Emplace(ConnectedPartsMap.Find(j)->Part);
 						}
@@ -198,7 +198,8 @@ TMap<FIntPoint, FPartData> UBaseResourceSystem::GetMapFromConnectedParts()
 	{
 		for (auto& j : i->GetShape())
 		{
-			Temp.Emplace(j, FPartData(i, 0, nullptr, 0));
+			FPartData PartData = FPartData(i, 0.f, (int32)0, i->GetPixelMaterial());
+			Temp.Emplace(j, PartData);
 		}
 	}
 	return Temp;
