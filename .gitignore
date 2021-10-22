@@ -1,10 +1,10 @@
 Binaries
 DerivedDataCache
 Intermediate
-Saved
+Saved/**/*
 !Saved/Config
 !Saved/Config/WindowsEditor
-!Saved/Config/WindowsEditor/*
+!Saved/Config/WindowsEditor/*VoidSettings.ini
 .vscode
 .vs
 *.VC.db
