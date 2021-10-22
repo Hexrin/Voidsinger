@@ -9,6 +9,9 @@
 #include "ShipPhysicsComponent.h"
 #include "ShipMovementComponent.h"
 #include "Voidsinger/Voidsongs/BaseVoidsong.h"
+#include "Voidsinger/Voidsongs/BaseNounVoidsong.h"
+#include "Voidsinger/Voidsongs/BaseVerbVoidsong.h"
+#include "Voidsinger/Voidsongs/BaseWhoVoidsong.h"
 #include "ProceduralMeshComponent.h"
 #include "BaseShip.generated.h"
 
