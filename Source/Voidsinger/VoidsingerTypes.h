@@ -30,6 +30,19 @@ enum EResourceType
 	Ammo			UMETA(DisplayName = "Ammo"),
 };
 
+UENUM(BlueprintType)
+enum VoidsongVerbs
+{
+	Activate		UMETA(DisplayName = "Activate"),
+	Deactivate		UMETA(DisplayName = "Deactivate"),
+	GitGud			UMETA(DisplayName = "GitGud"),
+	BecomNube		UMETA(DisplayName = "BecomNube"),
+	Hot				UMETA(DisplayName = "Hot"),
+	Cold			UMETA(DisplayName = "Cold"),
+	Absorb			UMETA(DisplayName = "Absorb"),
+	Disperse		UMETA(DisplayName = "Disperse"),
+
+};
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FPartData
 {
