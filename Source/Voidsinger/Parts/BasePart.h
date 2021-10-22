@@ -6,7 +6,6 @@
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/FunctionLibrary.h"
 #include "Voidsinger/Ships/BaseShip.h"
-#include "Voidsinger/Parts/PartGridComponent.h"
 #include "BasePart.generated.h"
 
 /**
@@ -14,6 +13,7 @@
  */
 
 class UBaseResourceSystem;
+class UPartGridComponent;
 
 UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject

@@ -11,9 +11,9 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Misc/Char.h"
+#include "BasePart.h"
 #include "PartGridComponent.generated.h"
 
-class UBasePart;
 class UBaseThrusterPart;
 class UCorePart;
 
@@ -27,31 +27,49 @@ struct VOIDSINGER_API FPartData
 	class UBasePart* Part;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMaterialInstanceDynamic* DynamicMat;
+
+private:
+	UPROPERTY()
+	int32 AdjacencyIndex = 0;
+
+	UPROPERTY()
 	float Temperature = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 BitNumber = 0;
-
+public:
 	FPartData()
 	{
-		FPartData(nullptr, 0, 0);
+		FPartData(nullptr, 0, 0, nullptr);
 	}
 
-	FPartData(UBasePart* PartRef, float Temp, int Bit, UMaterialInterface* Material)
+	FPartData(UBasePart* PartRef, float Temp, int32 BitwiseIndex, UMaterialInterface* Material)
 	{
+		DynamicMat = UMaterialInstanceDynamic::Create(Material, PartRef->GetPartGrid());
 		Part = PartRef;
-		Temperature = Temp;
-		BitNumber = Bit;
+		SetTemperature(Temp);
+		SetAdjacencyIndex(BitwiseIndex);
 	}
 
 	void SetTemperature(const float NewTemp)
 	{
 		Temperature = NewTemp;
+		DynamicMat->SetScalarParameterValue("Temperature", Temperature);
 	}
 
-	void SetBitNumber(int NewBitNumber)
+	const float GetTemperature()
 	{
-		BitNumber = NewBitNumber;
+		return Temperature;
+	}
+
+	void SetAdjacencyIndex(int32 NewAdjacencyIndex)
+	{
+		AdjacencyIndex = NewAdjacencyIndex;
+		DynamicMat->SetScalarParameterValue("AdjacencyIndex", AdjacencyIndex);
+	}
+
+	const int32 GetAdjacencyIndex()
+	{
+		return AdjacencyIndex;
 	}
 };
 

@@ -3,6 +3,7 @@
 
 #include "BasePart.h"
 #include "BaseResourceSystem.h"
+#include "Voidsinger/Parts/PartGridComponent.h"
 #include "Engine/Engine.h"
 
 

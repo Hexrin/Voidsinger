@@ -4,7 +4,6 @@
 #include "PartGridComponent.h"
 #include "BaseThrusterPart.h"
 #include "CorePart.h"
-#include "BasePart.h"
 
 // Sets default values for this component's properties
 UPartGridComponent::UPartGridComponent()
