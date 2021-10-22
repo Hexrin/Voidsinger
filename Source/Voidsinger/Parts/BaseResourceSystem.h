@@ -9,6 +9,7 @@
 #include "Voidsinger/FunctionLibrary.h"
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "PartGridComponent.h"
 #include "BaseResourceSystem.generated.h"
 
 /**

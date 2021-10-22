@@ -198,7 +198,8 @@ TMap<FIntPoint, FPartData> UBaseResourceSystem::GetMapFromConnectedParts()
 	{
 		for (auto& j : i->GetShape())
 		{
-			Temp.Emplace(j, FPartData(i, 0, 0));
+			FPartData PartData = FPartData(i, 0.f, (int32)0, i->GetPixelMaterial());
+			Temp.Emplace(j, PartData);
 		}
 	}
 	return Temp;

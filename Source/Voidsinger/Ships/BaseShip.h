@@ -144,6 +144,8 @@ public:
 	UFUNCTION()
 	void SetMeshRelativeLocation(FVector2D Location);
 
+	UFUNCTION()
+	void SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material);
 
 private:
 	UFUNCTION()

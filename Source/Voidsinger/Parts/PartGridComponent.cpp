@@ -2,8 +2,10 @@
 
 
 #include "PartGridComponent.h"
+#include "BasePart.h"
 #include "BaseThrusterPart.h"
 #include "CorePart.h"
+#include "Voidsinger/Ships/BaseShip.h"
 
 // Sets default values for this component's properties
 UPartGridComponent::UPartGridComponent()
@@ -104,9 +106,8 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 
 					//Create Mesh
 					Cast<ABaseShip>(GetOwner())->AddMeshAtLocation(CurrentLoc);
-
-
-					PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0));
+					//set PartGrid and material
+					Cast<ABaseShip>(GetOwner())->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
 				}
 			}
 			Part->InitializeFunctionality();
@@ -172,7 +173,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 		{
 			FIntPoint TargetPoint = Location +((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
 
-			ApplyHeatAtLocation(TargetPoint, (PartGrid.Find(Location)->Temperature / 4) * HeatMeltTransferFactor);
+			ApplyHeatAtLocation(TargetPoint, (PartGrid.Find(Location)->GetTemperature() / 4) * HeatMeltTransferFactor);
 		}
 
 		TArray<FIntPoint> NumbersFound;
@@ -332,7 +333,7 @@ void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float H
 {
 	if (PartGrid.Contains(RelativeLocation))
 	{
-		PartGrid.Find(RelativeLocation)->SetTemperature(PartGrid.Find(RelativeLocation)->Temperature + HeatToApply);
+		PartGrid.Find(RelativeLocation)->SetTemperature(PartGrid.Find(RelativeLocation)->GetTemperature() + HeatToApply);
 	}
 	
 }
@@ -702,10 +703,10 @@ void UPartGridComponent::DistrubuteHeat()
 			
 			if (PartGrid.Contains(TargetPoint + Data.Key))
 			{
-				NewHeat += PartGrid.FindRef(TargetPoint + Data.Key).Temperature * HeatPropagationFactor / (4);
+				NewHeat += PartGrid.FindRef(TargetPoint + Data.Key).GetTemperature() * HeatPropagationFactor / (4);
 			}
 		}
-		NewHeat = Data.Value.Temperature * (1-HeatPropagationFactor) + NewHeat;
+		NewHeat = Data.Value.GetTemperature() * (1-HeatPropagationFactor) + NewHeat;
 		NewHeatMap.Emplace(Data.Key, NewHeat > .05 ? NewHeat : 0);
 	}
 
@@ -861,11 +862,11 @@ void UPartGridComponent::UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePa
 				{
 					if (PartGrid.Contains(FIntPoint(Location)) && PartGrid.Find(FIntPoint(i + Location.X, j + Location.Y))->Part->GetClass() == PartType)
 					{
-						PartGrid.FindRef(FIntPoint(i + Location.X, j + Location.Y)).SetBitNumber(UFunctionLibrary::GetBitNumberFromLocation(FIntPoint(i * -1, j * -1)) + PartGrid.FindRef(FIntPoint(i + Location.X, j + Location.Y)).BitNumber);
+						PartGrid.FindRef(FIntPoint(i + Location.X, j + Location.Y)).SetAdjacencyIndex(UFunctionLibrary::GetBitNumberFromLocation(FIntPoint(i * -1, j * -1)) + PartGrid.FindRef(FIntPoint(i + Location.X, j + Location.Y)).GetAdjacencyIndex());
 					}
 					else if (PartGrid.Find(FIntPoint(i + Location.X, j + Location.Y))->Part->GetClass() == PartType)
 					{
-						PartGrid.FindRef(FIntPoint(i + Location.X, j + Location.Y)).SetBitNumber(PartGrid.FindRef(FIntPoint(i + Location.X, j + Location.Y)).BitNumber - UFunctionLibrary::GetBitNumberFromLocation(FIntPoint(i * -1, j * -1)));
+						PartGrid.FindRef(FIntPoint(i + Location.X, j + Location.Y)).SetAdjacencyIndex(PartGrid.FindRef(FIntPoint(i + Location.X, j + Location.Y)).GetAdjacencyIndex() - UFunctionLibrary::GetBitNumberFromLocation(FIntPoint(i * -1, j * -1)));
 					}
 				}
 			}

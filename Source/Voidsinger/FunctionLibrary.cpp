@@ -4,6 +4,7 @@
 #include "FunctionLibrary.h"
 #include "DrawDebugHelpers.h" // Remove this when debugging is done
 #include "Parts/BasePart.h"
+#include "Ships/BaseShip.h"
 
 
 FVector UFunctionLibrary::SafeDivide(FVector V1, FVector V2)

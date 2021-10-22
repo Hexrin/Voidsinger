@@ -192,7 +192,6 @@ void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 	UpdateMesh();
 }
 
-
 void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 {
 	MeshComponent->ClearMeshSection(MeshData.FindRef(Location));
@@ -227,6 +226,11 @@ void ABaseShip::UpdateMesh()
 			MeshComponent->UpdateMeshSection(Data.Value, AdjVertices, TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>());
 		}
 	}
+}
+
+void ABaseShip::SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material)
+{
+	MeshComponent->SetMaterial(MeshData.FindRef(Location), Material);
 }
 
 TArray<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)

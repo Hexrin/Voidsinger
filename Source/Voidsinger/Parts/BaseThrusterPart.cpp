@@ -2,6 +2,8 @@
 
 
 #include "BaseThrusterPart.h"
+#include "Voidsinger/Ships/BaseShip.h"
+
 UBaseThrusterPart::UBaseThrusterPart()
 {
 	ThrustForce = 10;
