@@ -9,13 +9,19 @@
 /**
  * 
  */
-UCLASS(Config=Settings)
+UCLASS(Config=VoidSettings)
 class VOIDSINGER_API AVoidGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
 
-		//UPROPERTY(Config, BlueprintReadOnly)
-		//int Testaroo;
+	AVoidGameMode();
+
+	UPROPERTY(Config)
+	int Testaroo;
+
+	UFUNCTION(BlueprintCallable)
+	int PrintTestaroo();
+
 };
