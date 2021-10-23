@@ -48,29 +48,38 @@ void ABaseShip::BeginPlay()
 void ABaseShip::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (bDecelerating && PhysicsComponent->GetVelocity().SizeSquared() > PhysicsComponent->MinLinearVelocity)
+	if (TargetMoveDirection.SizeSquared() != 0)
 	{
-		SetTargetMoveDirection(-1 * PhysicsComponent->GetVelocity().GetRotated(-1 * GetActorRotation().Yaw));
-		//UE_LOG(LogTemp, Warning, TEXT("Decellerate"));
+		if (PhysicsComponent->GetVelocity().SizeSquared() > TargetMoveSpeed * TargetMoveSpeed)
+		{
+			MovementComponent->Move(PhysicsComponent->GetVelocity().GetSafeNormal().GetRotated(GetActorRotation().Yaw * -1) * -1, FMath::Clamp(PhysicsComponent->GetVelocity().SizeSquared() - TargetMoveSpeed * TargetMoveSpeed, 0.f, 1.f));
+		}
+		else
+		{
+			MovementComponent->Move(TargetMoveDirection, 1);
+			FVector2D MisalignmentVector = PhysicsComponent->GetVelocity().GetSafeNormal().GetRotated(GetActorRotation().Yaw * -1) - TargetMoveDirection;
+			MovementComponent->Move(MisalignmentVector * -1, FMath::Clamp(MisalignmentVector.SizeSquared(), 0.f, 1.f));
+		}
+	}
+
+	float AngVel = PhysicsComponent->GetAngularVelocity();
+	bool DecelDirection = AngVel < 0;
+	if ((TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(GetActorForwardVector(), MovementComponent->GetLookDirectionErrorTollerance())))
+	{
+		bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
+	
+		float TimeToDecelerate = abs(AngVel / MovementComponent->GetMaximumAccelerationInRotation(DecelDirection));
+		float TimeToDestination = abs(FMath::Acos(FVector::DotProduct(TargetLookDirection, GetActorForwardVector())) / AngVel);
+		
+		//UE_LOG(LogTemp, Warning, TEXT("Decel: %f,   Dest: %f, IsDecelerating: %s"), TimeToDecelerate, TimeToDestination, TimeToDecelerate > TimeToDestination ? TEXT("Yes") : TEXT("No"));
+		MovementComponent->RotateShip((TimeToDecelerate > TimeToDestination) ? DecelDirection : TargetRotationDirection, 1);
+	}
+	else if (PhysicsComponent->GetAngularVelocity() > PhysicsComponent->MinAngularVelocity)
+	{
+		MovementComponent->RotateShip(DecelDirection, 1);
 	}
 
 	
-	if (TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(GetActorForwardVector(), MovementComponent->GetLookDirectionTollerance()))
-	{
-		
-		float AngVel = PhysicsComponent->GetAngularVelocity();
-		float TimeToDecelerate = abs(AngVel) / MovementComponent->GetMaximumAccelerationInRotation(AngVel < 0);
-		float TimeToDestination = FMath::Acos(FVector::DotProduct(TargetLookDirection, GetActorForwardVector())) / AngVel;
-		bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
-		UE_LOG(LogTemp, Warning, TEXT("Decel: %f,   Dest: %f"), TimeToDecelerate, TimeToDestination);
-		MovementComponent->RotateShip(TargetRotationDirection, 1);
-	}
-
-	if (TargetMoveDirection.SizeSquared() != 0)
-	{
-		MovementComponent->Move(TargetMoveDirection, 1);
-	}
 }
 
 // Called to bind functionality to input
@@ -189,6 +198,16 @@ void ABaseShip::SetTargetMoveDirection(FVector2D Vector)
 FVector2D ABaseShip::GetTargetMoveDirection()
 {
 	return TargetMoveDirection;
+}
+
+void ABaseShip::SetTargetMoveSpeed(float Vector)
+{
+	TargetMoveSpeed = abs(Vector);
+}
+
+float ABaseShip::GetTargetMoveSpeed()
+{
+	return TargetMoveSpeed;
 }
 
 void ABaseShip::AddMeshAtLocation(FIntPoint Location)

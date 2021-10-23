@@ -63,20 +63,20 @@ void UShipMovementComponent::RotateShip(bool Clockwise, float Throttle)
 
 void UShipMovementComponent::Move(FVector2D Direction, float Throttle)
 {
-	for (UBaseThrusterPart* Thruster : GetThrustersForDirection(Direction))
+	for (UBaseThrusterPart* Thruster : GetThrustersForDirection(Direction.GetSafeNormal()))
 	{
-		Thruster->Thrust(Throttle);
+		Thruster->Thrust(Throttle * FVector2D::DotProduct(Direction, FVector2D(1,0).GetRotated(Thruster->GetThrustRotation())));
 	}
 }
 
-float UShipMovementComponent::GetLookDirectionTollerance()
+float UShipMovementComponent::GetLookDirectionErrorTollerance()
 {
-	return LookDirectionTollerance;
+	return LookDirectionErrorTollerance;
 }
 
-float UShipMovementComponent::GetDecelerationPredictionTime()
+float UShipMovementComponent::GetMoveSpeedErrorTollerance()
 {
-	return DecelerationPredictionTime;
+	return MoveSpeedErrorTollerance;
 }
 
 TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForDirection(FVector2D Direction)

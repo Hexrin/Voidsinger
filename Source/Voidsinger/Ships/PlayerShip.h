@@ -121,7 +121,7 @@ public:
 
 	/*-Movement Bindings-*\
 	\*-------------------*/
-
+public:
 	UFUNCTION()
 	void MoveForwardPressedCall();
 
@@ -146,6 +146,9 @@ public:
 	UFUNCTION()
 	void MoveLeftReleasedCall();
 
+protected:
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float PlayerMaxSpeed{ 50 };
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||

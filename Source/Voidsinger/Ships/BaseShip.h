@@ -125,15 +125,22 @@ public:
 	UFUNCTION(BlueprintPure)
 	FVector2D GetTargetMoveDirection();
 
+	UFUNCTION(BlueprintCallable)
+	void SetTargetMoveSpeed(float Vector);
+
+	UFUNCTION(BlueprintPure)
+	float GetTargetMoveSpeed();
+
 	UPROPERTY(BlueprintReadWrite)
 	FVector TargetLookDirection;
 
-	UPROPERTY(BlueprintReadWrite)
-	bool bDecelerating{ true };
+	
 private:
 	UPROPERTY()
 	FVector2D TargetMoveDirection;
 
+	UPROPERTY()
+	float TargetMoveSpeed{ 0 };
 
 	/*---Mesh Control---*\
 	\*------------------*/

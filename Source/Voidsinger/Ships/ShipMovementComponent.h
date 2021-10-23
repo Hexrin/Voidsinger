@@ -36,10 +36,10 @@ public:
 	void Move(FVector2D Direction, float Throttle);
 	
 	UFUNCTION(BlueprintPure)
-	float GetLookDirectionTollerance();
+	float GetLookDirectionErrorTollerance();
 
 	UFUNCTION(BlueprintPure)
-	float GetDecelerationPredictionTime();
+	float GetMoveSpeedErrorTollerance();
 
 	UFUNCTION(BlueprintPure)
 	TSet<UBaseThrusterPart*> GetThrustersForDirection(FVector2D Direction);
@@ -55,11 +55,10 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere)
-	float LookDirectionTollerance{ 0.05 };
+	float LookDirectionErrorTollerance{ 0.05 };
 
-	//The time into the future used to predict when to stop roatating 
-	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float DecelerationPredictionTime{ 0.35 };
+	UPROPERTY(EditAnywhere)
+	float MoveSpeedErrorTollerance{ 0.5 };
 
 
 

@@ -143,7 +143,7 @@ void APlayerShip::MoveForwardPressedCall()
 {
     if (!bBuildMode)
     {
-        bDecelerating = false;
+        SetTargetMoveSpeed(PlayerMaxSpeed);
         SetTargetMoveDirection(FVector2D(1, 0));
     }
 }
@@ -152,7 +152,7 @@ void APlayerShip::MoveBackwardPressedCall()
 {
     if (!bBuildMode)
     {
-        bDecelerating = false;
+        SetTargetMoveSpeed(PlayerMaxSpeed);
         SetTargetMoveDirection(FVector2D(-1, 0));
     }
 }
@@ -161,7 +161,7 @@ void APlayerShip::MoveRightPressedCall()
 {
     if (!bBuildMode)
     {
-        bDecelerating = false;
+        SetTargetMoveSpeed(PlayerMaxSpeed);
         SetTargetMoveDirection(FVector2D(0, 1));
     }
 }
@@ -170,29 +170,29 @@ void APlayerShip::MoveLeftPressedCall()
 {
     if (!bBuildMode)
     {
-        bDecelerating = false;
+        SetTargetMoveSpeed(PlayerMaxSpeed);
         SetTargetMoveDirection(FVector2D(0, -1));
     }
 }
 
 void APlayerShip::MoveForwardReleasedCall()
 {
-    bDecelerating = true;
+    SetTargetMoveSpeed(0);
 }
 
 void APlayerShip::MoveBackwardReleasedCall()
 {
-    bDecelerating = true;
+    SetTargetMoveSpeed(0);
 }
 
 void APlayerShip::MoveRightReleasedCall()
 {
-    bDecelerating = true;
+    SetTargetMoveSpeed(0);
 }
 
 void APlayerShip::MoveLeftReleasedCall()
 {
-    bDecelerating = true;
+    SetTargetMoveSpeed(0);
 }
 
 void APlayerShip::SetBuildMode(bool NewBuildMode)
