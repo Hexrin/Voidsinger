@@ -147,7 +147,7 @@ float UShipMovementComponent::GetMaximumAccelerationInRotation(bool Clockwise)
 	float Sum = 0;
 	for (UBaseThrusterPart* Thruster : GetThrustersForRotation(Clockwise))
 	{
-		Sum += Thruster->GetThrustForce();
+		Sum += FVector2D::CrossProduct(Thruster->GetThrustRelativeLocation(), FVector2D(Thruster->GetThrustForce(), 0).GetRotated(Thruster->GetRotation())) / Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetMomentOfInertia();
 	}
 	return Sum;
 }

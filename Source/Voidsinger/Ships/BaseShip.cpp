@@ -56,14 +56,15 @@ void ABaseShip::Tick(float DeltaTime)
 	}
 
 	
-
-	FVector FutureForawardVector = FQuat(FVector(0,0,1), PhysicsComponent->GetAngularVelocity() * MovementComponent->GetDecelerationPredictionTime()).RotateVector(GetActorForwardVector());
-	
-	if (TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(FutureForawardVector, MovementComponent->GetLookDirectionTollerance()))
+	if (TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(GetActorForwardVector(), MovementComponent->GetLookDirectionTollerance()))
 	{
-		float RotationDirection = FVector::CrossProduct(TargetLookDirection, FutureForawardVector).Z;
-		//UE_LOG(LogTemp, Warning, TEXT("SineThing = %f, TargetLookDirection = %s"), RotationDirection, *TargetLookDirection.ToString());
-		MovementComponent->RotateShip(RotationDirection < 0, FMath::Abs(RotationDirection));
+		
+		float AngVel = PhysicsComponent->GetAngularVelocity();
+		float TimeToDecelerate = abs(AngVel) / MovementComponent->GetMaximumAccelerationInRotation(AngVel < 0);
+		float TimeToDestination = FMath::Acos(FVector::DotProduct(TargetLookDirection, GetActorForwardVector())) / AngVel;
+		bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
+		UE_LOG(LogTemp, Warning, TEXT("Decel: %f,   Dest: %f"), TimeToDecelerate, TimeToDestination);
+		MovementComponent->RotateShip(TargetRotationDirection, 1);
 	}
 
 	if (TargetMoveDirection.SizeSquared() != 0)
