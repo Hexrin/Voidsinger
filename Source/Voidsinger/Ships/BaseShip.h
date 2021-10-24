@@ -140,6 +140,9 @@ private:
 	FVector2D TargetMoveDirection;
 
 	UPROPERTY()
+	bool bCurrentRotationDeccelerationStatus{ true };
+
+	UPROPERTY()
 	float TargetMoveSpeed{ 0 };
 
 	/*---Mesh Control---*\

@@ -48,38 +48,41 @@ void ABaseShip::BeginPlay()
 void ABaseShip::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (TargetMoveDirection.SizeSquared() != 0)
+
+	//Handel Target Rotation
+	if (TargetLookDirection.SizeSquared2D() != 0)
 	{
-		if (PhysicsComponent->GetVelocity().SizeSquared() > TargetMoveSpeed * TargetMoveSpeed)
+		float AngVel = PhysicsComponent->GetAngularVelocity();
+		bool DecelDirection = AngVel < 0;
+
+		float TargetRotationDistance = abs(FMath::Acos(FVector::DotProduct(TargetLookDirection, GetActorForwardVector())));
+
+		if (TargetRotationDistance > MovementComponent->GetLookDirectionErrorTollerance())
 		{
-			MovementComponent->Move(PhysicsComponent->GetVelocity().GetSafeNormal().GetRotated(GetActorRotation().Yaw * -1) * -1, FMath::Clamp(PhysicsComponent->GetVelocity().SizeSquared() - TargetMoveSpeed * TargetMoveSpeed, 0.f, 1.f));
+			bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
+
+			float TimeToDecelerate = abs(AngVel / MovementComponent->GetMaximumAccelerationInRotation(DecelDirection));
+			float TimeToDestination = TargetRotationDistance / abs(AngVel);
+
+			if (abs(TimeToDecelerate - TimeToDestination) > MovementComponent->GetRotationDirectionUpdateInterval())
+			{
+				bCurrentRotationDeccelerationStatus = (TimeToDecelerate > TimeToDestination);
+			}
+			MovementComponent->RotateShip(bCurrentRotationDeccelerationStatus ? DecelDirection : TargetRotationDirection, 1);
 		}
 		else
 		{
-			MovementComponent->Move(TargetMoveDirection, 1);
-			FVector2D MisalignmentVector = PhysicsComponent->GetVelocity().GetSafeNormal().GetRotated(GetActorRotation().Yaw * -1) - TargetMoveDirection;
-			MovementComponent->Move(MisalignmentVector * -1, FMath::Clamp(MisalignmentVector.SizeSquared(), 0.f, 1.f));
+			MovementComponent->RotateShip(DecelDirection, AngVel);
 		}
 	}
 
-	float AngVel = PhysicsComponent->GetAngularVelocity();
-	bool DecelDirection = AngVel < 0;
-	if ((TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(GetActorForwardVector(), MovementComponent->GetLookDirectionErrorTollerance())))
+	//Handel Target Move Direction
+	if (TargetMoveDirection.SizeSquared() != 0)
 	{
-		bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
-	
-		float TimeToDecelerate = abs(AngVel / MovementComponent->GetMaximumAccelerationInRotation(DecelDirection));
-		float TimeToDestination = abs(FMath::Acos(FVector::DotProduct(TargetLookDirection, GetActorForwardVector())) / AngVel);
-		
-		//UE_LOG(LogTemp, Warning, TEXT("Decel: %f,   Dest: %f, IsDecelerating: %s"), TimeToDecelerate, TimeToDestination, TimeToDecelerate > TimeToDestination ? TEXT("Yes") : TEXT("No"));
-		MovementComponent->RotateShip((TimeToDecelerate > TimeToDestination) ? DecelDirection : TargetRotationDirection, 1);
-	}
-	else if (PhysicsComponent->GetAngularVelocity() > PhysicsComponent->MinAngularVelocity)
-	{
-		MovementComponent->RotateShip(DecelDirection, 1);
-	}
-
-	
+		//				   |----------Target Velocity----------|   |----------------------Current Relative Velocity----------------------|
+		FVector2D DeltaV = TargetMoveDirection * TargetMoveSpeed - PhysicsComponent->GetVelocity().GetRotated(GetActorRotation().Yaw * -1);
+		MovementComponent->Move(DeltaV, DeltaV.SizeSquared() - FMath::Square(MovementComponent->GetMoveSpeedErrorTollerance()));
+	}	
 }
 
 // Called to bind functionality to input

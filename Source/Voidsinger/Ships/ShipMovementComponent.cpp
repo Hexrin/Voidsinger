@@ -55,6 +55,7 @@ void UShipMovementComponent::UpdateThrusters()
 
 void UShipMovementComponent::RotateShip(bool Clockwise, float Throttle)
 {
+	Throttle = FMath::Clamp(Throttle, 0.f, 1.f);
 	for (UBaseThrusterPart* Thruster : GetThrustersForRotation(Clockwise))
 	{
 		Thruster->Thrust(Throttle);
@@ -63,20 +64,27 @@ void UShipMovementComponent::RotateShip(bool Clockwise, float Throttle)
 
 void UShipMovementComponent::Move(FVector2D Direction, float Throttle)
 {
+	Direction.Normalize();
+	Throttle = FMath::Clamp(Throttle, 0.f, 1.f);
 	for (UBaseThrusterPart* Thruster : GetThrustersForDirection(Direction.GetSafeNormal()))
 	{
 		Thruster->Thrust(Throttle * FVector2D::DotProduct(Direction, FVector2D(1,0).GetRotated(Thruster->GetThrustRotation())));
 	}
 }
 
-float UShipMovementComponent::GetLookDirectionErrorTollerance()
+const float UShipMovementComponent::GetLookDirectionErrorTollerance()
 {
 	return LookDirectionErrorTollerance;
 }
 
-float UShipMovementComponent::GetMoveSpeedErrorTollerance()
+const float UShipMovementComponent::GetMoveSpeedErrorTollerance()
 {
 	return MoveSpeedErrorTollerance;
+}
+
+const float UShipMovementComponent::GetRotationDirectionUpdateInterval()
+{
+	return RotationDirectionUpdateInterval;
 }
 
 TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForDirection(FVector2D Direction)
@@ -132,22 +140,22 @@ TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForRotation(bool Cl
 	}
 }
 
-float UShipMovementComponent::GetMaximumAccelerationInDirection(FVector2D Direction)
+const float UShipMovementComponent::GetMaximumAccelerationInDirection(FVector2D Direction, float AtThrottle)
 {
 	float Sum = 0;
 	for (UBaseThrusterPart* Thruster : GetThrustersForDirection(Direction))
 	{
-		Sum += Thruster->GetThrustForce();
+		Sum += Thruster->GetThrustForce() * AtThrottle;
 	}
 	return Sum;
 }
 
-float UShipMovementComponent::GetMaximumAccelerationInRotation(bool Clockwise)
+const float UShipMovementComponent::GetMaximumAccelerationInRotation(bool Clockwise, float AtThrottle)
 {
 	float Sum = 0;
 	for (UBaseThrusterPart* Thruster : GetThrustersForRotation(Clockwise))
 	{
-		Sum += FVector2D::CrossProduct(Thruster->GetThrustRelativeLocation(), FVector2D(Thruster->GetThrustForce(), 0).GetRotated(Thruster->GetRotation())) / Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetMomentOfInertia();
+		Sum += FVector2D::CrossProduct(Thruster->GetThrustRelativeLocation(), FVector2D(Thruster->GetThrustForce() * AtThrottle, 0).GetRotated(Thruster->GetRotation())) / Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetMomentOfInertia();
 	}
 	return Sum;
 }

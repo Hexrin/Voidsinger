@@ -108,8 +108,8 @@ private:
 	UPROPERTY()
 	FVector2D LinearAcceleration;
 
-	UPROPERTY()
-	FColor DebugColor;
+	//UPROPERTY()
+	//FColor DebugColor;
 
 	
 };
