@@ -13,6 +13,7 @@ ABaseShip::ABaseShip()
 	MeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Mesh Component"));
 	RootComponent = MeshComponent;
 	MeshComponent->bUseComplexAsSimpleCollision = true;
+	MeshComponent->bRenderCustomDepth = true;
 
 	PhysicsComponent = CreateDefaultSubobject<UShipPhysicsComponent>(TEXT("Physics Component"));
 	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
