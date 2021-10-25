@@ -185,6 +185,7 @@ public:
 	void AddToSystem(UBaseResourceSystem* System);
 
 	//Function called when FVoidsongDelegate is broadcasted
+	UFUNCTION()
 	void OnDelegateCalled(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass);
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
