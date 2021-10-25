@@ -13,6 +13,7 @@ ABaseShip::ABaseShip()
 	MeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Mesh Component"));
 	RootComponent = MeshComponent;
 	MeshComponent->bUseComplexAsSimpleCollision = true;
+	MeshComponent->bRenderCustomDepth = true;
 
 	PhysicsComponent = CreateDefaultSubobject<UShipPhysicsComponent>(TEXT("Physics Component"));
 	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
@@ -57,22 +58,28 @@ void ABaseShip::Tick(float DeltaTime)
 
 		float TargetRotationDistance = abs(FMath::Acos(FVector::DotProduct(TargetLookDirection, GetActorForwardVector())));
 
-		if (TargetRotationDistance > MovementComponent->GetLookDirectionErrorTollerance())
+		bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
+
+		float TimeToDecelerate = abs(AngVel / MovementComponent->GetMaximumAccelerationInRotation(DecelDirection));
+		float TimeToDestination = TargetRotationDistance / abs(AngVel);
+
+		switch ((TargetRotationDistance > MovementComponent->GetLookDirectionErrorTollerance()) ? 1 : 0)
 		{
-			bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
-
-			float TimeToDecelerate = abs(AngVel / MovementComponent->GetMaximumAccelerationInRotation(DecelDirection));
-			float TimeToDestination = TargetRotationDistance / abs(AngVel);
-
-			if (abs(TimeToDecelerate - TimeToDestination) > MovementComponent->GetRotationDirectionUpdateInterval())
+		case 1:
+			if (abs(TimeToDecelerate - TimeToDestination) > MovementComponent->GetRotationDirectionUpdateThreshold())
 			{
 				bCurrentRotationDeccelerationStatus = (TimeToDecelerate > TimeToDestination);
 			}
-			MovementComponent->RotateShip(bCurrentRotationDeccelerationStatus ? DecelDirection : TargetRotationDirection, 1);
-		}
-		else
-		{
-			MovementComponent->RotateShip(DecelDirection, AngVel);
+
+			if (!bCurrentRotationDeccelerationStatus)
+			{
+				MovementComponent->RotateShip(TargetRotationDirection, 1);
+				break;
+			}
+
+		default:
+			MovementComponent->RotateShip(DecelDirection, AngVel / MovementComponent->GetRotationDecelerationScalingThreshold());
+			break;
 		}
 	}
 
@@ -211,6 +218,16 @@ void ABaseShip::SetTargetMoveSpeed(float Vector)
 float ABaseShip::GetTargetMoveSpeed()
 {
 	return TargetMoveSpeed;
+}
+
+void ABaseShip::SetTargetLookDirection(FVector Vector)
+{
+	TargetLookDirection = Vector.GetSafeNormal2D();
+}
+
+const FVector ABaseShip::GetTargetLookDirection()
+{
+	return TargetLookDirection;
 }
 
 void ABaseShip::AddMeshAtLocation(FIntPoint Location)

@@ -131,11 +131,16 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetTargetMoveSpeed();
 
-	UPROPERTY(BlueprintReadWrite)
-	FVector TargetLookDirection;
+	UFUNCTION(BlueprintCallable)
+	void SetTargetLookDirection(FVector Vector);
 
+	UFUNCTION(BlueprintPure)
+	const FVector GetTargetLookDirection();
 	
 private:
+	UPROPERTY()
+	FVector TargetLookDirection;
+
 	UPROPERTY()
 	FVector2D TargetMoveDirection;
 

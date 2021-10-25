@@ -17,7 +17,7 @@ APlayerShip::APlayerShip()
     Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
     Camera->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
     Camera->SetUsingAbsoluteRotation(true);
-    Camera->SetRelativeLocation(FVector(0, 0, CameraHeight));
+    Camera->SetRelativeLocation(FVector(0, 10, CameraHeight));
     Camera->SetRelativeRotation(FRotator(-90, -90, 90));
 
     AutoPossessPlayer = EAutoReceiveInput::Player0;
@@ -34,7 +34,7 @@ void APlayerShip::Tick(float DeltaTime)
         GetWorld()->GetFirstPlayerController()->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
         WorldLocation = FMath::LinePlaneIntersection(Camera->GetComponentLocation(), Camera->GetComponentLocation() + WorldDirection * 10000, FPlane(GetActorLocation(), FVector(0, 0, 1)));
 
-        TargetLookDirection = (WorldLocation - GetActorLocation()).GetSafeNormal2D();
+        SetTargetLookDirection((WorldLocation - GetActorLocation()));
     }
     
 
