@@ -25,6 +25,10 @@ UBasePart::UBasePart()
 	ActualShape = TArray<FIntPoint>();
 	bFunctional = true;
 	bIsBeingDestroyed = false;
+
+	//Bind to delegates
+	//TSharedRef<FVoisdongDelegate> Idk(new FVoidsongDelegate());
+	//Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
 }
 
 void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
@@ -183,6 +187,7 @@ void UBasePart::DestroyPart()
 
 /*--------Tick--------*\
 \*--------------------*/
+
 void UBasePart::Tick(float DeltaTime)
 {
 
@@ -427,4 +432,8 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 			Systems.Add(System);
 		}
 	}
+}
+
+void UBasePart::OnDelegateCalled(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass)
+{
 }
