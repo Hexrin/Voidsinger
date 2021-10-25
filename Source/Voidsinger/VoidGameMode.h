@@ -57,4 +57,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FVoidsongDelegate OnVoidsongDelegate;
 
+	UPROPERTY()
+	TSubclassOf<UBaseVerbVoidsong> VerbActive;
+
 };

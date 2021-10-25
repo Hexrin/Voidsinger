@@ -24,6 +24,7 @@ void AVoidGameMode::ActivateWithEffects(UObject* ThingActivated)
 
 void AVoidGameMode::Broadcast(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass, TSubclassOf<UBaseVerbVoidsong> Verb)
 {
+	VerbActive = Verb;
 	OnVoidsongDelegate.Broadcast(Faction, NounClass);
 }
 
