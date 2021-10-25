@@ -54,13 +54,16 @@ void ABaseShip::Tick(float DeltaTime)
 	if (TargetLookDirection.SizeSquared2D() != 0)
 	{
 		float AngVel = PhysicsComponent->GetAngularVelocity();
+
 		bool DecelDirection = AngVel < 0;
+		bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
 
 		float TargetRotationDistance = abs(FMath::Acos(FVector::DotProduct(TargetLookDirection, GetActorForwardVector())));
 
-		bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
+		float MaxDecelerationSpeed = abs(MovementComponent->GetMaximumAccelerationInRotation(DecelDirection));
+		float MaxTurnSpeed = abs(MovementComponent->GetMaximumAccelerationInRotation(TargetRotationDirection));
 
-		float TimeToDecelerate = abs(AngVel / MovementComponent->GetMaximumAccelerationInRotation(DecelDirection));
+		float TimeToDecelerate = abs(AngVel / MaxDecelerationSpeed);
 		float TimeToDestination = TargetRotationDistance / abs(AngVel);
 
 		switch ((TargetRotationDistance > MovementComponent->GetLookDirectionErrorTollerance()) ? 1 : 0)
@@ -74,11 +77,13 @@ void ABaseShip::Tick(float DeltaTime)
 			if (!bCurrentRotationDeccelerationStatus)
 			{
 				MovementComponent->RotateShip(TargetRotationDirection, 1);
+				UE_LOG(LogTemp, Warning, TEXT("Turn"));
 				break;
 			}
 
 		default:
-			MovementComponent->RotateShip(DecelDirection, AngVel / MovementComponent->GetRotationDecelerationScalingThreshold());
+			MovementComponent->RotateShip(DecelDirection, TimeToDecelerate / TimeToDestination);
+			UE_LOG(LogTemp, Warning, TEXT("Decel"));
 			break;
 		}
 	}

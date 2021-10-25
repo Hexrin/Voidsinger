@@ -87,9 +87,9 @@ const float UShipMovementComponent::GetRotationDirectionUpdateThreshold()
 	return RotationDirectionUpdateThreshold;
 }
 
-const float UShipMovementComponent::GetRotationDecelerationScalingThreshold()
+const float UShipMovementComponent::GetRotationDecelerationTargetDuration()
 {
-	return RotationDecelerationScalingThreshold;
+	return RotationDecelerationTargetDuration;
 }
 
 TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForDirection(FVector2D Direction)
