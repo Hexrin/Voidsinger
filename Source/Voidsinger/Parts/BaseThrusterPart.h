@@ -38,6 +38,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	const bool IsThrusting();
 
+	UFUNCTION(BlueprintPure)
+	const float GetThrottle();
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	float ThrustForce;

@@ -9,6 +9,9 @@
 #include "ShipPhysicsComponent.h"
 #include "ShipMovementComponent.h"
 #include "Voidsinger/Voidsongs/BaseVoidsong.h"
+#include "Voidsinger/Voidsongs/BaseNounVoidsong.h"
+#include "Voidsinger/Voidsongs/BaseVerbVoidsong.h"
+#include "Voidsinger/Voidsongs/BaseWhoVoidsong.h"
 #include "ProceduralMeshComponent.h"
 #include "BaseShip.generated.h"
 
@@ -122,15 +125,25 @@ public:
 	UFUNCTION(BlueprintPure)
 	FVector2D GetTargetMoveDirection();
 
+	UFUNCTION(BlueprintCallable)
+	void SetTargetMoveSpeed(float Vector);
+
+	UFUNCTION(BlueprintPure)
+	float GetTargetMoveSpeed();
+
 	UPROPERTY(BlueprintReadWrite)
 	FVector TargetLookDirection;
 
-	UPROPERTY(BlueprintReadWrite)
-	bool bDecelerating{ true };
+	
 private:
 	UPROPERTY()
 	FVector2D TargetMoveDirection;
 
+	UPROPERTY()
+	bool bCurrentRotationDeccelerationStatus{ true };
+
+	UPROPERTY()
+	float TargetMoveSpeed{ 0 };
 
 	/*---Mesh Control---*\
 	\*------------------*/

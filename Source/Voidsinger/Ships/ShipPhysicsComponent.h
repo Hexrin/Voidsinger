@@ -72,16 +72,16 @@ private:
 
 public:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float MaxLinearVelocity{ 100000 };
+	float MaxLinearVelocity{ 1000000 };
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MaxAngularVelocity{ 10000 };
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float MinLinearVelocity{ 0.05 };
+	float MinLinearVelocity{ 0.25 };
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float MinAngularVelocity{ 0.001 };
+	float MinAngularVelocity{ 0.025 };
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "1"))
 	float CollisionElasticity{ 0 };
@@ -108,8 +108,8 @@ private:
 	UPROPERTY()
 	FVector2D LinearAcceleration;
 
-	UPROPERTY()
-	FColor DebugColor;
+	//UPROPERTY()
+	//FColor DebugColor;
 
 	
 };

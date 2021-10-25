@@ -24,6 +24,7 @@ UWorld* UBaseVoidsong::GetWorld() const
 	// In all other cases...
 	return GetOuter()->GetWorld();
 }
+
 void UBaseVoidsong::Tick(float DeltaTime)
 {
 	if (!bIsBeingDestroyed)
@@ -32,56 +33,24 @@ void UBaseVoidsong::Tick(float DeltaTime)
 		EventTick(DeltaTime);
 	}
 }
+
 bool UBaseVoidsong::IsTickable() const
 {
 	return (!IsTemplate(RF_ClassDefaultObject));
 }
+
 TStatId UBaseVoidsong::GetStatId() const
 {
 	return TStatId();
 }
+
 TArray<int> UBaseVoidsong::GetActivationCombo()
 {
-	return ActivationCombo;
+	return ActivationCombo.GetInputsAsArray();
 }
+
 FText UBaseVoidsong::GetVoidsongDisplayText()
 {
 	return VoidsongDisplayText;
 }
-void UBaseVoidsong::Activate()
-{
-	if (CanActivateAgain)
-	{
-		//Call the effect of the voidsong.
-		Effect();
 
-		//Make sure the voidsong can't be activated again
-		CanActivateAgain = false;
-
-		//Set a timer for the duration. When it's up the voidsong will deactivate. If Duration is 0 then just deactivate immediately.
-		FTimerHandle DurationTimer;
-		if (Duration != 0)
-		{
-			GetWorld()->GetTimerManager().SetTimer(DurationTimer, this, &UBaseVoidsong::DurationDelay, Duration);
-		}
-		else
-		{
-			DurationDelay();
-		}
-	}
-}
-
-void UBaseVoidsong::DurationDelay()
-{
-	//Undo the effect of the voidsong.
-	Deactivate();
-
-	//Set a timer for the cooldown. When it's up the voidsong will be able to be activated again.
-	FTimerHandle CooldownTimer;
-	GetWorld()->GetTimerManager().SetTimer(CooldownTimer, this, &UBaseVoidsong::CooldownDelay, Cooldown);
-}
-
-void UBaseVoidsong::CooldownDelay()
-{
-	CanActivateAgain = true;
-}

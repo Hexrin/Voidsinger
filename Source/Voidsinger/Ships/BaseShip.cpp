@@ -49,27 +49,40 @@ void ABaseShip::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bDecelerating && PhysicsComponent->GetVelocity().SizeSquared() > PhysicsComponent->MinLinearVelocity)
+	//Handel Target Rotation
+	if (TargetLookDirection.SizeSquared2D() != 0)
 	{
-		SetTargetMoveDirection(-1 * PhysicsComponent->GetVelocity().GetRotated(-1 * GetActorRotation().Yaw));
-		//UE_LOG(LogTemp, Warning, TEXT("Decellerate"));
+		float AngVel = PhysicsComponent->GetAngularVelocity();
+		bool DecelDirection = AngVel < 0;
+
+		float TargetRotationDistance = abs(FMath::Acos(FVector::DotProduct(TargetLookDirection, GetActorForwardVector())));
+
+		if (TargetRotationDistance > MovementComponent->GetLookDirectionErrorTollerance())
+		{
+			bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
+
+			float TimeToDecelerate = abs(AngVel / MovementComponent->GetMaximumAccelerationInRotation(DecelDirection));
+			float TimeToDestination = TargetRotationDistance / abs(AngVel);
+
+			if (abs(TimeToDecelerate - TimeToDestination) > MovementComponent->GetRotationDirectionUpdateInterval())
+			{
+				bCurrentRotationDeccelerationStatus = (TimeToDecelerate > TimeToDestination);
+			}
+			MovementComponent->RotateShip(bCurrentRotationDeccelerationStatus ? DecelDirection : TargetRotationDirection, 1);
+		}
+		else
+		{
+			MovementComponent->RotateShip(DecelDirection, AngVel);
+		}
 	}
 
-	
-
-	FVector FutureForawardVector = FQuat(FVector(0,0,1), PhysicsComponent->GetAngularVelocity() * MovementComponent->GetDecelerationPredictionTime()).RotateVector(GetActorForwardVector());
-	
-	if (TargetLookDirection.SizeSquared2D() != 0 && !TargetLookDirection.Equals(FutureForawardVector, MovementComponent->GetLookDirectionTollerance()))
-	{
-		float RotationDirection = FVector::CrossProduct(TargetLookDirection, FutureForawardVector).Z;
-		//UE_LOG(LogTemp, Warning, TEXT("SineThing = %f, TargetLookDirection = %s"), RotationDirection, *TargetLookDirection.ToString());
-		MovementComponent->RotateShip(RotationDirection < 0, FMath::Abs(RotationDirection));
-	}
-
+	//Handel Target Move Direction
 	if (TargetMoveDirection.SizeSquared() != 0)
 	{
-		MovementComponent->Move(TargetMoveDirection, 1);
-	}
+		//				   |----------Target Velocity----------|   |----------------------Current Relative Velocity----------------------|
+		FVector2D DeltaV = TargetMoveDirection * TargetMoveSpeed - PhysicsComponent->GetVelocity().GetRotated(GetActorRotation().Yaw * -1);
+		MovementComponent->Move(DeltaV, DeltaV.SizeSquared() - FMath::Square(MovementComponent->GetMoveSpeedErrorTollerance()));
+	}	
 }
 
 // Called to bind functionality to input
@@ -104,6 +117,7 @@ void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
 	}
 }
 
+//Adds a new voidsong
 void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 {
 	//Creates the voidsong object from the given class and adds it to available voidsongs
@@ -112,16 +126,51 @@ void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 	OnAddVoidsongDelegate.Broadcast(NewVoidsong);
 }
 
+//Plays the voidsong sequence
 void ABaseShip::PlayVoidsong(TArray<int> Sequence)
 {
-	//Check the available voidsongs and see if their activation sequence matches the sequence inputted. If so, activate that voidsong.
-	for (auto& i : AvailableVoidsongs)
+	//Figures out all the voidsongs played and the duration based on the sequence.
+
+	float NumOfVoidsongs = Sequence.Num() / FVoidsongInputs::GetNumOfInputs();
+	NumOfVoidsongs = FGenericPlatformMath::TruncToInt(NumOfVoidsongs);
+	TArray<UBaseWhoVoidsong*> Whos;
+	TArray<UBaseNounVoidsong*> Nouns;
+	TArray<UBaseVerbVoidsong*> Verbs;
+
+	for (int i = 0; i <= NumOfVoidsongs; i++)
 	{
-		if (i->ActivationCombo == Sequence)
+		TArray<int> Temp;
+
+		for (int j = 0; j <= FVoidsongInputs::GetNumOfInputs();j++)
 		{
-			i->Activate();
+			Temp.Emplace(Sequence[j + i * FVoidsongInputs::GetNumOfInputs()]);
+		}
+
+		for (auto& k : AvailableVoidsongs)
+		{
+			if (k->GetActivationCombo() == Temp)
+			{
+				if (IsValid(Cast<UBaseWhoVoidsong>(k)))
+				{
+					Whos.Emplace(Cast<UBaseWhoVoidsong>(k));
+				}
+				else if (IsValid(Cast<UBaseNounVoidsong>(k)))
+				{
+					Nouns.Emplace(Cast<UBaseNounVoidsong>(k));
+				}
+				else if (IsValid(Cast<UBaseVerbVoidsong>(k)))
+				{
+					Verbs.Emplace(Cast<UBaseVerbVoidsong>(k));
+				}
+			}
 		}
 	}
+
+	for (auto& k : Verbs)
+	{
+		k->Activate(Whos, Nouns);
+	}
+
 }
 
 void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
@@ -152,6 +201,16 @@ void ABaseShip::SetTargetMoveDirection(FVector2D Vector)
 FVector2D ABaseShip::GetTargetMoveDirection()
 {
 	return TargetMoveDirection;
+}
+
+void ABaseShip::SetTargetMoveSpeed(float Vector)
+{
+	TargetMoveSpeed = abs(Vector);
+}
+
+float ABaseShip::GetTargetMoveSpeed()
+{
+	return TargetMoveSpeed;
 }
 
 void ABaseShip::AddMeshAtLocation(FIntPoint Location)

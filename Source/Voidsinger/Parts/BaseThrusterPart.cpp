@@ -30,6 +30,11 @@ const bool UBaseThrusterPart::IsThrusting()
 	return Throttle != 0;
 }
 
+const float UBaseThrusterPart::GetThrottle()
+{
+	return Throttle;
+}
+
 void UBaseThrusterPart::Thrust(float NewThrottle)
 {
 	Throttle = FMath::Clamp(NewThrottle, 0.f, 1.f);

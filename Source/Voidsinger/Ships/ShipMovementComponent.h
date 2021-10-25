@@ -36,10 +36,13 @@ public:
 	void Move(FVector2D Direction, float Throttle);
 	
 	UFUNCTION(BlueprintPure)
-	float GetLookDirectionTollerance();
+	const float GetLookDirectionErrorTollerance();
 
 	UFUNCTION(BlueprintPure)
-	float GetDecelerationPredictionTime();
+	const float GetMoveSpeedErrorTollerance();
+
+	UFUNCTION(BlueprintPure)
+	const float GetRotationDirectionUpdateInterval();
 
 	UFUNCTION(BlueprintPure)
 	TSet<UBaseThrusterPart*> GetThrustersForDirection(FVector2D Direction);
@@ -48,20 +51,22 @@ public:
 	TSet<UBaseThrusterPart*> GetThrustersForRotation(bool Clockwise);
 
 	UFUNCTION(BlueprintPure)
-	float GetMaximumAccelerationInDirection(FVector2D Direction);
+	const float GetMaximumAccelerationInDirection(FVector2D Direction, float AtThrottle = 1);
 
 	UFUNCTION(BlueprintPure)
-	float GetMaximumAccelerationInRotation(bool Clockwise);
+	const float GetMaximumAccelerationInRotation(bool Clockwise, float AtThrottle = 1);
 
 protected:
-	UPROPERTY(EditAnywhere)
-	float LookDirectionTollerance{ 0.05 };
-
-	//The time into the future used to predict when to stop roatating 
+	//In radians
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float DecelerationPredictionTime{ 0.35 };
+	float LookDirectionErrorTollerance{ 0.075 };
 
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float MoveSpeedErrorTollerance{ 0.5 };
 
+	//The frequency at which ships alternate between accelerating and decelerating what trying to look in a direction
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float RotationDirectionUpdateInterval{ 0.1 };
 
 private:
 	UPROPERTY()
