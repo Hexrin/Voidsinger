@@ -42,7 +42,10 @@ public:
 	const float GetMoveSpeedErrorTollerance();
 
 	UFUNCTION(BlueprintPure)
-	const float GetRotationDirectionUpdateInterval();
+	const float GetRotationDirectionUpdateThreshold();
+
+	UFUNCTION(BlueprintPure)
+	const float GetRotationDecelerationScalingThreshold();
 
 	UFUNCTION(BlueprintPure)
 	TSet<UBaseThrusterPart*> GetThrustersForDirection(FVector2D Direction);
@@ -59,14 +62,18 @@ public:
 protected:
 	//In radians
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float LookDirectionErrorTollerance{ 0.075 };
+	float LookDirectionErrorTollerance{ 0.001 };
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MoveSpeedErrorTollerance{ 0.5 };
 
-	//The frequency at which ships alternate between accelerating and decelerating what trying to look in a direction
+	//The threshold at which ships alternate between accelerating and decelerating what trying to look in a direction
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float RotationDirectionUpdateInterval{ 0.1 };
+	float RotationDirectionUpdateThreshold{ 0.2 };
+
+	//The Veleocty at which decelerion begins to decline
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float RotationDecelerationScalingThreshold{ 0.001 };
 
 private:
 	UPROPERTY()

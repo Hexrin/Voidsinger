@@ -82,9 +82,14 @@ const float UShipMovementComponent::GetMoveSpeedErrorTollerance()
 	return MoveSpeedErrorTollerance;
 }
 
-const float UShipMovementComponent::GetRotationDirectionUpdateInterval()
+const float UShipMovementComponent::GetRotationDirectionUpdateThreshold()
 {
-	return RotationDirectionUpdateInterval;
+	return RotationDirectionUpdateThreshold;
+}
+
+const float UShipMovementComponent::GetRotationDecelerationScalingThreshold()
+{
+	return RotationDecelerationScalingThreshold;
 }
 
 TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForDirection(FVector2D Direction)
