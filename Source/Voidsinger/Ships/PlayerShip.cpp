@@ -14,10 +14,14 @@ APlayerShip::APlayerShip()
 
 
     //Setup Camera
+    CameraRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Camera Root"));
+    CameraRoot->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+    CameraRoot->SetUsingAbsoluteRotation(true);
+
     Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-    Camera->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+    Camera->AttachToComponent(CameraRoot, FAttachmentTransformRules::KeepRelativeTransform);
     Camera->SetUsingAbsoluteRotation(true);
-    Camera->SetRelativeLocation(FVector(0, 10, CameraHeight));
+    Camera->SetRelativeLocation(FVector(0, 0, CameraHeight));
     Camera->SetRelativeRotation(FRotator(-90, -90, 90));
 
     AutoPossessPlayer = EAutoReceiveInput::Player0;
@@ -193,6 +197,21 @@ void APlayerShip::MoveRightReleasedCall()
 void APlayerShip::MoveLeftReleasedCall()
 {
     SetTargetMoveSpeed(0);
+}
+
+void APlayerShip::AddCameraLocation(FVector2D DeltaLoc)
+{
+    SetCameraLocation(FVector2D(Camera->GetRelativeLocation()) + DeltaLoc);
+}
+
+void APlayerShip::SetCameraLocation(FVector2D NewLoc)
+{
+    Camera->SetRelativeLocation(FVector(NewLoc + PhysicsComponent->GetVelocity() * CameraVelocityAdjScaling, CameraHeight));
+}
+
+void APlayerShip::SetCameraZoom(float Percent)
+{
+    CameraHeight = FMath::Lerp(MinCameraHeight, MaxCameraHeight, FMath::Clamp(Percent, 0.f, 1.f));
 }
 
 void APlayerShip::SetBuildMode(bool NewBuildMode)

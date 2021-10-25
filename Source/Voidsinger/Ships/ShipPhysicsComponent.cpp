@@ -3,6 +3,7 @@
 
 #include "ShipPhysicsComponent.h"
 #include "BaseShip.h"
+#include "PlayerShip.h"
 #include "Voidsinger/Parts/BasePart.h"
 
 // Sets default values for this component's properties
@@ -134,6 +135,11 @@ void UShipPhysicsComponent::UpdateMassCalculations()
 
 	Ship->SetMeshRelativeLocation(CenterOfMass);
 	Ship->AddActorWorldOffset(-1 * FVector(DeltaCoM, 0));
+	APlayerShip* Player = Cast <APlayerShip>(Ship);
+	if (Player)
+	{
+		Player->SetCameraLocation(-1 * CenterOfMass);
+	}
 }
 
 bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult& Hit)

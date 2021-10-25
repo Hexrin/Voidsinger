@@ -191,7 +191,29 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class USceneComponent* CameraRoot;
+
+	UFUNCTION(BlueprintCallable)
+	void AddCameraLocation(FVector2D DeltaLoc);
+
+	UFUNCTION(BlueprintCallable)
+	void SetCameraLocation(FVector2D NewLoc);
+
+	UFUNCTION(BlueprintCallable)
+	void SetCameraZoom(float Percent);
+
 protected:
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float MinCameraHeight;
+
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float MaxCameraHeight;
+
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float CameraVelocityAdjScaling;
+
+private:
 	UPROPERTY(EditAnywhere)
 	float CameraHeight;
 
