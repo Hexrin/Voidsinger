@@ -26,9 +26,6 @@ UBasePart::UBasePart()
 	bFunctional = true;
 	bIsBeingDestroyed = false;
 
-	//Bind to delegates
-	//TSharedRef<FVoisdongDelegate> Idk(new FVoidsongDelegate());
-	//Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
 }
 
 void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
@@ -44,6 +41,23 @@ void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent
 
 void UBasePart::InitializeFunctionality()
 {
+	//if (IsValid(this))
+	//{
+		//Bind to delegates
+		//if (IsValid(Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())))
+		//{
+			Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
+	//	}
+	//	else
+	//	{
+	//		UE_LOG(LogTemp, Warning, TEXT("yo why isn't the game mode valid though?"));
+	//	}
+//	}
+//	else
+//	{
+//		UE_LOG(LogTemp, Warning, TEXT("why isn't this valid"));
+//	}
+
 	//Initialize Resource System
 
 	//Basic description: for each pixel on this part that has a resource type, check around that location for another part that has a pixel with that resource type next to the
