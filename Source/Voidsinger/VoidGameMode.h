@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "Voidsinger/Voidsongs/BaseVerbVoidsong.h"
 #include "VoidGameMode.generated.h"
 
 /**
@@ -24,7 +25,7 @@ class IFireInterface
 public:
 
 	UFUNCTION(BlueprintNativeEvent)
-		void Fire();
+	void Fire();
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FVoidsongDelegate, TEnumAsByte<EFactions>, Faction, TSubclassOf<UObject>, NounClass);
@@ -45,10 +46,10 @@ public:
 	int PrintTestaroo();
 
 	UFUNCTION(BlueprintCallable)
-	void ActivateWithEffects();
+	void ActivateWithEffects(UObject* ThingActivated);
 
 	UFUNCTION(BlueprintCallable)
-	void Broadcast(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass);
+	void Broadcast(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass, TSubclassOf<UBaseVerbVoidsong> Verb);
 
 	UFUNCTION()
 	FVoidsongDelegate GetVoidsongDelegate();

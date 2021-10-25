@@ -41,22 +41,9 @@ void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent
 
 void UBasePart::InitializeFunctionality()
 {
-	//if (IsValid(this))
-	//{
-		//Bind to delegates
-		//if (IsValid(Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())))
-		//{
-			Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
-	//	}
-	//	else
-	//	{
-	//		UE_LOG(LogTemp, Warning, TEXT("yo why isn't the game mode valid though?"));
-	//	}
-//	}
-//	else
-//	{
-//		UE_LOG(LogTemp, Warning, TEXT("why isn't this valid"));
-//	}
+
+	//Bind to delegates
+	Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
 
 	//Initialize Resource System
 
@@ -450,4 +437,8 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 
 void UBasePart::OnDelegateCalled(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass)
 {
+	if (Cast<ABaseShip>(GetOuter())->GetFaction() == Faction && GetClass() == NounClass)
+	{
+
+	}
 }

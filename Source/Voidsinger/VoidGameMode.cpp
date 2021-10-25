@@ -14,11 +14,15 @@ int AVoidGameMode::PrintTestaroo()
 	return Testaroo;
 }
 
-void AVoidGameMode::ActivateWithEffects()
+void AVoidGameMode::ActivateWithEffects(UObject* ThingActivated)
 {
+	if (ThingActivated->Implements<UFireInterface>())
+	{
+		Cast<IFireInterface>(ThingActivated)->Fire();
+	}
 }
 
-void AVoidGameMode::Broadcast(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass)
+void AVoidGameMode::Broadcast(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass, TSubclassOf<UBaseVerbVoidsong> Verb)
 {
 	OnVoidsongDelegate.Broadcast(Faction, NounClass);
 }

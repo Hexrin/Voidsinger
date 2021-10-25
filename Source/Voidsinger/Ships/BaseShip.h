@@ -52,6 +52,10 @@ public:
 	UFUNCTION()
 	void RemoveResourceSystem(UBaseResourceSystem* System);
 
+	//Gets the faction of the ship
+	UFUNCTION(BlueprintPure)
+	TEnumAsByte<EFactions> GetFaction();
+
 	//Adds a new Voidsong to the AvailableVoidsongs. Will be useful for gaining a new voidsong.
 	UFUNCTION(BlueprintCallable)
 	void AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong);
@@ -178,4 +182,8 @@ private:
 
 	UPROPERTY()
 	TArray<FVector2D> UV;
+
+	//The faction of the ship
+	UPROPERTY()
+	TEnumAsByte<EFactions> Faction;
 };
