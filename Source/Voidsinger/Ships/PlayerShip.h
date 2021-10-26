@@ -203,15 +203,24 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetCameraZoom(float Percent);
 
+	UFUNCTION(BlueprintCallable)
+	const float GetCameraZoom();
+
+	UFUNCTION()
+	void ZoomAxisCall(float AxisValue);
+
 protected:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float MinCameraHeight;
+	float CameraMinHeight{ 100 };
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float MaxCameraHeight;
+	float CameraMaxHeight{ 1000 };
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float CameraVelocityAdjScaling;
+	float CameraVelocityAdjScaling{ 1 };
+
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "1"))
+	float CameraZoomAxisScaling{ 0.01 };
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -225,6 +234,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OpenBuildMenu();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void CloseBuildMenu();
 
 	UFUNCTION(BlueprintPure)
 	bool IsInBuildMode();
