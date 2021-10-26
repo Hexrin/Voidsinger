@@ -88,6 +88,10 @@ void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
     //Camera Bindings
     InputComponent->BindAxis("Zoom", this, &APlayerShip::ZoomAxisCall);
+
+    //Build Mode Bindings
+    InputComponent->BindAction("ToggleBuildMode", IE_Pressed, this, &APlayerShip::ToggleBuildUICall);
+
 }
 
 void APlayerShip::BeginPlay()
@@ -228,6 +232,11 @@ void APlayerShip::ZoomAxisCall(float AxisValue)
     SetCameraZoom(GetCameraZoom() + -1 * AxisValue * CameraZoomAxisScaling);
 }
 
+void APlayerShip::ToggleBuildUICall()
+{
+    SetBuildMode(!IsInBuildMode());
+}
+
 void APlayerShip::SetBuildMode(bool NewBuildMode)
 {
     
@@ -244,6 +253,12 @@ void APlayerShip::SetBuildMode(bool NewBuildMode)
 bool APlayerShip::IsInBuildMode()
 {
     return bBuildMode;
+}
+
+void APlayerShip::SetMeshRelativeLocation(FVector2D Location)
+{
+    Super::SetMeshRelativeLocation(Location);
+    SetCameraLocation(Location);
 }
 
 void APlayerShip::AddVoidsongInput(int Input)
