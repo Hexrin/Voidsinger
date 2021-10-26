@@ -13,19 +13,18 @@
  */
 
 UINTERFACE(Blueprintable)
-class UFireInterface : public UInterface
+class UActivateInterface : public UInterface
 {
 	GENERATED_BODY()
 };
 
-class IFireInterface
+class IActivateInterface
 {
 	GENERATED_BODY()
 
 public:
 
-	UFUNCTION(BlueprintNativeEvent)
-	void Fire();
+	virtual void Activate();
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FVoidsongDelegate, TEnumAsByte<EFactions>, Faction, TSubclassOf<UObject>, NounClass);

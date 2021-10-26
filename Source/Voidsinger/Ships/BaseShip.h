@@ -186,4 +186,5 @@ private:
 	//The faction of the ship
 	UPROPERTY()
 	TEnumAsByte<EFactions> Faction;
+
 };

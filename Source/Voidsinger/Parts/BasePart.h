@@ -17,7 +17,7 @@ class UBaseThrusterPart;
 class UPartGridComponent;
 
 UCLASS(BlueprintType, Blueprintable)
-class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject, public IFireInterface
+class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject, public IActivateInterface
 {
 
 	GENERATED_BODY()
@@ -53,6 +53,12 @@ protected:
 	//Begin Play for use in blueprints
 	UFUNCTION(BlueprintImplementableEvent)
 	void BeginPlay();
+
+	//Interface
+	virtual void Activate() override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BlueprintActivate();
 
 	/*--------Tick--------*\
 	\*--------------------*/
