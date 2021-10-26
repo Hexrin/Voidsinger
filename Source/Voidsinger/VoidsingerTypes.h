@@ -30,7 +30,7 @@ enum EResourceType
 };
 
 UENUM(BlueprintType)
-enum VoidsongVerbs
+enum EVoidsongVerbs
 {
 	Activate		UMETA(DisplayName = "Activate"),
 	Deactivate		UMETA(DisplayName = "Deactivate"),
@@ -42,6 +42,16 @@ enum VoidsongVerbs
 	Disperse		UMETA(DisplayName = "Disperse"),
 
 };
+
+//Faction types. Enemy will probably be changed but it works for now.
+UENUM(BlueprintType)
+enum EFactions
+{
+	Player			UMETA(DisplayName = "Player"),
+	Enemy			UMETA(DisplayName = "Enemy"),
+	Inanimate		UMETA(DisplayName = "Inanimate")
+};
+
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FArrayBounds
 {

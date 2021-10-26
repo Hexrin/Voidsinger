@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "Voidsinger/VoidGameMode.h"
 #include "Voidsinger/FunctionLibrary.h"
 #include "BasePart.generated.h"
 
@@ -16,23 +17,16 @@ class UBaseThrusterPart;
 class UPartGridComponent;
 
 UCLASS(BlueprintType, Blueprintable)
-class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject
+class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject, public IFireInterface
 {
 
 	GENERATED_BODY()
 
-
-
-
-
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             FUNCTIONS             ||
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
-	
 
-
-
-	/*Initializer Funtions*\
+	/*Initializer Functions*\
 	\*--------------------*/
 
 public:
@@ -60,11 +54,9 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void BeginPlay();
 
-	
-
-
 	/*--------Tick--------*\
 	\*--------------------*/
+
 public:
 	//Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -76,14 +68,10 @@ public:
 	virtual TStatId GetStatId() const override;
 
 protected:
+
 	//Event Tick for use in blueprints
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnTick(float DeltaTime);
-
-	
-
-
-
 
 	/*--Getter Functions--*\
 	\*--------------------*/
@@ -107,8 +95,12 @@ public:
 	//Gets the location of the origin of the part relative to the part grid
 	UFUNCTION(BlueprintPure)
 	const FIntPoint GetPartGridLocation();
+
+	//Gets the location of the origin of the part in world space
 	UFUNCTION(BlueprintPure)
 	const FVector GetPartWorldLocation();
+
+	//Gets the location of the origin of the part in the local space of the ship it's a part of
 	UFUNCTION(BlueprintPure)
 	const FVector GetPartRelativeLocation();
 
@@ -123,6 +115,8 @@ public:
 	//Gets the part grid that this part is attached to
 	UFUNCTION(BlueprintPure)
 	UPartGridComponent* GetPartGrid();
+
+	//Gets the ship it's a part of
 	UFUNCTION(BlueprintPure)
 	const ABaseShip* GetShip();
 
@@ -146,6 +140,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	const int GetHeatResistance();
 
+	//Gets the material used for this part's pixel
 	UFUNCTION(BlueprintPure)
 	UMaterialInterface* GetPixelMaterial();
 
@@ -160,9 +155,6 @@ public:
 	//returns true if pixel at loc is functional
 	UFUNCTION()
 	bool IsPixelFunctional(FIntPoint Loc);
-
-
-
 
 	/*---Misc. Functions--*\
 	\*--------------------*/
@@ -192,25 +184,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddToSystem(UBaseResourceSystem* System);
 
-
-
-
-
-
-
-
-
-
-
+	//Function called when FVoidsongDelegate is broadcasted
+	UFUNCTION()
+	void OnDelegateCalled(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass);
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
 
-
-
 	/*-Blueprint Defaults-*\
 	\*--------------------*/
+
 protected:
 
 	//Stores the default shape of the part
@@ -232,9 +216,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ResourceTypes;
 
+	//Strength of the part
 	UPROPERTY(EditDefaultsOnly)
 	int Strength;
 
+	//Heat resistance of the part
 	UPROPERTY(EditDefaultsOnly)
 	int HeatResistance;
 
@@ -279,7 +265,5 @@ private:
 	//Stores a reference to the part grid component
 	UPROPERTY()
 	UPartGridComponent* PartGridComponent;
-	
-	
 
 };

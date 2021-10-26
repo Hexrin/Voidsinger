@@ -129,6 +129,11 @@ void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
 	}
 }
 
+TEnumAsByte<EFactions> ABaseShip::GetFaction()
+{
+	return Faction;
+}
+
 //Adds a new voidsong
 void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 {

@@ -25,6 +25,7 @@ UBasePart::UBasePart()
 	ActualShape = TArray<FIntPoint>();
 	bFunctional = true;
 	bIsBeingDestroyed = false;
+
 }
 
 void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
@@ -40,6 +41,10 @@ void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent
 
 void UBasePart::InitializeFunctionality()
 {
+
+	//Bind to delegates
+	Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
+
 	//Initialize Resource System
 
 	//Basic description: for each pixel on this part that has a resource type, check around that location for another part that has a pixel with that resource type next to the
@@ -183,6 +188,7 @@ void UBasePart::DestroyPart()
 
 /*--------Tick--------*\
 \*--------------------*/
+
 void UBasePart::Tick(float DeltaTime)
 {
 
@@ -426,5 +432,13 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 		{
 			Systems.Add(System);
 		}
+	}
+}
+
+void UBasePart::OnDelegateCalled(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass)
+{
+	if (Cast<ABaseShip>(GetOuter())->GetFaction() == Faction && GetClass() == NounClass)
+	{
+
 	}
 }
