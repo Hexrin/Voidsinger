@@ -230,7 +230,12 @@ void APlayerShip::ZoomAxisCall(float AxisValue)
 
 void APlayerShip::SetBuildMode(bool NewBuildMode)
 {
-    
+    bBuildMode = NewBuildMode;
+    APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
+    if (MyPlayer != NULL)
+    {
+        MyPlayer->SetPause(NewBuildMode);
+    }
     if (bBuildMode)
     {
         OpenBuildMenu();

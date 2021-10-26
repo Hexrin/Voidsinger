@@ -135,11 +135,16 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetTargetMoveSpeed();
 
-	UPROPERTY(BlueprintReadWrite)
-	FVector TargetLookDirection;
+	UFUNCTION(BlueprintCallable)
+	void SetTargetLookDirection(FVector Vector);
 
+	UFUNCTION(BlueprintPure)
+	const FVector GetTargetLookDirection();
 	
 private:
+	UPROPERTY()
+	FVector TargetLookDirection;
+
 	UPROPERTY()
 	FVector2D TargetMoveDirection;
 
@@ -165,8 +170,6 @@ public:
 	void SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material);
 
 private:
-	UFUNCTION()
-	void UpdateMesh();
 
 	UFUNCTION()
 	TArray<FVector> GetVerticesAroundLocation(FVector2D Location);
@@ -176,9 +179,6 @@ private:
 
 	UPROPERTY()
 	TMap<FIntPoint, int32> MeshData;
-
-	UPROPERTY()
-	FVector2D RelativeMeshLocation;
 
 	UPROPERTY()
 	TArray<FVector2D> UV;
