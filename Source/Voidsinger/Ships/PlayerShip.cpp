@@ -219,7 +219,7 @@ void APlayerShip::SetCameraLocation(FVector2D NewLoc)
 void APlayerShip::SetCameraZoom(float Percent)
 {
     CameraHeight = FMath::Lerp(CameraMinHeight, CameraMaxHeight, FMath::Clamp(Percent, 0.f, 1.f));
-    AddCameraLocation(FVector2D());
+    AddCameraLocation(FVector2D(0,0));
 }
 
 const float APlayerShip::GetCameraZoom()
