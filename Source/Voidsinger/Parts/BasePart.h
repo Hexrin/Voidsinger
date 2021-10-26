@@ -71,7 +71,7 @@ public:
 	virtual TStatId GetStatId() const override;
 
 	//Blueprint activate
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void BlueprintActivate();
 
 protected:
