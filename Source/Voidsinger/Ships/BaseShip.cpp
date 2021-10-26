@@ -279,6 +279,7 @@ void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
 {
 	MeshComponent->SetRelativeLocation(FVector(Location, 0));
+	AddActorWorldOffset(FVector(Location - PhysicsComponent->GetCenterOfMass(), 0));
 }
 
 void ABaseShip::SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material)
