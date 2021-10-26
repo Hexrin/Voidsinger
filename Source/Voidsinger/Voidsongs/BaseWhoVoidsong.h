@@ -17,10 +17,7 @@ class VOIDSINGER_API UBaseWhoVoidsong : public UBaseVoidsong
 	
 public:
 
-	UFUNCTION(BlueprintPure)
-	TArray<AActor*> GetWhos();
-
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> Who;
+	TEnumAsByte<EFactions> Faction;
 
 };

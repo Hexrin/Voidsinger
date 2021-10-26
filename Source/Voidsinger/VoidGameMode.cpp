@@ -18,18 +18,21 @@ int AVoidGameMode::PrintTestaroo()
 	return Testaroo;
 }
 
-void AVoidGameMode::ActivateWithEffects(UObject* ThingActivated)
+void AVoidGameMode::ActivateWithEffects(UObject* ObjectHit)
 {
-	if (ThingActivated->Implements<UActivateInterface>())
+	if (!VerbsActive.IsEmpty())
 	{
-		Cast<IActivateInterface>(ThingActivated)->Activate();
+		for (auto& i : VerbsActive)
+		{
+
+		}
 	}
 }
 
-void AVoidGameMode::Broadcast(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass, TSubclassOf<UBaseVerbVoidsong> Verb)
+void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs)
 {
-	VerbActive = Verb;
-	OnVoidsongDelegate.Broadcast(Faction, NounClass);
+	VerbsActive = Verbs;
+	OnVoidsongDelegate.Broadcast(Factions, NounClasses);
 }
 
 FVoidsongDelegate AVoidGameMode::GetVoidsongDelegate()

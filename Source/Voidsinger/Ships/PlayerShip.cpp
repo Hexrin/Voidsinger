@@ -288,7 +288,7 @@ void APlayerShip::AddVoidsongInput(int Input)
 void APlayerShip::ActivateVoidsong()
 {
     //Calls play voidsong with the player's current sequence of inputs
-    PlayVoidsong(VoidsongCombo);
+    PlaySequence(VoidsongCombo);
     ResetVoidsong();
 }
 

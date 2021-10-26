@@ -440,10 +440,13 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 	}
 }
 
-void UBasePart::OnDelegateCalled(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass)
+void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses)
 {
-	if (Cast<ABaseShip>(GetOuter())->GetFaction() == Faction && GetClass() == NounClass)
+	if (Factions.Contains(Cast<ABaseShip>(GetOuter())->GetFaction()) && NounClasses.Contains(GetClass()))
 	{
-
+		if (this->Implements<UActivateInterface>())
+		{
+			Cast<IActivateInterface>(this)->Activate();
+		}
 	}
 }

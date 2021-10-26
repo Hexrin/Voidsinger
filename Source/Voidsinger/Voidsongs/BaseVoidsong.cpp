@@ -46,7 +46,7 @@ TStatId UBaseVoidsong::GetStatId() const
 
 TArray<int> UBaseVoidsong::GetActivationCombo()
 {
-	return ActivationCombo.GetInputsAsArray();
+	return ActivationCombo;
 }
 
 FText UBaseVoidsong::GetVoidsongDisplayText()

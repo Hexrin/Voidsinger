@@ -144,50 +144,56 @@ void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 }
 
 //Plays the voidsong sequence
-void ABaseShip::PlayVoidsong(TArray<int> Sequence)
+void ABaseShip::PlaySequence(TArray<int> Sequence)
 {
-	//Figures out all the voidsongs played and the duration based on the sequence.
+	TArray<TEnumAsByte<EFactions>> Factions;
+	TArray<TSubclassOf<UObject>> Nouns;
+	TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs;
 
-	float NumOfVoidsongs = Sequence.Num() / FVoidsongInputs::GetNumOfInputs();
-	NumOfVoidsongs = FGenericPlatformMath::TruncToInt(NumOfVoidsongs);
-	TArray<UBaseWhoVoidsong*> Whos;
-	TArray<UBaseNounVoidsong*> Nouns;
-	TArray<UBaseVerbVoidsong*> Verbs;
+	DecideVoidsongsPlayed(Sequence, Factions, Nouns, Verbs);
 
-	for (int i = 0; i <= NumOfVoidsongs; i++)
+	Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs);
+}
+
+void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs)
+{
+	for (auto& i : AvailableVoidsongs)
 	{
-		TArray<int> Temp;
-
-		for (int j = 0; j <= FVoidsongInputs::GetNumOfInputs();j++)
+		bool SequenceContainsVoidsong = true;
+		for (int j = 0; j < i->ActivationCombo.Num(); j++)
 		{
-			Temp.Emplace(Sequence[j + i * FVoidsongInputs::GetNumOfInputs()]);
-		}
-
-		for (auto& k : AvailableVoidsongs)
-		{
-			if (k->GetActivationCombo() == Temp)
+			if (Sequence[j] != i->ActivationCombo[j])
 			{
-				if (IsValid(Cast<UBaseWhoVoidsong>(k)))
-				{
-					Whos.Emplace(Cast<UBaseWhoVoidsong>(k));
-				}
-				else if (IsValid(Cast<UBaseNounVoidsong>(k)))
-				{
-					Nouns.Emplace(Cast<UBaseNounVoidsong>(k));
-				}
-				else if (IsValid(Cast<UBaseVerbVoidsong>(k)))
-				{
-					Verbs.Emplace(Cast<UBaseVerbVoidsong>(k));
-				}
+				SequenceContainsVoidsong = false;
 			}
 		}
-	}
+		if (SequenceContainsVoidsong)
+		{
+			if (IsValid(Cast<UBaseWhoVoidsong>(i)))
+			{
+				Factions.Emplace(Cast<UBaseWhoVoidsong>(i)->Faction);
+			}
+			else if (IsValid(Cast<UBaseNounVoidsong>(i)))
+			{
+				Nouns.Emplace(Cast<UBaseNounVoidsong>(i)->Noun);
+			}
+			else if (IsValid(Cast<UBaseVerbVoidsong>(i)))
+			{
+				Verbs.Emplace(Cast<UBaseVerbVoidsong>(i)->GetClass());
+			}
 
-	for (auto& k : Verbs)
-	{
-		k->Activate(Whos, Nouns);
-	}
+			TArray<int> RecursiveArray = Sequence;
 
+			for (auto& j : i->ActivationCombo)
+			{
+				RecursiveArray.Remove(0);
+			}
+
+			DecideVoidsongsPlayed(RecursiveArray, Factions, Nouns, Verbs);
+
+			break;
+		}
+	}
 }
 
 void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)

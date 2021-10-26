@@ -12,50 +12,6 @@
  * 
  */
 
-USTRUCT(BlueprintType, Blueprintable)
-struct FVoidsongInputs
-{
-	GENERATED_BODY()
-	
-	//The inputs
-	UPROPERTY(EditDefaultsOnly)
-	int Input1;
-
-	UPROPERTY(EditDefaultsOnly)
-	int Input2;
-
-	UPROPERTY(EditDefaultsOnly)
-	int Input3;
-
-	static const int NumOfInputs = 3;
-
-	FVoidsongInputs()
-	{
-		FVoidsongInputs(0, 0, 0);
-	}
-
-	FVoidsongInputs(int New1, int New2, int New3)
-	{
-		Input1 = New1;
-		Input2 = New2;
-		Input3 = New3;
-	}
-
-	static int GetNumOfInputs()
-	{
-		return NumOfInputs;
-	}
-	TArray<int> GetInputsAsArray()
-	{
-		TArray<int> OutArray;
-		OutArray.Emplace(Input1);
-		OutArray.Emplace(Input2);
-		OutArray.Emplace(Input3);
-		return OutArray;
-	}
-
-};
-
 UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBaseVoidsong : public UObject, public FTickableGameObject
 {
@@ -123,5 +79,5 @@ public:
 
 	//The activation key combo of the voidsong.
 	UPROPERTY(EditDefaultsOnly)
-	FVoidsongInputs ActivationCombo;
+	TArray<int> ActivationCombo;
 };

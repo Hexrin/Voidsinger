@@ -27,7 +27,7 @@ public:
 	virtual void Activate();
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FVoidsongDelegate, TEnumAsByte<EFactions>, Faction, TSubclassOf<UObject>, NounClass);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FVoidsongDelegate, const TArray<TEnumAsByte<EFactions>>& , Factions, const TArray<TSubclassOf<UObject>>&, NounClasses);
 
 UCLASS(Config=VoidSettings)
 class VOIDSINGER_API AVoidGameMode : public AGameModeBase
@@ -45,10 +45,10 @@ public:
 	int PrintTestaroo();
 
 	UFUNCTION(BlueprintCallable)
-	void ActivateWithEffects(UObject* ThingActivated);
+	void ActivateWithEffects(UObject* ObjectHit);
 
 	UFUNCTION(BlueprintCallable)
-	void Broadcast(TEnumAsByte<EFactions> Faction, TSubclassOf<UObject> NounClass, TSubclassOf<UBaseVerbVoidsong> Verb);
+	void Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs);
 
 	UFUNCTION()
 	FVoidsongDelegate GetVoidsongDelegate();
@@ -57,6 +57,6 @@ public:
 	FVoidsongDelegate OnVoidsongDelegate;
 
 	UPROPERTY()
-	TSubclassOf<UBaseVerbVoidsong> VerbActive;
+	TArray<TSubclassOf<UBaseVerbVoidsong>> VerbsActive;
 
 };

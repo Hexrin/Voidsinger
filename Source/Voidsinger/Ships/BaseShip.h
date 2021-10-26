@@ -62,7 +62,11 @@ public:
 
 	//Plays a voidsong with a given activation sequence
 	UFUNCTION()
-	void PlayVoidsong(TArray<int> Sequence);
+	void PlaySequence(TArray<int> Sequence);
+
+	//Figures out what Voidsongs are played.
+	UFUNCTION()
+	void DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs);
 
 	//Creates Voidsong objects with the given classes of Voidsongs and adds them to the AvaialableVoidsongs. Will be useful for loading from a save game.
 	UFUNCTION(BlueprintCallable)
@@ -183,8 +187,10 @@ private:
 	UPROPERTY()
 	TArray<FVector2D> UV;
 
+public:
+
 	//The faction of the ship
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EFactions> Faction;
 
 };
