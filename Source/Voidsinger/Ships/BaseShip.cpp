@@ -186,10 +186,13 @@ void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<E
 
 			for (auto& j : i->ActivationCombo)
 			{
-				RecursiveArray.Remove(0);
+				RecursiveArray.RemoveAt(0);
 			}
 
-			DecideVoidsongsPlayed(RecursiveArray, Factions, Nouns, Verbs);
+			if (!RecursiveArray.IsEmpty())
+			{
+				DecideVoidsongsPlayed(RecursiveArray, Factions, Nouns, Verbs);
+			}
 
 			break;
 		}
