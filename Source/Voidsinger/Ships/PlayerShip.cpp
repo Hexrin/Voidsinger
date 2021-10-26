@@ -239,7 +239,7 @@ void APlayerShip::ToggleBuildUICall()
 
 void APlayerShip::SetBuildMode(bool NewBuildMode)
 {
-    
+    bBuildMode = NewBuildMode;
     if (bBuildMode)
     {
         OpenBuildMenu();
