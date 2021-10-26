@@ -57,9 +57,6 @@ protected:
 	//Interface
 	virtual void Activate() override;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void BlueprintActivate();
-
 	/*--------Tick--------*\
 	\*--------------------*/
 
@@ -72,6 +69,10 @@ public:
 
 	//Is a nesseary part of tick component
 	virtual TStatId GetStatId() const override;
+
+	//Blueprint activate
+	UFUNCTION(BlueprintImplementableEvent)
+	void BlueprintActivate();
 
 protected:
 
