@@ -186,6 +186,11 @@ void UBasePart::DestroyPart()
 	bIsBeingDestroyed = true;
 }
 
+void UBasePart::Activate()
+{
+	BlueprintActivate();
+}
+
 /*--------Tick--------*\
 \*--------------------*/
 

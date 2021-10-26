@@ -3,6 +3,10 @@
 
 #include "VoidGameMode.h"
 
+void IActivateInterface::Activate()
+{
+}
+
 AVoidGameMode::AVoidGameMode()
 {
 	//LoadConfig();
@@ -16,9 +20,9 @@ int AVoidGameMode::PrintTestaroo()
 
 void AVoidGameMode::ActivateWithEffects(UObject* ThingActivated)
 {
-	if (ThingActivated->Implements<UFireInterface>())
+	if (ThingActivated->Implements<UActivateInterface>())
 	{
-		Cast<IFireInterface>(ThingActivated)->Fire();
+		Cast<IActivateInterface>(ThingActivated)->Activate();
 	}
 }
 
