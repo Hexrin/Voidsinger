@@ -52,6 +52,10 @@ public:
 	UFUNCTION()
 	void RemoveResourceSystem(UBaseResourceSystem* System);
 
+	//Gets the faction of the ship
+	UFUNCTION(BlueprintPure)
+	TEnumAsByte<EFactions> GetFaction();
+
 	//Adds a new Voidsong to the AvailableVoidsongs. Will be useful for gaining a new voidsong.
 	UFUNCTION(BlueprintCallable)
 	void AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong);
@@ -131,11 +135,16 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetTargetMoveSpeed();
 
-	UPROPERTY(BlueprintReadWrite)
-	FVector TargetLookDirection;
+	UFUNCTION(BlueprintCallable)
+	void SetTargetLookDirection(FVector Vector);
 
+	UFUNCTION(BlueprintPure)
+	const FVector GetTargetLookDirection();
 	
 private:
+	UPROPERTY()
+	FVector TargetLookDirection;
+
 	UPROPERTY()
 	FVector2D TargetMoveDirection;
 
@@ -161,8 +170,6 @@ public:
 	void SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material);
 
 private:
-	UFUNCTION()
-	void UpdateMesh();
 
 	UFUNCTION()
 	TArray<FVector> GetVerticesAroundLocation(FVector2D Location);
@@ -174,8 +181,9 @@ private:
 	TMap<FIntPoint, int32> MeshData;
 
 	UPROPERTY()
-	FVector2D RelativeMeshLocation;
-
-	UPROPERTY()
 	TArray<FVector2D> UV;
+
+	//The faction of the ship
+	UPROPERTY()
+	TEnumAsByte<EFactions> Faction;
 };

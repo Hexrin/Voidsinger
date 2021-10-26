@@ -191,7 +191,38 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class USceneComponent* CameraRoot;
+
+	UFUNCTION(BlueprintCallable)
+	void AddCameraLocation(FVector2D DeltaLoc);
+
+	UFUNCTION(BlueprintCallable)
+	void SetCameraLocation(FVector2D NewLoc);
+
+	UFUNCTION(BlueprintCallable)
+	void SetCameraZoom(float Percent);
+
+	UFUNCTION(BlueprintCallable)
+	const float GetCameraZoom();
+
+	UFUNCTION()
+	void ZoomAxisCall(float AxisValue);
+
 protected:
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float CameraMinHeight{ 100 };
+
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float CameraMaxHeight{ 1000 };
+
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float CameraVelocityAdjScaling{ 1 };
+
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "1"))
+	float CameraZoomAxisScaling{ 0.01 };
+
+private:
 	UPROPERTY(EditAnywhere)
 	float CameraHeight;
 
@@ -203,6 +234,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OpenBuildMenu();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void CloseBuildMenu();
 
 	UFUNCTION(BlueprintPure)
 	bool IsInBuildMode();

@@ -3,6 +3,7 @@
 
 #include "ShipPhysicsComponent.h"
 #include "BaseShip.h"
+#include "PlayerShip.h"
 #include "Voidsinger/Parts/BasePart.h"
 
 // Sets default values for this component's properties
@@ -128,12 +129,20 @@ void UShipPhysicsComponent::UpdateMassCalculations()
 	//UE_LOG(LogTemp, Warning, TEXT("%s Has Updated Mass"), *GetReadableName());
 
 	Mass = Ship->PartGrid->GetMass();
-	FVector2D DeltaCoM = Ship->PartGrid->GetCenterOfMass() - CenterOfMass;
-	CenterOfMass = Ship->PartGrid->GetCenterOfMass();
+	FVector2D NewCoM = Ship->PartGrid->GetCenterOfMass();
+	FVector2D DeltaCoM = NewCoM - CenterOfMass;
+	
 	MomentOfInertia = Ship->PartGrid->GetMomentOfInertia();
 
-	Ship->SetMeshRelativeLocation(CenterOfMass);
-	Ship->AddActorWorldOffset(-1 * FVector(DeltaCoM, 0));
+	Ship->SetMeshRelativeLocation(-1 * NewCoM);
+	Ship->SetActorLocation(Ship->GetActorLocation() + FVector(- CenterOfMass + NewCoM, 0));
+
+	CenterOfMass = NewCoM;
+	APlayerShip* Player = Cast <APlayerShip>(Ship);
+	if (Player)
+	{
+		Player->SetCameraLocation(-1 * CenterOfMass);
+	}
 }
 
 bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult& Hit)

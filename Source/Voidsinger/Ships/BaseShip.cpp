@@ -8,18 +8,19 @@
 // Sets default values
 ABaseShip::ABaseShip()
 {
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	MeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Mesh Component"));
-	RootComponent = MeshComponent;
+	MeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	MeshComponent->bUseComplexAsSimpleCollision = true;
+	MeshComponent->bRenderCustomDepth = true;
 
 	PhysicsComponent = CreateDefaultSubobject<UShipPhysicsComponent>(TEXT("Physics Component"));
 	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
 	MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));	
 	
 	MeshData = TMap<FIntPoint, int32>();
-	RelativeMeshLocation = FVector2D();
 
 	if (UV.Num() == 0)
 	{
@@ -53,26 +54,37 @@ void ABaseShip::Tick(float DeltaTime)
 	if (TargetLookDirection.SizeSquared2D() != 0)
 	{
 		float AngVel = PhysicsComponent->GetAngularVelocity();
+
 		bool DecelDirection = AngVel < 0;
+		bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
 
 		float TargetRotationDistance = abs(FMath::Acos(FVector::DotProduct(TargetLookDirection, GetActorForwardVector())));
 
-		if (TargetRotationDistance > MovementComponent->GetLookDirectionErrorTollerance())
+		float MaxDecelerationSpeed = abs(MovementComponent->GetMaximumAccelerationInRotation(DecelDirection));
+		float MaxTurnSpeed = abs(MovementComponent->GetMaximumAccelerationInRotation(TargetRotationDirection));
+
+		float TimeToDecelerate = abs(AngVel / MaxDecelerationSpeed);
+		float TimeToDestination = TargetRotationDistance / abs(AngVel);
+
+		switch ((TargetRotationDistance > MovementComponent->GetLookDirectionErrorTollerance()) ? 1 : 0)
 		{
-			bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
-
-			float TimeToDecelerate = abs(AngVel / MovementComponent->GetMaximumAccelerationInRotation(DecelDirection));
-			float TimeToDestination = TargetRotationDistance / abs(AngVel);
-
-			if (abs(TimeToDecelerate - TimeToDestination) > MovementComponent->GetRotationDirectionUpdateInterval())
+		case 1:
+			if (abs(TimeToDecelerate - TimeToDestination) > MovementComponent->GetRotationDirectionUpdateThreshold())
 			{
 				bCurrentRotationDeccelerationStatus = (TimeToDecelerate > TimeToDestination);
 			}
-			MovementComponent->RotateShip(bCurrentRotationDeccelerationStatus ? DecelDirection : TargetRotationDirection, 1);
-		}
-		else
-		{
-			MovementComponent->RotateShip(DecelDirection, AngVel);
+
+			if (!bCurrentRotationDeccelerationStatus)
+			{
+				MovementComponent->RotateShip(TargetRotationDirection, 1);
+				UE_LOG(LogTemp, Warning, TEXT("Turn"));
+				break;
+			}
+
+		default:
+			MovementComponent->RotateShip(DecelDirection, TimeToDecelerate / TimeToDestination);
+			UE_LOG(LogTemp, Warning, TEXT("Decel"));
+			break;
 		}
 	}
 
@@ -115,6 +127,11 @@ void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
 		ResourceSystems.Remove(System);
 
 	}
+}
+
+TEnumAsByte<EFactions> ABaseShip::GetFaction()
+{
+	return Faction;
 }
 
 //Adds a new voidsong
@@ -213,6 +230,16 @@ float ABaseShip::GetTargetMoveSpeed()
 	return TargetMoveSpeed;
 }
 
+void ABaseShip::SetTargetLookDirection(FVector Vector)
+{
+	TargetLookDirection = Vector.GetSafeNormal2D();
+}
+
+const FVector ABaseShip::GetTargetLookDirection()
+{
+	return TargetLookDirection;
+}
+
 void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 {
 	//MeshComponent->CreateMeshSection()
@@ -232,12 +259,6 @@ void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 		SectionIndex = Keys.Num();
 	}
 
-	TArray<FVector> Vertices = TArray<FVector>();
-	for (FVector Vertex : GetVerticesAroundLocation(Location))
-	{
-		Vertices.Emplace(FVector(Vertex.X, Vertex.Y, 0.5));
-		Vertices.Emplace(FVector(Vertex.X, Vertex.Y, -0.5));
-	}
 	TArray<int32> Triangles = CreateTrianglesForSquare(0,2,4,6);
 	//Triangles += CreateTrianglesForSquare(3, 1, 7, 5);
 	Triangles += CreateTrianglesForSquare(2, 0, 3, 1);
@@ -245,46 +266,19 @@ void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 	Triangles += CreateTrianglesForSquare(4, 6, 5, 7);
 	Triangles += CreateTrianglesForSquare(6, 2, 7, 3);
 
-	MeshComponent->CreateMeshSection(SectionIndex, Vertices, Triangles, TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
+	MeshComponent->CreateMeshSection(SectionIndex, GetVerticesAroundLocation(Location), Triangles, TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
 
 	MeshData.Emplace(Location, SectionIndex);
-	UpdateMesh();
 }
 
 void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 {
 	MeshComponent->ClearMeshSection(MeshData.FindRef(Location));
-	UpdateMesh();
 }
 
 void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
 {
-	RelativeMeshLocation = Location;
-	UpdateMesh();
-}
-
-void ABaseShip::UpdateMesh()
-{
-	for (auto& Data : MeshData)
-	{
-		if (MeshComponent->GetProcMeshSection(Data.Value)->ProcVertexBuffer.Num() == 4)
-		{
-			TArray<FVector> AdjVertices = GetVerticesAroundLocation(Data.Key);
-
-			TArray<FVector> CollsionVertices = TArray<FVector>();
-			CollsionVertices.Reserve(8);
-
-
-			for (int i = 0; i < AdjVertices.Num(); i++)
-			{
-				AdjVertices[i] = AdjVertices[i] + FVector(RelativeMeshLocation, 0);
-
-				CollsionVertices.Emplace(AdjVertices[i] + FVector(0, 0, 0.5));
-				CollsionVertices.Emplace(AdjVertices[i] + FVector(0, 0, -0.5));
-			}
-			MeshComponent->UpdateMeshSection(Data.Value, AdjVertices, TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>());
-		}
-	}
+	MeshComponent->SetRelativeLocation(FVector(Location, 0));
 }
 
 void ABaseShip::SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material)
@@ -299,7 +293,8 @@ TArray<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
 	{
 		float AdjustmentValue1 = PartGrid->GetPartGridScale() / (i < 2 ? 2 : -2);
 		float AdjustmentValue2 = PartGrid->GetPartGridScale() / ((i % 2 == 0) ? 2 : -2);
-		ReturnValue.Emplace(FVector(Location, 0) + FVector(AdjustmentValue1, AdjustmentValue2, 0));
+		ReturnValue.Emplace(FVector(Location, 0) + FVector(AdjustmentValue1, AdjustmentValue2, 0.1));
+		ReturnValue.Emplace(FVector(Location, 0) + FVector(AdjustmentValue1, AdjustmentValue2, -0.1));
 	}
 	
 	return ReturnValue;
