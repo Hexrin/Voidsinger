@@ -229,6 +229,8 @@ private:
 	/*-----Building------*\
 	\*-------------------*/
 public:
+	void ToggleBuildUICall();
+
 	UFUNCTION(BlueprintCallable)
 	void SetBuildMode(bool NewBuildMode);
 
@@ -262,4 +264,6 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere)
 	class UStarSystemData* CurrentStarSystem;
+public:
+	void SetMeshRelativeLocation(FVector2D Location);
 };
