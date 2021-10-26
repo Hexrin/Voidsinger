@@ -442,11 +442,47 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 
 void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses)
 {
-	if (Factions.Contains(Cast<ABaseShip>(GetOuter())->GetFaction()) && NounClasses.Contains(GetClass()))
+	if (!Factions.IsEmpty())
 	{
-		if (this->Implements<UActivateInterface>())
+		if (!NounClasses.IsEmpty())
 		{
-			Cast<IActivateInterface>(this)->Activate();
+			if (Factions.Contains(Cast<ABaseShip>(GetOuter())->GetFaction()) && NounClasses.Contains(GetClass()))
+			{
+				if (this->Implements<UActivateInterface>())
+				{
+					Cast<IActivateInterface>(this)->Activate();
+				}
+			}
+		}
+		else
+		{
+			if (Factions.Contains(Cast<ABaseShip>(GetOuter())->GetFaction()))
+			{
+				if (this->Implements<UActivateInterface>())
+				{
+					Cast<IActivateInterface>(this)->Activate();
+				}
+			}
+		}
+	}
+	else
+	{
+		if (!NounClasses.IsEmpty())
+		{
+			if (NounClasses.Contains(GetClass()))
+			{
+				if (this->Implements<UActivateInterface>())
+				{
+					Cast<IActivateInterface>(this)->Activate();
+				}
+			}
+		}
+		else
+		{
+			if (this->Implements<UActivateInterface>())
+			{
+				Cast<IActivateInterface>(this)->Activate();
+			}
 		}
 	}
 }
