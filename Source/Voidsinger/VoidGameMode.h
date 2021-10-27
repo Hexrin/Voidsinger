@@ -53,6 +53,9 @@ public:
 	void Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs);
 
 	UFUNCTION()
+	void UnsetVerbs();
+
+	UFUNCTION()
 	FVoidsongDelegate GetVoidsongDelegate();
 
 	UPROPERTY(BlueprintAssignable)

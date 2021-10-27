@@ -146,7 +146,7 @@ void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 //Plays the voidsong sequence
 void ABaseShip::PlaySequence(TArray<int> Sequence)
 {
-	if (!Sequence.IsEmpty())
+	if (!Sequence.IsEmpty() && Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->VerbsActive.IsEmpty())
 	{
 		TArray<TEnumAsByte<EFactions>> Factions;
 		TArray<TSubclassOf<UObject>> Nouns;
@@ -163,6 +163,8 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 
 void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs)
 {
+	float Duration = 0;
+
 	for (auto& i : AvailableVoidsongs)
 	{
 		bool SequenceContainsVoidsong = true;
@@ -188,6 +190,8 @@ void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<E
 				Verbs.Emplace(Cast<UBaseVerbVoidsong>(i));
 			}
 
+			Duration += i->GetDuration();
+
 			TArray<int> RecursiveArray = Sequence;
 
 			for (auto& j : i->ActivationCombo)
@@ -203,6 +207,15 @@ void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<E
 			break;
 		}
 	}
+
+	FTimerHandle DurationTimer;
+	GetWorld()->GetTimerManager().SetTimer(DurationTimer, this, &ABaseShip::DurationDelay, Duration);
+
+}
+
+void ABaseShip::DurationDelay()
+{
+	Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->UnsetVerbs();
 }
 
 void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)

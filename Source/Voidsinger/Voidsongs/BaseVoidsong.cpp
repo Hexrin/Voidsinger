@@ -54,3 +54,7 @@ FText UBaseVoidsong::GetVoidsongDisplayText()
 	return VoidsongDisplayText;
 }
 
+float UBaseVoidsong::GetDuration()
+{
+	return Duration;
+}

@@ -36,6 +36,11 @@ void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TS
 	OnVoidsongDelegate.Broadcast(Factions, NounClasses);
 }
 
+void AVoidGameMode::UnsetVerbs()
+{
+	VerbsActive.Empty();
+}
+
 FVoidsongDelegate AVoidGameMode::GetVoidsongDelegate()
 {
 	return OnVoidsongDelegate;

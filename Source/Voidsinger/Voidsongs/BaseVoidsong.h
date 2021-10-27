@@ -60,6 +60,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	FText GetVoidsongDisplayText();
 
+	UFUNCTION(BlueprintPure)
+	float GetDuration();
+
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
@@ -71,13 +74,16 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	FText VoidsongDisplayText;
 
+	//The activation key combo of the voidsong.
+	UPROPERTY(EditDefaultsOnly)
+	TArray<int> ActivationCombo;
+
+	UPROPERTY(EditDefaultsOnly)
+	float Duration;
+
 	/*Instanced  Variables*\
 	\*--------------------*/
 
 	UPROPERTY()
 	bool bIsBeingDestroyed;
-
-	//The activation key combo of the voidsong.
-	UPROPERTY(EditDefaultsOnly)
-	TArray<int> ActivationCombo;
 };
