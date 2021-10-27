@@ -446,7 +446,7 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 	{
 		if (!NounClasses.IsEmpty())
 		{
-			if (Factions.Contains(Cast<ABaseShip>(GetOuter())->GetFaction()) && NounClasses.Contains(GetClass()))
+			if (Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction()) && NounClasses.Contains(GetClass()))
 			{
 				if (this->Implements<UActivateInterface>())
 				{
