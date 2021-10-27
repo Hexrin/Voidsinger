@@ -150,7 +150,7 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 	{
 		TArray<TEnumAsByte<EFactions>> Factions;
 		TArray<TSubclassOf<UObject>> Nouns;
-		TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs;
+		TArray<UBaseVerbVoidsong*> Verbs;
 
 		DecideVoidsongsPlayed(Sequence, Factions, Nouns, Verbs);
 
@@ -161,7 +161,7 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 	}
 }
 
-void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs)
+void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs)
 {
 	for (auto& i : AvailableVoidsongs)
 	{
@@ -186,7 +186,7 @@ void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<E
 			}
 			else if (IsValid(Cast<UBaseVerbVoidsong>(i)))
 			{
-				Verbs.Emplace(Cast<UBaseVerbVoidsong>(i)->GetClass());
+				Verbs.Emplace(Cast<UBaseVerbVoidsong>(i));
 			}
 
 			TArray<int> RecursiveArray = Sequence;

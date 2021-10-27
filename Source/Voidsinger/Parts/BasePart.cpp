@@ -442,6 +442,7 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 
 void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses)
 {
+	//This is bad and I want a better way to do this but I'm jus getting it to work rn
 	if (!Factions.IsEmpty())
 	{
 		if (!NounClasses.IsEmpty())
@@ -456,7 +457,7 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 		}
 		else
 		{
-			if (Factions.Contains(Cast<ABaseShip>(GetOuter())->GetFaction()))
+			if (Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction()))
 			{
 				if (this->Implements<UActivateInterface>())
 				{
