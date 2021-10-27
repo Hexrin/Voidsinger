@@ -263,6 +263,4 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere)
 	class UStarSystemData* CurrentStarSystem;
-public:
-	void SetMeshRelativeLocation(FVector2D Location);
 };

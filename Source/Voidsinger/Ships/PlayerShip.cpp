@@ -12,14 +12,8 @@ APlayerShip::APlayerShip()
         CameraHeight = FMath::GetMappedRangeValueClamped(FVector2D(0,1), FVector2D(CameraMinHeight, CameraMaxHeight), 0.5);
     }
 
-
-    //Setup Camera
-    CameraRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Camera Root"));
-    CameraRoot->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-    CameraRoot->SetUsingAbsoluteRotation(true);
-
     Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-    Camera->AttachToComponent(CameraRoot, FAttachmentTransformRules::KeepRelativeTransform);
+    Camera->AttachToComponent(MeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
     Camera->SetUsingAbsoluteRotation(true);
     Camera->SetRelativeLocation(FVector(0, 0, CameraHeight));
     Camera->SetRelativeRotation(FRotator(-90, -90, 90));
@@ -253,12 +247,6 @@ void APlayerShip::SetBuildMode(bool NewBuildMode)
 bool APlayerShip::IsInBuildMode()
 {
     return bBuildMode;
-}
-
-void APlayerShip::SetMeshRelativeLocation(FVector2D Location)
-{
-    Super::SetMeshRelativeLocation(Location);
-    SetCameraLocation(Location);
 }
 
 void APlayerShip::AddVoidsongInput(int Input)
