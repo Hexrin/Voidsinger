@@ -21,42 +21,30 @@ public:
 	/*Voidsong Functions*\
 	\*------------------*/
 
-	//Used to activate the voidsong.
-	UFUNCTION(BlueprintCallable)
-	void Activate(TArray<UBaseWhoVoidsong*> Whos, TArray<UBaseNounVoidsong*> Nouns);
+	//Pre-activate calls activate, but it also sets ActorHit and WorldLocation. It's convenient.
+	UFUNCTION()
+	void PreActivate(AActor* NewActorHit, FVector NewWorldLocation);
 
 	//This will do the effect of the voidsong. It's called within Activate. Needs to be implemented for each Voidsong.
 	UFUNCTION(BlueprintImplementableEvent)
-	void Effect(const TArray<UBaseWhoVoidsong*>& Whos, const TArray<UBaseNounVoidsong*>& Nouns);
+	void Activate(AActor* NewActorHit, FVector NewWorldLocation);
 
 	//This will undo the effect of the voidsong. It's also called within activate, after a delay for the duration. Needs to be implemented for each Voidsong. 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Deactivate();
 
-	//This function is for the delay of the duration.
-	UFUNCTION()
-	void DurationDelay();
-
 	/*Getters*\
 	\--------*/
 
-private:
+protected:
 
 	/*Instanced  Variables*\
 	\*--------------------*/
 
-	//The duration of the voidsong.
-	UPROPERTY()
-	float Duration;
+	UPROPERTY(BlueprintReadOnly)
+	AActor* ActorHit;
 
-	//Used to check if the voidsong is off cooldown.
-	UPROPERTY()
-	bool CanActivateAgain = true;
-
-	UPROPERTY()
-	TArray<UBaseWhoVoidsong*> WhosAffected;
-
-	UPROPERTY()
-	TArray<UBaseNounVoidsong*> NounsAffected;
+	UPROPERTY(BlueprintReadOnly)
+	FVector WorldLocation;
 
 };

@@ -150,7 +150,7 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 	{
 		TArray<TEnumAsByte<EFactions>> Factions;
 		TArray<TSubclassOf<UObject>> Nouns;
-		TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs;
+		TArray<UBaseVerbVoidsong*> Verbs;
 
 		DecideVoidsongsPlayed(Sequence, Factions, Nouns, Verbs);
 
@@ -161,14 +161,13 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 	}
 }
 
-void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs)
+void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs)
 {
 	for (auto& i : AvailableVoidsongs)
 	{
 		bool SequenceContainsVoidsong = true;
 		for (int j = 0; j < i->ActivationCombo.Num(); j++)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Sequence %i Activation Combo %i Voidsong %s"), Sequence[j], i->ActivationCombo[j], *i->GetVoidsongDisplayText().ToString());
 			if (Sequence[j] != i->ActivationCombo[j])
 			{
 				SequenceContainsVoidsong = false;
@@ -186,7 +185,7 @@ void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<E
 			}
 			else if (IsValid(Cast<UBaseVerbVoidsong>(i)))
 			{
-				Verbs.Emplace(Cast<UBaseVerbVoidsong>(i)->GetClass());
+				Verbs.Emplace(Cast<UBaseVerbVoidsong>(i));
 			}
 
 			TArray<int> RecursiveArray = Sequence;
@@ -217,7 +216,6 @@ void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
 
 void ABaseShip::CallLaser(float DamageMultiplier, float DurationMultiplier)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Broadcast should be called...?"))
 	OnLaserDelegate.Broadcast(DamageMultiplier, DurationMultiplier);
 }
 
