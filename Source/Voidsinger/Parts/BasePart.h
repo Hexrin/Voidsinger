@@ -212,7 +212,7 @@ protected:
 	UMaterialInterface* PixelMaterial;
 
 	//Stores the total mass of the part
-	UPROPERTY(EditDefaultsOnly, NoClear)
+	UPROPERTY(EditDefaultsOnly, NoClear, BlueprintReadOnly)
 	float TotalPartMass;
 
 	//Stores the cost to place the part in Pixels
@@ -224,12 +224,20 @@ protected:
 	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ResourceTypes;
 
 	//Strength of the part
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText PartName;
+
+	//Strength of the part
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int Strength;
 
 	//Heat resistance of the part
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int HeatResistance;
+
+	//Strength of the part
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UTexture2D* PartIcon;
 
 	/*Function Return Vals*\
 	\*--------------------*/
