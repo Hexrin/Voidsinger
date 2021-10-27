@@ -66,7 +66,11 @@ public:
 
 	//Figures out what Voidsongs are played.
 	UFUNCTION()
-	void DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs);
+	void DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs);
+
+	//This function is for the delay of the Voidsong duration
+	UFUNCTION()
+	void DurationDelay();
 
 	//Creates Voidsong objects with the given classes of Voidsongs and adds them to the AvaialableVoidsongs. Will be useful for loading from a save game.
 	UFUNCTION(BlueprintCallable)

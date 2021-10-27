@@ -18,21 +18,27 @@ int AVoidGameMode::PrintTestaroo()
 	return Testaroo;
 }
 
-void AVoidGameMode::ActivateWithEffects(UObject* ObjectHit)
+void AVoidGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness)
 {
+	//UE_LOG(LogTemp, Warning, TEXT("Verbiness is called"));
 	if (!VerbsActive.IsEmpty())
 	{
 		for (auto& i : VerbsActive)
 		{
-
+			i->PreActivate(ActorHit, ActorThatActivated, PartsHit, LocationCalledFrom, WorldLocation, Effectiveness);
 		}
 	}
 }
 
-void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs)
+void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs)
 {
 	VerbsActive = Verbs;
 	OnVoidsongDelegate.Broadcast(Factions, NounClasses);
+}
+
+void AVoidGameMode::UnsetVerbs()
+{
+	VerbsActive.Empty();
 }
 
 FVoidsongDelegate AVoidGameMode::GetVoidsongDelegate()

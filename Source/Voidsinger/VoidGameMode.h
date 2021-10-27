@@ -12,6 +12,8 @@
  * 
  */
 
+//class UBasePart;
+
 UINTERFACE(Blueprintable)
 class UActivateInterface : public UInterface
 {
@@ -45,10 +47,13 @@ public:
 	int PrintTestaroo();
 
 	UFUNCTION(BlueprintCallable)
-	void ActivateWithEffects(UObject* ObjectHit);
+	void ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness);
 
 	UFUNCTION(BlueprintCallable)
-	void Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs);
+	void Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs);
+
+	UFUNCTION()
+	void UnsetVerbs();
 
 	UFUNCTION()
 	FVoidsongDelegate GetVoidsongDelegate();
@@ -57,6 +62,6 @@ public:
 	FVoidsongDelegate OnVoidsongDelegate;
 
 	UPROPERTY()
-	TArray<TSubclassOf<UBaseVerbVoidsong>> VerbsActive;
+	TArray<UBaseVerbVoidsong*> VerbsActive;
 
 };
