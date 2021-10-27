@@ -11,6 +11,9 @@
 /**
  * 
  */
+
+class UBasePart;
+
 UCLASS()
 class VOIDSINGER_API UBaseVerbVoidsong : public UBaseVoidsong
 {
@@ -21,13 +24,13 @@ public:
 	/*Voidsong Functions*\
 	\*------------------*/
 
-	//Pre-activate calls activate, but it also sets ActorHit and WorldLocation. It's convenient.
+	//Pre-activate calls activate, but it also sets ActorHit, WorldLocation and effectiveness. It's convenient.
 	UFUNCTION()
-	void PreActivate(AActor* NewActorHit, FVector NewWorldLocation);
+	void PreActivate(AActor* NewActorHit, AActor* NewActorThatActivated, TArray<UBasePart*> NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness);
 
 	//This will do the effect of the voidsong. It's called within Activate. Needs to be implemented for each Voidsong.
 	UFUNCTION(BlueprintImplementableEvent)
-	void Activate(AActor* NewActorHit, FVector NewWorldLocation);
+	void Activate(AActor* NewActorHit, AActor* NewActorThatActivated, const TArray<UBasePart*>& NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness);
 
 	//This will undo the effect of the voidsong. It's also called within activate, after a delay for the duration. Needs to be implemented for each Voidsong. 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -45,6 +48,18 @@ protected:
 	AActor* ActorHit;
 
 	UPROPERTY(BlueprintReadOnly)
+	AActor* ActorThatActivated;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<UBasePart*> PartsHit;
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector LocationCalledFrom;
+
+	UPROPERTY(BlueprintReadOnly)
 	FVector WorldLocation;
+
+	UPROPERTY(BlueprintReadOnly)
+	float Effectiveness;
 
 };

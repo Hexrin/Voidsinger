@@ -18,14 +18,14 @@ int AVoidGameMode::PrintTestaroo()
 	return Testaroo;
 }
 
-void AVoidGameMode::ActivateWithEffects(AActor* ActorHit, FVector WorldLocation)
+void AVoidGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Verbiness is called"));
 	if (!VerbsActive.IsEmpty())
 	{
 		for (auto& i : VerbsActive)
 		{
-			i->PreActivate(ActorHit, WorldLocation);
+			i->PreActivate(ActorHit, ActorThatActivated, PartsHit, LocationCalledFrom, WorldLocation, Effectiveness);
 		}
 	}
 }
