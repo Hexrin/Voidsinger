@@ -168,7 +168,6 @@ void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<E
 		bool SequenceContainsVoidsong = true;
 		for (int j = 0; j < i->ActivationCombo.Num(); j++)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Sequence %i Activation Combo %i Voidsong %s"), Sequence[j], i->ActivationCombo[j], *i->GetVoidsongDisplayText().ToString());
 			if (Sequence[j] != i->ActivationCombo[j])
 			{
 				SequenceContainsVoidsong = false;
@@ -217,7 +216,6 @@ void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
 
 void ABaseShip::CallLaser(float DamageMultiplier, float DurationMultiplier)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Broadcast should be called...?"))
 	OnLaserDelegate.Broadcast(DamageMultiplier, DurationMultiplier);
 }
 
