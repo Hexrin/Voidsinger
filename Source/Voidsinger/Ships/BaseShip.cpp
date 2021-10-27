@@ -146,13 +146,19 @@ void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 //Plays the voidsong sequence
 void ABaseShip::PlaySequence(TArray<int> Sequence)
 {
-	TArray<TEnumAsByte<EFactions>> Factions;
-	TArray<TSubclassOf<UObject>> Nouns;
-	TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs;
+	if (!Sequence.IsEmpty())
+	{
+		TArray<TEnumAsByte<EFactions>> Factions;
+		TArray<TSubclassOf<UObject>> Nouns;
+		TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs;
 
-	DecideVoidsongsPlayed(Sequence, Factions, Nouns, Verbs);
+		DecideVoidsongsPlayed(Sequence, Factions, Nouns, Verbs);
 
-	Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs);
+		if (!Factions.IsEmpty() || !Nouns.IsEmpty() || !Verbs.IsEmpty())
+		{
+			Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs);
+		}
+	}
 }
 
 void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs)
@@ -162,6 +168,7 @@ void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<E
 		bool SequenceContainsVoidsong = true;
 		for (int j = 0; j < i->ActivationCombo.Num(); j++)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Sequence %i Activation Combo %i Voidsong %s"), Sequence[j], i->ActivationCombo[j], *i->GetVoidsongDisplayText().ToString());
 			if (Sequence[j] != i->ActivationCombo[j])
 			{
 				SequenceContainsVoidsong = false;
