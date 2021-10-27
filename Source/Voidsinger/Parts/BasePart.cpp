@@ -61,94 +61,12 @@ void UBasePart::InitializeFunctionality()
 		for (auto& j : i.Value.IntPointArray)
 		{
 			//Check the X + 1 location for a part on the part grid
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X + 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part != this)
+			if (PartGridComponent->GetPartGrid().Contains(j + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
 			{
-				//For each resource type location on the adjacent part
-				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part->GetResourceTypes())
-				{
-					//check if the type of the resource system is the same as the type of of the adjecent part's resource system
-					if (k.Key == i.Key)
-					{
-						//For each pixel location on the adjacent part that has this resource type
-						for (auto& l : k.Value.IntPointArray)
-						{
-							//Check if the adjacent part's pixel is actually adjacent to the pixel in question on this part
-							if (l + PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part->GetPartGridLocation() == FIntPoint(j.X + 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y))
-							{
-								//if all the above checks succeed, then add this part to the resource system that it found it was adjacent to.
-								//Get system by type works because a part can only ever be part of 1 system with a given type, with various different reasons and logic to get
-								// that result. 
-								//(although... i may need to think about that)
-
-								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part->GetSystemByType(i.Key));
+								AddToSystem(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key));
 
 								//A system was found!
 								SystemFound = true;
-							}
-						}
-					}
-				}
-
-			}
-
-			//Do everything done for X + 1 for Y + 1
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y)).Part != this)
-			{
-				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y)).Part->GetResourceTypes())
-				{
-					if (k.Key == i.Key)
-					{
-						for (auto& l : k.Value.IntPointArray)
-						{
-							if (l + PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y)).Part->GetPartGridLocation() == FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y))
-							{
-								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y + 1 + GetPartGridLocation().Y)).Part->GetSystemByType(i.Key));
-								SystemFound = true;
-							}
-						}
-					}
-				}
-			}
-
-			//Do everything done for X + 1 for Y - 1
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y)).Part != this)
-			{
-				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y)).Part->GetResourceTypes())
-				{
-					if (k.Key == i.Key)
-					{
-
-						for (auto& l : k.Value.IntPointArray)
-						{
-							if (l + PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y)).Part->GetPartGridLocation() == FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y))
-							{
-								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X + GetPartGridLocation().X, j.Y - 1 + GetPartGridLocation().Y)).Part->GetSystemByType(k.Key));
-								SystemFound = true;
-							}
-						}
-					}
-				}
-			}
-
-			//Do everything done for X + 1 for X - 1
-			if (PartGridComponent->GetPartGrid().Contains(FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)) && PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part != this)
-			{
-				//UE_LOG(LogTemp, Warning, TEXT("x - 1 is valid"));
-				for (auto& k : PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part->GetResourceTypes())
-				{
-					if (k.Key == i.Key)
-					{
-						for (auto& l : k.Value.IntPointArray)
-						{
-							if (l + PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part->GetPartGridLocation() == FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y))
-							{
-								//UE_LOG(LogTemp, Warning, TEXT("x - 1 system found"));
-								AddToSystem(PartGridComponent->GetPartGrid().FindRef(FIntPoint(j.X - 1 + GetPartGridLocation().X, j.Y + GetPartGridLocation().Y)).Part->GetSystemByType(k.Key));
-								SystemFound = true;
-							}
-						}
-					}
-				}
 			}
 		}
 
