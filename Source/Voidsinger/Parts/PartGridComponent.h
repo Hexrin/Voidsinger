@@ -74,6 +74,73 @@ public:
 	}
 };
 
+USTRUCT(BlueprintType)
+struct VOIDSINGER_API FPartGrid
+{
+	GENERATED_BODY()
+
+private:
+	UPROPERTY()
+	TArray<FIntPoint> ValidLocations;
+
+	UPROPERTY()
+	TArray<FPartData> Parts;
+
+public:
+	FPartGrid()
+	{
+		ValidLocations = TArray<FIntPoint>();
+		Parts = TArray<FPartData>();
+	}
+
+	void Emplace(FIntPoint Location, FPartData PartData)
+	{
+		
+	}
+
+	int32 Num()
+	{
+		return ValidLocations.Num();
+	}
+private:
+	const int32 BianarySearch(int32 TargetValue)
+	{
+		return BianarySearch(TargetValue, 0, ValidLocations.Num());
+	}
+	
+	const int32 BianarySearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
+	{
+		int32 IndexToCheck = (MaxIndex - MinIndex) / 2;
+		int32 CheckValue = LocationToIndexValue(ValidLocations[IndexToCheck]);
+		if (MinIndex >= MaxIndex)
+		{
+			return -1;
+		}
+		else if (CheckValue == TargetValue)
+		{
+			return IndexToCheck;
+		}
+		else if (CheckValue < TargetValue)
+		{
+			return BianarySearch(TargetValue, IndexToCheck + 1, MaxIndex);
+		}
+		else
+		{
+			return BianarySearch(TargetValue, MinIndex, IndexToCheck - 1);
+		}
+	}
+
+	const int32 LocationToIndexValue(FIntPoint Location)
+	{
+		return Location.X + 250 * Location.Y;
+	}
+
+	const FIntPoint IndexValueToLocation(int32 Index)
+	{
+		return FIntPoint(Index % 250, Index / 250);
+	}
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
 class VOIDSINGER_API UPartGridComponent : public UActorComponent
 {
@@ -175,6 +242,10 @@ public:
 	UFUNCTION()
 	void UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePart> PartType);
 
+public:
+	
+
+
 private:
 	UPROPERTY()
 	TMap<FIntPoint, FPartData> PartGrid;
@@ -183,11 +254,11 @@ private:
 	FArrayBounds GridBounds;
 
 	UPROPERTY(EditAnywhere)
-	FIntPoint GridSize;
-
-	UPROPERTY(EditAnywhere)
 	float GridScale; 
 
+	UPROPERTY(EditAnywhere)
+	FIntPoint GridHalfSize;
+	
 	//The path to the pixel mesh. 
 	UPROPERTY(EditAnywhere)
 	FString PathToPixelMesh = TEXT("/Game/Parts/PlaneWithCollision.PlaneWithCollision");
