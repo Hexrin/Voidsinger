@@ -74,6 +74,27 @@ public:
 	}
 };
 
+USTRUCT()
+struct VOIDSINGER_API FPartGridPair
+{
+	GENERATED_BODY()
+	
+
+	FIntPoint Location = TempLocation;
+
+	FPartData PartData = TempPartData;
+
+	FPartGridPair(FIntPoint NewLocation, FPartData NewPartData)
+	{
+		Location = NewLocation;
+		PartData = NewPartData;
+	}
+
+private:
+	FIntPoint TempLocation = FIntPoint();
+	FPartData TempPartData = FPartData();
+};
+
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FPartGrid
 {
@@ -93,28 +114,91 @@ public:
 		Parts = TArray<FPartData>();
 	}
 
-	void Emplace(FIntPoint Location, FPartData PartData)
+	FPartData Emplace(FIntPoint Location, FPartData PartData)
 	{
+		int32 InsertionIndex = BianarySearch(LocationToRelativeValue(Location));
+		if (InsertionIndex > 0)
+		{
+			Remove(Location);
+		}
 		
+		InsertionIndex = abs(InsertionIndex);
+		ValidLocations.EmplaceAt(InsertionIndex, Location);
+		Parts.EmplaceAt(InsertionIndex, PartData);
+
+		return PartData;
+	}
+	
+	void Remove(FIntPoint Location)
+	{
+		int32 RemovalIndex = BianarySearch(LocationToRelativeValue(Location));
+		ValidLocations.RemoveAt(RemovalIndex);
+		Parts.RemoveAt(RemovalIndex);
+	}
+
+	bool Contains(FIntPoint Location)
+	{
+		return BianarySearch(LocationToRelativeValue(Location)) != -1;
+	}
+
+	FPartData FindRef(FIntPoint Location)
+	{
+		int32 Index = BianarySearch(LocationToRelativeValue(Location));
+		if (Index != -1)
+		{
+			return Parts[Index];
+		}
+		else
+		{
+			return FPartData();
+		}
+	}
+
+	FPartData* Find(FIntPoint Location)
+	{
+		int32 Index = BianarySearch(LocationToRelativeValue(Location));
+		if (Index != -1)
+		{
+			return &Parts[Index];
+		}
+		else
+		{
+			return nullptr;
+		}
 	}
 
 	int32 Num()
 	{
 		return ValidLocations.Num();
 	}
+
+	TArray<FPartData> GetValueArray()
+	{
+		return Parts;
+	}
+
+	TArray<FIntPoint> GetKeyArray()
+	{
+		return ValidLocations;
+	}
+
+	FPartGridPair operator[](int32 Index)
+	{
+		return FPartGridPair(ValidLocations[Index], Parts[Index]);
+	}
 private:
 	const int32 BianarySearch(int32 TargetValue)
 	{
-		return BianarySearch(TargetValue, 0, ValidLocations.Num());
+		return BianarySearch(TargetValue, 0, ValidLocations.Num() - 1);
 	}
 	
 	const int32 BianarySearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
 	{
-		int32 IndexToCheck = (MaxIndex - MinIndex) / 2;
-		int32 CheckValue = LocationToIndexValue(ValidLocations[IndexToCheck]);
-		if (MinIndex >= MaxIndex)
+		int32 IndexToCheck = (MaxIndex + MinIndex) / 2;
+		int32 CheckValue = LocationToRelativeValue(ValidLocations[IndexToCheck]);
+		if (MinIndex > MaxIndex)
 		{
-			return -1;
+			return -1 * IndexToCheck + 1;
 		}
 		else if (CheckValue == TargetValue)
 		{
@@ -130,16 +214,17 @@ private:
 		}
 	}
 
-	const int32 LocationToIndexValue(FIntPoint Location)
+	const int32 LocationToRelativeValue(FIntPoint Location)
 	{
 		return Location.X + 250 * Location.Y;
 	}
 
-	const FIntPoint IndexValueToLocation(int32 Index)
+	const FIntPoint RelativeValueToLocation(int32 Index)
 	{
 		return FIntPoint(Index % 250, Index / 250);
 	}
 };
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
 class VOIDSINGER_API UPartGridComponent : public UActorComponent
@@ -229,7 +314,7 @@ public:
 	const float GetMass();
 
 	UFUNCTION(BlueprintPure)
-	TMap<FIntPoint, FPartData> GetPartGrid();
+	FPartGrid GetPartGrid();
 
 	UFUNCTION(BlueprintPure)
 	const float GetPartGridScale();
@@ -248,7 +333,7 @@ public:
 
 private:
 	UPROPERTY()
-	TMap<FIntPoint, FPartData> PartGrid;
+	FPartGrid PartGrid;
 
 	UPROPERTY()
 	FArrayBounds GridBounds;
@@ -288,11 +373,11 @@ private:
 	\*----------------*/
 public:
 	UFUNCTION(BlueprintPure)
-	static bool PointsConnected(TMap<FIntPoint, FPartData> Grid, FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality = false);
-	static bool PointsConnected(TMap<FIntPoint, FPartData> Grid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality = false);
+	static bool PointsConnected(FPartGrid Grid, FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality = false);
+	static bool PointsConnected(FPartGrid Grid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality = false);
 
 	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
 	UFUNCTION()
-	static TArray<FIntPoint> FindConnectedShape(TArray<FIntPoint> Shape, TMap<FIntPoint, FPartData> ConnectedPartsMap, bool CheckFunctionality = false);
+	static TArray<FIntPoint> FindConnectedShape(TArray<FIntPoint> Shape, FPartGrid ConnectedPartsMap, bool CheckFunctionality = false);
 
 };

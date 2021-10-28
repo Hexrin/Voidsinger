@@ -164,10 +164,11 @@ bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult
 		FQuat DeltaRot = NewTransform.GetRelativeTransform(Start).GetRotation();
 		FVector DeltaTranslation = NewTransform.GetTranslation() - Start.GetTranslation();
 
-		for (auto& Pixel : Ship->PartGrid->GetPartGrid())
+		FPartGrid Grid = Ship->PartGrid->GetPartGrid();
+		for (int i = 0; i < Grid.Num(); i++)
 		{
-			FVector StartLoc = FVector(FVector2D(Pixel.Key).GetRotated(Ship->GetActorRotation().Yaw), 0) + Ship->GetActorLocation();
-			FVector EndLoc = DeltaTranslation + (Start.GetRotation() * DeltaRot).RotateVector(FVector(FVector2D(Pixel.Key), 0)) + Ship->GetActorLocation();
+			FVector StartLoc = FVector(FVector2D(Grid[i].Location).GetRotated(Ship->GetActorRotation().Yaw), 0) + Ship->GetActorLocation();
+			FVector EndLoc = DeltaTranslation + (Start.GetRotation() * DeltaRot).RotateVector(FVector(FVector2D(Grid[i].Location), 0)) + Ship->GetActorLocation();
 			FHitResult ThisHit = FHitResult();
 
 			if (Ship->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, TraceRot, FCollisionObjectQueryParams::AllObjects, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))

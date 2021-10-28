@@ -333,8 +333,8 @@ TArray<int32> ABaseShip::CreateTrianglesForSquare(int32 UpperRight, int32 UpperL
 void ABaseShip::SaveEditorShip()
 {
 
-	TArray<FPartData> OutArray;
-	PartGrid->GetPartGrid().GenerateValueArray(OutArray);
+	TArray<FPartData> OutArray = PartGrid->GetPartGrid().GetValueArray();;
+	
 	TArray<FSavePartInfo> InfoToSave;
 	TSet<UBasePart*> PartSet;
 	for (auto& i : OutArray)

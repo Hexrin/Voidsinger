@@ -42,10 +42,12 @@ void UShipMovementComponent::UpdateThrusters()
 	ThrustersForRotation.Empty();
 
 	UPartGridComponent* PartGrid = Cast<ABaseShip>(GetOwner())->PartGrid;
+	
+	FPartGrid Grid = PartGrid->GetPartGrid();
 
-	for (auto& Val : PartGrid->GetPartGrid())
+	for (int i = 0; i < Grid.Num(); i++)
 	{
-		UBaseThrusterPart* Thruster = Cast<UBaseThrusterPart>(Val.Value.Part);
+		UBaseThrusterPart* Thruster = Cast<UBaseThrusterPart>(Grid[i].PartData.Part);
 		if (Thruster)
 		{
 			Thrusters.Emplace(Thruster);
