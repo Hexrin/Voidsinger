@@ -98,56 +98,46 @@ public:
 		
 	}
 
+	int32 Num()
+	{
+		return ValidLocations.Num();
+	}
 private:
 	const int32 BianarySearch(int32 TargetValue)
 	{
-		return 
+		return BianarySearch(TargetValue, 0, ValidLocations.Num());
 	}
 	
 	const int32 BianarySearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
 	{
 		int32 IndexToCheck = (MaxIndex - MinIndex) / 2;
-		if ()
+		int32 CheckValue = LocationToIndexValue(ValidLocations[IndexToCheck]);
+		if (MinIndex >= MaxIndex)
 		{
-			return 
+			return -1;
+		}
+		else if (CheckValue == TargetValue)
+		{
+			return IndexToCheck;
+		}
+		else if (CheckValue < TargetValue)
+		{
+			return BianarySearch(TargetValue, IndexToCheck + 1, MaxIndex);
 		}
 		else
 		{
-			return 
+			return BianarySearch(TargetValue, MinIndex, IndexToCheck - 1);
 		}
 	}
 
 	const int32 LocationToIndexValue(FIntPoint Location)
 	{
-		if (Location.X < 0)
-		{
-			Location.X = -2 * Location.X - 1;
-		}
-		else
-		{
-			Location.X = 2 * Location.X;
-		}
-		if (Location.Y < 0)
-		{
-			Location.Y = -2 * Location.X - 1;
-		}
-		else
-		{
-			Location.Y = 2 * Location.X;
-		}
-		int32 ReturnValue = 0;
-		while (Location.X != 0)
-		{
-			ReturnValue += Location.X % 2;
-
-		}
-		return Location.X + Location.Y * Location.Y;
+		return Location.X + 250 * Location.Y;
 	}
 
 	const FIntPoint IndexValueToLocation(int32 Index)
 	{
-		//Inverse Paring function found here: http://szudzik.com/ElegantPairing.pdf
-		if (Index-abs)
+		return FIntPoint(Index % 250, Index / 250);
 	}
 };
 
@@ -252,6 +242,10 @@ public:
 	UFUNCTION()
 	void UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePart> PartType);
 
+public:
+	
+
+
 private:
 	UPROPERTY()
 	TMap<FIntPoint, FPartData> PartGrid;
@@ -260,11 +254,11 @@ private:
 	FArrayBounds GridBounds;
 
 	UPROPERTY(EditAnywhere)
-	FIntPoint GridSize;
-
-	UPROPERTY(EditAnywhere)
 	float GridScale; 
 
+	UPROPERTY(EditAnywhere)
+	FIntPoint GridHalfSize;
+	
 	//The path to the pixel mesh. 
 	UPROPERTY(EditAnywhere)
 	FString PathToPixelMesh = TEXT("/Game/Parts/PlaneWithCollision.PlaneWithCollision");
