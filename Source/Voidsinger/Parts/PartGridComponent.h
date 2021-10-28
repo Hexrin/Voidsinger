@@ -74,6 +74,83 @@ public:
 	}
 };
 
+USTRUCT(BlueprintType)
+struct VOIDSINGER_API FPartGrid
+{
+	GENERATED_BODY()
+
+private:
+	UPROPERTY()
+	TArray<FIntPoint> ValidLocations;
+
+	UPROPERTY()
+	TArray<FPartData> Parts;
+
+public:
+	FPartGrid()
+	{
+		ValidLocations = TArray<FIntPoint>();
+		Parts = TArray<FPartData>();
+	}
+
+	void Emplace(FIntPoint Location, FPartData PartData)
+	{
+		
+	}
+
+private:
+	const int32 BianarySearch(int32 TargetValue)
+	{
+		return 
+	}
+	
+	const int32 BianarySearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
+	{
+		int32 IndexToCheck = (MaxIndex - MinIndex) / 2;
+		if ()
+		{
+			return 
+		}
+		else
+		{
+			return 
+		}
+	}
+
+	const int32 LocationToIndexValue(FIntPoint Location)
+	{
+		if (Location.X < 0)
+		{
+			Location.X = -2 * Location.X - 1;
+		}
+		else
+		{
+			Location.X = 2 * Location.X;
+		}
+		if (Location.Y < 0)
+		{
+			Location.Y = -2 * Location.X - 1;
+		}
+		else
+		{
+			Location.Y = 2 * Location.X;
+		}
+		int32 ReturnValue = 0;
+		while (Location.X != 0)
+		{
+			ReturnValue += Location.X % 2;
+
+		}
+		return Location.X + Location.Y * Location.Y;
+	}
+
+	const FIntPoint IndexValueToLocation(int32 Index)
+	{
+		//Inverse Paring function found here: http://szudzik.com/ElegantPairing.pdf
+		if (Index-abs)
+	}
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
 class VOIDSINGER_API UPartGridComponent : public UActorComponent
 {
