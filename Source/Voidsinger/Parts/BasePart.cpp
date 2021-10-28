@@ -360,7 +360,6 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 
 void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses)
 {
-
 	if (Factions.IsEmpty() != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction()) && NounClasses.IsEmpty() != NounClasses.Contains(GetClass()))
 	{
 		if (this->Implements<UActivateInterface>())
@@ -368,5 +367,4 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 			Cast<IActivateInterface>(this)->Activate();
 		}
 	}
-	
 }
