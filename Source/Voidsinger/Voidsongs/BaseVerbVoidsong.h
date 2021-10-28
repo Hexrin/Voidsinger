@@ -25,7 +25,7 @@ public:
 	\*------------------*/
 
 	//Pre-activate calls activate, but it also sets ActorHit, WorldLocation and effectiveness. It's convenient.
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void PreActivate(AActor* NewActorHit, AActor* NewActorThatActivated, TArray<UBasePart*> NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness);
 
 	//This will do the effect of the voidsong. It's called within Activate. Needs to be implemented for each Voidsong.

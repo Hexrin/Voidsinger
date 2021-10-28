@@ -38,6 +38,11 @@ void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TS
 
 void AVoidGameMode::UnsetVerbs()
 {
+	for (auto& i : VerbsActive)
+	{
+		i->Deactivate();
+	}
+
 	VerbsActive.Empty();
 }
 
