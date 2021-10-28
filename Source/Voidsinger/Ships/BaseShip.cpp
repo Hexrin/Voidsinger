@@ -168,13 +168,22 @@ void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<E
 	for (auto& i : AvailableVoidsongs)
 	{
 		bool SequenceContainsVoidsong = true;
-		for (int j = 0; j < i->ActivationCombo.Num(); j++)
+		if (i->ActivationCombo.Num() <= Sequence.Num())
 		{
-			if (Sequence[j] != i->ActivationCombo[j])
+			for (int j = 0; j < i->ActivationCombo.Num(); j++)
 			{
-				SequenceContainsVoidsong = false;
+				if (Sequence[j] != i->ActivationCombo[j])
+				{
+					SequenceContainsVoidsong = false;
+				}
 			}
 		}
+
+		else
+		{
+			SequenceContainsVoidsong = false;
+		}
+
 		if (SequenceContainsVoidsong)
 		{
 			if (IsValid(Cast<UBaseWhoVoidsong>(i)))
