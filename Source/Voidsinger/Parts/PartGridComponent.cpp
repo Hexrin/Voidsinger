@@ -18,7 +18,7 @@ UPartGridComponent::UPartGridComponent()
 	//Initiate Variables
 	GridBounds = FArrayBounds(FIntPoint(0, 0), FIntPoint(0, 0));
 
-	GridSize = FIntPoint(50);
+	GridHalfSize = FIntPoint(250);
 	
 	PartGrid = TMap<FIntPoint, FPartData>();
 	if (!GridScale)
@@ -36,6 +36,7 @@ UPartGridComponent::UPartGridComponent()
 	{
 		PixelMesh = PixelMeshAsset.Object;
 	}
+	
 }
 
 // Called when the game starts
@@ -80,9 +81,9 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 		FArrayBounds PartBounds = Part->GetPartBounds();
 
 		//Detect if placement is in valid position
-		if (GridSize.X >= Location.X + PartBounds.UpperBounds.X && -GridSize.X <= Location.X + PartBounds.LowerBounds.X
+		if (GridHalfSize.X >= Location.X + PartBounds.UpperBounds.X && -GridHalfSize.X <= Location.X + PartBounds.LowerBounds.X
 			&&
-			GridSize.Y >= Location.Y + PartBounds.UpperBounds.Y && -GridSize.Y <= Location.Y + PartBounds.LowerBounds.Y
+			GridHalfSize.Y >= Location.Y + PartBounds.UpperBounds.Y && -GridHalfSize.Y <= Location.Y + PartBounds.LowerBounds.Y
 			&&
 			(bAlwaysPlace || CanShapeFit(Location, DesiredShape)))
 		{

@@ -236,10 +236,12 @@ void APlayerShip::SetBuildMode(bool NewBuildMode)
     bBuildMode = NewBuildMode;
     if (bBuildMode)
     {
+        Camera->AddWorldRotation(GetActorQuat());
         OpenBuildMenu();
     }
     else
     {
+        Camera->AddWorldRotation(GetActorQuat().Inverse());
         CloseBuildMenu();
     }
 }
