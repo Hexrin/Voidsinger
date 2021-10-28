@@ -77,13 +77,13 @@ void ABaseShip::Tick(float DeltaTime)
 			if (!bCurrentRotationDeccelerationStatus)
 			{
 				MovementComponent->RotateShip(TargetRotationDirection, 1);
-				UE_LOG(LogTemp, Warning, TEXT("Turn"));
+				//UE_LOG(LogTemp, Warning, TEXT("Turn"));
 				break;
 			}
 
 		default:
 			MovementComponent->RotateShip(DecelDirection, TimeToDecelerate / TimeToDestination);
-			UE_LOG(LogTemp, Warning, TEXT("Decel"));
+			//UE_LOG(LogTemp, Warning, TEXT("Decel"));
 			break;
 		}
 	}
@@ -146,22 +146,31 @@ void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 //Plays the voidsong sequence
 void ABaseShip::PlaySequence(TArray<int> Sequence)
 {
-	if (!Sequence.IsEmpty() && Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->VerbsActive.IsEmpty())
+	if (!Sequence.IsEmpty() && CanActivateVoidsong)
 	{
 		TArray<TEnumAsByte<EFactions>> Factions;
 		TArray<TSubclassOf<UObject>> Nouns;
 		TArray<UBaseVerbVoidsong*> Verbs;
 
-		DecideVoidsongsPlayed(Sequence, Factions, Nouns, Verbs);
+		float Duration = DecideVoidsongsPlayed(Sequence, Factions, Nouns, Verbs);
 
 		if (!Factions.IsEmpty() || !Nouns.IsEmpty() || !Verbs.IsEmpty())
 		{
 			Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs);
 		}
+
+		UE_LOG(LogTemp, Warning, TEXT("duration %f"), Duration);
+		if (Duration != 0)
+		{
+			FTimerHandle DurationTimer;
+			GetWorld()->GetTimerManager().SetTimer(DurationTimer, this, &ABaseShip::DurationDelay, Duration);
+			CanActivateVoidsong = false;
+		}
+
 	}
 }
 
-void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs)
+float ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs)
 {
 	float Duration = 0;
 
@@ -175,6 +184,7 @@ void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<E
 				if (Sequence[j] != i->ActivationCombo[j])
 				{
 					SequenceContainsVoidsong = false;
+					break;
 				}
 			}
 		}
@@ -217,13 +227,13 @@ void ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<E
 		}
 	}
 
-	FTimerHandle DurationTimer;
-	GetWorld()->GetTimerManager().SetTimer(DurationTimer, this, &ABaseShip::DurationDelay, Duration);
-
+	return Duration;
 }
 
 void ABaseShip::DurationDelay()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Can Activate again"))
+	CanActivateVoidsong = true;
 	Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->UnsetVerbs();
 }
 

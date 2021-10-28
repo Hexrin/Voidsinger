@@ -66,7 +66,7 @@ public:
 
 	//Figures out what Voidsongs are played.
 	UFUNCTION()
-	void DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs);
+	float DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs);
 
 	//This function is for the delay of the Voidsong duration
 	UFUNCTION()
@@ -196,5 +196,11 @@ public:
 	//The faction of the ship
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TEnumAsByte<EFactions> Faction;
+
+private:
+
+	//Whether the ship can activate another Voidsong
+	UPROPERTY()
+	bool CanActivateVoidsong = true;
 
 };
