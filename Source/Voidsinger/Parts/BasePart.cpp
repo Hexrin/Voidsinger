@@ -12,6 +12,7 @@
 
 /*Initializer Funtions*\
 \*--------------------*/
+
 UBasePart::UBasePart()
 {
 	//Initalize All Variables
@@ -133,9 +134,9 @@ TStatId UBasePart::GetStatId() const
 	return TStatId();
 }
 
-
 /*--Getter Functions--*\
 \*--------------------*/
+
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
 {
 	

@@ -12,12 +12,6 @@ AVoidGameMode::AVoidGameMode()
 	//LoadConfig();
 }
 
-int AVoidGameMode::PrintTestaroo()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Testaroo = %i"), Testaroo)
-	return Testaroo;
-}
-
 void AVoidGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Verbiness is called"));

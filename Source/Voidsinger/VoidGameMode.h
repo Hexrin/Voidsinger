@@ -31,7 +31,7 @@ public:
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FVoidsongDelegate, const TArray<TEnumAsByte<EFactions>>& , Factions, const TArray<TSubclassOf<UObject>>&, NounClasses);
 
-UCLASS(Config=VoidSettings)
+UCLASS()
 class VOIDSINGER_API AVoidGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
@@ -39,12 +39,6 @@ class VOIDSINGER_API AVoidGameMode : public AGameModeBase
 public:
 
 	AVoidGameMode();
-
-	UPROPERTY(Config)
-	int Testaroo;
-
-	UFUNCTION(BlueprintCallable)
-	int PrintTestaroo();
 
 	UFUNCTION(BlueprintCallable)
 	void ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness);
@@ -57,6 +51,7 @@ public:
 
 	UFUNCTION()
 	FVoidsongDelegate GetVoidsongDelegate();
+
 
 	UPROPERTY(BlueprintAssignable)
 	FVoidsongDelegate OnVoidsongDelegate;
