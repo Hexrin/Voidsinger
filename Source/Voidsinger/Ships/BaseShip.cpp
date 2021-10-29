@@ -41,8 +41,8 @@ void ABaseShip::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	MeshData = TMap<FIntPoint, int32>();
 	PartGrid->BuildShip(DefaultParts);
-
 }
 
 // Called every frame
@@ -341,7 +341,7 @@ void ABaseShip::SaveEditorShip()
 	{
 		if (!PartSet.Contains(i.Part))
 		{
-			InfoToSave.Emplace(FSavePartInfo(i.Part->GetClass(), i.Part->GetPartGridLocation(), i.Part->GetRotation()));
+			InfoToSave.Emplace(FSavePartInfo(i.Part->GetClass(), i.Part->GetPartGridLocation(), i.Part->GetRelativeRotation()));
 			PartSet.Emplace(i.Part);
 		}
 	}

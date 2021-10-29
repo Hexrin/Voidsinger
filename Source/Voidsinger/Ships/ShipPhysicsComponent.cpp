@@ -128,10 +128,10 @@ void UShipPhysicsComponent::UpdateMassCalculations()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("%s Has Updated Mass"), *GetReadableName());
 
-	Mass = Ship->PartGrid->GetMass();
-	FVector2D NewCoM = Ship->PartGrid->GetCenterOfMass();
+	Mass = Ship->PartGrid->CalcMass();
+	FVector2D NewCoM = Ship->PartGrid->CalcCenterOfMass();
 	
-	MomentOfInertia = Ship->PartGrid->GetMomentOfInertia();
+	MomentOfInertia = Ship->PartGrid->CalcMomentOfInertia();
 	Ship->SetMeshRelativeLocation(-1 * NewCoM);
 
 	CenterOfMass = NewCoM;
@@ -167,8 +167,8 @@ bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult
 		FPartGrid Grid = Ship->PartGrid->GetPartGrid();
 		for (int i = 0; i < Grid.Num(); i++)
 		{
-			FVector StartLoc = FVector(FVector2D(Grid[i].Location).GetRotated(Ship->GetActorRotation().Yaw), 0) + Ship->GetActorLocation();
-			FVector EndLoc = DeltaTranslation + (Start.GetRotation() * DeltaRot).RotateVector(FVector(FVector2D(Grid[i].Location), 0)) + Ship->GetActorLocation();
+			FVector StartLoc = FVector(FVector2D(Grid.LocationAtIndex(i)).GetRotated(Ship->GetActorRotation().Yaw), 0) + Ship->GetActorLocation();
+			FVector EndLoc = DeltaTranslation + (Start.GetRotation() * DeltaRot).RotateVector(FVector(FVector2D(Grid.LocationAtIndex(i)), 0)) + Ship->GetActorLocation();
 			FHitResult ThisHit = FHitResult();
 
 			if (Ship->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, TraceRot, FCollisionObjectQueryParams::AllObjects, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))

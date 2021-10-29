@@ -203,12 +203,17 @@ const FVector UBasePart::GetPartWorldLocation()
 
 const FVector UBasePart::GetPartRelativeLocation()
 {
-	return FVector((FVector2D(GetPartGridLocation()) * GetPartGrid()->GetPartGridScale()) - GetPartGrid()->GetCenterOfMass(), 0);
+	return FVector((FVector2D(GetPartGridLocation()) * GetPartGrid()->GetPartGridScale()) - GetShip()->PhysicsComponent->GetCenterOfMass(), 0);
 }
 
-const float UBasePart::GetRotation()
+const float UBasePart::GetRelativeRotation()
 {
 	return Rotation;
+}
+
+const float UBasePart::GetWorldRotation()
+{
+	return Rotation + GetShip()->GetActorQuat().GetAngle();
 }
 
 float UBasePart::GetMass()

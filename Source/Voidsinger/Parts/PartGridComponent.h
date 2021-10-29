@@ -74,27 +74,6 @@ public:
 	}
 };
 
-USTRUCT()
-struct VOIDSINGER_API FPartGridPair
-{
-	GENERATED_BODY()
-	
-
-	FIntPoint Location = TempLocation;
-
-	FPartData PartData = TempPartData;
-
-	FPartGridPair(FIntPoint NewLocation, FPartData NewPartData)
-	{
-		Location = NewLocation;
-		PartData = NewPartData;
-	}
-
-private:
-	FIntPoint TempLocation = FIntPoint();
-	FPartData TempPartData = FPartData();
-};
-
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FPartGrid
 {
@@ -116,6 +95,15 @@ public:
 
 	FPartData Emplace(FIntPoint Location, FPartData PartData)
 	{
+		if (ValidLocations.Num() == 0)
+		{
+			ValidLocations.Emplace(Location);
+			Parts.Emplace(PartData);
+
+			return PartData;
+		}
+
+
 		int32 InsertionIndex = BianarySearch(LocationToRelativeValue(Location));
 		if (InsertionIndex > 0)
 		{
@@ -138,33 +126,29 @@ public:
 
 	bool Contains(FIntPoint Location)
 	{
-		return BianarySearch(LocationToRelativeValue(Location)) != -1;
+		return BianarySearch(LocationToRelativeValue(Location)) >= 0;
 	}
 
 	FPartData FindRef(FIntPoint Location)
 	{
 		int32 Index = BianarySearch(LocationToRelativeValue(Location));
-		if (Index != -1)
+		if (Index >= 0)
 		{
 			return Parts[Index];
 		}
-		else
-		{
-			return FPartData();
-		}
+		
+		return FPartData();
 	}
 
 	FPartData* Find(FIntPoint Location)
 	{
 		int32 Index = BianarySearch(LocationToRelativeValue(Location));
-		if (Index != -1)
+		if (Index >= 0)
 		{
 			return &Parts[Index];
 		}
-		else
-		{
-			return nullptr;
-		}
+
+		return nullptr;
 	}
 
 	int32 Num()
@@ -182,13 +166,22 @@ public:
 		return ValidLocations;
 	}
 
-	FPartGridPair operator[](int32 Index)
+	FIntPoint& LocationAtIndex (int32 Index)
 	{
-		return FPartGridPair(ValidLocations[Index], Parts[Index]);
+		return ValidLocations[Index];
+	}
+	
+	FPartData& PartDataAtIndex (int32 Index)
+	{
+		return Parts[Index];
 	}
 private:
 	const int32 BianarySearch(int32 TargetValue)
 	{
+		if (ValidLocations.Num() == 0)
+		{
+			return -1;
+		}
 		return BianarySearch(TargetValue, 0, ValidLocations.Num() - 1);
 	}
 	
@@ -283,6 +276,14 @@ public:
 	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, FVector2D origin);
 	bool DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float XIntercept);
 
+	UFUNCTION(BlueprintPure)
+	FPartData GetPartDataAtGridLocation(FIntPoint Location);
+
+	UFUNCTION(BlueprintPure)
+	FPartData GetPartDataAtRelativeLocation(FVector Location);
+
+	UFUNCTION(BlueprintPure)
+	FPartData GetPartDataAtWorldLocation(FVector Location);
 private:
 	UFUNCTION()
 	void DistrubuteHeat();
@@ -305,13 +306,13 @@ public:
 	//---Getters---
 
 	UFUNCTION(BlueprintPure)
-	const FVector2D GetCenterOfMass();
+	const FVector2D CalcCenterOfMass();
 
 	UFUNCTION(BlueprintPure)
-	const float GetMomentOfInertia();
+	const float CalcMomentOfInertia();
 
 	UFUNCTION(BlueprintPure)
-	const float GetMass();
+	const float CalcMass();
 
 	UFUNCTION(BlueprintPure)
 	FPartGrid GetPartGrid();
@@ -332,6 +333,9 @@ public:
 
 
 private:
+	UPROPERTY()
+	ABaseShip* Ship;
+
 	UPROPERTY()
 	FPartGrid PartGrid;
 
