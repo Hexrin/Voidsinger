@@ -184,7 +184,6 @@ bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult
 				//DrawDebugDirectionalArrow(Ship->GetWorld(), StartLoc + FVector(0, 0, 1), EndLoc + FVector(0, 0, 1), .25f, FColor::Green, false, 5, 0U, 0.05);
 			}
 		}
-
 	}
 
 	if (ReturnValue)

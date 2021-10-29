@@ -17,7 +17,7 @@ UPartGridComponent::UPartGridComponent()
 
 	//Initiate Variables
 	GridBounds = FArrayBounds(FIntPoint(0, 0), FIntPoint(0, 0));
-	Ship = Ship;
+	Ship = Cast<ABaseShip>(GetOwner());
 	GridHalfSize = FIntPoint(250);
 	
 	PartGrid = FPartGrid();

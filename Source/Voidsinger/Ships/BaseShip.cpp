@@ -41,7 +41,6 @@ void ABaseShip::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	MeshData = TMap<FIntPoint, int32>();
 	PartGrid->BuildShip(DefaultParts);
 }
 
@@ -258,7 +257,6 @@ const FVector ABaseShip::GetTargetLookDirection()
 
 void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 {
-	//MeshComponent->CreateMeshSection()
 	
 
 	int32 SectionIndex = 0; 

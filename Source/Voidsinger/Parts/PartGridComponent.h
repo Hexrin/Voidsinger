@@ -98,13 +98,11 @@ public:
 		if (ValidLocations.Num() == 0)
 		{
 			ValidLocations.Emplace(Location);
-			Parts.Emplace(PartData);
-
-			return PartData;
+			return Parts[Parts.Emplace(PartData)];
 		}
 
 
-		int32 InsertionIndex = BianarySearch(LocationToRelativeValue(Location));
+		int32 InsertionIndex = BinarySearch(LocationToRelativeValue(Location));
 		if (InsertionIndex > 0)
 		{
 			Remove(Location);
@@ -114,24 +112,24 @@ public:
 		ValidLocations.EmplaceAt(InsertionIndex, Location);
 		Parts.EmplaceAt(InsertionIndex, PartData);
 
-		return PartData;
+		return Parts[InsertionIndex];
 	}
 	
 	void Remove(FIntPoint Location)
 	{
-		int32 RemovalIndex = BianarySearch(LocationToRelativeValue(Location));
+		int32 RemovalIndex = BinarySearch(LocationToRelativeValue(Location));
 		ValidLocations.RemoveAt(RemovalIndex);
 		Parts.RemoveAt(RemovalIndex);
 	}
 
 	bool Contains(FIntPoint Location)
 	{
-		return BianarySearch(LocationToRelativeValue(Location)) >= 0;
+		return BinarySearch(LocationToRelativeValue(Location)) >= 0;
 	}
 
 	FPartData FindRef(FIntPoint Location)
 	{
-		int32 Index = BianarySearch(LocationToRelativeValue(Location));
+		int32 Index = BinarySearch(LocationToRelativeValue(Location));
 		if (Index >= 0)
 		{
 			return Parts[Index];
@@ -142,12 +140,11 @@ public:
 
 	FPartData* Find(FIntPoint Location)
 	{
-		int32 Index = BianarySearch(LocationToRelativeValue(Location));
+		int32 Index = BinarySearch(LocationToRelativeValue(Location));
 		if (Index >= 0)
 		{
 			return &Parts[Index];
 		}
-
 		return nullptr;
 	}
 
@@ -176,16 +173,16 @@ public:
 		return Parts[Index];
 	}
 private:
-	const int32 BianarySearch(int32 TargetValue)
+	const int32 BinarySearch(int32 TargetValue)
 	{
 		if (ValidLocations.Num() == 0)
 		{
 			return -1;
 		}
-		return BianarySearch(TargetValue, 0, ValidLocations.Num() - 1);
+		return BinarySearch(TargetValue, 0, ValidLocations.Num() - 1);
 	}
 	
-	const int32 BianarySearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
+	const int32 BinarySearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
 	{
 		int32 IndexToCheck = (MaxIndex + MinIndex) / 2;
 		int32 CheckValue = LocationToRelativeValue(ValidLocations[IndexToCheck]);
@@ -199,11 +196,11 @@ private:
 		}
 		else if (CheckValue < TargetValue)
 		{
-			return BianarySearch(TargetValue, IndexToCheck + 1, MaxIndex);
+			return BinarySearch(TargetValue, IndexToCheck + 1, MaxIndex);
 		}
 		else
 		{
-			return BianarySearch(TargetValue, MinIndex, IndexToCheck - 1);
+			return BinarySearch(TargetValue, MinIndex, IndexToCheck - 1);
 		}
 	}
 
