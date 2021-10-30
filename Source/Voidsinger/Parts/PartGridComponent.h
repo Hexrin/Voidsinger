@@ -103,10 +103,7 @@ public:
 
 
 		int32 InsertionIndex = BinarySearch(LocationToRelativeValue(Location));
-		if (InsertionIndex > 0)
-		{
-			Remove(Location);
-		}
+		Remove(InsertionIndex);
 		
 		InsertionIndex = abs(InsertionIndex);
 		ValidLocations.EmplaceAt(InsertionIndex, Location);
@@ -118,8 +115,19 @@ public:
 	void Remove(FIntPoint Location)
 	{
 		int32 RemovalIndex = BinarySearch(LocationToRelativeValue(Location));
-		ValidLocations.RemoveAt(RemovalIndex);
-		Parts.RemoveAt(RemovalIndex);
+		if (ValidLocations.Contains(RemovalIndex))
+		{
+			ValidLocations.RemoveAt(RemovalIndex);
+			Parts.RemoveAt(RemovalIndex);
+		}		
+	}
+	void Remove(int32 Index)
+	{
+		if (ValidLocations.Contains(Index))
+		{
+			ValidLocations.RemoveAt(Index);
+			Parts.RemoveAt(Index);
+		}
 	}
 
 	bool Contains(FIntPoint Location)
@@ -182,25 +190,26 @@ private:
 		return BinarySearch(TargetValue, 0, ValidLocations.Num() - 1);
 	}
 	
-	const int32 BinarySearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
+	const int32 BinarySearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex, bool MinIncremented = true)
 	{
-		int32 IndexToCheck = (MaxIndex + MinIndex) / 2;
-		int32 CheckValue = LocationToRelativeValue(ValidLocations[IndexToCheck]);
 		if (MinIndex > MaxIndex)
 		{
-			return -1 * IndexToCheck + 1;
+			return MinIncremented ? MinIndex : MaxIndex;
 		}
-		else if (CheckValue == TargetValue)
+		
+		int32 IndexToCheck = (MaxIndex + MinIndex) / 2;
+		int32 CheckValue = LocationToRelativeValue(ValidLocations[IndexToCheck]);
+		if (CheckValue == TargetValue)
 		{
 			return IndexToCheck;
 		}
 		else if (CheckValue < TargetValue)
 		{
-			return BinarySearch(TargetValue, IndexToCheck + 1, MaxIndex);
+			return BinarySearch(TargetValue, IndexToCheck + 1, MaxIndex, true);
 		}
 		else
 		{
-			return BinarySearch(TargetValue, MinIndex, IndexToCheck - 1);
+			return BinarySearch(TargetValue, MinIndex, IndexToCheck - 1, false);
 		}
 	}
 
