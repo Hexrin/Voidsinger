@@ -177,25 +177,9 @@ float ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<
 
 	for (auto& i : AvailableVoidsongs)
 	{
-		bool SequenceContainsVoidsong = true;
-		if (i->ActivationCombo.Num() <= Sequence.Num())
-		{
-			for (int j = 0; j < i->ActivationCombo.Num(); j++)
-			{
-				if (Sequence[j] != i->ActivationCombo[j])
-				{
-					SequenceContainsVoidsong = false;
-					break;
-				}
-			}
-		}
-
-		else
-		{
-			SequenceContainsVoidsong = false;
-		}
-
-		if (SequenceContainsVoidsong)
+		TArray<int> TrimmedSequence = Sequence;
+		TrimmedSequence.SetNum(i->GetActivationCombo().Num());
+		if (i->GetActivationCombo() == TrimmedSequence)
 		{
 			if (IsValid(Cast<UBaseWhoVoidsong>(i)))
 			{
@@ -227,6 +211,31 @@ float ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<
 			break;
 		}
 	}
+	/*for (auto& i : AvailableVoidsongs)
+	{
+		bool SequenceContainsVoidsong = true;
+		if (i->ActivationCombo.Num() <= Sequence.Num())
+		{
+			for (int j = 0; j < i->ActivationCombo.Num(); j++)
+			{
+				if (Sequence[j] != i->ActivationCombo[j])
+				{
+					SequenceContainsVoidsong = false;
+					break;
+				}
+			}
+		}
+
+		else
+		{
+			SequenceContainsVoidsong = false;
+		}*/
+
+		//if (SequenceContainsVoidsong)
+		//{
+			
+		//}
+	//}
 
 	return Duration;
 }
