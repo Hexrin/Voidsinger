@@ -41,6 +41,7 @@ void ABaseShip::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	UE_LOG(LogTemp, Warning, TEXT("Default parts num %i"), DefaultParts.Num())
 	PartGrid->BuildShip(DefaultParts);
 
 }

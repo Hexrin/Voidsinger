@@ -38,6 +38,9 @@ void AVoidGameMode::UnsetVerbs()
 	}
 
 	VerbsActive.Empty();
+
+	OnDeactivateVoidsongDelegate.Broadcast();
+
 }
 
 FVoidsongDelegate AVoidGameMode::GetVoidsongDelegate()

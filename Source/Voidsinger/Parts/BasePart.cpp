@@ -286,6 +286,7 @@ UMaterialInterface* UBasePart::GetPixelMaterial()
 
 /*Condtional  Checkers*\
 \*--------------------*/
+
 bool UBasePart::IsFunctional()
 {
 	return bFunctional;
@@ -298,6 +299,7 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 
 /*---Misc. Functions--*\
 \*--------------------*/
+
 void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 {
 	ActualShape.Remove(RelativeLoc);
@@ -361,6 +363,13 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 
 void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses)
 {
+	/*for (auto& i : NounClasses)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Noun classes %s"), *i.Get()->GetDisplayNameText().ToString())
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("part class %s"), *this->GetClass()->GetDisplayNameText().ToString())*/
+
 	if (Factions.IsEmpty() != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction()) && NounClasses.IsEmpty() != NounClasses.Contains(GetClass()))
 	{
 		if (this->Implements<UActivateInterface>())
