@@ -59,8 +59,6 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		DistrubuteHeat();
 	}
 	TimesSinceHeatTick += DeltaTime;
-
-	UE_LOG(LogTemp, Warning, TEXT("Num = %f"), PartGrid.GetValueArray().Num());
 }
 
 //Adds a compleate part to the part grid

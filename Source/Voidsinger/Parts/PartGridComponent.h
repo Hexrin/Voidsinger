@@ -225,7 +225,7 @@ private:
 	{
 		if (MinIndex > MaxIndex)
 		{
-			return FMath::Max(MaxIndex, 0);
+			return FMath::Max(MinIndex, 0);
 		}
 
 		int32 IndexToCheck = (MaxIndex + MinIndex) / 2;
@@ -248,12 +248,12 @@ private:
 	{
 		Location.X = Location.X > 0 ? 2 * Location.X : -2 * Location.X - 1;
 		Location.Y = Location.Y > 0 ? 2 * Location.Y : -2 * Location.Y - 1;
-		return Location.X + GridHalfSize * Location.Y;
+		return Location.X + 2 * GridHalfSize * Location.Y;
 	}
 
 	const FIntPoint RelativeValueToLocation(int32 Index)
 	{
-		FIntPoint ReturnValue = FIntPoint(Index % GridHalfSize, Index / GridHalfSize);
+		FIntPoint ReturnValue = FIntPoint(Index % (2 * GridHalfSize), Index / GridHalfSize);
 		ReturnValue.X = ReturnValue.X % 2 == 0 ? ReturnValue.X / 2 : (ReturnValue.X + 1) / -2;
 		ReturnValue.Y = ReturnValue.Y % 2 == 0 ? ReturnValue.Y / 2 : (ReturnValue.Y + 1) / -2;
 		return ReturnValue;
