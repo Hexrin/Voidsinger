@@ -42,6 +42,7 @@ UPartGridComponent::UPartGridComponent()
 // Called when the game starts
 void UPartGridComponent::BeginPlay()
 {
+	Ship = Cast<ABaseShip>(GetOwner());
 	Super::BeginPlay();
 	GridBounds = FArrayBounds(FIntPoint(0, 0), FIntPoint(0, 0));
 	// ...
@@ -58,6 +59,8 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		DistrubuteHeat();
 	}
 	TimesSinceHeatTick += DeltaTime;
+
+	UE_LOG(LogTemp, Warning, TEXT("Num = %f"), PartGrid.GetValueArray().Num());
 }
 
 //Adds a compleate part to the part grid

@@ -79,13 +79,15 @@ struct VOIDSINGER_API FPartGrid
 {
 	GENERATED_BODY()
 
-private:
+protected:
 	UPROPERTY()
 	TArray<FIntPoint> ValidLocations;
 
 	UPROPERTY()
 	TArray<FPartData> Parts;
 
+	UPROPERTY()
+	int32 GridHalfSize = 250;
 public:
 	FPartGrid()
 	{
@@ -102,10 +104,8 @@ public:
 		}
 
 
-		int32 InsertionIndex = BinarySearch(LocationToRelativeValue(Location));
-		Remove(InsertionIndex);
+		int32 InsertionIndex = BinaryInsertionSearch(LocationToRelativeValue(Location));
 		
-		InsertionIndex = abs(InsertionIndex);
 		ValidLocations.EmplaceAt(InsertionIndex, Location);
 		Parts.EmplaceAt(InsertionIndex, PartData);
 
@@ -190,11 +190,11 @@ private:
 		return BinarySearch(TargetValue, 0, ValidLocations.Num() - 1);
 	}
 	
-	const int32 BinarySearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex, bool MinIncremented = true)
+	const int32 BinarySearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
 	{
 		if (MinIndex > MaxIndex)
 		{
-			return MinIncremented ? MinIndex : MaxIndex;
+			return -1;
 		}
 		
 		int32 IndexToCheck = (MaxIndex + MinIndex) / 2;
@@ -205,22 +205,58 @@ private:
 		}
 		else if (CheckValue < TargetValue)
 		{
-			return BinarySearch(TargetValue, IndexToCheck + 1, MaxIndex, true);
+			return BinarySearch(TargetValue, IndexToCheck + 1, MaxIndex);
 		}
 		else
 		{
-			return BinarySearch(TargetValue, MinIndex, IndexToCheck - 1, false);
+			return BinarySearch(TargetValue, MinIndex, IndexToCheck - 1);
+		}
+	}
+	const int32 BinaryInsertionSearch(int32 TargetValue)
+	{
+		if (ValidLocations.Num() == 0)
+		{
+			return 0;
+		}
+		return BinaryInsertionSearch(TargetValue, 0, ValidLocations.Num() - 1);
+	}
+
+	const int32 BinaryInsertionSearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
+	{
+		if (MinIndex > MaxIndex)
+		{
+			return FMath::Max(MaxIndex, 0);
+		}
+
+		int32 IndexToCheck = (MaxIndex + MinIndex) / 2;
+		int32 CheckValue = LocationToRelativeValue(ValidLocations[IndexToCheck]);
+		if (CheckValue == TargetValue)
+		{
+			return IndexToCheck;
+		}
+		else if (CheckValue < TargetValue)
+		{
+			return BinaryInsertionSearch(TargetValue, IndexToCheck + 1, MaxIndex);
+		}
+		else
+		{
+			return BinaryInsertionSearch(TargetValue, MinIndex, IndexToCheck - 1);
 		}
 	}
 
 	const int32 LocationToRelativeValue(FIntPoint Location)
 	{
-		return Location.X + 250 * Location.Y;
+		Location.X = Location.X > 0 ? 2 * Location.X : -2 * Location.X - 1;
+		Location.Y = Location.Y > 0 ? 2 * Location.Y : -2 * Location.Y - 1;
+		return Location.X + GridHalfSize * Location.Y;
 	}
 
 	const FIntPoint RelativeValueToLocation(int32 Index)
 	{
-		return FIntPoint(Index % 250, Index / 250);
+		FIntPoint ReturnValue = FIntPoint(Index % GridHalfSize, Index / GridHalfSize);
+		ReturnValue.X = ReturnValue.X % 2 == 0 ? ReturnValue.X / 2 : (ReturnValue.X + 1) / -2;
+		ReturnValue.Y = ReturnValue.Y % 2 == 0 ? ReturnValue.Y / 2 : (ReturnValue.Y + 1) / -2;
+		return ReturnValue;
 	}
 };
 
