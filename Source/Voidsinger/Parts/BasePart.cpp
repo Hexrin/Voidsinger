@@ -46,36 +46,8 @@ void UBasePart::InitializeFunctionality()
 	Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
 
 	//Initialize Resource System
-
-	//Basic description: for each pixel on this part that has a resource type, check around that location for another part that has a pixel with that resource type next to the
-	// pixel currently being checked. If there is no adjacent resource system create a new one.
-
-	//This needs to be called for each resource type so a resource system for each type is created.
-	for (auto& i : GetResourceTypes())
-	{
-
-		//System found will be useful later to determine if the part should be added to an existing or the part should make a new system.
-		bool SystemFound = false;
-
-		//For each pixel location that has this resource type applied to it
-		for (auto& j : i.Value.IntPointArray)
-		{
-			//Check the X + 1 location for a part on the part grid
-			if (PartGridComponent->GetPartGrid().Contains(j + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
-			{
-				AddToSystem(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key));
-
-				//A system was found!
-				SystemFound = true;
-			}
-		}
-
-		//If the code gets to this point without finding a system, then it will create a new resource system
-		if (SystemFound == false)
-		{
-			CreateNewSystem(i.Key);
-		}
-	}
+	ConnectToSystems();
+	
 
 	//Call BeginPlay for blueprints
 	BeginPlay();
@@ -101,6 +73,8 @@ UWorld* UBasePart::GetWorld() const
 
 void UBasePart::DestroyPart()
 {
+	
+	ConditionalBeginDestroy();
 	bIsBeingDestroyed = true;
 }
 
@@ -327,6 +301,39 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	{
 		OnDestroyed();
 		DestroyPart();
+	}
+}
+
+void UBasePart::ConnectToSystems()
+{
+	//Basic description: for each pixel on this part that has a resource type, check around that location for another part that has a pixel with that resource type next to the
+	// pixel currently being checked. If there is no adjacent resource system create a new one.
+
+	//This needs to be called for each resource type so a resource system for each type is created.
+	for (auto& i : GetResourceTypes())
+	{
+
+		//System found will be useful later to determine if the part should be added to an existing or the part should make a new system.
+		bool SystemFound = false;
+
+		//For each pixel location that has this resource type applied to it
+		for (auto& j : i.Value.IntPointArray)
+		{
+			//Check the X + 1 location for a part on the part grid
+			if (PartGridComponent->GetPartGrid().Contains(j + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
+			{
+				AddToSystem(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key));
+
+				//A system was found!
+				SystemFound = true;
+			}
+		}
+
+		//If the code gets to this point without finding a system, then it will create a new resource system
+		if (SystemFound == false)
+		{
+			CreateNewSystem(i.Key);
+		}
 	}
 }
 

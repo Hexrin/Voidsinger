@@ -5,6 +5,7 @@
 #include "BasePart.h"
 #include "BaseThrusterPart.h"
 #include "CorePart.h"
+#include "BaseFreespacePart.h"
 #include "Voidsinger/Ships/BaseShip.h"
 
 // Sets default values for this component's properties
@@ -108,6 +109,24 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 
 					//Create Mesh
 					Ship->AddMeshAtLocation(CurrentLoc);
+
+					UBaseFreespacePart* PartAsFreeform = Cast<UBaseFreespacePart>(Part);
+					if (PartAsFreeform)
+					{
+
+						for (FIntPoint j = FIntPoint(1, 0); j.Y != -1; j = (j * -1).X == 1 ? FIntPoint(0, 1) : (j * -1))
+						{
+							
+							if (PartGrid.Contains(Location + j))
+							{
+								UBaseFreespacePart* PartToMergeWith = Cast<UBaseFreespacePart>(PartGrid.Find(Location + j)->Part);
+								Part->ConnectToSystems();
+								PartToMergeWith->MergeParts(PartAsFreeform);
+								Part = PartToMergeWith;
+								
+							}
+						}
+					}
 					//set PartGrid and material
 					Ship->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
 				}

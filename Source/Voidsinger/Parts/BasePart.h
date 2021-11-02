@@ -187,6 +187,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DestroyPixel(FIntPoint RelativeLoc);
 
+	UFUNCTION()
+	void ConnectToSystems();
+
 	//Creates a new resource system that the part is a part of
 	UFUNCTION(BlueprintCallable)
 	void CreateNewSystem(TEnumAsByte<EResourceType> ResourceType);
