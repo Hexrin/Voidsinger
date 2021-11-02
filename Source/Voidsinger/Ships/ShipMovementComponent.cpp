@@ -40,12 +40,11 @@ void UShipMovementComponent::UpdateThrusters()
 	Thrusters.Empty();
 	ThrustersForDirection.Empty();
 	ThrustersForRotation.Empty();
+		
 
-	UPartGridComponent* PartGrid = Cast<ABaseShip>(GetOwner())->PartGrid;
-
-	for (auto& Val : PartGrid->GetPartGrid())
+	for (auto& Part : Cast<ABaseShip>(GetOwner())->PartGrid->GetPartGrid().GetValueArray())
 	{
-		UBaseThrusterPart* Thruster = Cast<UBaseThrusterPart>(Val.Value.Part);
+		UBaseThrusterPart* Thruster = Cast<UBaseThrusterPart>(Part.Part);
 		if (Thruster)
 		{
 			Thrusters.Emplace(Thruster);
@@ -160,7 +159,7 @@ const float UShipMovementComponent::GetMaximumAccelerationInRotation(bool Clockw
 	float Sum = 0;
 	for (UBaseThrusterPart* Thruster : GetThrustersForRotation(Clockwise))
 	{
-		Sum += FVector2D::CrossProduct(Thruster->GetThrustRelativeLocation(), FVector2D(Thruster->GetThrustForce() * AtThrottle, 0).GetRotated(Thruster->GetRotation())) / Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetMomentOfInertia();
+		Sum += FVector2D::CrossProduct(Thruster->GetThrustRelativeLocation(), FVector2D(Thruster->GetThrustForce() * AtThrottle, 0).GetRotated(Thruster->GetThrustRotation())) / Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetMomentOfInertia();
 	}
 	return Sum;
 }

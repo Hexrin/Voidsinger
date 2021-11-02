@@ -43,7 +43,6 @@ void ABaseShip::BeginPlay()
 	
 	UE_LOG(LogTemp, Warning, TEXT("Default parts num %i"), DefaultParts.Num())
 	PartGrid->BuildShip(DefaultParts);
-
 }
 
 // Called every frame
@@ -273,7 +272,6 @@ const FVector ABaseShip::GetTargetLookDirection()
 
 void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 {
-	//MeshComponent->CreateMeshSection()
 	
 
 	int32 SectionIndex = 0; 
@@ -348,15 +346,15 @@ TArray<int32> ABaseShip::CreateTrianglesForSquare(int32 UpperRight, int32 UpperL
 void ABaseShip::SaveEditorShip()
 {
 
-	TArray<FPartData> OutArray;
-	PartGrid->GetPartGrid().GenerateValueArray(OutArray);
+	TArray<FPartData> OutArray = PartGrid->GetPartGrid().GetValueArray();;
+	
 	TArray<FSavePartInfo> InfoToSave;
 	TSet<UBasePart*> PartSet;
 	for (auto& i : OutArray)
 	{
 		if (!PartSet.Contains(i.Part))
 		{
-			InfoToSave.Emplace(FSavePartInfo(i.Part->GetClass(), i.Part->GetPartGridLocation(), i.Part->GetRotation()));
+			InfoToSave.Emplace(FSavePartInfo(i.Part->GetClass(), i.Part->GetPartGridLocation(), i.Part->GetRelativeRotation()));
 			PartSet.Emplace(i.Part);
 		}
 	}
