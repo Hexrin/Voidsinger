@@ -34,6 +34,6 @@ public:
 	static int GetBitNumberFromLocation(FIntPoint Location);
 
 	UFUNCTION(BlueprintPure)
-	TArray<UBasePart*> GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid);
+	static TArray<UBasePart*> GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid);
 
 };
