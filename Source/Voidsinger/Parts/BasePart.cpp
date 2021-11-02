@@ -64,10 +64,10 @@ void UBasePart::InitializeFunctionality()
 			//Check the X + 1 location for a part on the part grid
 			if (PartGridComponent->GetPartGrid().Contains(j + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
 			{
-								AddToSystem(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key));
+				AddToSystem(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key));
 
-								//A system was found!
-								SystemFound = true;
+				//A system was found!
+				SystemFound = true;
 			}
 		}
 
