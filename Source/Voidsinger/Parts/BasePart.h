@@ -245,11 +245,12 @@ protected:
 
 	/*Function Return Vals*\
 	\*--------------------*/
-
-private:
 	//Stores the curent shape of the part acounting for damage and rotation
 	UPROPERTY()
 	TArray<FIntPoint> ActualShape;
+
+private:
+	
 
 	//Stores the rotated version of DesiredShape 
 	//UPROPERTY()

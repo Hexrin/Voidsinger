@@ -18,4 +18,6 @@ class VOIDSINGER_API UBaseFreespacePart : public UBasePart
 	void InitializeFunctionality();
 
 	void InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
+
+	void MergeParts(TSet<UBaseFreespacePart*> Other);
 };
