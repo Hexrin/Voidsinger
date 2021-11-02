@@ -258,7 +258,6 @@ void APlayerShip::AddVoidsongInput(int Input)
 
     //Call the event dispatcher
     OnVoidsongInputDelegate.Broadcast(FIntArray(VoidsongCombo));
-    //OnSTUPIDVoidsongInputDelegate.Broadcast(FIntArray(VoidsongCombo));
 
     //Reset the reset voidsong timer
     ResetVoidsongTimer = 0;
@@ -287,6 +286,8 @@ void APlayerShip::ResetVoidsong()
     //Empties the sequence of inputs
     VoidsongCombo.Empty();
     ShouldResetVoidsongTimerTick = false;
+
+    OnVoidsongInputDelegate.Broadcast(FIntArray());
 }
 
 

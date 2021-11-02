@@ -35,7 +35,6 @@ struct FIntArray
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVoidsongInputDelegate, FIntArray, CurrentInput);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSTUPIDVoidsongInputDelegate, TArray<int>, CurrentInput);
 
 UCLASS()
 class VOIDSINGER_API APlayerShip : public ABaseShip
@@ -258,8 +257,8 @@ protected:
 	UPROPERTY(BlueprintAssignable)
 	FVoidsongInputDelegate OnVoidsongInputDelegate;
 
-	UPROPERTY(BlueprintAssignable)
-	FSTUPIDVoidsongInputDelegate OnSTUPIDVoidsongInputDelegate;
+	//UPROPERTY(BlueprintAssignable)
+	//FSTUPIDVoidsongInputDelegate OnSTUPIDVoidsongInputDelegate;
 	
 	UPROPERTY(VisibleAnywhere)
 	class UStarSystemData* CurrentStarSystem;
