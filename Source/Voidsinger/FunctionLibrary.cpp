@@ -104,3 +104,23 @@ int UFunctionLibrary::GetBitNumberFromLocation(FIntPoint Location)
 	return 0;
 }
 
+TArray<UBasePart*> UFunctionLibrary::GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid)
+{
+
+	FVector RelativeLoc = UKismetMathLibrary::InverseTransformLocation(PartGrid->GetOwner()->GetActorTransform(), Location) + FVector(Cast<ABaseShip>(PartGrid->GetOwner())->PhysicsComponent->GetCenterOfMass(), 0);
+	FIntPoint LocalIntPoint = FVector2D(RelativeLoc.X, RelativeLoc.Y).IntPoint();
+
+	for (int i = 0; i < 4; i++)
+	{
+		LocalIntPoint.X + (i % 2);
+		if (i > 1)
+		{
+			LocalIntPoint.Y + 1;
+		}
+		else
+		{
+			LocalIntPoint.Y;
+		}
+	}
+}
+
