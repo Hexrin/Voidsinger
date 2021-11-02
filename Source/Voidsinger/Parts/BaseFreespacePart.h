@@ -13,5 +13,9 @@ UCLASS()
 class VOIDSINGER_API UBaseFreespacePart : public UBasePart
 {
 	GENERATED_BODY()
+
 	
+	void InitializeFunctionality();
+
+	void InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
 };
