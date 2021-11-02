@@ -12,6 +12,7 @@
 
 /*Initializer Funtions*\
 \*--------------------*/
+
 UBasePart::UBasePart()
 {
 	//Initalize All Variables
@@ -63,10 +64,10 @@ void UBasePart::InitializeFunctionality()
 			//Check the X + 1 location for a part on the part grid
 			if (PartGridComponent->GetPartGrid().Contains(j + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
 			{
-								AddToSystem(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key));
+				AddToSystem(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key));
 
-								//A system was found!
-								SystemFound = true;
+				//A system was found!
+				SystemFound = true;
 			}
 		}
 
@@ -133,9 +134,9 @@ TStatId UBasePart::GetStatId() const
 	return TStatId();
 }
 
-
 /*--Getter Functions--*\
 \*--------------------*/
+
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
 {
 	
@@ -203,12 +204,17 @@ const FVector UBasePart::GetPartWorldLocation()
 
 const FVector UBasePart::GetPartRelativeLocation()
 {
-	return FVector((FVector2D(GetPartGridLocation()) * GetPartGrid()->GetPartGridScale()) - GetPartGrid()->GetCenterOfMass(), 0);
+	return FVector((FVector2D(GetPartGridLocation()) * GetPartGrid()->GetPartGridScale()) - GetShip()->PhysicsComponent->GetCenterOfMass(), 0);
 }
 
-const float UBasePart::GetRotation()
+const float UBasePart::GetRelativeRotation()
 {
 	return Rotation;
+}
+
+const float UBasePart::GetWorldRotation()
+{
+	return Rotation + GetShip()->GetActorQuat().GetAngle();
 }
 
 float UBasePart::GetMass()
@@ -285,6 +291,7 @@ UMaterialInterface* UBasePart::GetPixelMaterial()
 
 /*Condtional  Checkers*\
 \*--------------------*/
+
 bool UBasePart::IsFunctional()
 {
 	return bFunctional;
@@ -297,6 +304,7 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 
 /*---Misc. Functions--*\
 \*--------------------*/
+
 void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 {
 	ActualShape.Remove(RelativeLoc);
@@ -360,6 +368,13 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 
 void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses)
 {
+	/*for (auto& i : NounClasses)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Noun classes %s"), *i.Get()->GetDisplayNameText().ToString())
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("part class %s"), *this->GetClass()->GetDisplayNameText().ToString())*/
+
 	if (Factions.IsEmpty() != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction()) && NounClasses.IsEmpty() != NounClasses.Contains(GetClass()))
 	{
 		if (this->Implements<UActivateInterface>())

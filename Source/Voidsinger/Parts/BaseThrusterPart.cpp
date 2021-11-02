@@ -17,12 +17,12 @@ const float UBaseThrusterPart::GetThrustForce()
 
 const float UBaseThrusterPart::GetThrustRotation()
 {
-	return ThrustRotation + GetRotation();
+	return ThrustRotation + GetRelativeRotation();
 }
 
 const FVector2D UBaseThrusterPart::GetThrustRelativeLocation()
 {
-	return ThrustLocation.GetRotated(GetRotation()) + FVector2D(GetPartRelativeLocation());
+	return ThrustLocation.GetRotated(GetRelativeRotation()) + FVector2D(GetPartRelativeLocation());
 }
 
 const bool UBaseThrusterPart::IsThrusting()

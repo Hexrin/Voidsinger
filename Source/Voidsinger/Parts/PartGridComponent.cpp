@@ -17,10 +17,10 @@ UPartGridComponent::UPartGridComponent()
 
 	//Initiate Variables
 	GridBounds = FArrayBounds(FIntPoint(0, 0), FIntPoint(0, 0));
-
+	Ship = Cast<ABaseShip>(GetOwner());
 	GridHalfSize = FIntPoint(250);
 	
-	PartGrid = TMap<FIntPoint, FPartData>();
+	PartGrid = FPartGrid();
 	if (!GridScale)
 	{
 		GridScale = 1;
@@ -42,6 +42,7 @@ UPartGridComponent::UPartGridComponent()
 // Called when the game starts
 void UPartGridComponent::BeginPlay()
 {
+	Ship = Cast<ABaseShip>(GetOwner());
 	Super::BeginPlay();
 	GridBounds = FArrayBounds(FIntPoint(0, 0), FIntPoint(0, 0));
 	// ...
@@ -106,16 +107,16 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 					}
 
 					//Create Mesh
-					Cast<ABaseShip>(GetOwner())->AddMeshAtLocation(CurrentLoc);
+					Ship->AddMeshAtLocation(CurrentLoc);
 					//set PartGrid and material
-					Cast<ABaseShip>(GetOwner())->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
+					Ship->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
 				}
 			}
 			Part->InitializeFunctionality();
-			Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
+			Ship->PhysicsComponent->UpdateMassCalculations();
 			if (Cast<UBaseThrusterPart>(Part))
 			{
-				Cast<ABaseShip>(GetOwner())->MovementComponent->UpdateThrusters();
+				Ship->MovementComponent->UpdateThrusters();
 			}
 
 			if (IsValid(Cast<UCorePart>(Part)))
@@ -142,7 +143,7 @@ bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
 	if (PartGrid.Contains(Location))
 	{
 		//Intialize Variables
-		class UBasePart* PartToRemove = PartGrid.Find(Location)->Part;
+		class UBasePart* PartToRemove = PartGrid.FindRef(Location).Part;
 		FIntPoint PartLoc = PartToRemove->GetPartGridLocation();
 
 		//Iterate though the shape of PartToRemove and remove them from the part grid
@@ -168,13 +169,13 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 		DamagedPart->DestroyPixel(Location - DamagedPart->GetPartGridLocation());
 
 		//Destroy Mesh
-		Cast<ABaseShip>(GetOwner())->RemoveMeshAtLocation(Location);
+		Ship->RemoveMeshAtLocation(Location);
 
 		for (int i = 0; i < 4; i++)
 		{
 			FIntPoint TargetPoint = Location +((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
 
-			ApplyHeatAtLocation(TargetPoint, (PartGrid.Find(Location)->GetTemperature() / 4) * HeatMeltTransferFactor);
+			ApplyHeatAtLocation(TargetPoint, (PartGrid.FindRef(Location).GetTemperature() / 4) * HeatMeltTransferFactor);
 		}
 
 		TArray<FIntPoint> NumbersFound;
@@ -244,7 +245,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 				}
 			}
 		}
-		Cast<ABaseShip>(GetOwner())->PhysicsComponent->UpdateMassCalculations();
+		Ship->PhysicsComponent->UpdateMassCalculations();
 		return true;
 	}
 	else
@@ -281,11 +282,11 @@ void UPartGridComponent::RemoveDisconnectedShape(TArray<FIntPoint> ConnectedShap
 				}
 			}
 
-			NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetPartGridLocation(), j->GetRotation());
+			NewShip->PartGrid->AddPart(PartialPartShape, j->GetClass(), j->GetPartGridLocation(), j->GetRelativeRotation());
 		}
 
 
-		FVector NewLocation = GetOwner()->GetActorLocation() + FVector(NewShip->PartGrid->GetCenterOfMass(), 0) - FVector(Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass(), 0);
+		FVector NewLocation = GetOwner()->GetActorLocation() + FVector(NewShip->PhysicsComponent->GetCenterOfMass(), 0) - FVector(Ship->PhysicsComponent->GetCenterOfMass(), 0);
 		FVector RotateLocation = GetOwner()->GetActorLocation();
 
 		NewLocation = RotateLocation - GetOwner()->GetActorRotation().RotateVector(RotateLocation - NewLocation);
@@ -294,20 +295,20 @@ void UPartGridComponent::RemoveDisconnectedShape(TArray<FIntPoint> ConnectedShap
 		NewShip->SetActorLocation(NewLocation);
 		NewShip->SetActorRotation(GetOwner()->GetActorRotation());
 
-		float Radius = UKismetMathLibrary::Sqrt(FMath::Square((NewShip->PartGrid->GetCenterOfMass().X + NewShip->GetActorLocation().X) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().X + Cast<AActor>(GetOwner())->GetActorLocation().X)) + FMath::Square((NewShip->PartGrid->GetCenterOfMass().Y + NewShip->GetActorLocation().Y) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass().Y + Cast<AActor>(GetOwner())->GetActorLocation().Y)));
-		float VelocityFromRotationMagnitude = Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity() * Radius;
-		FVector2D VectorBetween = NewShip->PartGrid->GetCenterOfMass() + FVector2D(NewShip->GetActorLocation()) - (Cast<ABaseShip>(GetOwner())->PartGrid->GetCenterOfMass() + FVector2D(Cast<AActor>(GetOwner())->GetActorLocation()));
+		float Radius = UKismetMathLibrary::Sqrt(FMath::Square((NewShip->PhysicsComponent->GetCenterOfMass().X + NewShip->GetActorLocation().X) - (Ship->PhysicsComponent->GetCenterOfMass().X + Cast<AActor>(GetOwner())->GetActorLocation().X)) + FMath::Square((NewShip->PhysicsComponent->GetCenterOfMass().Y + NewShip->GetActorLocation().Y) - (Ship->PhysicsComponent->GetCenterOfMass().Y + Cast<AActor>(GetOwner())->GetActorLocation().Y)));
+		float VelocityFromRotationMagnitude = Ship->PhysicsComponent->GetAngularVelocity() * Radius;
+		FVector2D VectorBetween = NewShip->PhysicsComponent->GetCenterOfMass() + FVector2D(NewShip->GetActorLocation()) - (Ship->PhysicsComponent->GetCenterOfMass() + FVector2D(Cast<AActor>(GetOwner())->GetActorLocation()));
 		FVector2D RotatedVector = VectorBetween.GetRotated(90);
 
 		RotatedVector.Normalize();
 
 		//Debug stuff
 		/*UE_LOG(LogTemp, Warning, TEXT("velocity from rotation magnitude %f"), VelocityFromRotationMagnitude);
-		UE_LOG(LogTemp, Warning, TEXT("angular velocity of the ship %f"), Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetAngularVelocity());
+		UE_LOG(LogTemp, Warning, TEXT("angular velocity of the ship %f"), Ship->PhysicsComponent->GetAngularVelocity());
 		UE_LOG(LogTemp, Warning, TEXT("radius %f"), Radius);
 		DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Red, true);
-		DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0), 5, FColor::Blue, true);
-		DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), 0) + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Green, true);
+		DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Ship->PhysicsComponent->GetVelocity(), 0), 5, FColor::Blue, true);
+		DrawDebugDirectionalArrow(GetWorld(), NewShip->GetActorLocation(), NewShip->GetActorLocation() + FVector(Ship->PhysicsComponent->GetVelocity(), 0) + FVector(RotatedVector * VelocityFromRotationMagnitude, 0), 5, FColor::Green, true);
 		DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + FVector(VectorBetween, 0), 5, FColor::Yellow, true);*/
 
 		if (FromExplosion)
@@ -315,7 +316,7 @@ void UPartGridComponent::RemoveDisconnectedShape(TArray<FIntPoint> ConnectedShap
 			NewShip->PartGrid->ExplodeAtLocation(ExplosionLocation, ExplosionRadius);
 		}
 
-		NewShip->PhysicsComponent->AddImpulse((RotatedVector * VelocityFromRotationMagnitude) + Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetVelocity(), NewShip->PartGrid->GetCenterOfMass());
+		NewShip->PhysicsComponent->AddImpulse((RotatedVector * VelocityFromRotationMagnitude) + Ship->PhysicsComponent->GetVelocity(), NewShip->PhysicsComponent->GetCenterOfMass());
 	}
 	else
 	{
@@ -325,7 +326,7 @@ void UPartGridComponent::RemoveDisconnectedShape(TArray<FIntPoint> ConnectedShap
 
 void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatToApply)
 {
-	ApplyHeatAtLocation((FVector2D(WorldLocation - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw) + GetCenterOfMass()).RoundToVector().IntPoint(), HeatToApply);
+	ApplyHeatAtLocation((FVector2D(WorldLocation - GetOwner()->GetActorLocation()).GetRotated(-1 * GetOwner()->GetActorRotation().Yaw) + Ship->PhysicsComponent->GetCenterOfMass()).RoundToVector().IntPoint(), HeatToApply);
 		
 	//PartGrid.FindRef(FVector2D(WorldLocation - GetOwner()->GetActorLocation()).RoundToVector().IntPoint()).SetTemperature(HeatToApply);
 }
@@ -342,7 +343,7 @@ void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float H
 void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius)
  {
 	UE_LOG(LogTemp, Warning, TEXT("explodd but part grid"))
-	FVector FloatRelativeLoc = UKismetMathLibrary::InverseTransformLocation(GetOwner()->GetActorTransform(), WorldLocation) + FVector(GetCenterOfMass(), 0);
+	FVector FloatRelativeLoc = UKismetMathLibrary::InverseTransformLocation(GetOwner()->GetActorTransform(), WorldLocation) + FVector(Ship->PhysicsComponent->GetCenterOfMass(), 0);
 	float CheckX = -ExplosionRadius;
 	float CheckY = -ExplosionRadius;
 	FIntPoint CheckGridLocation;
@@ -691,36 +692,51 @@ bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D Botto
 	return TopLeft.Y < YIntercept&& BottomRight.Y > YIntercept;
 }
 
+FPartData UPartGridComponent::GetPartDataAtGridLocation(FIntPoint Location)
+{
+	return PartGrid.FindRef(Location);
+}
+
+FPartData UPartGridComponent::GetPartDataAtRelativeLocation(FVector Location)
+{
+	return GetPartDataAtGridLocation(FVector2D(Location).RoundToVector().IntPoint());
+}
+
+FPartData UPartGridComponent::GetPartDataAtWorldLocation(FVector Location)
+{
+	return GetPartDataAtRelativeLocation(Ship->GetActorQuat().UnrotateVector(Location - Ship->GetActorLocation()));
+}
+
 void UPartGridComponent::DistrubuteHeat()
 {
 	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
 	NewHeatMap.Reserve(PartGrid.Num());
-	for (auto& Data : PartGrid)
+	for (int j = 0; j < PartGrid.Num(); j++)
 	{
 		float NewHeat = 0;
 		for (int i = 0; i < 4; i++)
 		{
 			FIntPoint TargetPoint = ((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
 			
-			if (PartGrid.Contains(TargetPoint + Data.Key))
+			if (PartGrid.Contains(TargetPoint + PartGrid.LocationAtIndex(j)))
 			{
-				NewHeat += PartGrid.FindRef(TargetPoint + Data.Key).GetTemperature() * HeatPropagationFactor / (4);
+				NewHeat += PartGrid.FindRef(TargetPoint + PartGrid.LocationAtIndex(j)).GetTemperature() * HeatPropagationFactor / (4);
 			}
 		}
-		NewHeat = Data.Value.GetTemperature() * (1-HeatPropagationFactor) + NewHeat;
-		NewHeatMap.Emplace(Data.Key, NewHeat > .05 ? NewHeat : 0);
+		NewHeat = PartGrid.PartDataAtIndex(j).GetTemperature() * (1-HeatPropagationFactor) + NewHeat;
+		NewHeatMap.Emplace(PartGrid.LocationAtIndex(j), NewHeat > .05 ? NewHeat : 0);
 	}
 
 	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
-	for (auto& Data : PartGrid)
+	for (int i = 0; i < PartGrid.Num(); i++)
 	{
-		if (NewHeatMap.FindRef(Data.Key) > Data.Value.Part->GetHeatResistance())
+		if (NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)) > PartGrid.PartDataAtIndex(i).Part->GetHeatResistance())
 		{
-			KeysToDestroy.Emplace(Data.Key);
+			KeysToDestroy.Emplace(PartGrid.LocationAtIndex(i));
 		}
 		else
 		{
-			Data.Value.SetTemperature(NewHeatMap.FindRef(Data.Key));
+			PartGrid.PartDataAtIndex(i).SetTemperature(NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)));
 		}
 	}
 	for (FIntPoint Val : KeysToDestroy)
@@ -742,9 +758,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& Dama
 
 void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 {
-	TArray<FIntPoint> AllParts;
-
-	PartGrid.GenerateKeyArray(AllParts);
+	TArray<FIntPoint> AllParts = PartGrid.GetKeyArray();
 
 	for (auto& i : AllParts)
 	{
@@ -752,6 +766,7 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 	}
 	for (int i = 0; i < Parts.Num(); i++)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("build ship part class %s"), *Parts[i].PartClass.Get()->GetDisplayNameText().ToString())
 		AddPart(Parts[i].PartClass, Parts[i].PartLocation, Parts[i].PartRotation, false);
 	}
 }
@@ -759,15 +774,15 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 void UPartGridComponent::SaveShip(FString ShipName)
 {
 	
-	TArray<FPartData> Parts;
+	TArray<FPartData> Parts = PartGrid.GetValueArray();
 
-	PartGrid.GenerateValueArray(Parts);
+	
 	
 	USaveGame* SaveGameInstance = UGameplayStatics::CreateSaveGameObject(USaveShip::StaticClass());
 
 	for (int i = 0; i < Parts.Num(); i++)
 	{
-		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i].Part->GetClass(), Parts[i].Part->GetPartGridLocation(), Parts[i].Part->GetRotation()));
+		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i].Part->GetClass(), Parts[i].Part->GetPartGridLocation(), Parts[i].Part->GetRelativeRotation()));
 	}
 	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);
 
@@ -788,17 +803,17 @@ bool UPartGridComponent::LoadSavedShip(FString ShipName)
 }
 
 //Gets the center of mass of the PartGrid
-const FVector2D UPartGridComponent::GetCenterOfMass()
+const FVector2D UPartGridComponent::CalcCenterOfMass()
 {
 	//Initalize Variables
 	FVector2D Center = FVector2D(0,0);
-	float Mass = GetMass();
+	float Mass = CalcMass();
 	//UE_LOG(LogTemp, Warning, TEXT("PRE cofmass?? x=%f, y=%f, Mass=%f"), Center.X, Center.Y, Mass);
 
 	//Iterate though Pixels and adjust center of mass
-	for (auto& Elem : PartGrid)
+	for (int i = 0; i < PartGrid.Num(); i++)
 	{
-		Center += FVector2D(Elem.Key) * Elem.Value.Part->GetMass() / Mass;
+		Center += FVector2D(PartGrid.LocationAtIndex(i)) * PartGrid.PartDataAtIndex(i).Part->GetMass() / Mass;
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("cofmass?? x=%f, y=%f"), Center.X, Center.Y);
 	
@@ -806,28 +821,28 @@ const FVector2D UPartGridComponent::GetCenterOfMass()
 	return Center;
 }
 
-const float UPartGridComponent::GetMomentOfInertia()
+const float UPartGridComponent::CalcMomentOfInertia()
 {
 	float ReturnValue = 0;
-	FVector2D CenterOfMass = GetCenterOfMass();
-	for (auto& Part : PartGrid)
+	FVector2D CenterOfMass = Ship->PhysicsComponent->GetCenterOfMass();
+	for (int i = 0; i < PartGrid.Num(); i++)
 	{
-		float PartMass = Part.Value.Part->GetMass();
-		ReturnValue += (1 / 12) + PartMass * (FVector2D(Part.Value.Part->GetPartRelativeLocation())).SizeSquared();
+		float PartMass = PartGrid.PartDataAtIndex(i).Part->GetMass();
+		ReturnValue += (1 / 12) + PartMass * (FVector2D(PartGrid.PartDataAtIndex(i).Part->GetPartRelativeLocation())).SizeSquared();
 	}
 	return ReturnValue;
 }
 
 //Gets the mass of the PartGrid
-const float UPartGridComponent::GetMass()
+const float UPartGridComponent::CalcMass()
 {
 	//Initialize Variable
 	float Mass = 0;
 
 	//Interate though Pixels and summate their mass
-	for (auto& Elem : PartGrid)
+	for (int i = 0; i < PartGrid.Num(); i++)
 	{
-		Mass += Elem.Value.Part->GetMass();
+		Mass += PartGrid.PartDataAtIndex(i).Part->GetMass();
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("other mass = %f"), Mass);
 
@@ -836,7 +851,7 @@ const float UPartGridComponent::GetMass()
 }
 
 //Gets the PartGrid Map
-TMap<FIntPoint, FPartData> UPartGridComponent::GetPartGrid()
+FPartGrid UPartGridComponent::GetPartGrid()
 {
 	return PartGrid;
 }
@@ -891,13 +906,13 @@ bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> Desi
 }
 
 //Returns true if StartPoint and EndPoint are connected via PartGrid
-bool UPartGridComponent::PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality)
+bool UPartGridComponent::PointsConnected(FPartGrid Grid, FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality)
 {
 	//Initate Conectiveity Array
 	TArray<FIntPoint> ConectivityArray = TArray<FIntPoint>();
-	return PointsConnected(PartGrid, StartPoint, EndPoint, ConectivityArray, TestForFunctionality);
+	return PointsConnected(Grid, StartPoint, EndPoint, ConectivityArray, TestForFunctionality);
 }
-bool UPartGridComponent::PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality)
+bool UPartGridComponent::PointsConnected(FPartGrid Grid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality)
 {
 	//Detect if funtion has reached target
 	if (StartPoint == EndPoint)
@@ -924,9 +939,9 @@ bool UPartGridComponent::PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FI
 		//UE_LOG(LogTemp, Warning, TEXT("Target Point x=%i, y=%i, Xclose=%i, Xpos=%i, Ypos=%i"), TargetPoint.X, TargetPoint.Y, (IsXCloser ^ (i % 2 == 1)) ? 1 : 0, !(XIsPosive ^ (i > 1)) ? 1 : 0, !(YIsPosive ^ (i > 1)) ? 1 : 0);
 
 		//Scan Pixel
-		if (!ConnectivityArray.Contains(StartPoint + TargetPoint) && PartGrid.Contains(StartPoint + TargetPoint) && (!TestForFunctionality || PartGrid.Find(StartPoint + TargetPoint)->Part->IsPixelFunctional(StartPoint + TargetPoint)))
+		if (!ConnectivityArray.Contains(StartPoint + TargetPoint) && Grid.Contains(StartPoint + TargetPoint) && (!TestForFunctionality || Grid.Find(StartPoint + TargetPoint)->Part->IsPixelFunctional(StartPoint + TargetPoint)))
 		{
-			ReturnValue = PointsConnected(PartGrid, StartPoint + TargetPoint, EndPoint, ConnectivityArray);
+			ReturnValue = PointsConnected(Grid, StartPoint + TargetPoint, EndPoint, ConnectivityArray);
 			if (ReturnValue)
 			{
 				break;
@@ -938,7 +953,7 @@ bool UPartGridComponent::PointsConnected(TMap<FIntPoint, FPartData> PartGrid, FI
 	return ReturnValue;
 }
 
-TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape, TMap<FIntPoint, FPartData> ConnectedPartsMap, bool CheckFunctionality)
+TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape, FPartGrid ConnectedPartsMap, bool CheckFunctionality)
 {
 
 	//New shape will return the entire connected shape, indcluding the starting shape

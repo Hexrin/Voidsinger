@@ -45,7 +45,7 @@ public:
 
 	//Gets a FIntPoint to FPartData map from a list of UBaseParts. FIntPoints will be the pixel locations of the UBaseParts. 
 	UFUNCTION()
-	TMap<FIntPoint, FPartData> GetMapFromConnectedParts();
+	FPartGrid GetMapFromConnectedParts();
 
 	UFUNCTION(BlueprintPure)
 	float GetResourceAmount();

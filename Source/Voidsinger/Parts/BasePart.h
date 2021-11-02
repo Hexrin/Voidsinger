@@ -111,9 +111,13 @@ public:
 	UFUNCTION(BlueprintPure)
 	const FVector GetPartRelativeLocation();
 
-	//Gets the rotaion of the part
+	//Gets the rotaion of the part relative to the part grid
 	UFUNCTION(BlueprintPure)
-	const float GetRotation();
+	const float GetRelativeRotation();
+
+	//Gets the rotaion of the part in worldspace
+	UFUNCTION(BlueprintPure)
+	const float GetWorldRotation();
 
 	//Gets the mass of a single pixel for this part
 	UFUNCTION(BlueprintPure)
@@ -241,11 +245,12 @@ protected:
 
 	/*Function Return Vals*\
 	\*--------------------*/
-
-private:
 	//Stores the curent shape of the part acounting for damage and rotation
 	UPROPERTY()
 	TArray<FIntPoint> ActualShape;
+
+private:
+	
 
 	//Stores the rotated version of DesiredShape 
 	//UPROPERTY()
