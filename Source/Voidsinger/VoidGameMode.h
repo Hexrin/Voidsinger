@@ -12,6 +12,8 @@
  * 
  */
 
+//class UBasePart;
+
 UINTERFACE(Blueprintable)
 class UActivateInterface : public UInterface
 {
@@ -28,8 +30,9 @@ public:
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FVoidsongDelegate, const TArray<TEnumAsByte<EFactions>>& , Factions, const TArray<TSubclassOf<UObject>>&, NounClasses);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeactivateVoidsongDelegate);
 
-UCLASS(Config=VoidSettings)
+UCLASS()
 class VOIDSINGER_API AVoidGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
@@ -38,25 +41,26 @@ public:
 
 	AVoidGameMode();
 
-	UPROPERTY(Config)
-	int Testaroo;
+	UFUNCTION(BlueprintCallable)
+	void ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness);
 
 	UFUNCTION(BlueprintCallable)
-	int PrintTestaroo();
+	void Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs);
 
-	UFUNCTION(BlueprintCallable)
-	void ActivateWithEffects(UObject* ObjectHit);
-
-	UFUNCTION(BlueprintCallable)
-	void Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs);
+	UFUNCTION()
+	void UnsetVerbs();
 
 	UFUNCTION()
 	FVoidsongDelegate GetVoidsongDelegate();
 
+
 	UPROPERTY(BlueprintAssignable)
 	FVoidsongDelegate OnVoidsongDelegate;
 
+	UPROPERTY(BlueprintAssignable)
+	FDeactivateVoidsongDelegate OnDeactivateVoidsongDelegate;
+
 	UPROPERTY()
-	TArray<TSubclassOf<UBaseVerbVoidsong>> VerbsActive;
+	TArray<UBaseVerbVoidsong*> VerbsActive;
 
 };

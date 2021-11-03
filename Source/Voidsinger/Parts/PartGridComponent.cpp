@@ -787,6 +787,7 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 	}
 	for (int i = 0; i < Parts.Num(); i++)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("build ship part class %s"), *Parts[i].PartClass.Get()->GetDisplayNameText().ToString())
 		AddPart(Parts[i].PartClass, Parts[i].PartLocation, Parts[i].PartRotation, false);
 	}
 }

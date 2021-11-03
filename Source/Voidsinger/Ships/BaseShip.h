@@ -26,6 +26,10 @@ class VOIDSINGER_API ABaseShip : public APawn
 	GENERATED_BODY()
 
 public:
+
+	/*-Initializers-*\
+	\*--------------*/
+
 	// Sets default values for this pawn's properties
 	ABaseShip();
 
@@ -33,28 +37,42 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	/*-Tick-*\
+	\*------*/
+
+public:	
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	/*-Resource Managment-*\
+	\*--------------------*/
+
+	//Gets the maximum fluid capacity of the given fluid.
 	UFUNCTION(BlueprintPure)
 	float const GetFluidCapacity(TEnumAsByte<EResourceType> Fluid);
 
+	//Gets the amount of a given fluid.
 	UFUNCTION(BlueprintPure)
 	float const GetFluidAmount(TEnumAsByte<EResourceType> Fluid);
-
+	
+	//Adds a resource system to the systems on the ship.
 	UFUNCTION()
 	void AddResourceSystem(UBaseResourceSystem* System);
 
+	//Removes a resource system from the systems on the ship.
 	UFUNCTION()
 	void RemoveResourceSystem(UBaseResourceSystem* System);
 
-	//Gets the faction of the ship
+	//Gets all the resource systems on the ship.
 	UFUNCTION(BlueprintPure)
-	TEnumAsByte<EFactions> GetFaction();
+	TArray<UBaseResourceSystem*> GetResourceSystems();
+
+	/*-Voidsong Control-*\
+	\*------------------*/
 
 	//Adds a new Voidsong to the AvailableVoidsongs. Will be useful for gaining a new voidsong.
 	UFUNCTION(BlueprintCallable)
@@ -66,7 +84,14 @@ public:
 
 	//Figures out what Voidsongs are played.
 	UFUNCTION()
-	void DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs);
+	float DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs);
+
+	//This function is for the delay of the Voidsong duration
+	UFUNCTION()
+	void DurationDelay();
+
+	/*-Ship Creation-*\
+	\*---------------*/
 
 	//Creates Voidsong objects with the given classes of Voidsongs and adds them to the AvaialableVoidsongs. Will be useful for loading from a save game.
 	UFUNCTION(BlueprintCallable)
@@ -80,11 +105,56 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CallLaser(float DamageMultiplier, float DurationMultiplier);
 
-	UFUNCTION(BlueprintPure)
-	TArray<UBaseResourceSystem*> GetResourceSystems();
+	/*-Misc-*\
+	\-------*/
 
+	//Gets the faction of the ship
+	UFUNCTION(BlueprintPure)
+	TEnumAsByte<EFactions> GetFaction();
+
+	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
+	//             VARIABLES             ||
+	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
+
+	/*-Resource Managment-*\
+	\*--------------------*/
+
+	//An array of all the resource systems on the base ship
 	UPROPERTY()
 	TArray<UBaseResourceSystem*> ResourceSystems;
+
+	/*-Voidsong Managment-*\
+	\*--------------------*/
+
+	//Array of the voidsongs that are available to play
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UBaseVoidsong*> AvailableVoidsongs;
+
+	//For the add voidsong event dispatcher
+	UPROPERTY(BlueprintAssignable)
+	FAddVoidsongDelegate OnAddVoidsongDelegate;
+
+private:
+
+	//Whether the ship can activate another Voidsong
+	UPROPERTY()
+	bool CanActivateVoidsong = true;
+
+public:
+
+	/*-Ship Creation-*\
+	\*---------------*/
+
+	//This allows you to create ships. Should set this to false once we create all the ships.
+	UPROPERTY(BlueprintReadWrite)
+	bool bCanCreateShips = true;
+
+	//The class that is currently being edited. This is the class that the SaveEditorShips() will change.
+	UPROPERTY(BlueprintReadWrite)
+	TSubclassOf<ABaseShip> ClassCurrentlyEditing;
+
+	/*-Liam, you haven't commented things in a while-*\
+	\*-----------------------------------------------*/
 
 	UPROPERTY(VisibleAnywhere)
 	class UProceduralMeshComponent* MeshComponent;
@@ -98,30 +168,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UShipMovementComponent* MovementComponent;
 
-	//Array of the voidsongs that are available to play
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<UBaseVoidsong*> AvailableVoidsongs;
-
 	//For the laser Event Dispatcher
 	UPROPERTY(BlueprintAssignable)
 	FLaserDelegate OnLaserDelegate;
 
-	//For the add voidsong event dispatcher
-	UPROPERTY(BlueprintAssignable)
-	FAddVoidsongDelegate OnAddVoidsongDelegate;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FSavePartInfo> DefaultParts;
-
-//Creating ship stuff
-
-	//This allows you to create ships. Should set this to false once we create all the ships.
-	UPROPERTY(BlueprintReadWrite)
-	bool bCanCreateShips = true;
-
-	//The class that is currently being edited. This is the class that the SaveEditorShips() will change.
-	UPROPERTY(BlueprintReadWrite)
-	TSubclassOf<ABaseShip> ClassCurrentlyEditing;
 
 
 	/*-Movement Control-*\
@@ -188,6 +240,9 @@ private:
 	TArray<FVector2D> UV;
 
 public:
+
+	/*-Misc Variables-*\
+	\*----------------*/
 
 	//The faction of the ship
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

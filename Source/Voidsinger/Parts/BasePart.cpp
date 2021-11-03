@@ -12,6 +12,7 @@
 
 /*Initializer Funtions*\
 \*--------------------*/
+
 UBasePart::UBasePart()
 {
 	//Initalize All Variables
@@ -114,9 +115,9 @@ TStatId UBasePart::GetStatId() const
 	return TStatId();
 }
 
-
 /*--Getter Functions--*\
 \*--------------------*/
+
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
 {
 	
@@ -271,6 +272,7 @@ UMaterialInterface* UBasePart::GetPixelMaterial()
 
 /*Condtional  Checkers*\
 \*--------------------*/
+
 bool UBasePart::IsFunctional()
 {
 	return bFunctional;
@@ -283,6 +285,7 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 
 /*---Misc. Functions--*\
 \*--------------------*/
+
 void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 {
 	ActualShape.Remove(RelativeLoc);
@@ -379,47 +382,18 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 
 void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses)
 {
-	if (!Factions.IsEmpty())
+	/*for (auto& i : NounClasses)
 	{
-		if (!NounClasses.IsEmpty())
-		{
-			if (Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction()) && NounClasses.Contains(GetClass()))
-			{
-				if (this->Implements<UActivateInterface>())
-				{
-					Cast<IActivateInterface>(this)->Activate();
-				}
-			}
-		}
-		else
-		{
-			if (Factions.Contains(Cast<ABaseShip>(GetOuter())->GetFaction()))
-			{
-				if (this->Implements<UActivateInterface>())
-				{
-					Cast<IActivateInterface>(this)->Activate();
-				}
-			}
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Noun classes %s"), *i.Get()->GetDisplayNameText().ToString())
 	}
-	else
+
+	UE_LOG(LogTemp, Warning, TEXT("part class %s"), *this->GetClass()->GetDisplayNameText().ToString())*/
+
+	if (Factions.IsEmpty() != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction()) && NounClasses.IsEmpty() != NounClasses.Contains(GetClass()))
 	{
-		if (!NounClasses.IsEmpty())
+		if (this->Implements<UActivateInterface>())
 		{
-			if (NounClasses.Contains(GetClass()))
-			{
-				if (this->Implements<UActivateInterface>())
-				{
-					Cast<IActivateInterface>(this)->Activate();
-				}
-			}
-		}
-		else
-		{
-			if (this->Implements<UActivateInterface>())
-			{
-				Cast<IActivateInterface>(this)->Activate();
-			}
+			Cast<IActivateInterface>(this)->Activate();
 		}
 	}
 }
