@@ -3,7 +3,7 @@ import re
 import pandas as pd
 
 
-img = Image.open(r"C:\Users\schultheisz\Creative Cloud Files\Test.png")
+img = Image.open(r"C:\Users\schultheisz\Creative Cloud Files\ThrusterBounds.png")
 imgWidth, imgHeight = img.size
 img = img.convert("RGBA")
 imgdata = img.getdata()
