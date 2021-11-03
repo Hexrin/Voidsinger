@@ -116,7 +116,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 
 						for (FIntPoint j = FIntPoint(1, 0); j.Y != -1; j = (j * -1).X == 1 ? FIntPoint(0, 1) : (j * -1))
 						{
-							
+							UE_LOG(LogTemp, Warning, TEXT("J = %s"), *j.ToString());
 							if (PartGrid.Contains(Location + j))
 							{
 								UBaseFreespacePart* PartToMergeWith = Cast<UBaseFreespacePart>(PartGrid.Find(Location + j)->Part);
