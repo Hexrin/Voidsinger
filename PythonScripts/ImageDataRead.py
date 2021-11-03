@@ -1,6 +1,9 @@
 from PIL import Image
+import re
+import pandas as pd
 
-img = Image.open(r"C:\Users\schultheisz\Creative Cloud Files\Test.png")
+
+img = Image.open(r"C:\Users\schultheisz\Creative Cloud Files\ThrusterBounds.png")
 imgWidth, imgHeight = img.size
 img = img.convert("RGBA")
 imgdata = img.getdata()
@@ -8,7 +11,9 @@ imgdata = img.getdata()
 x_pos = 0
 y_pos = 1
 
-pixel_value = [ ]
+
+
+pixel_value = "("
 x = [ ]
 y = [ ]
 
@@ -20,12 +25,14 @@ for item in imgdata:
         x_pos += 1
 
     if item[3] != 0:
-        pixel_value.append(item[2])
-        x.append(x_pos)
-        y.append(y_pos)
-        
+           
+        pixel_value +=("(X="+str(x_pos) + ", Y="+str(y_pos)+"),")
+         
+pixel_value = pixel_value[:-1]         
+            
+pixel_value += ")"
+
     
+         #pixel_value, x, y = zip(*sorted(zip(pixel_value, x, y), reverse=True))
 
-pixel_value, x, y = zip(*sorted(zip(pixel_value, x, y), reverse=True))
-
-print(f'{pixel_value}\n{x}\n{y}')
+print(pixel_value)
