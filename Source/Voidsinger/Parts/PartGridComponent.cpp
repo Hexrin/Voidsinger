@@ -120,10 +120,12 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 							if (PartGrid.Contains(Location + j))
 							{
 								UBaseFreespacePart* PartToMergeWith = Cast<UBaseFreespacePart>(PartGrid.Find(Location + j)->Part);
-								Part->ConnectToSystems();
-								PartToMergeWith->MergeParts(PartAsFreeform);
-								Part = PartToMergeWith;
-								
+								if (PartToMergeWith)
+								{
+									Part->ConnectToSystems();
+									PartToMergeWith->MergeParts(PartAsFreeform);
+									Part = PartToMergeWith;
+								}
 							}
 						}
 					}

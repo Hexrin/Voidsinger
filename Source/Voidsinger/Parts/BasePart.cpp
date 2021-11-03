@@ -41,16 +41,23 @@ void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent
 
 void UBasePart::InitializeFunctionality()
 {
+	if (!bHasFunctionalityBeenInitialized)
+	{
+		//Bind to delegates
+		Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
+	
+		
+		
 
-	//Bind to delegates
-	Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
-
-	//Initialize Resource System
-	ConnectToSystems();
+		//Initialize Resource System
+		ConnectToSystems();
 	
 
-	//Call BeginPlay for blueprints
-	BeginPlay();
+		//Call BeginPlay for blueprints
+		BeginPlay();
+
+		bHasFunctionalityBeenInitialized = true;
+	}
 }
 
 UWorld* UBasePart::GetWorld() const

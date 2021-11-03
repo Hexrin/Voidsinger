@@ -54,8 +54,12 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void BeginPlay();
 
+
+private:
+	bool bHasFunctionalityBeenInitialized{ false };
 	//Interface
 	virtual void Activate() override;
+
 
 	/*--------Tick--------*\
 	\*--------------------*/
@@ -269,6 +273,8 @@ private:
 
 	//UPROPERTY()
 	bool bIsBeingDestroyed;
+
+
 
 	/*Instanced  Variables*\
 	\*--------------------*/
