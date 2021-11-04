@@ -46,7 +46,7 @@ void UBasePart::InitializeFunctionality()
 	{
 		//Bind to delegates
 		Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
-	
+		Cast<ABaseShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
 		
 		
 
