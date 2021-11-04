@@ -22,7 +22,7 @@ UPartGridComponent::UPartGridComponent()
 	Ship = Cast<ABaseShip>(GetOwner());
 	GridHalfSize = FIntPoint(250);
 	
-	PartGrid = FPartGrid();
+	PartGrid = TGridMap<FPartData>();
 	if (!GridScale)
 	{
 		GridScale = 1;
@@ -139,7 +139,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 					}
 					//set PartGrid and material
 					Ship->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
-					Cast<AShipPlayerState>(Ship->GetPlayerState())->ShipBlueprint
+					//Cast<AShipPlayerState>(Ship->GetPlayerState())->ShipBlueprint
 					UE_LOG(LogTemp, Warning, TEXT("Added: %s"), *Part->GetFName().ToString());
 				}
 			}
@@ -882,7 +882,7 @@ const float UPartGridComponent::CalcMass()
 }
 
 //Gets the PartGrid Map
-FPartGrid UPartGridComponent::GetPartGrid()
+TGridMap<FPartData> UPartGridComponent::GetPartGrid()
 {
 	return PartGrid;
 }
@@ -937,14 +937,15 @@ bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> Desi
 }
 
 //Returns true if StartPoint and EndPoint are connected via PartGrid
-bool UPartGridComponent::PointsConnected(FPartGrid Grid, FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality)
+bool UPartGridComponent::PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality)
 {
 	//Initate Conectiveity Array
 	TArray<FIntPoint> ConectivityArray = TArray<FIntPoint>();
-	return PointsConnected(Grid, StartPoint, EndPoint, ConectivityArray, TestForFunctionality);
+	return PointsConnected(StartPoint, EndPoint, ConectivityArray, TestForFunctionality);
 }
-bool UPartGridComponent::PointsConnected(FPartGrid Grid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality)
+bool UPartGridComponent::PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality)
 {
+	TGridMap<FPartData> Grid = PartGrid;
 	//Detect if funtion has reached target
 	if (StartPoint == EndPoint)
 	{
@@ -984,7 +985,7 @@ bool UPartGridComponent::PointsConnected(FPartGrid Grid, FIntPoint StartPoint, F
 	return ReturnValue;
 }
 
-TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape, FPartGrid ConnectedPartsMap, bool CheckFunctionality)
+TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality)
 {
 
 	//New shape will return the entire connected shape, indcluding the starting shape

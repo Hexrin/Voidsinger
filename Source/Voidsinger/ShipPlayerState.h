@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
-#include "Parts/PartGridComponent.h"
+#include "VoidsingerTypes.h"
+#include "Parts/BasePart.h"
 #include "ShipPlayerState.generated.h"
 
 /**
  * 
  */
-USTRUCT()
-stuct VOIDSINGER_API FShipBlueprintInfo
 
 UCLASS()
 class VOIDSINGER_API AShipPlayerState : public APlayerState
@@ -19,9 +18,8 @@ class VOIDSINGER_API AShipPlayerState : public APlayerState
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY()
-	FPartGrid ShipBlueprint;
+	TGridMap<TSubclassOf<UBasePart>> ShipBlueprint;
 
-	UFUNCTION()
-	TArray<FPartData> GetParts();
+	/*UFUNCTION()
+	TArray<FPartData> GetParts();*/
 };

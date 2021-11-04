@@ -161,35 +161,31 @@ struct FTextureDataTable : public FTableRowBase
 
 };
 
-template <class T>
-class VOIDSINGER_API TGridMap
+template <class ValueType>
+class TGridMap
 {
-	GENERATED_BODY()
 
-protected:
-	UPROPERTY()
+public:
 	TSet<FIntPoint> ValidLocations;
 
-	UPROPERTY()
-	TArray<T> Values;
+	TArray<ValueType> Values;
 
-	UPROPERTY()
 	int32 GridHalfSize = 250;
 public:
-	FPartGrid()
+	TGridMap()
 	{
-		FPartGrid(TSet<FIntPoint>(), TArray<T>());
+		TGridMap(TSet<FIntPoint>(), TArray<ValueType>());
 	}
 
-	FPartGrid(TSet<FIntPoint> Locations, TArray<T> MapValues, int GridHalfSize = 250)
+	TGridMap(TSet<FIntPoint> Locations, TArray<ValueType> MapValues, int GridHalfSize = 250)
 	{
-		Locations.SetNum(MapValues.Num());
+		MapValues.SetNum(Locations.Num());
 		ValidLocations = Locations;
 		Values = MapValues;
 		GridHalfSize = GridHalfSize;
 	}
 
-	T Emplace(FIntPoint Location, T Value)
+	ValueType Emplace(FIntPoint Location, ValueType Value)
 	{
 		if (ValidLocations.Num() == 0)
 		{
@@ -225,7 +221,7 @@ public:
 		return BinarySearch(LocationToRelativeValue(Location)) >= 0;
 	}
 
-	T FindRef(FIntPoint Location)
+	ValueType FindRef(FIntPoint Location)
 	{
 		int32 Index = BinarySearch(LocationToRelativeValue(Location));
 		if (Index >= 0)
@@ -233,10 +229,10 @@ public:
 			return Values[Index];
 		}
 
-		return T();
+		return ValueType();
 	}
 
-	T* Find(FIntPoint Location)
+	ValueType* Find(FIntPoint Location)
 	{
 		int32 Index = BinarySearch(LocationToRelativeValue(Location));
 		if (Index >= 0)
@@ -251,7 +247,7 @@ public:
 		return ValidLocations.Num();
 	}
 
-	TArray<T> GetValueArray()
+	TArray<ValueType> GetValueArray()
 	{
 		return Values;
 	}
@@ -266,10 +262,62 @@ public:
 		return ValidLocations[Index];
 	}
 
-	T& ValueAtIndex(int32 Index)
+	ValueType& ValueAtIndex(int32 Index)
 	{
 		return Values[Index];
 	}
+
+
+	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, BianaryPredicate SortCondition)
+	{
+		//Initate Conectiveity Array
+		TArray<FIntPoint> ConectivityArray = TArray<FIntPoint>();
+		return PointsConnected(StartPoint, EndPoint, ConectivityArray, TestForFunctionality);
+	}
+	bool UPartGridComponent::PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality)
+	{
+		TGridMap<FPartData> Grid = PartGrid;
+		//Detect if funtion has reached target
+		if (StartPoint == EndPoint)
+		{
+			return true;
+		}
+
+		//Prevent Infinte Loops
+		ConnectivityArray.Emplace(StartPoint);
+
+		//Initate Variables
+		bool ReturnValue = false;
+		const bool IsXCloser = abs((EndPoint - StartPoint).X) < abs((EndPoint - StartPoint).Y);
+		bool XIsPosive = (EndPoint - StartPoint).X > 0;
+		bool YIsPosive = (EndPoint - StartPoint).Y > 0;
+		//UE_LOG(LogTemp, Warning, TEXT("Direction x=%i, y=%i"), (EndPoint - StartPoint).X, (EndPoint - StartPoint).Y);
+
+
+		//Iterate though and run recursive function for all adjecent pixels
+		for (int i = 0; i < 4; i++)
+		{
+			//Select next pixel to scan based of of direction to EndPoint
+			FIntPoint TargetPoint = (!IsXCloser ^ (i % 2 == 1)) ? FIntPoint((XIsPosive ^ (i > 1)) ? 1 : -1, 0) : FIntPoint(0, (YIsPosive ^ (i > 1)) ? 1 : -1);
+			//UE_LOG(LogTemp, Warning, TEXT("Target Point x=%i, y=%i, Xclose=%i, Xpos=%i, Ypos=%i"), TargetPoint.X, TargetPoint.Y, (IsXCloser ^ (i % 2 == 1)) ? 1 : 0, !(XIsPosive ^ (i > 1)) ? 1 : 0, !(YIsPosive ^ (i > 1)) ? 1 : 0);
+
+			//Scan Pixel
+			if (!ConnectivityArray.Contains(StartPoint + TargetPoint) && Grid.Contains(StartPoint + TargetPoint) && (!TestForFunctionality || Grid.Find(StartPoint + TargetPoint)->Part->IsPixelFunctional(StartPoint + TargetPoint)))
+			{
+				ReturnValue = PointsConnected(Grid, StartPoint + TargetPoint, EndPoint, ConnectivityArray);
+				if (ReturnValue)
+				{
+					break;
+				}
+			}
+		}
+
+
+		return ReturnValue;
+	}
+
+
+
 private:
 	const int32 BinarySearch(int32 TargetValue)
 	{

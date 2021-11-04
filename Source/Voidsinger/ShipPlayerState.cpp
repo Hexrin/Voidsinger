@@ -3,7 +3,7 @@
 
 #include "ShipPlayerState.h"
 
-TArray<FPartData> AShipPlayerState::GetParts()
-{
-	return ShipBlueprint.GetValueArray();
-}
+//TArray<FPartData> AShipPlayerState::GetParts()
+//{
+//	return Cast<TArray<FPartData>>(ShipBlueprint.GetValueArray());
+//}

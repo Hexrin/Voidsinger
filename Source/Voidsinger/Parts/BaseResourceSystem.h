@@ -44,8 +44,7 @@ public:
 	virtual class UWorld* GetWorld() const override;
 
 	//Gets a FIntPoint to FPartData map from a list of UBaseParts. FIntPoints will be the pixel locations of the UBaseParts. 
-	UFUNCTION()
-	FPartGrid GetMapFromConnectedParts();
+	TGridMap<FPartData> GetMapFromConnectedParts();
 
 	UFUNCTION(BlueprintPure)
 	float GetResourceAmount();

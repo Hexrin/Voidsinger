@@ -83,7 +83,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 			//For each in NumbersFound.Num() - 1 because of how PointsConnected works
 			for (int i = 0; i < NumbersFound.Num() - 1; i++)
 			{
-				FPartGrid ConnectedPartsMap = GetMapFromConnectedParts();
+				TGridMap<FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
 				if (ConnectedPartsMap.Contains(NumbersFound[i]) && ConnectedPartsMap.Contains(NumbersFound[i + 1]))
 				{
 					//This needs to be improved, but right now it checks if the current index is connected to the next index.
@@ -191,9 +191,9 @@ UWorld* UBaseResourceSystem::GetWorld() const
 	}
 }
 
-FPartGrid UBaseResourceSystem::GetMapFromConnectedParts()
+TGridMap<FPartData> UBaseResourceSystem::GetMapFromConnectedParts()
 {
-	FPartGrid Temp;
+	TGridMap<FPartData> Temp;
 	for (auto& i : ConnectedParts)
 	{
 		for (auto& j : i->GetShape())

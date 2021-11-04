@@ -164,7 +164,7 @@ bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult
 		FQuat DeltaRot = NewTransform.GetRelativeTransform(Start).GetRotation();
 		FVector DeltaTranslation = NewTransform.GetTranslation() - Start.GetTranslation();
 
-		FPartGrid Grid = Ship->PartGrid->GetPartGrid();
+		TGridMap<FPartData> Grid = Ship->PartGrid->GetPartGrid();
 		for (int i = 0; i < Grid.Num(); i++)
 		{
 			FVector StartLoc = FVector(FVector2D(Grid.LocationAtIndex(i)).GetRotated(Ship->GetActorRotation().Yaw), 0) + Ship->GetActorLocation();

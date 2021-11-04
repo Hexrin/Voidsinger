@@ -18,7 +18,6 @@ class UBaseThrusterPart;
 class UCorePart;
 
 
-
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FPartData
 {
@@ -170,8 +169,8 @@ public:
 	UFUNCTION(BlueprintPure)
 	const float CalcMass();
 
-	UFUNCTION(BlueprintPure)
-	FPartGrid GetPartGrid();
+	//UFUNCTION(BlueprintPure)
+	TGridMap<FPartData> GetPartGrid();
 
 	UFUNCTION(BlueprintPure)
 	const float GetPartGridScale();
@@ -181,18 +180,21 @@ public:
 
 	//Misc
 
+	UFUNCTION(BlueprintPure)
+	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality = false);
+	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality = false);
+
 	UFUNCTION()
 	void UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePart> PartType);
 
 public:
-	
+
 
 
 private:
 	UPROPERTY()
 	ABaseShip* Ship;
 
-	UPROPERTY()
 	TGridMap<FPartData> PartGrid;
 
 	UPROPERTY()
@@ -232,12 +234,8 @@ private:
 	/*Static Functions*\
 	\*----------------*/
 public:
-	UFUNCTION(BlueprintPure)
-	static bool PointsConnected(FPartGrid Grid, FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality = false);
-	static bool PointsConnected(FPartGrid Grid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality = false);
 
 	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
-	UFUNCTION()
-	static TArray<FIntPoint> FindConnectedShape(TArray<FIntPoint> Shape, FPartGrid ConnectedPartsMap, bool CheckFunctionality = false);
+	static TArray<FIntPoint> FindConnectedShape(TArray<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality = false);
 
 };
