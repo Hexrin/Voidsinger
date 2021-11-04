@@ -6,6 +6,7 @@
 #include "BaseThrusterPart.h"
 #include "CorePart.h"
 #include "BaseFreespacePart.h"
+#include "Voidsinger/ShipPlayerState.h"
 #include "Voidsinger/Ships/BaseShip.h"
 
 // Sets default values for this component's properties
@@ -83,11 +84,14 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 		FArrayBounds PartBounds = Part->GetPartBounds();
 
 		//Detect if placement is in valid position
-		if (GridHalfSize.X >= Location.X + PartBounds.UpperBounds.X && -GridHalfSize.X <= Location.X + PartBounds.LowerBounds.X
+		if 
+		(
+			GridHalfSize.X >= Location.X + PartBounds.UpperBounds.X && -GridHalfSize.X <= Location.X + PartBounds.LowerBounds.X
 			&&
 			GridHalfSize.Y >= Location.Y + PartBounds.UpperBounds.Y && -GridHalfSize.Y <= Location.Y + PartBounds.LowerBounds.Y
 			&&
-			(bAlwaysPlace || CanShapeFit(Location, DesiredShape)))
+			(bAlwaysPlace || CanShapeFit(Location, DesiredShape))
+		)
 		{
 
 			//Update GridBounds
@@ -135,6 +139,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 					}
 					//set PartGrid and material
 					Ship->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
+					Cast<AShipPlayerState>(Ship->GetPlayerState())->ShipBlueprint
 					UE_LOG(LogTemp, Warning, TEXT("Added: %s"), *Part->GetFName().ToString());
 				}
 			}
