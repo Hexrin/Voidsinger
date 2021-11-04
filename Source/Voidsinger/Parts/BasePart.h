@@ -54,8 +54,12 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void BeginPlay();
 
+
+private:
+	bool bHasFunctionalityBeenInitialized{ false };
 	//Interface
 	virtual void Activate() override;
+
 
 	/*--------Tick--------*\
 	\*--------------------*/
@@ -187,6 +191,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DestroyPixel(FIntPoint RelativeLoc);
 
+	UFUNCTION()
+	void ConnectToSystems();
+
 	//Creates a new resource system that the part is a part of
 	UFUNCTION(BlueprintCallable)
 	void CreateNewSystem(TEnumAsByte<EResourceType> ResourceType);
@@ -266,6 +273,8 @@ private:
 
 	//UPROPERTY()
 	bool bIsBeingDestroyed;
+
+
 
 	/*Instanced  Variables*\
 	\*--------------------*/
