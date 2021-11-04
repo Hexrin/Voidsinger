@@ -19,6 +19,7 @@ class UBaseResourceSystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, DamageMultiplier, float, DurationMultiplier);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*, AddedVoidsong);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActivatePartsDelegate, const TArray<TEnumAsByte<EFactions>>&, Factions, const TArray<TSubclassOf<UObject>>&, NounClasses);
 
 UCLASS()
 class VOIDSINGER_API ABaseShip : public APawn
@@ -90,20 +91,20 @@ public:
 	UFUNCTION()
 	void DurationDelay();
 
-	/*-Ship Creation-*\
-	\*---------------*/
-
 	//Creates Voidsong objects with the given classes of Voidsongs and adds them to the AvaialableVoidsongs. Will be useful for loading from a save game.
 	UFUNCTION(BlueprintCallable)
 	void LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs);
 
+	//Event dispatcher for activating the parts on the ship.
+	UFUNCTION(BlueprintCallable)
+	void BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses);
+
+	/*-Ship Creation-*\
+	\*---------------*/
+
 	//Saves the current part grid to the class defaults of the ClassCurrentlyEditing.
 	UFUNCTION(BlueprintCallable)
 	void SaveEditorShip();
-
-	//Event dispatcher for laser.
-	UFUNCTION(BlueprintCallable)
-	void CallLaser(float DamageMultiplier, float DurationMultiplier);
 
 	/*-Misc-*\
 	\-------*/
@@ -111,6 +112,10 @@ public:
 	//Gets the faction of the ship
 	UFUNCTION(BlueprintPure)
 	TEnumAsByte<EFactions> GetFaction();
+
+	//Event dispatcher for laser.
+	UFUNCTION(BlueprintCallable)
+	void CallLaser(float DamageMultiplier, float DurationMultiplier);
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||
@@ -133,6 +138,10 @@ public:
 	//For the add voidsong event dispatcher
 	UPROPERTY(BlueprintAssignable)
 	FAddVoidsongDelegate OnAddVoidsongDelegate;
+
+	//For firing parts on the ship
+	UPROPERTY(BlueprintAssignable)
+	FActivatePartsDelegate OnActivatePartsDelegate;
 
 private:
 

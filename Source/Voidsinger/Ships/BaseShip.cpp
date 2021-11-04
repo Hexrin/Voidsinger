@@ -230,6 +230,13 @@ void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
 	}
 }
 
+void ABaseShip::BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses)
+{
+	TArray<TEnumAsByte<EFactions>> Temp;
+	Temp.Emplace(GetFaction());
+	OnActivatePartsDelegate.Broadcast(Temp, NounClasses);
+}
+
 void ABaseShip::CallLaser(float DamageMultiplier, float DurationMultiplier)
 {
 	OnLaserDelegate.Broadcast(DamageMultiplier, DurationMultiplier);

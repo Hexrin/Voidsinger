@@ -203,7 +203,7 @@ public:
 	void AddToSystem(UBaseResourceSystem* System);
 
 	//Function called when FVoidsongDelegate is broadcasted
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses);
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
