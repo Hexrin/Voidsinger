@@ -114,23 +114,28 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 					if (PartAsFreeform)
 					{
 
-						for (FIntPoint j = FIntPoint(1, 0); j.Y != -1; j = (j * -1).X == 1 ? FIntPoint(0, 1) : (j * -1))
+						for (int32 j = 0; j < 4; j++)
 						{
-							UE_LOG(LogTemp, Warning, TEXT("J = %s"), *j.ToString());
-							if (PartGrid.Contains(Location + j))
+							FIntPoint CheckLocation = (((j % 2 == 0)) ? FIntPoint(((j > 1)) ? 1 : -1, 0) : FIntPoint(0, ((j > 1)) ? 1 : -1)) + Location;
+							if (PartGrid.Contains(CheckLocation))
 							{
-								UBaseFreespacePart* PartToMergeWith = Cast<UBaseFreespacePart>(PartGrid.Find(Location + j)->Part);
+								UBaseFreespacePart* PartToMergeWith = Cast<UBaseFreespacePart>(PartGrid.Find(CheckLocation)->Part);
 								if (PartToMergeWith)
 								{
 									Part->ConnectToSystems();
 									PartToMergeWith->MergeParts(PartAsFreeform);
 									Part = PartToMergeWith;
 								}
+								else
+								{
+									DrawDebugPoint(GetWorld(), FVector(Location, 1), 5, FColor::Silver, true);
+								}
 							}
 						}
 					}
 					//set PartGrid and material
 					Ship->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
+					UE_LOG(LogTemp, Warning, TEXT("Added: %s"), *Part->GetFName().ToString());
 				}
 			}
 			Part->InitializeFunctionality();
