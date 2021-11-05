@@ -7,6 +7,10 @@
 
 void UBaseFreespacePart::MergeParts(UBaseFreespacePart* Other)
 {
-	ActualShape += Other->GetShape();
+	FIntPoint RelativeLoc = Other->GetPartGridLocation() - GetPartGridLocation();
+	for (FIntPoint PixelLoc : Other->GetShape())
+	{
+		ActualShape.Emplace(PixelLoc + RelativeLoc);
+	}
 	Other->DestroyPart();
 }
