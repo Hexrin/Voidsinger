@@ -82,8 +82,8 @@ void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 
     //Move
-    InputComponent->BindAction("InvertStrafeDirection", IE_Pressed, this, &APlayerShip::InvertMoveDirection);
-    InputComponent->BindAction("InvertStrafeDirection", IE_Released, this, &APlayerShip::InvertMoveDirection);
+    InputComponent->BindAction("ToggleStrafe", IE_Pressed, this, &APlayerShip::InvertMoveDirection);
+    InputComponent->BindAction("ToggleStrafe", IE_Released, this, &APlayerShip::InvertMoveDirection);
     InputComponent->BindAxis("MoveForward");
     InputComponent->BindAxis("MoveRight");
 }
