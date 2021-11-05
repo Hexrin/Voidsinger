@@ -47,7 +47,7 @@ public:
 
 	//Destroys the part. Does not call the blueprint funciton
 	UFUNCTION()
-	void DestroyPart();
+	virtual void DestroyPart();
 
 protected:
 	//Begin Play for use in blueprints

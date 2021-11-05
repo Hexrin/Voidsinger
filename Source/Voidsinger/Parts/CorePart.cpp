@@ -29,4 +29,11 @@ UCorePart::UCorePart()
 	DesiredShape.Emplace(FIntPoint(0, -2));
 	DesiredShape.Emplace(FIntPoint(-1, -2));
 	DesiredShape.Emplace(FIntPoint(-2, -2));
+
+}
+
+void UCorePart::DestroyPart()
+{
+	CoreDestroyed();
+	Super::DestroyPart();
 }

@@ -17,4 +17,12 @@ class VOIDSINGER_API UCorePart : public UBasePart
 	//Constructor
 	UCorePart();
 
+	virtual void DestroyPart() override;
+
+protected:
+
+	//Death event for demo
+	UFUNCTION(BlueprintImplementableEvent)
+	void CoreDestroyed();
+
 };
