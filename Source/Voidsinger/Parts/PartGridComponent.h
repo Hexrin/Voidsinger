@@ -115,15 +115,11 @@ public:
 	void Remove(FIntPoint Location)
 	{
 		int32 RemovalIndex = BinarySearch(LocationToRelativeValue(Location));
-		if (ValidLocations.Contains(RemovalIndex))
-		{
-			ValidLocations.RemoveAt(RemovalIndex);
-			Parts.RemoveAt(RemovalIndex);
-		}		
+		Remove(RemovalIndex);
 	}
 	void Remove(int32 Index)
 	{
-		if (ValidLocations.Contains(Index))
+		if (ValidLocations.IsValidIndex(Index))
 		{
 			ValidLocations.RemoveAt(Index);
 			Parts.RemoveAt(Index);
