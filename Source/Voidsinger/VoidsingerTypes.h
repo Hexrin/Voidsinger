@@ -166,7 +166,7 @@ class TGridMap
 {
 
 public:
-	TSet<FIntPoint> ValidLocations;
+	TArray<FIntPoint> ValidLocations;
 
 	TArray<ValueType> Values;
 
@@ -176,11 +176,19 @@ public:
 	{
 		TGridMap(TSet<FIntPoint>(), TArray<ValueType>());
 	}
+	
+	TGridMap(TSet<FIntPoint> Locations, ValueType MapValue, int GridHalfSize = 250)
+	{
+		TArray<ValueType> MapValues = TArray<ValueType>();
+		MapValues.Init(MapValue, Locations.Num());
+		TGridMap(Locations, MapValues, GridHalfSize);
+		
+	}
 
 	TGridMap(TSet<FIntPoint> Locations, TArray<ValueType> MapValues, int GridHalfSize = 250)
 	{
 		MapValues.SetNum(Locations.Num());
-		ValidLocations = Locations;
+		ValidLocations = Locations.Array();
 		Values = MapValues;
 		GridHalfSize = GridHalfSize;
 	}
@@ -267,14 +275,16 @@ public:
 		return Values[Index];
 	}
 
-
-	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, BianaryPredicate SortCondition)
+	template<typename BinaryPredicate>
+	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, BinaryPredicate ConectivityCondition)
 	{
 		//Initate Conectiveity Array
 		TArray<FIntPoint> ConectivityArray = TArray<FIntPoint>();
-		return PointsConnected(StartPoint, EndPoint, ConectivityArray, TestForFunctionality);
+		return PointsConnected(StartPoint, EndPoint, ConectivityArray, ConectivityCondition);
 	}
-	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, BianaryPredicate SortCondition)
+
+	template<typename BinaryPredicate>
+	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, BinaryPredicate ConectivityCondition)
 	{
 		TGridMap<FPartData> Grid = PartGrid;
 		//Detect if funtion has reached target
@@ -298,13 +308,13 @@ public:
 		for (int i = 0; i < 4; i++)
 		{
 			//Select next pixel to scan based of of direction to EndPoint
-			FIntPoint TargetPoint = (!IsXCloser ^ (i % 2 == 1)) ? FIntPoint((XIsPosive ^ (i > 1)) ? 1 : -1, 0) : FIntPoint(0, (YIsPosive ^ (i > 1)) ? 1 : -1);
+			FIntPoint TargetPoint = StartPoint + (!IsXCloser ^ (i % 2 == 1)) ? FIntPoint((XIsPosive ^ (i > 1)) ? 1 : -1, 0) : FIntPoint(0, (YIsPosive ^ (i > 1)) ? 1 : -1);
 			//UE_LOG(LogTemp, Warning, TEXT("Target Point x=%i, y=%i, Xclose=%i, Xpos=%i, Ypos=%i"), TargetPoint.X, TargetPoint.Y, (IsXCloser ^ (i % 2 == 1)) ? 1 : 0, !(XIsPosive ^ (i > 1)) ? 1 : 0, !(YIsPosive ^ (i > 1)) ? 1 : 0);
 
 			//Scan Pixel
-			if (!ConnectivityArray.Contains(StartPoint + TargetPoint) && Grid.Contains(StartPoint + TargetPoint) && (!TestForFunctionality || Grid.Find(StartPoint + TargetPoint)->Part->IsPixelFunctional(StartPoint + TargetPoint)))
+			if (!ConnectivityArray.Contains(TargetPoint) && Grid.Contains(TargetPoint) && ConectivityCondition(Grid.Find(TargetPoint), TargetPoint))
 			{
-				ReturnValue = PointsConnected(Grid, StartPoint + TargetPoint, EndPoint, ConnectivityArray);
+				ReturnValue = PointsConnected(Grid, TargetPoint, EndPoint, ConnectivityArray);
 				if (ReturnValue)
 				{
 					break;

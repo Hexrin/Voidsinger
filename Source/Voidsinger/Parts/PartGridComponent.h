@@ -182,7 +182,6 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality = false);
-	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality = false);
 
 	UFUNCTION()
 	void UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePart> PartType);

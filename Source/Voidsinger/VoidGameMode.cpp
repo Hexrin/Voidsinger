@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "VoidGameMode.h"
 #include "ShipPlayerState.h"
 #include "Ships/PlayerShip.h"
-#include "VoidGameMode.h"
+
 
 void IActivateInterface::Activate()
 {

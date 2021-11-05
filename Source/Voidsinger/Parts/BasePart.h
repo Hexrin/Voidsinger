@@ -167,9 +167,9 @@ public:
 	UFUNCTION()
 	bool IsFunctional();
 
-	//returns true if pixel at loc is functional
-	UFUNCTION()
-	bool IsPixelFunctional(FIntPoint Loc);
+	//returns true if pixel at loc is functional on Part
+	template<class PartObject>
+	static bool IsPixelFunctional(PartObject* Part, FIntPoint Loc);
 
 	/*---Misc. Functions--*\
 	\*--------------------*/

@@ -88,7 +88,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 				{
 					//This needs to be improved, but right now it checks if the current index is connected to the next index.
 					//actually it might not need to be improved but i need to think about it
-					if (!UPartGridComponent::PointsConnected(ConnectedPartsMap, NumbersFound[i], NumbersFound[i + 1]), true)
+					if (!ConnectedPartsMap.PointsConnected(NumbersFound[i], NumbersFound[i + 1], UBasePart::IsPixelFunctional))
 					{
 						//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
 						//also not be connected.
