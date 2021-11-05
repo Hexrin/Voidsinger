@@ -156,7 +156,7 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 
 		if (!Factions.IsEmpty() || !Nouns.IsEmpty() || !Verbs.IsEmpty())
 		{
-			Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs);
+			Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs, AvailableVoidsongs);
 		}
 
 		UE_LOG(LogTemp, Warning, TEXT("duration %f"), Duration);
@@ -234,7 +234,7 @@ void ABaseShip::BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounC
 {
 	TArray<TEnumAsByte<EFactions>> Temp;
 	Temp.Emplace(GetFaction());
-	OnActivatePartsDelegate.Broadcast(Temp, NounClasses);
+	OnActivatePartsDelegate.Broadcast(Temp, NounClasses, AvailableVoidsongs);
 }
 
 void ABaseShip::CallLaser(float DamageMultiplier, float DurationMultiplier)

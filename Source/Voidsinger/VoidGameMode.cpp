@@ -24,10 +24,10 @@ void AVoidGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActiv
 	}
 }
 
-void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs)
+void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs)
 {
 	VerbsActive = Verbs;
-	OnVoidsongDelegate.Broadcast(Factions, NounClasses);
+	OnVoidsongDelegate.Broadcast(Factions, NounClasses, AvailableVoidsongs);
 }
 
 void AVoidGameMode::UnsetVerbs()
