@@ -368,7 +368,7 @@ void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float H
 
 void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float ExplosionRadius)
  {
-	UE_LOG(LogTemp, Warning, TEXT("explodd but part grid"))
+	//UE_LOG(LogTemp, Warning, TEXT("explodd but part grid"))
 	FVector FloatRelativeLoc = UKismetMathLibrary::InverseTransformLocation(GetOwner()->GetActorTransform(), WorldLocation) + FVector(Ship->PhysicsComponent->GetCenterOfMass(), 0);
 	float CheckX = -ExplosionRadius;
 	float CheckY = -ExplosionRadius;
@@ -592,7 +592,7 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 
 		if (IsValid(Cast<ABaseShip>(OutHit.GetActor())))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Impulse %s"), *FVector2D(EndLocation.X - WorldLocation.X, EndLocation.Y - WorldLocation.Y).ToString())
+			//UE_LOG(LogTemp, Warning, TEXT("Impulse %s"), *FVector2D(EndLocation.X - WorldLocation.X, EndLocation.Y - WorldLocation.Y).ToString())
 			Cast<ABaseShip>(OutHit.GetActor())->PhysicsComponent->AddImpulse(FVector2D(EndLocation.X - WorldLocation.X, EndLocation.Y - WorldLocation.Y) * 2, FVector2D(WorldLocation));
 		}
 	}
