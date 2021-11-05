@@ -216,9 +216,10 @@ float ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<
 
 void ABaseShip::DurationDelay()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Can Activate again"))
+	//UE_LOG(LogTemp, Warning, TEXT("Can Activate again"))
 	CanActivateVoidsong = true;
 	Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->UnsetVerbs();
+	OnUnsetVerbsDelegate.Broadcast();
 }
 
 void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)

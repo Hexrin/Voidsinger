@@ -32,6 +32,7 @@ void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TS
 
 void AVoidGameMode::UnsetVerbs()
 {
+	UE_LOG(LogTemp, Warning, TEXT("UnsetVerbs"));
 	for (auto& i : VerbsActive)
 	{
 		i->Deactivate();
@@ -46,4 +47,9 @@ void AVoidGameMode::UnsetVerbs()
 FVoidsongDelegate AVoidGameMode::GetVoidsongDelegate()
 {
 	return OnVoidsongDelegate;
+}
+
+TArray<UBaseVerbVoidsong*> AVoidGameMode::GetVerbsActive()
+{
+	return VerbsActive;
 }

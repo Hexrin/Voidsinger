@@ -53,6 +53,8 @@ public:
 	UFUNCTION()
 	FVoidsongDelegate GetVoidsongDelegate();
 
+	UFUNCTION(BlueprintPure)
+	TArray<UBaseVerbVoidsong*> GetVerbsActive();
 
 	UPROPERTY(BlueprintAssignable)
 	FVoidsongDelegate OnVoidsongDelegate;
