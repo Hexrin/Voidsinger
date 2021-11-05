@@ -33,6 +33,11 @@ void APlayerShip::Tick(float DeltaTime)
         WorldLocation = FMath::LinePlaneIntersection(Camera->GetComponentLocation(), Camera->GetComponentLocation() + WorldDirection * 10000, FPlane(GetActorLocation(), FVector(0, 0, 1)));
 
         SetTargetLookDirection((WorldLocation - GetActorLocation()));
+
+        FVector2D MoveInputAxis = FVector2D(!bMovementInputInvert ? GetInputAxisValue("MoveForward") : 0, bMovementInputInvert ? GetInputAxisValue("MoveRight") : 0);
+        UE_LOG(LogTemp, Warning, TEXT("InputAxis: %s"), * MoveInputAxis.ToString());
+        SetTargetMoveDirection(MoveInputAxis == FVector2D(0,0) ? FVector2D(1, 0) : MoveInputAxis);
+        SetTargetMoveSpeed(FMath::Min(MoveInputAxis.SizeSquared(), 1.f) * PlayerMaxSpeed);
     }
     
 
@@ -68,24 +73,19 @@ void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
     InputComponent->BindAction("Voidsong5", IE_Pressed, this, &APlayerShip::Voidsong5Call);
     InputComponent->BindAction("VoidsongActivate", IE_Pressed, this, &APlayerShip::ActivateVoidsong);
 
-
-    //Movement Bindings
-    InputComponent->BindAction("MoveForward", IE_Pressed, this, &APlayerShip::MoveForwardPressedCall);
-    InputComponent->BindAction("MoveBackward", IE_Pressed, this, &APlayerShip::MoveBackwardPressedCall);
-    InputComponent->BindAction("MoveRight", IE_Pressed, this, &APlayerShip::MoveRightPressedCall);
-    InputComponent->BindAction("MoveLeft", IE_Pressed, this, &APlayerShip::MoveLeftPressedCall);
-
-    InputComponent->BindAction("MoveForward", IE_Released, this, &APlayerShip::MoveForwardReleasedCall);
-    InputComponent->BindAction("MoveBackward", IE_Released, this, &APlayerShip::MoveBackwardReleasedCall);
-    InputComponent->BindAction("MoveRight", IE_Released, this, &APlayerShip::MoveRightReleasedCall);
-    InputComponent->BindAction("MoveLeft", IE_Released, this, &APlayerShip::MoveLeftReleasedCall);
-
     //Camera Bindings
     InputComponent->BindAxis("Zoom", this, &APlayerShip::ZoomAxisCall);
+    
 
     //Build Mode Bindings
     InputComponent->BindAction("ToggleBuildMode", IE_Pressed, this, &APlayerShip::ToggleBuildUICall);
 
+
+    //Move
+    InputComponent->BindAction("ToggleStrafe", IE_Pressed, this, &APlayerShip::InvertMoveDirection);
+    InputComponent->BindAction("ToggleStrafe", IE_Released, this, &APlayerShip::InvertMoveDirection);
+    InputComponent->BindAxis("MoveForward");
+    InputComponent->BindAxis("MoveRight");
 }
 
 void APlayerShip::BeginPlay()
@@ -94,7 +94,7 @@ void APlayerShip::BeginPlay()
 
     //Spawns the voidsong instrument
     VoidsongInstrument = UGameplayStatics::SpawnSound2D(this, Cast<USoundBase>(VoidsongInstrumentAsset.LoadSynchronous()));
-
+    SetTargetMoveDirection(FVector2D(1, 0));
     
 }
 
@@ -142,62 +142,6 @@ void APlayerShip::Voidsong4Call()
 void APlayerShip::Voidsong5Call()
 {
     AddVoidsongInput(5);
-}
-
-void APlayerShip::MoveForwardPressedCall()
-{
-    if (!bBuildMode)
-    {
-        SetTargetMoveSpeed(PlayerMaxSpeed);
-        SetTargetMoveDirection(FVector2D(1, 0));
-    }
-}
-
-void APlayerShip::MoveBackwardPressedCall()
-{
-    if (!bBuildMode)
-    {
-        SetTargetMoveSpeed(PlayerMaxSpeed);
-        SetTargetMoveDirection(FVector2D(-1, 0));
-    }
-}
-
-void APlayerShip::MoveRightPressedCall()
-{
-    if (!bBuildMode)
-    {
-        SetTargetMoveSpeed(PlayerMaxSpeed);
-        SetTargetMoveDirection(FVector2D(0, 1));
-    }
-}
-
-void APlayerShip::MoveLeftPressedCall()
-{
-    if (!bBuildMode)
-    {
-        SetTargetMoveSpeed(PlayerMaxSpeed);
-        SetTargetMoveDirection(FVector2D(0, -1));
-    }
-}
-
-void APlayerShip::MoveForwardReleasedCall()
-{
-    SetTargetMoveSpeed(0);
-}
-
-void APlayerShip::MoveBackwardReleasedCall()
-{
-    SetTargetMoveSpeed(0);
-}
-
-void APlayerShip::MoveRightReleasedCall()
-{
-    SetTargetMoveSpeed(0);
-}
-
-void APlayerShip::MoveLeftReleasedCall()
-{
-    SetTargetMoveSpeed(0);
 }
 
 void APlayerShip::AddCameraLocation(FVector2D DeltaLoc)
@@ -288,6 +232,11 @@ void APlayerShip::ResetVoidsong()
     ShouldResetVoidsongTimerTick = false;
 
     OnResetVoidsongDelegate.Broadcast();
+}
+
+void APlayerShip::InvertMoveDirection()
+{
+    bMovementInputInvert = !bMovementInputInvert;
 }
 
 

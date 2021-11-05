@@ -118,36 +118,19 @@ public:
 	void ResetVoidsong();
 
 
-	/*-Movement Bindings-*\
-	\*-------------------*/
+	/*-----Movement-----*\
+	\*------------------*/
 public:
 	UFUNCTION()
-	void MoveForwardPressedCall();
-
-	UFUNCTION()
-	void MoveBackwardPressedCall();
-
-	UFUNCTION()
-	void MoveRightPressedCall();
-
-	UFUNCTION()
-	void MoveLeftPressedCall();
-
-	UFUNCTION()
-	void MoveForwardReleasedCall();
-
-	UFUNCTION()
-	void MoveBackwardReleasedCall();
-
-	UFUNCTION()
-	void MoveRightReleasedCall();
-
-	UFUNCTION()
-	void MoveLeftReleasedCall();
+	void InvertMoveDirection();
 
 protected:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float PlayerMaxSpeed{ 50 };
+
+private:
+	UPROPERTY()
+	bool bMovementInputInvert{ false };
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||
@@ -156,7 +139,7 @@ protected:
 
 	/*Voidsong Timers*\
 	\*---------------*/
-
+protected:
 	//The time the player has to wait without playing to reset the Voidsong combo
 	UPROPERTY(EditDefaultsOnly)
 	float VoidsongResetDelay = 3.0;
