@@ -287,7 +287,7 @@ void APlayerShip::ResetVoidsong()
     VoidsongCombo.Empty();
     ShouldResetVoidsongTimerTick = false;
 
-    OnVoidsongInputDelegate.Broadcast(FIntArray());
+    OnResetVoidsongDelegate.Broadcast();
 }
 
 
