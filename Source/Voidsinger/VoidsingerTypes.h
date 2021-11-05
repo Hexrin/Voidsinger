@@ -274,7 +274,7 @@ public:
 		TArray<FIntPoint> ConectivityArray = TArray<FIntPoint>();
 		return PointsConnected(StartPoint, EndPoint, ConectivityArray, TestForFunctionality);
 	}
-	bool UPartGridComponent::PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality)
+	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, BianaryPredicate SortCondition)
 	{
 		TGridMap<FPartData> Grid = PartGrid;
 		//Detect if funtion has reached target
