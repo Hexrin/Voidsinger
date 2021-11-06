@@ -34,6 +34,7 @@ UCorePart::UCorePart()
 
 void UCorePart::DestroyPart()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Destroy part called"))
 	CoreDestroyed();
 	Super::DestroyPart();
 }
