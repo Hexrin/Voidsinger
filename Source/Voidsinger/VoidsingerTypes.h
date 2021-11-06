@@ -310,11 +310,11 @@ public:
 			//Select next pixel to scan based of of direction to EndPoint
 			FIntPoint TargetPoint = StartPoint + ((!IsXCloser ^ (i % 2 == 1)) ? FIntPoint((XIsPosive ^ (i > 1)) ? 1 : -1, 0) : FIntPoint(0, (YIsPosive ^ (i > 1)) ? 1 : -1));
 			//UE_LOG(LogTemp, Warning, TEXT("Target Point x=%i, y=%i, Xclose=%i, Xpos=%i, Ypos=%i"), TargetPoint.X, TargetPoint.Y, (IsXCloser ^ (i % 2 == 1)) ? 1 : 0, !(XIsPosive ^ (i > 1)) ? 1 : 0, !(YIsPosive ^ (i > 1)) ? 1 : 0);
-
+			
 			//Scan Pixel
-			if (!ConnectivityArray.Contains(TargetPoint) && Contains(TargetPoint) && ConectivityCondition(Find(TargetPoint), TargetPoint))
+			if (!ConnectivityArray.Contains(TargetPoint) && Contains(TargetPoint) && ConectivityCondition(FindRef(TargetPoint), TargetPoint))
 			{
-				ReturnValue = PointsConnected(TargetPoint, EndPoint, ConnectivityArray);
+				ReturnValue = PointsConnected(TargetPoint, EndPoint, ConnectivityArray, ConectivityCondition);
 				if (ReturnValue)
 				{
 					break;
@@ -407,3 +407,9 @@ private:
 		return ReturnValue;
 	}
 };
+
+template <class ValueType>
+static bool AlwaysConnect(ValueType Value, FIntPoint IntPoint)
+{
+	return true;
+}

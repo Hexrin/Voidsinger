@@ -240,7 +240,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 					{
 						if (PartGrid.Contains(i))
 						{
-							if (!PartGrid.PointsConnected(CorePart->GetShape()[0], i, true))
+							if (!PartGrid.PointsConnected(CorePart->GetShape()[0], i, AlwaysConnect<FPartData>))
 							{
 								TArray<FIntPoint> Temp;
 								Temp.Emplace(i);
@@ -260,7 +260,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 						//actually it might not need to be improved but i need to think about it
 						if (PartGrid.Contains(NumbersFound[i]) && PartGrid.Contains(NumbersFound[i + 1]))
 						{
-							if (!PartGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], true))
+							if (!PartGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
 							{
 								//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
 								//also not be connected.
@@ -941,11 +941,11 @@ bool UPartGridComponent::PointsConnected(FIntPoint StartPoint, FIntPoint EndPoin
 {
 	if (TestForFunctionality)
 	{
-		return PartGrid.PointsConnected(StartPoint, EndPoint, UBasePart::IsPixelFunctional<FPartData>);
+		return PartGrid.PointsConnected(StartPoint, EndPoint, IsPixelFunctional);
 	}
 	else
 	{
-		return PartGrid.PointsConnected(StartPoint, EndPoint, true);
+		return PartGrid.PointsConnected(StartPoint, EndPoint, AlwaysConnect<FPartData>);
 	}
 }
 TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality)
@@ -965,7 +965,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 				if (CheckFunctionality)
 				{
 					//And the pixel at that location is functional
-					if (UBasePart::IsPixelFunctional(ConnectedPartsMap.Find(FIntPoint(i.X + 1, i.Y))->Part, FIntPoint(i.X + 1, i.Y)))
+					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X + 1, i.Y)))
 					{
 						//Add that location to the new shape, because it is connected
 						NewShape.Emplace(FIntPoint(i.X + 1, i.Y));
@@ -985,7 +985,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 			{
 				if (CheckFunctionality)
 				{
-					if (UBasePart::IsPixelFunctional(ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part, FIntPoint(i.X - 1, i.Y)))
+					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X - 1, i.Y)))
 					{
 						NewShape.Emplace(FIntPoint(i.X - 1, i.Y));
 					}
@@ -1004,7 +1004,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 			{
 				if (CheckFunctionality)
 				{
-					if (UBasePart::IsPixelFunctional(ConnectedPartsMap.Find(FIntPoint(i.X, i.Y + 1))->Part, FIntPoint(i.X, i.Y + 1)))
+					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y + 1)))
 					{
 						NewShape.Emplace(FIntPoint(i.X, i.Y + 1));
 					}
@@ -1023,7 +1023,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 			{
 				if (CheckFunctionality)
 				{
-					if (UBasePart::IsPixelFunctional(ConnectedPartsMap.Find(FIntPoint(i.X, i.Y - 1))->Part, FIntPoint(i.X, i.Y - 1)))
+					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y - 1)))
 					{
 						NewShape.Emplace(FIntPoint(i.X, i.Y - 1));
 					}
@@ -1045,4 +1045,9 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 
 	//Once everything has figured itself out, return the New Shape
 	return NewShape;
+}
+
+bool UPartGridComponent::IsPixelFunctional(FPartData PixelValue, FIntPoint Loc)
+{
+	return PixelValue.Part->IsPixelFunctional(Loc);
 }

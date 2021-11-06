@@ -237,4 +237,5 @@ public:
 	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
 	static TArray<FIntPoint> FindConnectedShape(TArray<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality = false);
 
+	static bool IsPixelFunctional(FPartData PixelValue, FIntPoint Loc);
 };

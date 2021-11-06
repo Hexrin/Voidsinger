@@ -15,6 +15,7 @@
 class UBaseResourceSystem;
 class UBaseThrusterPart;
 class UPartGridComponent;
+struct FPartData;
 
 UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject, public IActivateInterface
@@ -168,9 +169,7 @@ public:
 	bool IsFunctional();
 
 	//returns true if pixel at loc is functional on Part
-	template<class PartObject>
-	static bool IsPixelFunctional(PartObject* Part, FIntPoint Loc);
-
+	bool IsPixelFunctional(FIntPoint Loc);
 	/*---Misc. Functions--*\
 	\*--------------------*/
 public:

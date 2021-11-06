@@ -278,20 +278,11 @@ bool UBasePart::IsFunctional()
 	return bFunctional;
 }
 
-template <class PartObject>
-bool UBasePart::IsPixelFunctional(PartObject* Part, FIntPoint Loc)
+bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 {
-	UBasePart* AsBasePart = Cast<UBasePart>(Part);
-	if (!AsBasePart)
-	{
-		AsBasePart = Cast<FPartData>(Part)->Part;
-	}
-	if (AsBasePart)
-	{
-		return AsBasePart->IsFunctional() && TGridMap<UBasePart*>(TSet<FIntPoint>(AsBasePart->GetShape()), 0).PointsConnected(Loc - AsBasePart->GetPartGridLocation(), FIntPoint(0, 0), true);
-	}
-	return false;
+	return IsFunctional() && TGridMap<bool>(TSet<FIntPoint>(GetShape()), false).PointsConnected(Loc - GetPartGridLocation(), FIntPoint(0, 0), AlwaysConnect<bool>);
 }
+
 
 /*---Misc. Functions--*\
 \*--------------------*/
