@@ -939,7 +939,14 @@ bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> Desi
 //Returns true if StartPoint and EndPoint are connected via PartGrid
 bool UPartGridComponent::PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality)
 {
-	return PartGrid.PointsConnected(StartPoint, EndPoint, TestForFunctionality ? UBasePart::IsPixelFunctional : true);
+	if (TestForFunctionality)
+	{
+		return PartGrid.PointsConnected(StartPoint, EndPoint, UBasePart::IsPixelFunctional<FPartData>);
+	}
+	else
+	{
+		return PartGrid.PointsConnected(StartPoint, EndPoint, true);
+	}
 }
 TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality)
 {

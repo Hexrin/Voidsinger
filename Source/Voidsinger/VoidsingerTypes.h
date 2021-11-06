@@ -217,7 +217,7 @@ public:
 	}
 	void Remove(int32 Index)
 	{
-		if (ValidLocations.Contains(Index))
+		if (ValidLocations.IsValidIndex(Index))
 		{
 			ValidLocations.RemoveAt(Index);
 			Values.RemoveAt(Index);
@@ -286,7 +286,7 @@ public:
 	template<typename BinaryPredicate>
 	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, BinaryPredicate ConectivityCondition)
 	{
-		TGridMap<FPartData> Grid = PartGrid;
+		
 		//Detect if funtion has reached target
 		if (StartPoint == EndPoint)
 		{
@@ -308,13 +308,13 @@ public:
 		for (int i = 0; i < 4; i++)
 		{
 			//Select next pixel to scan based of of direction to EndPoint
-			FIntPoint TargetPoint = StartPoint + (!IsXCloser ^ (i % 2 == 1)) ? FIntPoint((XIsPosive ^ (i > 1)) ? 1 : -1, 0) : FIntPoint(0, (YIsPosive ^ (i > 1)) ? 1 : -1);
+			FIntPoint TargetPoint = StartPoint + ((!IsXCloser ^ (i % 2 == 1)) ? FIntPoint((XIsPosive ^ (i > 1)) ? 1 : -1, 0) : FIntPoint(0, (YIsPosive ^ (i > 1)) ? 1 : -1));
 			//UE_LOG(LogTemp, Warning, TEXT("Target Point x=%i, y=%i, Xclose=%i, Xpos=%i, Ypos=%i"), TargetPoint.X, TargetPoint.Y, (IsXCloser ^ (i % 2 == 1)) ? 1 : 0, !(XIsPosive ^ (i > 1)) ? 1 : 0, !(YIsPosive ^ (i > 1)) ? 1 : 0);
 
 			//Scan Pixel
-			if (!ConnectivityArray.Contains(TargetPoint) && Grid.Contains(TargetPoint) && ConectivityCondition(Grid.Find(TargetPoint), TargetPoint))
+			if (!ConnectivityArray.Contains(TargetPoint) && Contains(TargetPoint) && ConectivityCondition(Find(TargetPoint), TargetPoint))
 			{
-				ReturnValue = PointsConnected(Grid, TargetPoint, EndPoint, ConnectivityArray);
+				ReturnValue = PointsConnected(TargetPoint, EndPoint, ConnectivityArray);
 				if (ReturnValue)
 				{
 					break;
