@@ -35,7 +35,7 @@ void APlayerShip::Tick(float DeltaTime)
         SetTargetLookDirection((WorldLocation - GetActorLocation()));
 
         FVector2D MoveInputAxis = FVector2D(!bMovementInputInvert ? GetInputAxisValue("MoveForward") : 0, bMovementInputInvert ? GetInputAxisValue("MoveRight") : 0);
-        UE_LOG(LogTemp, Warning, TEXT("InputAxis: %s"), * MoveInputAxis.ToString());
+        //UE_LOG(LogTemp, Warning, TEXT("InputAxis: %s"), * MoveInputAxis.ToString());
         SetTargetMoveDirection(MoveInputAxis == FVector2D(0,0) ? FVector2D(1, 0) : MoveInputAxis);
         SetTargetMoveSpeed(FMath::Min(MoveInputAxis.SizeSquared(), 1.f) * PlayerMaxSpeed);
     }
@@ -231,7 +231,7 @@ void APlayerShip::ResetVoidsong()
     VoidsongCombo.Empty();
     ShouldResetVoidsongTimerTick = false;
 
-    OnVoidsongInputDelegate.Broadcast(FIntArray());
+    OnResetVoidsongDelegate.Broadcast();
 }
 
 void APlayerShip::InvertMoveDirection()

@@ -28,14 +28,15 @@ void AVoidGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActiv
 	}
 }
 
-void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs)
+void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs)
 {
 	VerbsActive = Verbs;
-	OnVoidsongDelegate.Broadcast(Factions, NounClasses);
+	OnVoidsongDelegate.Broadcast(Factions, NounClasses, AvailableVoidsongs);
 }
 
 void AVoidGameMode::UnsetVerbs()
 {
+	UE_LOG(LogTemp, Warning, TEXT("UnsetVerbs"));
 	for (auto& i : VerbsActive)
 	{
 		i->Deactivate();
@@ -50,4 +51,9 @@ void AVoidGameMode::UnsetVerbs()
 FVoidsongDelegate AVoidGameMode::GetVoidsongDelegate()
 {
 	return OnVoidsongDelegate;
+}
+
+TArray<UBaseVerbVoidsong*> AVoidGameMode::GetVerbsActive()
+{
+	return VerbsActive;
 }

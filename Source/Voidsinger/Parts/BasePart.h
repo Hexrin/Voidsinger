@@ -48,7 +48,7 @@ public:
 
 	//Destroys the part. Does not call the blueprint funciton
 	UFUNCTION()
-	void DestroyPart();
+	virtual void DestroyPart();
 
 protected:
 	//Begin Play for use in blueprints
@@ -203,7 +203,7 @@ public:
 
 	//Function called when FVoidsongDelegate is broadcasted
 	UFUNCTION(BlueprintCallable)
-	void OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses);
+	void OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs);
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||

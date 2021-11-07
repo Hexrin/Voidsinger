@@ -19,7 +19,8 @@ class UBaseResourceSystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, DamageMultiplier, float, DurationMultiplier);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*, AddedVoidsong);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActivatePartsDelegate, const TArray<TEnumAsByte<EFactions>>&, Factions, const TArray<TSubclassOf<UObject>>&, NounClasses);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FActivatePartsDelegate, const TArray<TEnumAsByte<EFactions>>&, Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnsetVerbsDelegate);
 
 UCLASS()
 class VOIDSINGER_API ABaseShip : public APawn
@@ -161,6 +162,9 @@ public:
 	//The class that is currently being edited. This is the class that the SaveEditorShips() will change.
 	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<ABaseShip> ClassCurrentlyEditing;
+
+	UPROPERTY(BlueprintAssignable)
+	FUnsetVerbsDelegate OnUnsetVerbsDelegate;
 
 	/*-Liam, you haven't commented things in a while-*\
 	\*-----------------------------------------------*/

@@ -233,26 +233,7 @@ UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
 
 TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 {
-	//idk what this mess is and why it didn't just return resource types
-	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ReturnValue;
-	TArray<FIntPoint> IntPointArray;
-
-	for (auto& i : ResourceTypes)
-	{
-		for (auto& j : i.Value.IntPointArray)
-		{
-			if (GetShape().Contains(j))
-			{
-				IntPointArray.Emplace(j);
-			}
-		}
-		if (!IntPointArray.IsEmpty())
-		{
-			ReturnValue.Emplace(i.Key, IntPointArray);
-		}
-	}
-
-	return ReturnValue;
+	return ResourceTypes;
 }
 
 const int UBasePart::GetStrength()
@@ -381,7 +362,7 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 	}
 }
 
-void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses)
+void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs)
 {
 	/*for (auto& i : NounClasses)
 	{
@@ -390,7 +371,25 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 
 	UE_LOG(LogTemp, Warning, TEXT("part class %s"), *this->GetClass()->GetDisplayNameText().ToString())*/
 
-	if (Factions.IsEmpty() != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction()) && NounClasses.IsEmpty() != NounClasses.Contains(GetClass()))
+	// I know this is gross but I was trying to get the game playable when I made this. I realized that parts that you didn't have the Voidsong for would activate if you
+	// didn't play any nouns even though they shouldn't.
+
+	TArray<TEnumAsByte<EFactions>> AvailableFactions;
+	TArray<TSubclassOf<UObject>> AvailableNouns;
+
+	for (auto& i : AvailableVoidsongs)
+	{
+		if (IsValid(Cast<UBaseWhoVoidsong>(i)))
+		{
+			AvailableFactions.Emplace(Cast<UBaseWhoVoidsong>(i)->Faction);
+		}
+		else if (IsValid(Cast<UBaseNounVoidsong>(i)))
+		{
+			AvailableNouns.Emplace(Cast<UBaseNounVoidsong>(i)->Noun);
+		}
+	}
+
+	if (((Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) && ((NounClasses.IsEmpty() && AvailableNouns.Contains(GetClass())) != NounClasses.Contains(GetClass())))
 	{
 		if (this->Implements<UActivateInterface>())
 		{

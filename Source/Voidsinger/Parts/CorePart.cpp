@@ -29,4 +29,12 @@ UCorePart::UCorePart()
 	DesiredShape.Emplace(FIntPoint(0, -2));
 	DesiredShape.Emplace(FIntPoint(-1, -2));
 	DesiredShape.Emplace(FIntPoint(-2, -2));
+
+}
+
+void UCorePart::DestroyPart()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Destroy part called"))
+	CoreDestroyed();
+	Super::DestroyPart();
 }
