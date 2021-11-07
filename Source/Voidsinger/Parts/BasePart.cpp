@@ -256,7 +256,16 @@ UMaterialInterface* UBasePart::GetPixelMaterial()
 
 bool UBasePart::IsFunctional()
 {
-	return bFunctional;
+	//return bFunctional;
+
+	if (GetShape().Num() >= PercentFunctional * .01 * GetDesiredShape().Num())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 bool UBasePart::IsPixelFunctional(FIntPoint Loc)
