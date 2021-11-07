@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "VoidGameMode.h"
+#include "ShipPlayerState.h"
+#include "Ships/PlayerShip.h"
+
 
 void IActivateInterface::Activate()
 {
@@ -10,6 +12,8 @@ void IActivateInterface::Activate()
 AVoidGameMode::AVoidGameMode()
 {
 	//LoadConfig();
+	PlayerStateClass = AShipPlayerState::StaticClass();
+	DefaultPawnClass = APlayerShip::StaticClass();
 }
 
 void AVoidGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness)

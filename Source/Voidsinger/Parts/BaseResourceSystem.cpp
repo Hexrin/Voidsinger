@@ -83,12 +83,12 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 			//For each in NumbersFound.Num() - 1 because of how PointsConnected works
 			for (int i = 0; i < NumbersFound.Num() - 1; i++)
 			{
-				FPartGrid ConnectedPartsMap = GetMapFromConnectedParts();
+				TGridMap<FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
 				if (ConnectedPartsMap.Contains(NumbersFound[i]) && ConnectedPartsMap.Contains(NumbersFound[i + 1]))
 				{
 					//This needs to be improved, but right now it checks if the current index is connected to the next index.
 					//actually it might not need to be improved but i need to think about it
-					if (!UPartGridComponent::PointsConnected(ConnectedPartsMap, NumbersFound[i], NumbersFound[i + 1]), true)
+					if (!ConnectedPartsMap.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
 					{
 						//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
 						//also not be connected.
@@ -106,6 +106,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 		}
 	}
 }
+
 
 void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 {
@@ -191,9 +192,9 @@ UWorld* UBaseResourceSystem::GetWorld() const
 	}
 }
 
-FPartGrid UBaseResourceSystem::GetMapFromConnectedParts()
+TGridMap<FPartData> UBaseResourceSystem::GetMapFromConnectedParts()
 {
-	FPartGrid Temp;
+	TGridMap<FPartData> Temp;
 	for (auto& i : ConnectedParts)
 	{
 		for (auto& j : i->GetShape())

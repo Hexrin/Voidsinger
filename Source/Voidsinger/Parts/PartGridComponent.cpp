@@ -6,6 +6,7 @@
 #include "BaseThrusterPart.h"
 #include "CorePart.h"
 #include "BaseFreespacePart.h"
+#include "Voidsinger/ShipPlayerState.h"
 #include "Voidsinger/Ships/BaseShip.h"
 
 // Sets default values for this component's properties
@@ -21,7 +22,7 @@ UPartGridComponent::UPartGridComponent()
 	Ship = Cast<ABaseShip>(GetOwner());
 	GridHalfSize = FIntPoint(250);
 	
-	PartGrid = FPartGrid();
+	PartGrid = TGridMap<FPartData>();
 	if (!GridScale)
 	{
 		GridScale = 1;
@@ -83,11 +84,14 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 		FArrayBounds PartBounds = Part->GetPartBounds();
 
 		//Detect if placement is in valid position
-		if (GridHalfSize.X >= Location.X + PartBounds.UpperBounds.X && -GridHalfSize.X <= Location.X + PartBounds.LowerBounds.X
+		if 
+		(
+			GridHalfSize.X >= Location.X + PartBounds.UpperBounds.X && -GridHalfSize.X <= Location.X + PartBounds.LowerBounds.X
 			&&
 			GridHalfSize.Y >= Location.Y + PartBounds.UpperBounds.Y && -GridHalfSize.Y <= Location.Y + PartBounds.LowerBounds.Y
 			&&
-			(bAlwaysPlace || CanShapeFit(Location, DesiredShape)))
+			(bAlwaysPlace || CanShapeFit(Location, DesiredShape))
+		)
 		{
 
 			//Update GridBounds
@@ -135,6 +139,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 					}
 					//set PartGrid and material
 					Ship->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
+					//Cast<AShipPlayerState>(Ship->GetPlayerState())->ShipBlueprint
 					UE_LOG(LogTemp, Warning, TEXT("Added: %s"), *Part->GetFName().ToString());
 				}
 			}
@@ -235,7 +240,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 					{
 						if (PartGrid.Contains(i))
 						{
-							if (!UPartGridComponent::PointsConnected(PartGrid, CorePart->GetShape()[0], i))
+							if (!PartGrid.PointsConnected(CorePart->GetShape()[0], i, AlwaysConnect<FPartData>))
 							{
 								TArray<FIntPoint> Temp;
 								Temp.Emplace(i);
@@ -255,7 +260,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 						//actually it might not need to be improved but i need to think about it
 						if (PartGrid.Contains(NumbersFound[i]) && PartGrid.Contains(NumbersFound[i + 1]))
 						{
-							if (!UPartGridComponent::PointsConnected(PartGrid, NumbersFound[i], NumbersFound[i + 1]))
+							if (!PartGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
 							{
 								//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
 								//also not be connected.
@@ -749,20 +754,20 @@ void UPartGridComponent::DistrubuteHeat()
 				NewHeat += PartGrid.FindRef(TargetPoint + PartGrid.LocationAtIndex(j)).GetTemperature() * HeatPropagationFactor / (4);
 			}
 		}
-		NewHeat = PartGrid.PartDataAtIndex(j).GetTemperature() * (1-HeatPropagationFactor) + NewHeat;
+		NewHeat = PartGrid.ValueAtIndex(j).GetTemperature() * (1-HeatPropagationFactor) + NewHeat;
 		NewHeatMap.Emplace(PartGrid.LocationAtIndex(j), NewHeat > .05 ? NewHeat : 0);
 	}
 
 	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
 	for (int i = 0; i < PartGrid.Num(); i++)
 	{
-		if (NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)) > PartGrid.PartDataAtIndex(i).Part->GetHeatResistance())
+		if (NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)) > PartGrid.ValueAtIndex(i).Part->GetHeatResistance())
 		{
 			KeysToDestroy.Emplace(PartGrid.LocationAtIndex(i));
 		}
 		else
 		{
-			PartGrid.PartDataAtIndex(i).SetTemperature(NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)));
+			PartGrid.ValueAtIndex(i).SetTemperature(NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)));
 		}
 	}
 	for (FIntPoint Val : KeysToDestroy)
@@ -839,7 +844,7 @@ const FVector2D UPartGridComponent::CalcCenterOfMass()
 	//Iterate though Pixels and adjust center of mass
 	for (int i = 0; i < PartGrid.Num(); i++)
 	{
-		Center += FVector2D(PartGrid.LocationAtIndex(i)) * PartGrid.PartDataAtIndex(i).Part->GetMass() / Mass;
+		Center += FVector2D(PartGrid.LocationAtIndex(i)) * PartGrid.ValueAtIndex(i).Part->GetMass() / Mass;
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("cofmass?? x=%f, y=%f"), Center.X, Center.Y);
 	
@@ -853,8 +858,8 @@ const float UPartGridComponent::CalcMomentOfInertia()
 	FVector2D CenterOfMass = Ship->PhysicsComponent->GetCenterOfMass();
 	for (int i = 0; i < PartGrid.Num(); i++)
 	{
-		float PartMass = PartGrid.PartDataAtIndex(i).Part->GetMass();
-		ReturnValue += (1 / 12) + PartMass * (FVector2D(PartGrid.PartDataAtIndex(i).Part->GetPartRelativeLocation())).SizeSquared();
+		float PartMass = PartGrid.ValueAtIndex(i).Part->GetMass();
+		ReturnValue += (1 / 12) + PartMass * (FVector2D(PartGrid.ValueAtIndex(i).Part->GetPartRelativeLocation())).SizeSquared();
 	}
 	return ReturnValue;
 }
@@ -868,7 +873,7 @@ const float UPartGridComponent::CalcMass()
 	//Interate though Pixels and summate their mass
 	for (int i = 0; i < PartGrid.Num(); i++)
 	{
-		Mass += PartGrid.PartDataAtIndex(i).Part->GetMass();
+		Mass += PartGrid.ValueAtIndex(i).Part->GetMass();
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("other mass = %f"), Mass);
 
@@ -877,7 +882,7 @@ const float UPartGridComponent::CalcMass()
 }
 
 //Gets the PartGrid Map
-FPartGrid UPartGridComponent::GetPartGrid()
+TGridMap<FPartData> UPartGridComponent::GetPartGrid()
 {
 	return PartGrid;
 }
@@ -932,54 +937,18 @@ bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> Desi
 }
 
 //Returns true if StartPoint and EndPoint are connected via PartGrid
-bool UPartGridComponent::PointsConnected(FPartGrid Grid, FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality)
+bool UPartGridComponent::PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, bool TestForFunctionality)
 {
-	//Initate Conectiveity Array
-	TArray<FIntPoint> ConectivityArray = TArray<FIntPoint>();
-	return PointsConnected(Grid, StartPoint, EndPoint, ConectivityArray, TestForFunctionality);
-}
-bool UPartGridComponent::PointsConnected(FPartGrid Grid, FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, bool TestForFunctionality)
-{
-	//Detect if funtion has reached target
-	if (StartPoint == EndPoint)
+	if (TestForFunctionality)
 	{
-		return true;
+		return PartGrid.PointsConnected(StartPoint, EndPoint, IsPixelFunctional);
 	}
-
-	//Prevent Infinte Loops
-	ConnectivityArray.Emplace(StartPoint);
-
-	//Initate Variables
-	bool ReturnValue = false;
-	const bool IsXCloser = abs((EndPoint - StartPoint).X) < abs((EndPoint - StartPoint).Y);
-	bool XIsPosive = (EndPoint - StartPoint).X > 0;
-	bool YIsPosive = (EndPoint - StartPoint).Y > 0;
-	//UE_LOG(LogTemp, Warning, TEXT("Direction x=%i, y=%i"), (EndPoint - StartPoint).X, (EndPoint - StartPoint).Y);
-
-
-	//Iterate though and run recursive function for all adjecent pixels
-	for (int i = 0; i < 4; i++)
+	else
 	{
-		//Select next pixel to scan based of of direction to EndPoint
-		FIntPoint TargetPoint = (!IsXCloser ^ (i % 2 == 1)) ? FIntPoint((XIsPosive ^ (i > 1)) ? 1 : -1, 0) : FIntPoint(0, (YIsPosive ^ (i > 1)) ? 1 : -1);
-		//UE_LOG(LogTemp, Warning, TEXT("Target Point x=%i, y=%i, Xclose=%i, Xpos=%i, Ypos=%i"), TargetPoint.X, TargetPoint.Y, (IsXCloser ^ (i % 2 == 1)) ? 1 : 0, !(XIsPosive ^ (i > 1)) ? 1 : 0, !(YIsPosive ^ (i > 1)) ? 1 : 0);
-
-		//Scan Pixel
-		if (!ConnectivityArray.Contains(StartPoint + TargetPoint) && Grid.Contains(StartPoint + TargetPoint) && (!TestForFunctionality || Grid.Find(StartPoint + TargetPoint)->Part->IsPixelFunctional(StartPoint + TargetPoint)))
-		{
-			ReturnValue = PointsConnected(Grid, StartPoint + TargetPoint, EndPoint, ConnectivityArray);
-			if (ReturnValue)
-			{
-				break;
-			}
-		}
+		return PartGrid.PointsConnected(StartPoint, EndPoint, AlwaysConnect<FPartData>);
 	}
-
-
-	return ReturnValue;
 }
-
-TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape, FPartGrid ConnectedPartsMap, bool CheckFunctionality)
+TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality)
 {
 
 	//New shape will return the entire connected shape, indcluding the starting shape
@@ -996,7 +965,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 				if (CheckFunctionality)
 				{
 					//And the pixel at that location is functional
-					if (ConnectedPartsMap.Find(FIntPoint(i.X + 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X + 1, i.Y)))
+					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X + 1, i.Y)))
 					{
 						//Add that location to the new shape, because it is connected
 						NewShape.Emplace(FIntPoint(i.X + 1, i.Y));
@@ -1035,7 +1004,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 			{
 				if (CheckFunctionality)
 				{
-					if (ConnectedPartsMap.Find(FIntPoint(i.X, i.Y + 1))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y + 1)))
+					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y + 1)))
 					{
 						NewShape.Emplace(FIntPoint(i.X, i.Y + 1));
 					}
@@ -1054,7 +1023,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 			{
 				if (CheckFunctionality)
 				{
-					if (ConnectedPartsMap.Find(FIntPoint(i.X, i.Y - 1))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y - 1)))
+					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y - 1)))
 					{
 						NewShape.Emplace(FIntPoint(i.X, i.Y - 1));
 					}
@@ -1076,4 +1045,9 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 
 	//Once everything has figured itself out, return the New Shape
 	return NewShape;
+}
+
+bool UPartGridComponent::IsPixelFunctional(FPartData PixelValue, FIntPoint Loc)
+{
+	return PixelValue.Part->IsPixelFunctional(Loc);
 }

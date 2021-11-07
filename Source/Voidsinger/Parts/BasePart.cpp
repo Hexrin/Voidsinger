@@ -270,8 +270,9 @@ bool UBasePart::IsFunctional()
 
 bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 {
-	return false;
+	return IsFunctional() && TGridMap<bool>(TSet<FIntPoint>(GetShape()), false).PointsConnected(Loc - GetPartGridLocation(), FIntPoint(0, 0), AlwaysConnect<bool>);
 }
+
 
 /*---Misc. Functions--*\
 \*--------------------*/
