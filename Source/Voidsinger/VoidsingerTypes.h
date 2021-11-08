@@ -177,20 +177,20 @@ public:
 		TGridMap(TSet<FIntPoint>(), TArray<ValueType>());
 	}
 	
-	TGridMap(TSet<FIntPoint> Locations, ValueType MapValue, int GridHalfSize = 250)
+	TGridMap(TSet<FIntPoint> Locations, ValueType MapValue, int NewGridHalfSize = 250)
 	{
 		TArray<ValueType> MapValues = TArray<ValueType>();
 		MapValues.Init(MapValue, Locations.Num());
-		TGridMap(Locations, MapValues, GridHalfSize);
+		TGridMap(Locations, MapValues, NewGridHalfSize);
 		
 	}
 
-	TGridMap(TSet<FIntPoint> Locations, TArray<ValueType> MapValues, int GridHalfSize = 250)
+	TGridMap(TSet<FIntPoint> Locations, TArray<ValueType> MapValues, int NewGridHalfSize = 250)
 	{
 		MapValues.SetNum(Locations.Num());
 		ValidLocations = Locations.Array();
 		Values = MapValues;
-		GridHalfSize = GridHalfSize;
+		GridHalfSize = NewGridHalfSize;
 	}
 
 	ValueType Emplace(FIntPoint Location, ValueType Value)
