@@ -130,10 +130,6 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 									PartToMergeWith->MergeParts(PartAsFreeform);
 									Part = PartToMergeWith;
 								}
-								else
-								{
-									DrawDebugPoint(GetWorld(), FVector(Location, 1), 5, FColor::Silver, true);
-								}
 							}
 						}
 					}

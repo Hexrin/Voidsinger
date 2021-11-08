@@ -178,14 +178,14 @@ void APlayerShip::ToggleBuildUICall()
 void APlayerShip::SetBuildMode(bool NewBuildMode)
 {
     bBuildMode = NewBuildMode;
+    Camera->SetAbsolute(false, !NewBuildMode, false);
+
     if (bBuildMode)
     {
-        Camera->AddWorldRotation(GetActorQuat());
         OpenBuildMenu();
     }
     else
     {
-        Camera->AddWorldRotation(GetActorQuat().Inverse());
         CloseBuildMenu();
     }
 }
