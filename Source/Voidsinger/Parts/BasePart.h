@@ -48,7 +48,7 @@ public:
 
 	//Destroys the part. Does not call the blueprint funciton
 	UFUNCTION()
-	virtual void DestroyPart();
+	void DestroyPart();
 
 protected:
 	//Begin Play for use in blueprints
@@ -249,6 +249,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTexture2D* PartIcon;
 
+	//What percentage of pixels that have to be part of the part in order for the part to be functional
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float PercentFunctional = 50;
+
 	/*Function Return Vals*\
 	\*--------------------*/
 	//Stores the curent shape of the part acounting for damage and rotation
@@ -272,8 +276,6 @@ private:
 
 	//UPROPERTY()
 	bool bIsBeingDestroyed;
-
-
 
 	/*Instanced  Variables*\
 	\*--------------------*/
