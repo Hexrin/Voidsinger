@@ -15,7 +15,6 @@ class VOIDSINGER_API UCorePart : public UBasePart
 	GENERATED_BODY()
 
 	//Constructor
-	//Comment better -Mabel Suggestion(-Liam suggestion so I don't forget this)
 	UCorePart();
 
 };

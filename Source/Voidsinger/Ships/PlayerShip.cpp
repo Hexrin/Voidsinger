@@ -5,10 +5,10 @@
 
 APlayerShip::APlayerShip()
 {
-    //Magic -Mabel Suggestion
+    //Magic -Mabel
     Pixels=55;
     
-    //Numbers -Mabel Suggestion
+    //Numbers -Mabel
     if (!CameraHeight)
     {
         CameraHeight = FMath::GetMappedRangeValueClamped(FVector2D(0,1), FVector2D(CameraMinHeight, CameraMaxHeight), 0.5);
@@ -19,14 +19,14 @@ APlayerShip::APlayerShip()
     Camera->SetUsingAbsoluteRotation(true);
     Camera->SetRelativeLocation(FVector(0, 0, CameraHeight));
 
-    //>:( -Mabel Suggestion
+    //>:( -Mabel
     Camera->SetRelativeRotation(FRotator(-90, -90, 90));
 
     AutoPossessPlayer = EAutoReceiveInput::Player0;
 
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void APlayerShip::Tick(float DeltaTime)
 {
     if (!bBuildMode)
@@ -84,7 +84,7 @@ void APlayerShip::Tick(float DeltaTime)
     }
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -112,7 +112,7 @@ void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
     InputComponent->BindAxis("MoveRight");
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void APlayerShip::BeginPlay()
 {
     Super::BeginPlay();
@@ -123,7 +123,7 @@ void APlayerShip::BeginPlay()
     
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 TMap<TEnumAsByte<EResourceType>, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
 {
     TMap<TEnumAsByte<EResourceType>, float> Costs;
@@ -133,14 +133,14 @@ TMap<TEnumAsByte<EResourceType>, float> APlayerShip::GetTravelCost(class UStarSy
     return Costs;
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 bool APlayerShip::TravelToStarSystem(class UStarSystemData* Target)
 {
     CurrentStarSystem = Target;
     return true;
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 UStarSystemData* APlayerShip::GetCurrentStarSystem()
 {
     return CurrentStarSystem;
@@ -177,44 +177,44 @@ void APlayerShip::Voidsong5Call()
     AddVoidsongInput(5);
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void APlayerShip::AddCameraLocation(FVector2D DeltaLoc)
 {
     SetCameraLocation(FVector2D(Camera->GetRelativeLocation()) + DeltaLoc - PhysicsComponent->GetVelocity() * CameraVelocityAdjScaling);
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void APlayerShip::SetCameraLocation(FVector2D NewLoc)
 {
     Camera->SetRelativeLocation(FVector(NewLoc + PhysicsComponent->GetVelocity() * CameraVelocityAdjScaling, CameraHeight));
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void APlayerShip::SetCameraZoom(float Percent)
 {
     CameraHeight = FMath::Lerp(CameraMinHeight, CameraMaxHeight, FMath::Clamp(Percent, 0.f, 1.f));
     AddCameraLocation(FVector2D(0,0));
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 const float APlayerShip::GetCameraZoom()
 {
     return FMath::GetMappedRangeValueUnclamped(FVector2D(CameraMinHeight, CameraMaxHeight), FVector2D(0,1), CameraHeight);
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void APlayerShip::ZoomAxisCall(float AxisValue)
 {
     SetCameraZoom(GetCameraZoom() + -1 * AxisValue * CameraZoomAxisScaling);
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void APlayerShip::ToggleBuildUICall()
 {
     SetBuildMode(!IsInBuildMode());
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void APlayerShip::SetBuildMode(bool NewBuildMode)
 {
     bBuildMode = NewBuildMode;
@@ -230,7 +230,7 @@ void APlayerShip::SetBuildMode(bool NewBuildMode)
     }
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 bool APlayerShip::IsInBuildMode()
 {
     return bBuildMode;
@@ -300,10 +300,9 @@ void APlayerShip::ResetVoidsong()
     OnResetVoidsongDelegate.Broadcast();
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void APlayerShip::InvertMoveDirection()
 {
-    //I was looking for what InvertMoveDirection would do, and now I have to look for what bMovementInputInvert does.  Kind of annoying tbh. -Mabel Suggestion
     bMovementInputInvert = !bMovementInputInvert;
 }
 

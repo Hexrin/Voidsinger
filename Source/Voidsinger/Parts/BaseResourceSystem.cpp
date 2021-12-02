@@ -84,15 +84,6 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 	{
 		TArray<FIntPoint> NumbersFound;
 
-		/*
-		* I've seen lines 98-150 before in PartGridCommponent::DestroyPixel. Should be a function on TGridMap<>
-		* This function should have the signatures:
-		* 1) void CheckForBreaks(TArray<TGridMap<ValueType>>& NewGrids)
-		* 2) void CheckForBreaks(TArray<TGridMap<ValueType>>& NewGrids, Location)
-		*
-		* This function will set NewGrids to all grids created by: 1) any breaks in the map 2) Any breaks created around Location.
-		* 2) assumes pixel at Location is empty.
-		*/
 		//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 		//Check for previously adjacent parts
 		for (auto& i : ConnectedParts)
@@ -165,7 +156,7 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 	else
 	{
 		//Delete print string and else{} or come up with a good way for c++ debug modes - Liam Suggestion
-		UE_LOG(LogTemp, Error, TEXT("The world is not valid on the resource system for some unexplicable reason (ask Mabel Suggestion)"));
+		UE_LOG(LogTemp, Error, TEXT("The world is not valid on the resource system for some unexplicable reason (ask Mabel)"));
 	}
 }
 
@@ -260,7 +251,7 @@ UWorld* UBaseResourceSystem::GetWorld() const
 	else
 	{
 		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
-		UE_LOG(LogTemp, Error, TEXT("You forgot to add a part to the system before calling MergeSystem() or CreateNewSystem(). AddPart(). Ask Mabel Suggestion."));
+		UE_LOG(LogTemp, Error, TEXT("You forgot to add a part to the system before calling MergeSystem() or CreateNewSystem(). AddPart(). Ask Mabel."));
 		return nullptr;
 	}
 }

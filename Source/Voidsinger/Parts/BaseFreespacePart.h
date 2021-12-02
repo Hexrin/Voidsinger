@@ -7,7 +7,7 @@
 #include "BaseFreespacePart.generated.h"
 
 /**
- * Comment what this class is -Mabel Suggestion
+ * Comment what this class is -Mabel
  */
 UCLASS()
 class VOIDSINGER_API UBaseFreespacePart : public UBasePart
@@ -16,6 +16,6 @@ class VOIDSINGER_API UBaseFreespacePart : public UBasePart
 
 public:
 
-	//Comment this -Mabel Suggestion
+	//Comment this -Mabel
 	void MergeParts(UBaseFreespacePart* Other);
 };

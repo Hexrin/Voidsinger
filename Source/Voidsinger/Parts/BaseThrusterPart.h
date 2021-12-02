@@ -9,7 +9,7 @@
 #include "BaseThrusterPart.generated.h"
 
 /**
- * Comment the class -Mabel Suggestion
+ * Comment the class -Mabel
  */
 UCLASS()
 class VOIDSINGER_API UBaseThrusterPart : public UBasePart
@@ -19,21 +19,21 @@ class VOIDSINGER_API UBaseThrusterPart : public UBasePart
 
 public:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UBaseThrusterPart();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	virtual void Tick(float DeltaTime) override;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	const float GetThrustForce();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	const float GetThrustRotation();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	const FVector2D GetThrustRelativeLocation();
 
@@ -41,31 +41,31 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Thrust(float NewThrottle);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	const bool IsThrusting();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	const float GetThrottle();
 
 protected:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(EditDefaultsOnly)
 	float ThrustForce;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(EditDefaultsOnly)
 	FVector2D ThrustLocation;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(EditDefaultsOnly)
 	float ThrustRotation;
 
 private:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	float Throttle{0};
 };

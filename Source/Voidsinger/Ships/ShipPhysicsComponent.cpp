@@ -28,13 +28,13 @@ void UShipPhysicsComponent::BeginPlay()
 
 
 //Called every tick
-//This comment should say what you are doing inside tick, not that it is in fact called every tick -Mabel Suggestion
+//This comment should say what you are doing inside tick, not that it is in fact called every tick -Mabel
 void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//Consider moving this to a new function that has a more descriptive name than "Tick" -Mabel Suggestion
+	//Consider moving this to a new function that has a more descriptive name than "Tick" -Mabel
 
 	SetLinearVelocity(LinearVelocity + LinearAcceleration * DeltaTime);
 	SetAngularVelocity(AngularVelocity + AngularAcceleration * DeltaTime);
@@ -94,7 +94,7 @@ void UShipPhysicsComponent::AddForce(FVector2D RelativeForceLocation, FVector2D 
 {
 	if (!Force.IsZero())
 	{
-		RelativeForceLocation = RelativeForceLocation.GetRotated(GetOwner()->GetActorRotation().Yaw);CalcCenterOfMass()
+		RelativeForceLocation = RelativeForceLocation.GetRotated(GetOwner()->GetActorRotation().Yaw);
 		//DrawDebugDirectionalArrow(GetWorld(), FVector(RelativeForceLocation, 0) + GetOwner()->GetActorLocation(), FVector(RelativeForceLocation + (Force / Mass), 0) + GetOwner()->GetActorLocation(), 5, DebugColor, true, -1.0F, 0U, 0.1f);
 		UE_LOG(LogTemp, Warning, TEXT("Add Linear Acceleration to %s: %s"), *GetReadableName(), *(Force / Mass).ToString());
 		LinearAcceleration += Force / Mass;
@@ -102,46 +102,46 @@ void UShipPhysicsComponent::AddForce(FVector2D RelativeForceLocation, FVector2D 
 	}
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void UShipPhysicsComponent::AddImpulse(FVector2D Impulse, FVector2D RelativeImpulseLocation)
 {
 	SetLinearVelocity(LinearVelocity + Impulse / GetMass());
 	SetAngularVelocity(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation, Impulse) / GetMomentOfInertia());
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 FVector2D UShipPhysicsComponent::GetVelocity()
 {
 	return LinearVelocity;
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void UShipPhysicsComponent::SetLinearVelocity(FVector2D NewVelocity)
 {
 	LinearVelocity = FMath::Clamp(NewVelocity, FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void UShipPhysicsComponent::SetAngularVelocity(float NewVelocity)
 {
 	AngularVelocity = FMath::Clamp(NewVelocity, -1 * MaxAngularVelocity, MaxAngularVelocity);
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 FVector2D UShipPhysicsComponent::GetVelocityOfPoint(FVector2D RelativePointLocation)
 {
 	float AngularVelocityRadians = FMath::DegreesToRadians(GetAngularVelocity());
 	return GetVelocity() + FVector2D(-1 * AngularVelocityRadians * RelativePointLocation.Y, AngularVelocityRadians * RelativePointLocation.X);
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void UShipPhysicsComponent::UpdateMassCalculations()
 {
 
 	//I saw that this was called when a part is added. Now I don't know how all this works, but maybe instead of recalculating
 	// all the mass when a part is added you could just
 	// Mass += NewPartMass
-	// And then you can calculate the new center of mass without recalculating all mass. -Mabel Suggestion
+	// And then you can calculate the new center of mass without recalculating all mass. -Mabel
 	
 	//UE_LOG(LogTemp, Warning, TEXT("%s Has Updated Mass"), *GetReadableName());
 
@@ -154,7 +154,7 @@ void UShipPhysicsComponent::UpdateMassCalculations()
 	CenterOfMass = NewCoM;
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult& Hit)
 {
 	//Return Values
@@ -223,28 +223,28 @@ bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult
 	return ReturnValue;
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 float UShipPhysicsComponent::GetAngularVelocity()
 {
 	return AngularVelocity;
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 float UShipPhysicsComponent::GetMass()
 {
 	return Mass;
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 float UShipPhysicsComponent::GetMomentOfInertia()
 {
 	return MomentOfInertia;
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 FVector2D UShipPhysicsComponent::GetCenterOfMass()
 {
 	return CenterOfMass;
 }
 ////////// CHANGE THIS BACK TO JUST return MomentOfInertia; (when done testing)\\\\\\\\\\\\\\
-//Uhhh it does return MomentOfInertia? -Mabel Suggestion
+//Uhhh it does return MomentOfInertia? -Mabel

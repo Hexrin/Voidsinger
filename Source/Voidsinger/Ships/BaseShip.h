@@ -277,19 +277,19 @@ public:
 	/*-Liam, you haven't commented things in a while-*\
 	\*-----------------------------------------------*/
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(VisibleAnywhere)
 	class UProceduralMeshComponent* MeshComponent;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UPartGridComponent* PartGrid;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UShipPhysicsComponent* PhysicsComponent;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UShipMovementComponent* MovementComponent;
 
@@ -313,45 +313,45 @@ public:
 	\*------------------*/
 public:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	void SetTargetMoveDirection(FVector2D Vector);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	FVector2D GetTargetMoveDirection();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	void SetTargetMoveSpeed(float Vector);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	float GetTargetMoveSpeed();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	void SetTargetLookDirection(FVector Vector);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	const FVector GetTargetLookDirection();
 	
 private:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	FVector TargetLookDirection;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	FVector2D TargetMoveDirection;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	bool bCurrentRotationDeccelerationStatus{ true };
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	float TargetMoveSpeed{ 0 };
 
@@ -359,44 +359,37 @@ private:
 	\*------------------*/
 public:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION()
 	void AddMeshAtLocation(FIntPoint Location);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION()
 	void RemoveMeshAtLocation(FIntPoint Location);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION()
 	void SetMeshRelativeLocation(FVector2D Location);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION()
 	void SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material);
 
 private:
 
-	//Comment -Mabel Suggestion
-	//Function name unclear. Mentions vertices, but where exactly is it getting the vertices from? Sure, there may be meshes
-	//around, but what meshes would it get the vertices from? Do you have like a variable storing vertices? 
-	//As an aside, I'm wondering if mesh handling should be a separate class. I don't really know for sure. 
-	//If only the mesh component ever cares about these functions, then we may actually want to make this part of a
-	//separate component. And that may actually make sense. Think about it. -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION()
 	TArray<FVector> GetVerticesAroundLocation(FVector2D Location);
 
-	//Comment -Mabel Suggestion
-	//Because I happen to know that you were making meshes, I know what this means. but otherwise this function name is 
-	//confusing. What does creating triangles for a square have to do with a base ship? -Mabel Reed
+	//Comment -Mabel
 	UFUNCTION()
 	TArray<int32> CreateTrianglesForSquare(int32 UpperRight = 0, int32 UpperLeft = 1, int32 LowerRight = 2, int32 LowerLeft =3);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	TMap<FIntPoint, int32> MeshData;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	TArray<FVector2D> UV;
 

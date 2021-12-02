@@ -25,47 +25,47 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	void UpdateThrusters();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	void RotateShip(bool Clockwise, float Throttle);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	void Move(FVector2D Direction, float Throttle);
 	
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	const float GetLookDirectionErrorTollerance();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	const float GetMoveSpeedErrorTollerance();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	const float GetRotationDirectionUpdateThreshold();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	const float GetRotationDecelerationTargetDuration();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	TSet<UBaseThrusterPart*> GetThrustersForDirection(FVector2D Direction);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	TSet<UBaseThrusterPart*> GetThrustersForRotation(bool Clockwise);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	const float GetMaximumAccelerationInDirection(FVector2D Direction, float AtThrottle = 1);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	const float GetMaximumAccelerationInRotation(bool Clockwise, float AtThrottle = 1);
 
@@ -74,12 +74,12 @@ protected:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float LookDirectionErrorTollerance{ 0.02 };
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MoveSpeedErrorTollerance{ 0.5 };
 
 	//The threshold at which ships alternate between accelerating and decelerating what trying to look in a direction
-	//? did you mean when? -Mabel Suggestion
+	//? did you mean when? -Mabel
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float RotationDirectionUpdateThreshold{ 0.1 };
 
@@ -89,14 +89,14 @@ protected:
 
 private:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	TSet<UBaseThrusterPart*> Thrusters;
 
-	//Comment -Mabel Suggestion
-	//Why are these last 2 variables and not return values? -Mabel Suggestion
+	//Comment -Mabel
+	//Why are these last 2 variables and not return values? -Mabel
 	TMap<bool, TSet<UBaseThrusterPart*>> ThrustersForRotation;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	TMap<FVector2D, TSet<UBaseThrusterPart*>> ThrustersForDirection;
 };

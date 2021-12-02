@@ -13,11 +13,11 @@
 /*Initializer Funtions*\
 \*--------------------*/
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 UBasePart::UBasePart()
 {
 	//Initalize All Variables
-	//This should probably call the "InitializeVariables()" function -Mabel Suggestion
+	//This should probably call the "initalize variables" function -Mabel
 	Rotation = 0;
 	Location = FIntPoint();
 	TotalPartMass = 1;
@@ -31,7 +31,7 @@ UBasePart::UBasePart()
 
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
 {
 	//Initalize Variables
@@ -40,22 +40,24 @@ void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent
 	PartGridComponent = PartGrid;
 	ActualShape = GetDesiredShape();
 
+	
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 void UBasePart::InitializeFunctionality()
 {
-
-	//Would this function ever have a chance of being called again? If not, then this bool isn't needed. -Mabel Suggestion
 	if (!bHasFunctionalityBeenInitialized)
 	{
 		//Bind to delegates
 		Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
 		Cast<ABaseShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
 		
+		
+
 		//Initialize Resource System
 		ConnectToSystems();
 	
+
 		//Call BeginPlay for blueprints
 		BeginPlay();
 
@@ -63,7 +65,7 @@ void UBasePart::InitializeFunctionality()
 	}
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 UWorld* UBasePart::GetWorld() const
 {
 	if (GetOuter() == nullptr)
@@ -82,7 +84,7 @@ UWorld* UBasePart::GetWorld() const
 	return GetOuter()->GetWorld();
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 void UBasePart::DestroyPart()
 {
 	
@@ -105,7 +107,7 @@ void UBasePart::Activate()
 /*--------Tick--------*\
 \*--------------------*/
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 void UBasePart::Tick(float DeltaTime)
 {
 
@@ -117,13 +119,13 @@ void UBasePart::Tick(float DeltaTime)
 		
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 bool UBasePart::IsTickable() const
 {
 	return (!IsTemplate(RF_ClassDefaultObject));
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 TStatId UBasePart::GetStatId() const
 {
 	return TStatId();
@@ -132,13 +134,13 @@ TStatId UBasePart::GetStatId() const
 /*--Getter Functions--*\
 \*--------------------*/
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
 {
 	return GetDesiredShape(Rotation);
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const TArray<FIntPoint> UBasePart::GetDesiredShape(float Rot)
 {
 	TArray<FIntPoint> RotatedShape = TArray<FIntPoint>();
@@ -149,24 +151,24 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape(float Rot)
 	return RotatedShape;
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const TArray<FIntPoint> UBasePart::GetShape()
 {
 	return ActualShape;
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const FArrayBounds UBasePart::GetPartBounds()
 {
 	return GetPartBounds(Rotation);
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const FArrayBounds UBasePart::GetPartBounds(float Rot)
 {
 	//Couldn't you just rotate the current Bounds variable with the parts current rotation
 	//instead of recalculating the bounds? If you do want to recalculate
-	//bounds this function should be renamed "RecalculateBounds" -Mabel Suggestion
+	//bounds this function should be renamed "RecalculateBounds" -Mabel
 	if ((Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds) || this == this->GetClass()->GetDefaultObject())
 	{
 		
@@ -194,50 +196,50 @@ const FArrayBounds UBasePart::GetPartBounds(float Rot)
 	return Bounds;
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const FIntPoint UBasePart::GetPartGridLocation()
 {
 	return Location;
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const FVector UBasePart::GetPartWorldLocation()
 {
 	return GetPartRelativeLocation() + GetShip()->GetActorLocation();
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const FVector UBasePart::GetPartRelativeLocation()
 {
 	return FVector((FVector2D(GetPartGridLocation()) * GetPartGrid()->GetPartGridScale()) - GetShip()->PhysicsComponent->GetCenterOfMass(), 0);
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const float UBasePart::GetRelativeRotation()
 {
 	return Rotation;
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const float UBasePart::GetWorldRotation()
 {
 	return Rotation + GetShip()->GetActorQuat().GetAngle();
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 float UBasePart::GetMass()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i"), TotalPartMass / GetDesiredShape().Num(), GetDesiredShape().Num());
 	return TotalPartMass / GetDesiredShape().Num();
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 UPartGridComponent* UBasePart::GetPartGrid()
 {
 	return PartGridComponent;
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const ABaseShip* UBasePart::GetShip()
 {
 	return Cast<ABaseShip>(GetPartGrid()->GetOwner());
@@ -269,19 +271,19 @@ TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 	return ResourceTypes;
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const int UBasePart::GetStrength()
 {
 	return Strength;
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 const int UBasePart::GetHeatResistance()
 {
 	return HeatResistance;
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 UMaterialInterface* UBasePart::GetPixelMaterial()
 {
 	return PixelMaterial;
@@ -290,19 +292,16 @@ UMaterialInterface* UBasePart::GetPixelMaterial()
 /*Condtional  Checkers*\
 \*--------------------*/
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 bool UBasePart::IsFunctional()
 {
 
-	//If you don't need it, delete it -Mabel Suggestion
+	//If this commented out this is no longer necessary delete it -Mabel
 	//return bFunctional;
 
 	//Change the comment for this function to say that it uses percent functional instead of saying that it returns true if 
-	//there is one pixel functional -Mabel Suggestion
+	//there is one pixel functional
 
-	//If parts do not split into more parts when they are split, then this wouldn't really work. For example, if you cut
-	//a part in half, this might still return true even if the part totally shouldn't be functional because there might still
-	//be enough pixels for this to be true.
 	if (GetShape().Num() >= PercentFunctional * .01 * GetDesiredShape().Num())
 	{
 		return true;
@@ -313,11 +312,9 @@ bool UBasePart::IsFunctional()
 	}
 }
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 {
-	//Couldn't you just check if Loc is in ActualShape? (as well as IsFunctional() of course, assuming parts split into more parts
-	//when they are split) -Mabel Suggestion
 	return IsFunctional() && TGridMap<bool>(TSet<FIntPoint>(GetShape()), false).PointsConnected(Loc - GetPartGridLocation(), FIntPoint(0, 0), AlwaysConnect<bool>);
 }
 
@@ -325,7 +322,7 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 /*---Misc. Functions--*\
 \*--------------------*/
 
-//Copy comment from .h -Mabel Suggestion
+//Copy comment from .h -Mabel
 void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 {
 	ActualShape.Remove(RelativeLoc);
@@ -333,7 +330,6 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 
 	if (IsFunctional())
 	{
-		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
 		for (auto& i : Systems)
 		{
 			i->RemovePixel(RelativeLoc);
@@ -342,8 +338,6 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	else
 	{
 		OnCriticallyDamaged();
-
-		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
 		for (auto& i : Systems)
 		{
 			i->RemovePart(this);
