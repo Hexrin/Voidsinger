@@ -26,6 +26,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//Comment -Mabel Suggestion
+	//Should this be blueprint callable? 
 	UFUNCTION(BlueprintCallable)
 	void UpdateThrusters();
 
@@ -38,18 +39,24 @@ public:
 	void Move(FVector2D Direction, float Throttle);
 	
 	//Comment -Mabel Suggestion
+	//Tolerance is spelled wrong.
+	//Does this need to be public?
 	UFUNCTION(BlueprintPure)
 	const float GetLookDirectionErrorTollerance();
 
 	//Comment -Mabel Suggestion
+	//Tolerance is spelled wrong.
+	//Does this need to be public?
 	UFUNCTION(BlueprintPure)
 	const float GetMoveSpeedErrorTollerance();
 
 	//Comment -Mabel Suggestion
+	//Does this need to be public?
 	UFUNCTION(BlueprintPure)
 	const float GetRotationDirectionUpdateThreshold();
 
 	//Comment -Mabel Suggestion
+	//Does this need to be public?
 	UFUNCTION(BlueprintPure)
 	const float GetRotationDecelerationTargetDuration();
 
@@ -71,15 +78,18 @@ public:
 
 protected:
 	//In radians
+	//Comment better -Mabel Suggestion
+	//Tolerance is spelled wrong. -Mabel Suggestion
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float LookDirectionErrorTollerance{ 0.02 };
 
 	//Comment -Mabel Suggestion
+	//Tolerance is spelled wrong. -Mabel Suggestion
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MoveSpeedErrorTollerance{ 0.5 };
 
 	//The threshold at which ships alternate between accelerating and decelerating what trying to look in a direction
-	//? did you mean when? -Mabel Suggestion
+	//? did you mean when? Also, I don't understand what this comment means. -Mabel Suggestion
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float RotationDirectionUpdateThreshold{ 0.1 };
 

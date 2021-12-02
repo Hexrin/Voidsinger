@@ -96,22 +96,18 @@ private:
 public:
 
 	//Comment -Mabel Suggestion
-	//Magic number
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MaxLinearVelocity{ 1000000 };
 
 	//Comment -Mabel Suggestion
-	//Magic number
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MaxAngularVelocity{ 10000 };
 
 	//Comment -Mabel Suggestion
-	//Magic number
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MinLinearVelocity{ 0.25 };
 
 	//Comment -Mabel Suggestion
-	//Magic numbers!!!
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MinAngularVelocity{ 0.025 };
 

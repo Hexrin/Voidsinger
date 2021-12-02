@@ -237,6 +237,8 @@ protected:
 	\*-------------------*/
 public:
 
+	//Should the camera be a component? -Mabel Suggestion
+	
 	//Comment -Mabel Suggestion
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
