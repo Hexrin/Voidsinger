@@ -9,7 +9,7 @@
 
 class UBasePart;
 
-//Comment -Mabel
+//Comment -Mabel Suggestion
 UENUM(BlueprintType)
 enum EDifficulty
 {
@@ -19,7 +19,7 @@ enum EDifficulty
 	VeryHard		UMETA(DisplayName = "Very Hard"),
 };
 
-//Comment -Mabel
+//Comment -Mabel Suggestion
 UENUM(BlueprintType)
 enum EResourceType
 {
@@ -40,7 +40,7 @@ enum EFactions
 	Inanimate		UMETA(DisplayName = "Inanimate")
 };
 
-//Comment -Mabel
+//Comment -Mabel Suggestion
 //Does this need to be outside the part grid?
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FArrayBounds
@@ -112,31 +112,31 @@ struct VOIDSINGER_API FUBasePartArray
 	}
 };
 
-//Comment -Mabel
+//Comment -Mabel Suggestion
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FSavePartInfo
 {
 	GENERATED_BODY()
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UBasePart> PartClass;
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FIntPoint PartLocation;
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PartRotation;
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	FSavePartInfo()
 	{
 		FSavePartInfo(nullptr, FIntPoint(), 0);
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	FSavePartInfo(TSubclassOf<UBasePart> Class, FIntPoint Location, float Rotation)
 	{
 
@@ -158,32 +158,32 @@ struct FTextureDataTable : public FTableRowBase
 };
 
 
-//Comment -Mabel
+//Comment -Mabel Suggestion
 template <class ValueType>
 class TGridMap
 {
 
 public:
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	TArray<FIntPoint> ValidLocations;
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	TArray<ValueType> Values;
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	//maGIC NUMBERS!!!!!!!!!!!!!!!!!!!!!!!!
 	int32 GridHalfSize = 250;
 
 public:
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	TGridMap()
 	{
 		TGridMap(TSet<FIntPoint>(), TArray<ValueType>());
 	}
 	
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	TGridMap(TSet<FIntPoint> Locations, ValueType MapValue, int NewGridHalfSize = 250)
 	{
 		TArray<ValueType> MapValues = TArray<ValueType>();
@@ -192,7 +192,7 @@ public:
 		
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	TGridMap(TSet<FIntPoint> Locations, TArray<ValueType> MapValues, int NewGridHalfSize = 250)
 	{
 		MapValues.SetNum(Locations.Num());
@@ -201,7 +201,7 @@ public:
 		GridHalfSize = NewGridHalfSize;
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	//Why does emplace return a value?
 	ValueType Emplace(FIntPoint Location, ValueType Value)
 	{
@@ -220,14 +220,14 @@ public:
 		return Values[InsertionIndex];
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	void Remove(FIntPoint Location)
 	{
 		int32 RemovalIndex = BinarySearch(LocationToRelativeValue(Location));
 		Remove(RemovalIndex);
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	void Remove(int32 Index)
 	{
 		if (ValidLocations.IsValidIndex(Index))
@@ -237,13 +237,13 @@ public:
 		}
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	bool Contains(FIntPoint Location)
 	{
 		return BinarySearch(LocationToRelativeValue(Location)) >= 0;
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	ValueType FindRef(FIntPoint Location)
 	{
 		int32 Index = BinarySearch(LocationToRelativeValue(Location));
@@ -255,7 +255,7 @@ public:
 		return ValueType();
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	ValueType* Find(FIntPoint Location)
 	{
 		int32 Index = BinarySearch(LocationToRelativeValue(Location));
@@ -266,37 +266,37 @@ public:
 		return nullptr;
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	int32 Num()
 	{
 		return ValidLocations.Num();
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	TArray<ValueType> GetValueArray()
 	{
 		return Values;
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	TArray<FIntPoint> GetKeyArray()
 	{
 		return ValidLocations;
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	FIntPoint& LocationAtIndex(int32 Index)
 	{
 		return ValidLocations[Index];
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	ValueType& ValueAtIndex(int32 Index)
 	{
 		return Values[Index];
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	template<typename BinaryPredicate>
 	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, BinaryPredicate ConectivityCondition)
 	{
@@ -305,7 +305,7 @@ public:
 		return PointsConnected(StartPoint, EndPoint, ConectivityArray, ConectivityCondition);
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	//Does template<typename BinaryPredicate> need to be here again after you put it above?
 	template<typename BinaryPredicate>
 	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, TArray<FIntPoint>& ConnectivityArray, BinaryPredicate ConectivityCondition)
@@ -354,7 +354,7 @@ public:
 
 private:
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	const int32 BinarySearch(int32 TargetValue)
 	{
 		if (ValidLocations.Num() == 0)
@@ -364,7 +364,7 @@ private:
 		return BinarySearch(TargetValue, 0, ValidLocations.Num() - 1);
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	const int32 BinarySearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
 	{
 		if (MinIndex > MaxIndex)
@@ -388,7 +388,7 @@ private:
 		}
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	const int32 BinaryInsertionSearch(int32 TargetValue)
 	{
 		if (ValidLocations.Num() == 0)
@@ -398,7 +398,7 @@ private:
 		return BinaryInsertionSearch(TargetValue, 0, ValidLocations.Num() - 1);
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	const int32 BinaryInsertionSearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
 	{
 		if (MinIndex > MaxIndex)
@@ -422,7 +422,7 @@ private:
 		}
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	const int32 LocationToRelativeValue(FIntPoint Location)
 	{
 		Location.X = Location.X > 0 ? 2 * Location.X : -2 * Location.X - 1;
@@ -430,7 +430,7 @@ private:
 		return Location.X + 2 * GridHalfSize * Location.Y;
 	}
 
-	//Comment -Mabel
+	//Comment -Mabel Suggestion
 	const FIntPoint RelativeValueToLocation(int32 Index)
 	{
 		FIntPoint ReturnValue = FIntPoint(Index % (2 * GridHalfSize), Index / GridHalfSize);
@@ -440,7 +440,7 @@ private:
 	}
 };
 
-//Comment -Mabel
+//Comment -Mabel Suggestion
 //Why does this take in parameters if it doesn't do anything with them?
 template <class ValueType>
 static bool AlwaysConnect(ValueType Value, FIntPoint IntPoint)
