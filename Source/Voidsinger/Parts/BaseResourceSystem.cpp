@@ -165,7 +165,7 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 	else
 	{
 		//Delete print string and else{} or come up with a good way for c++ debug modes - Liam Suggestion
-		UE_LOG(LogTemp, Error, TEXT("The world is not valid on the resource system for some unexplicable reason (ask Mabel Suggestion)"));
+		UE_LOG(LogTemp, Error, TEXT("The world is not valid on the resource system for some unexplicable reason (ask Mabel)"));
 	}
 }
 
@@ -260,7 +260,7 @@ UWorld* UBaseResourceSystem::GetWorld() const
 	else
 	{
 		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
-		UE_LOG(LogTemp, Error, TEXT("You forgot to add a part to the system before calling MergeSystem() or CreateNewSystem(). AddPart(). Ask Mabel Suggestion."));
+		UE_LOG(LogTemp, Error, TEXT("You forgot to add a part to the system before calling MergeSystem() or CreateNewSystem(). AddPart(). Ask Mabel."));
 		return nullptr;
 	}
 }

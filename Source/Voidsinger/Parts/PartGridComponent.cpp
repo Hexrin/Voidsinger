@@ -1224,6 +1224,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 	//Yup, yup, this is bad, use better for loop instead of magic numbering, better iterator name, no auto... yup.
 	for (auto& i : Shape)
 	{
+		//Repeated code should be put in a loop or a function.
 		//If the new shape does NOT contain the checked location
 		if (!NewShape.Contains(FIntPoint(i.X + 1, i.Y)))
 		{
@@ -1307,6 +1308,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 	//If the new shape has changed at all
 	if (NewShape != Shape)
 	{
+		//This could be replaced with: return FindConnectedShape(NewShape, ConnectedPartsMap, CheckFunctionality); - Liam Suggestion
 		//Continue to check for connections by calling the function recursively.
 		NewShape = FindConnectedShape(NewShape, ConnectedPartsMap, CheckFunctionality);
 	}
