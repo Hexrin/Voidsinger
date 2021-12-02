@@ -94,7 +94,7 @@ void UShipPhysicsComponent::AddForce(FVector2D RelativeForceLocation, FVector2D 
 {
 	if (!Force.IsZero())
 	{
-		RelativeForceLocation = RelativeForceLocation.GetRotated(GetOwner()->GetActorRotation().Yaw);CalcCenterOfMass()
+		RelativeForceLocation = RelativeForceLocation.GetRotated(GetOwner()->GetActorRotation().Yaw);
 		//DrawDebugDirectionalArrow(GetWorld(), FVector(RelativeForceLocation, 0) + GetOwner()->GetActorLocation(), FVector(RelativeForceLocation + (Force / Mass), 0) + GetOwner()->GetActorLocation(), 5, DebugColor, true, -1.0F, 0U, 0.1f);
 		UE_LOG(LogTemp, Warning, TEXT("Add Linear Acceleration to %s: %s"), *GetReadableName(), *(Force / Mass).ToString());
 		LinearAcceleration += Force / Mass;
