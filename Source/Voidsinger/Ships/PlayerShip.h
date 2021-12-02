@@ -74,13 +74,11 @@ public:
 	/*Getter Functions*\
 	\*----------------*/
 
-	//Gets the travel cost of going to the given star system
-	//Why is this on the player? Shouldn't it be on whatever is storing the start systems? Like the galaxay map or something? -Mabel Suggestion
+	//Gets the travel cost of going to the given start system
 	UFUNCTION(BlueprintPure)
 	TMap<TEnumAsByte<EResourceType>, float> GetTravelCost(class UStarSystemData* Target);
 
-	//Gets the star system the player is currently in
-	//This maybe should be on the galaxy map as well. Idk -Mabel Suggestion
+	//Gets the start system the player is currently in
 	UFUNCTION(BlueprintPure)
 	class UStarSystemData* GetCurrentStarSystem();
 
@@ -88,7 +86,6 @@ public:
 	\*-------------------*/
 
 	//Travels to the start system given
-	//Should this also be on the galaxy map -Mabel Suggestion
 	UFUNCTION(BlueprintCallable)
 	bool TravelToStarSystem(class UStarSystemData* Target);
 
@@ -143,20 +140,19 @@ public:
 	\*------------------*/
 public:
 
-	//Comment -Mabel Suggestion
-	//Function name feels odd, what about ReverseMoveDirection? -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION()
 	void InvertMoveDirection();
 
 protected:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float PlayerMaxSpeed{ 50 };
 
 private:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	bool bMovementInputInvert{ false };
 
@@ -237,55 +233,55 @@ protected:
 	\*-------------------*/
 public:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USceneComponent* CameraRoot;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	void AddCameraLocation(FVector2D DeltaLoc);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	void SetCameraLocation(FVector2D NewLoc);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	void SetCameraZoom(float Percent);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	const float GetCameraZoom();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION()
 	void ZoomAxisCall(float AxisValue);
 
 protected:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float CameraMinHeight{ 100 };
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float CameraMaxHeight{ 1000 };
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float CameraVelocityAdjScaling{ 1 };
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "1"))
 	float CameraZoomAxisScaling{ 0.01 };
 
 private:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(EditAnywhere)
 	float CameraHeight;
 
@@ -293,28 +289,28 @@ private:
 	\*-------------------*/
 public:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	void ToggleBuildUICall();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	void SetBuildMode(bool NewBuildMode);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintImplementableEvent)
 	void OpenBuildMenu();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintImplementableEvent)
 	void CloseBuildMenu();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	bool IsInBuildMode();
 
 private:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	bool bBuildMode{ false };
 
@@ -325,7 +321,7 @@ private:
 
 protected:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int Pixels;
 
@@ -353,7 +349,7 @@ protected:
 	UPROPERTY(BlueprintAssignable)
 	FResetVoidsongDelegate OnResetVoidsongDelegate;
 	
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(VisibleAnywhere)
 	class UStarSystemData* CurrentStarSystem;
 };

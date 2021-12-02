@@ -22,7 +22,7 @@ ABaseShip::ABaseShip()
 	
 	MeshData = TMap<FIntPoint, int32>();
 
-	//This seems weird -Mabel Suggestion
+	//This seems weird -Mabel
 	if (UV.Num() == 0)
 	{
 		UV = TArray<FVector2D>();
@@ -42,7 +42,7 @@ void ABaseShip::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//Debug... OH NO! -Mabel Suggestion
+	//Debug
 	//UE_LOG(LogTemp, Warning, TEXT("Default parts num %i"), DefaultParts.Num())
 
 	PartGrid->BuildShip(DefaultParts);
@@ -55,16 +55,12 @@ void ABaseShip::Tick(float DeltaTime)
 
 	//Handle Target Rotation
 	//Make a functions called HandleTargetRotation() and call that on tick. Having a function is better because "tick" is not
-	//descriptive of what is being done on tick. -Mabel Suggestion
+	//descriptive of what is being done on tick. -Mabel
 	if (TargetLookDirection.SizeSquared2D() != 0)
 	{
 		float AngVel = PhysicsComponent->GetAngularVelocity();
 
-		//Why are booleans named "Direction"? Directions are typically associated with vectors. I don't understand what 
-		//saying "DecelDirection" is true would actually mean based on the english. Name better, like bIsClockwise or something.
-		//bDecelDirection? -Mabel Suggestion
 		bool DecelDirection = AngVel < 0;
-		//bTargetRotationDirection? -MabelSuggestion
 		bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
 
 		float TargetRotationDistance = abs(FMath::Acos(FVector::DotProduct(TargetLookDirection, GetActorForwardVector())));
@@ -75,8 +71,6 @@ void ABaseShip::Tick(float DeltaTime)
 		float TimeToDecelerate = abs(AngVel / MaxDecelerationSpeed);
 		float TimeToDestination = TargetRotationDistance / abs(AngVel);
 
-		//Comment your switch, also just use an if statement instead. You only have 2 possible cases, 0 or 1. Perfect
-		//for an if statement. Here, you use an if statement with a switch, so... you only need the if. -Mabel Suggestion
 		switch ((TargetRotationDistance > MovementComponent->GetLookDirectionErrorTollerance()) ? 1 : 0)
 		{
 		case 1:
@@ -100,14 +94,14 @@ void ABaseShip::Tick(float DeltaTime)
 	}
 
 	//Handle Target Move Direction
-	//Same as above -Mabel Suggestion
+	//Same as above -Mabel
 	if (TargetMoveDirection.SizeSquared() != 0)
 	{
 		//While this is a clever way of commenting, I think it would be more readable if you just made separate variables.
 		// TargetVelocity = TargetMoveDirection * TargetMoveSpeed
 		// CurrentRelativeVelocity = blahblah
 		// FVector2D DeltaV = TargetVelocity - CurrentRelativeVelocity
-		// -Mabel Suggestion
+		// -Mabel
 		//				   |----------Target Velocity----------|   |----------------------Current Relative Velocity----------------------|
 		FVector2D DeltaV = TargetMoveDirection * TargetMoveSpeed - PhysicsComponent->GetVelocity().GetRotated(GetActorRotation().Yaw * -1);
 		MovementComponent->Move(DeltaV, DeltaV.SizeSquared() - FMath::Square(MovementComponent->GetMoveSpeedErrorTollerance()));
@@ -117,7 +111,6 @@ void ABaseShip::Tick(float DeltaTime)
 // Called to bind functionality to input
 void ABaseShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	//Did this function need to be overriden if there is nothing happening inside of it? -Mabel Suggestion
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
@@ -334,48 +327,43 @@ TArray<UBaseResourceSystem*> ABaseShip::GetResourceSystems()
 	return ResourceSystems;
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void ABaseShip::SetTargetMoveDirection(FVector2D Vector)
 {
 	TargetMoveDirection = Vector.GetSafeNormal();
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 FVector2D ABaseShip::GetTargetMoveDirection()
 {
 	return TargetMoveDirection;
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void ABaseShip::SetTargetMoveSpeed(float Vector)
 {
 	TargetMoveSpeed = abs(Vector);
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 float ABaseShip::GetTargetMoveSpeed()
 {
 	return TargetMoveSpeed;
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void ABaseShip::SetTargetLookDirection(FVector Vector)
 {
 	TargetLookDirection = Vector.GetSafeNormal2D();
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 const FVector ABaseShip::GetTargetLookDirection()
 {
 	return TargetLookDirection;
 }
 
-
-//Reading this over, I feel like the mesh handling could actually for reals be a separate component. The only questionable ones
-//are the GetVerticesAroundLocation and the SetMeshRelativeLocation because the use functions on the base ship. I don't think
-//SetMeshRelativeLocation should change the location of the ship anyway though, but you would probably have to rework
-//the GetVerticesAroundLocation.
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 {
 	
@@ -394,7 +382,7 @@ void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 		SectionIndex = Keys.Num();
 	}
 
-	//Magic numbers >:( at least comment them -Mabel Suggestion
+	//Magic numbers >:( at least comment them -Mabel
 	TArray<int32> Triangles = CreateTrianglesForSquare(0,2,4,6);
 	//Triangles += CreateTrianglesForSquare(3, 1, 7, 5);
 	Triangles += CreateTrianglesForSquare(2, 0, 3, 1);
@@ -407,28 +395,26 @@ void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 	MeshData.Emplace(Location, SectionIndex);
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
 {
 	MeshComponent->ClearMeshSection(MeshData.FindRef(Location));
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
 {
 	MeshComponent->SetRelativeLocation(FVector(Location, 0));
-
-	//Why does setting a meshes location move the entire ship? That seems a bit odd. -Mabel
 	AddActorWorldOffset(FVector(-1 * Location - PhysicsComponent->GetCenterOfMass(), 0));
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 void ABaseShip::SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material)
 {
 	MeshComponent->SetMaterial(MeshData.FindRef(Location), Material);
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 TArray<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
 {
 	TArray<FVector> ReturnValue = TArray<FVector>();
@@ -443,7 +429,7 @@ TArray<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
 	return ReturnValue;
 }
 
-//Comment -Mabel Suggestion
+//Comment -Mabel
 TArray<int32> ABaseShip::CreateTrianglesForSquare(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft)
 {
 	TArray<int32> Triangles = TArray<int32>();

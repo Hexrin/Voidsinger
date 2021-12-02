@@ -10,7 +10,7 @@
 class ABaseShip;
 
 
-//Comment the class? -Mabel Suggestion
+//Comment the class? -Mabel
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
 class VOIDSINGER_API UShipPhysicsComponent : public UActorComponent
 {
@@ -18,134 +18,134 @@ class VOIDSINGER_API UShipPhysicsComponent : public UActorComponent
 
 public:	
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UShipPhysicsComponent();
 
 protected:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	virtual void BeginPlay() override;
 
 public:	
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//declare functions
-	//Ah yes. declare functions. Amazing comment -Mabel Suggestion
+	//Ah yes. declare functions. Amazing comment -Mabel
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	void AddForce(FVector2D ForceLocation, FVector2D Force);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintCallable)
 	void AddImpulse(FVector2D Impulse, FVector2D RelativeImpulseLocation);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	FVector2D GetVelocity();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	//Should this be public?
 	UFUNCTION(BlueprintCallable)
 	void SetLinearVelocity(FVector2D NewVelocity);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	//Should this be public?
 	UFUNCTION(BlueprintCallable)
 	void SetAngularVelocity(float NewVelocity);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION()
 	void UpdateMassCalculations();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	bool SweepShip(const FTransform& NewTransform, FHitResult& Hit);
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	float GetAngularVelocity();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	float GetMass();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	float GetMomentOfInertia();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	FVector2D GetCenterOfMass();
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UFUNCTION(BlueprintPure)
 	FVector2D GetVelocityOfPoint(FVector2D RelativePointLocation);
 
 private:
 
 	//declare private variables
-	// Declare private variables. 10/10 comment -Mabel Suggestion
+	// Declare private variables. 10/10 comment -Mabel
 	 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	//UPROPERTY()
 	ABaseShip* Ship;
 
 public:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	//Magic number
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MaxLinearVelocity{ 1000000 };
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	//Magic number
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MaxAngularVelocity{ 10000 };
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	//Magic number
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MinLinearVelocity{ 0.25 };
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	//Magic numbers!!!
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MinAngularVelocity{ 0.025 };
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "1"))
 	float CollisionElasticity{ 0 };
 
 private:
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	float Mass;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	FVector2D CenterOfMass;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	float MomentOfInertia;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	float AngularVelocity;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	FVector2D LinearVelocity;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	float AngularAcceleration;
 
-	//Comment -Mabel Suggestion
+	//Comment -Mabel
 	UPROPERTY()
 	FVector2D LinearAcceleration;
 
