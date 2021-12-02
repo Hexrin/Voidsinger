@@ -10,6 +10,7 @@
 class UBasePart;
 
 //Comment -Mabel Suggestion
+//Are we even using this enum anymore? -Mabel Suggestion
 UENUM(BlueprintType)
 enum EDifficulty
 {
@@ -41,7 +42,7 @@ enum EFactions
 };
 
 //Comment -Mabel Suggestion
-//Does this need to be outside the part grid?
+//Is this ever used outside of the part grid? If not, move it to the part grid -Mabel Suggestion
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FArrayBounds
 {
@@ -221,6 +222,7 @@ public:
 	}
 
 	//Comment -Mabel Suggestion
+	//Should remove return a boolean saying if it was removed succesfully? -Mabel Suggestion
 	void Remove(FIntPoint Location)
 	{
 		int32 RemovalIndex = BinarySearch(LocationToRelativeValue(Location));
@@ -300,7 +302,7 @@ public:
 	template<typename BinaryPredicate>
 	bool PointsConnected(FIntPoint StartPoint, FIntPoint EndPoint, BinaryPredicate ConectivityCondition)
 	{
-		//Initate Conectiveity Array
+		//Initiate Conectivity Array
 		TArray<FIntPoint> ConectivityArray = TArray<FIntPoint>();
 		return PointsConnected(StartPoint, EndPoint, ConectivityArray, ConectivityCondition);
 	}
@@ -317,25 +319,35 @@ public:
 			return true;
 		}
 
-		//Prevent Infinte Loops
+		//Prevent Infinite Loops
 		ConnectivityArray.Emplace(StartPoint);
 
-		//Initate Variables
+		//Initiate Variables
+		//Boolean variables should start with b -Mabel Suggestion
 		bool ReturnValue = false;
 		const bool IsXCloser = abs((EndPoint - StartPoint).X) < abs((EndPoint - StartPoint).Y);
+
+		//"Positive" is spelled wrong, boolean variables should start with b -Mabel Suggestion
 		bool XIsPosive = (EndPoint - StartPoint).X > 0;
 		bool YIsPosive = (EndPoint - StartPoint).Y > 0;
+
+		//Debug -Mabel Suggestion
 		//UE_LOG(LogTemp, Warning, TEXT("Direction x=%i, y=%i"), (EndPoint - StartPoint).X, (EndPoint - StartPoint).Y);
 
 
 		//Iterate though and run recursive function for all adjecent pixels
+		//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
 		for (int i = 0; i < 4; i++)
 		{
 			//Select next pixel to scan based of of direction to EndPoint
+			//Comment your logic -Mabel Suggestion
 			FIntPoint TargetPoint = StartPoint + ((!IsXCloser ^ (i % 2 == 1)) ? FIntPoint((XIsPosive ^ (i > 1)) ? 1 : -1, 0) : FIntPoint(0, (YIsPosive ^ (i > 1)) ? 1 : -1));
+
+			//Debug -Mabel Suggestion
 			//UE_LOG(LogTemp, Warning, TEXT("Target Point x=%i, y=%i, Xclose=%i, Xpos=%i, Ypos=%i"), TargetPoint.X, TargetPoint.Y, (IsXCloser ^ (i % 2 == 1)) ? 1 : 0, !(XIsPosive ^ (i > 1)) ? 1 : 0, !(YIsPosive ^ (i > 1)) ? 1 : 0);
 			
 			//Scan Pixel
+			//Comment  your logic -Mabel Suggestion
 			if (!ConnectivityArray.Contains(TargetPoint) && Contains(TargetPoint) && ConectivityCondition(FindRef(TargetPoint), TargetPoint))
 			{
 				ReturnValue = PointsConnected(TargetPoint, EndPoint, ConnectivityArray, ConectivityCondition);
