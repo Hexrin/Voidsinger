@@ -12,12 +12,16 @@
  * 
  */
 
+
+//Comment the class -Mabel Suggestion
 UCLASS()
 class VOIDSINGER_API AShipPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 	
 public:
+
+	//what is this for -Mabel Suggestion
 	TGridMap<TSubclassOf<UBasePart>> ShipBlueprint;
 
 	/*UFUNCTION()

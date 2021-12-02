@@ -3,10 +3,18 @@
 
 #include "BaseVoidsong.h"
 
+/*
+* Function comments from the .h should be copied to the .cpp 
+* 
+* This should be deleted because
+* If a constuctor is empty it doesn't need to be declared or defined, you can just used the constuctor from its parent.
+* - Liam Suggestion
+*/
 UBaseVoidsong::UBaseVoidsong()
 {
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 UWorld* UBaseVoidsong::GetWorld() const
 {
 	if (GetOuter() == nullptr)
@@ -25,6 +33,7 @@ UWorld* UBaseVoidsong::GetWorld() const
 	return GetOuter()->GetWorld();
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 void UBaseVoidsong::Tick(float DeltaTime)
 {
 	if (!bIsBeingDestroyed)
@@ -34,26 +43,31 @@ void UBaseVoidsong::Tick(float DeltaTime)
 	}
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 bool UBaseVoidsong::IsTickable() const
 {
 	return (!IsTemplate(RF_ClassDefaultObject));
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 TStatId UBaseVoidsong::GetStatId() const
 {
 	return TStatId();
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 TArray<int> UBaseVoidsong::GetActivationCombo()
 {
 	return ActivationCombo;
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 FText UBaseVoidsong::GetVoidsongDisplayText()
 {
 	return VoidsongDisplayText;
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 float UBaseVoidsong::GetDuration()
 {
 	return Duration;

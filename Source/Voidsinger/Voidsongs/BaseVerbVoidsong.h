@@ -24,10 +24,21 @@ public:
 	/*Voidsong Functions*\
 	\*------------------*/
 
+	/*
+	* Why does this function exist? It sets variables that arent used anywhere and is only called where
+	* it could be replaced with Activate(so long as you make Activate blueprint callable).
+	* - Liam Suggestion
+	*/
 	//Pre-activate calls activate, but it also sets ActorHit, WorldLocation and effectiveness. It's convenient.
 	UFUNCTION(BlueprintCallable)
 	void PreActivate(AActor* NewActorHit, AActor* NewActorThatActivated, TArray<UBasePart*> NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness);
 
+	/*
+	* Should be blueprintcallable so it can replace PreActivate
+	* The prefiex New doesn't realy make sense in the context of this functions parameters
+	* NewActorThatActivated should be replaced with Instigator to maintain consitancy with ue5
+	* - Liam Suggestion
+	*/
 	//This will do the effect of the voidsong. It's called within Activate. Needs to be implemented for each Voidsong.
 	UFUNCTION(BlueprintImplementableEvent)
 	void Activate(AActor* NewActorHit, AActor* NewActorThatActivated, const TArray<UBasePart*>& NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness);
@@ -44,6 +55,7 @@ protected:
 	/*Instanced  Variables*\
 	\*--------------------*/
 
+	// All of the varaiibles in this class are never used so they should be deleted - Liam Suggestion
 	UPROPERTY(BlueprintReadOnly)
 	AActor* ActorHit;
 

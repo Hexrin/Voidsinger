@@ -25,37 +25,47 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
+	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintCallable)
 	void UpdateThrusters();
 
+	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintCallable)
 	void RotateShip(bool Clockwise, float Throttle);
 
+	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintCallable)
 	void Move(FVector2D Direction, float Throttle);
 	
+	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintPure)
 	const float GetLookDirectionErrorTollerance();
 
+	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintPure)
 	const float GetMoveSpeedErrorTollerance();
 
+	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintPure)
 	const float GetRotationDirectionUpdateThreshold();
 
+	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintPure)
 	const float GetRotationDecelerationTargetDuration();
 
+	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintPure)
 	TSet<UBaseThrusterPart*> GetThrustersForDirection(FVector2D Direction);
 
+	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintPure)
 	TSet<UBaseThrusterPart*> GetThrustersForRotation(bool Clockwise);
 
+	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintPure)
 	const float GetMaximumAccelerationInDirection(FVector2D Direction, float AtThrottle = 1);
 
+	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintPure)
 	const float GetMaximumAccelerationInRotation(bool Clockwise, float AtThrottle = 1);
 
@@ -64,21 +74,29 @@ protected:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float LookDirectionErrorTollerance{ 0.02 };
 
+	//Comment -Mabel Suggestion
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float MoveSpeedErrorTollerance{ 0.5 };
 
 	//The threshold at which ships alternate between accelerating and decelerating what trying to look in a direction
+	//? did you mean when? -Mabel Suggestion
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float RotationDirectionUpdateThreshold{ 0.1 };
 
-	//The time which the algorithem alots for deceleating
+	//The time which the algorithm allots for decelerating
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float RotationDecelerationTargetDuration{ 0.25 };
 
 private:
+
+	//Comment -Mabel Suggestion
 	UPROPERTY()
 	TSet<UBaseThrusterPart*> Thrusters;
 
+	//Comment -Mabel Suggestion
+	//Why are these last 2 variables and not return values? -Mabel Suggestion
 	TMap<bool, TSet<UBaseThrusterPart*>> ThrustersForRotation;
+
+	//Comment -Mabel Suggestion
 	TMap<FVector2D, TSet<UBaseThrusterPart*>> ThrustersForDirection;
 };

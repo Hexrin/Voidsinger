@@ -13,9 +13,11 @@
 /*Initializer Funtions*\
 \*--------------------*/
 
+//Copy comment from .h -Mabel Suggestion
 UBasePart::UBasePart()
 {
 	//Initalize All Variables
+	//This should probably call the "InitializeVariables()" function -Mabel Suggestion
 	Rotation = 0;
 	Location = FIntPoint();
 	TotalPartMass = 1;
@@ -29,6 +31,7 @@ UBasePart::UBasePart()
 
 }
 
+//Copy comment from .h -Mabel Suggestion
 void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
 {
 	//Initalize Variables
@@ -37,23 +40,22 @@ void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent
 	PartGridComponent = PartGrid;
 	ActualShape = GetDesiredShape();
 
-	
 }
 
+//Copy comment from .h -Mabel Suggestion
 void UBasePart::InitializeFunctionality()
 {
+
+	//Would this function ever have a chance of being called again? If not, then this bool isn't needed. -Mabel Suggestion
 	if (!bHasFunctionalityBeenInitialized)
 	{
 		//Bind to delegates
 		Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
 		Cast<ABaseShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
 		
-		
-
 		//Initialize Resource System
 		ConnectToSystems();
 	
-
 		//Call BeginPlay for blueprints
 		BeginPlay();
 
@@ -61,6 +63,7 @@ void UBasePart::InitializeFunctionality()
 	}
 }
 
+//Copy comment from .h -Mabel Suggestion
 UWorld* UBasePart::GetWorld() const
 {
 	if (GetOuter() == nullptr)
@@ -79,6 +82,7 @@ UWorld* UBasePart::GetWorld() const
 	return GetOuter()->GetWorld();
 }
 
+//Copy comment from .h -Mabel Suggestion
 void UBasePart::DestroyPart()
 {
 	
@@ -86,6 +90,13 @@ void UBasePart::DestroyPart()
 	bIsBeingDestroyed = true;
 }
 
+/*
+* Function comments from the .h should be copied to the .cpp
+*
+* Why are activate and blueprint activate separate functions?
+* You should(?) be able to make the interface function as bluepritn implementable
+* - Liam Suggestion
+*/
 void UBasePart::Activate()
 {
 	BlueprintActivate();
@@ -94,6 +105,7 @@ void UBasePart::Activate()
 /*--------Tick--------*\
 \*--------------------*/
 
+//Copy comment from .h -Mabel Suggestion
 void UBasePart::Tick(float DeltaTime)
 {
 
@@ -105,11 +117,13 @@ void UBasePart::Tick(float DeltaTime)
 		
 }
 
+//Copy comment from .h -Mabel Suggestion
 bool UBasePart::IsTickable() const
 {
 	return (!IsTemplate(RF_ClassDefaultObject));
 }
 
+//Copy comment from .h -Mabel Suggestion
 TStatId UBasePart::GetStatId() const
 {
 	return TStatId();
@@ -118,12 +132,13 @@ TStatId UBasePart::GetStatId() const
 /*--Getter Functions--*\
 \*--------------------*/
 
+//Copy comment from .h -Mabel Suggestion
 const TArray<FIntPoint> UBasePart::GetDesiredShape()
 {
-	
 	return GetDesiredShape(Rotation);
 }
 
+//Copy comment from .h -Mabel Suggestion
 const TArray<FIntPoint> UBasePart::GetDesiredShape(float Rot)
 {
 	TArray<FIntPoint> RotatedShape = TArray<FIntPoint>();
@@ -134,18 +149,24 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape(float Rot)
 	return RotatedShape;
 }
 
+//Copy comment from .h -Mabel Suggestion
 const TArray<FIntPoint> UBasePart::GetShape()
 {
 	return ActualShape;
 }
 
+//Copy comment from .h -Mabel Suggestion
 const FArrayBounds UBasePart::GetPartBounds()
 {
 	return GetPartBounds(Rotation);
 }
 
+//Copy comment from .h -Mabel Suggestion
 const FArrayBounds UBasePart::GetPartBounds(float Rot)
 {
+	//Couldn't you just rotate the current Bounds variable with the parts current rotation
+	//instead of recalculating the bounds? If you do want to recalculate
+	//bounds this function should be renamed "RecalculateBounds" -Mabel Suggestion
 	if ((Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds) || this == this->GetClass()->GetDefaultObject())
 	{
 		
@@ -173,54 +194,65 @@ const FArrayBounds UBasePart::GetPartBounds(float Rot)
 	return Bounds;
 }
 
+//Copy comment from .h -Mabel Suggestion
 const FIntPoint UBasePart::GetPartGridLocation()
 {
 	return Location;
 }
 
+//Copy comment from .h -Mabel Suggestion
 const FVector UBasePart::GetPartWorldLocation()
 {
 	return GetPartRelativeLocation() + GetShip()->GetActorLocation();
 }
 
+//Copy comment from .h -Mabel Suggestion
 const FVector UBasePart::GetPartRelativeLocation()
 {
 	return FVector((FVector2D(GetPartGridLocation()) * GetPartGrid()->GetPartGridScale()) - GetShip()->PhysicsComponent->GetCenterOfMass(), 0);
 }
 
+//Copy comment from .h -Mabel Suggestion
 const float UBasePart::GetRelativeRotation()
 {
 	return Rotation;
 }
 
+//Copy comment from .h -Mabel Suggestion
 const float UBasePart::GetWorldRotation()
 {
 	return Rotation + GetShip()->GetActorQuat().GetAngle();
 }
 
+//Copy comment from .h -Mabel Suggestion
 float UBasePart::GetMass()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i"), TotalPartMass / GetDesiredShape().Num(), GetDesiredShape().Num());
 	return TotalPartMass / GetDesiredShape().Num();
 }
 
+//Copy comment from .h -Mabel Suggestion
 UPartGridComponent* UBasePart::GetPartGrid()
 {
 	return PartGridComponent;
 }
 
+//Copy comment from .h -Mabel Suggestion
 const ABaseShip* UBasePart::GetShip()
 {
 	return Cast<ABaseShip>(GetPartGrid()->GetOwner());
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 TArray<UBaseResourceSystem*> UBasePart::GetSystems()
 {
 	return Systems;
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
 {
+	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	for (auto& i : GetSystems())
 	{
 		if (i->GetType() == Type)
@@ -231,21 +263,25 @@ UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
 	return nullptr;
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
 {
 	return ResourceTypes;
 }
 
+//Copy comment from .h -Mabel Suggestion
 const int UBasePart::GetStrength()
 {
 	return Strength;
 }
 
+//Copy comment from .h -Mabel Suggestion
 const int UBasePart::GetHeatResistance()
 {
 	return HeatResistance;
 }
 
+//Copy comment from .h -Mabel Suggestion
 UMaterialInterface* UBasePart::GetPixelMaterial()
 {
 	return PixelMaterial;
@@ -254,10 +290,19 @@ UMaterialInterface* UBasePart::GetPixelMaterial()
 /*Condtional  Checkers*\
 \*--------------------*/
 
+//Copy comment from .h -Mabel Suggestion
 bool UBasePart::IsFunctional()
 {
+
+	//If you don't need it, delete it -Mabel Suggestion
 	//return bFunctional;
 
+	//Change the comment for this function to say that it uses percent functional instead of saying that it returns true if 
+	//there is one pixel functional -Mabel Suggestion
+
+	//If parts do not split into more parts when they are split, then this wouldn't really work. For example, if you cut
+	//a part in half, this might still return true even if the part totally shouldn't be functional because there might still
+	//be enough pixels for this to be true.
 	if (GetShape().Num() >= PercentFunctional * .01 * GetDesiredShape().Num())
 	{
 		return true;
@@ -268,8 +313,11 @@ bool UBasePart::IsFunctional()
 	}
 }
 
+//Copy comment from .h -Mabel Suggestion
 bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 {
+	//Couldn't you just check if Loc is in ActualShape? (as well as IsFunctional() of course, assuming parts split into more parts
+	//when they are split) -Mabel Suggestion
 	return IsFunctional() && TGridMap<bool>(TSet<FIntPoint>(GetShape()), false).PointsConnected(Loc - GetPartGridLocation(), FIntPoint(0, 0), AlwaysConnect<bool>);
 }
 
@@ -277,6 +325,7 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 /*---Misc. Functions--*\
 \*--------------------*/
 
+//Copy comment from .h -Mabel Suggestion
 void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 {
 	ActualShape.Remove(RelativeLoc);
@@ -284,6 +333,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 
 	if (IsFunctional())
 	{
+		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
 		for (auto& i : Systems)
 		{
 			i->RemovePixel(RelativeLoc);
@@ -292,6 +342,8 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	else
 	{
 		OnCriticallyDamaged();
+
+		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
 		for (auto& i : Systems)
 		{
 			i->RemovePart(this);
@@ -305,11 +357,13 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	}
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 void UBasePart::ConnectToSystems()
 {
 	//Basic description: for each pixel on this part that has a resource type, check around that location for another part that has a pixel with that resource type next to the
 	// pixel currently being checked. If there is no adjacent resource system create a new one.
 
+	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	//This needs to be called for each resource type so a resource system for each type is created.
 	for (auto& i : GetResourceTypes())
 	{
@@ -317,9 +371,11 @@ void UBasePart::ConnectToSystems()
 		//System found will be useful later to determine if the part should be added to an existing or the part should make a new system.
 		bool SystemFound = false;
 
+		//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 		//For each pixel location that has this resource type applied to it
 		for (auto& j : i.Value.IntPointArray)
 		{
+			//Comment outdated - Liam Suggestion
 			//Check the X + 1 location for a part on the part grid
 			if (PartGridComponent->GetPartGrid().Contains(j + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
 			{
@@ -338,6 +394,7 @@ void UBasePart::ConnectToSystems()
 	}
 }
 
+//Function comments from the .h should be identical to the one in the .cpp - Liam Suggestion
 //Create a new resource system
 void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 {
@@ -350,6 +407,7 @@ void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 	AddToSystem(NewSystem);
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 void UBasePart::AddToSystem(UBaseResourceSystem* System)
 {
 	if (!Systems.Contains(System))
@@ -371,6 +429,22 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 	}
 }
 
+/*
+* Function comments from the .h should be copied to the .cpp
+* 
+* Consider coverting avalable voisongs to a stuct containg avalable Verbs, Nouns, and Factions or just Nouns and Factions
+* 
+* Logic for weather or not a delegate is cabale of being called should be done before it is brodcast.
+* In otherwords AvalableVoidsongs should be handeled in UBaseShip::DecideVoidsongsPlayed()
+* 
+* Confusing parameter names.
+* Factions for what?
+* Nounclasses for what?
+* Inconsitant names. To fix either: rename Factions to FactionNames or FactionTypes, or rename NounClasses to Nouns
+* 
+* Shouldn't NounClasses have the type: const TArray<TSubclassOf<UBasePart>>&
+* - Liam Suggestion
+*/
 void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs)
 {
 	/*for (auto& i : NounClasses)
@@ -383,9 +457,12 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 	// I know this is gross but I was trying to get the game playable when I made this. I realized that parts that you didn't have the Voidsong for would activate if you
 	// didn't play any nouns even though they shouldn't.
 
+	
+	// Variable sould be global and updated on AddNewVoidsong()	 
 	TArray<TEnumAsByte<EFactions>> AvailableFactions;
 	TArray<TSubclassOf<UObject>> AvailableNouns;
 
+	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	for (auto& i : AvailableVoidsongs)
 	{
 		if (IsValid(Cast<UBaseWhoVoidsong>(i)))
@@ -397,7 +474,7 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 			AvailableNouns.Emplace(Cast<UBaseNounVoidsong>(i)->Noun);
 		}
 	}
-
+	//Long chunk of logic should be commented or made legible - Liam Suggestion
 	if (((Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) && ((NounClasses.IsEmpty() && AvailableNouns.Contains(GetClass())) != NounClasses.Contains(GetClass())))
 	{
 		if (this->Implements<UActivateInterface>())

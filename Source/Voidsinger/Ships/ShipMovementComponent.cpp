@@ -35,9 +35,17 @@ void UShipMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
+//Comment -Mabel Suggestion
 void UShipMovementComponent::UpdateThrusters()
 {
+	//I saw that this was called when a thruster was added to a ship. Instead of recalculating all the thrusters when a thruster
+	//is added, consider simply... adding the thruster. 
+	//Thrusters.Emplace(NewThruster) instead of "OH NO THRUSTER WAS ADDED BETTER RECALCULATE LITERALLY ALL OF THEM AND ITERATE
+	// THROUGH ALL OF THE PARTS ON THE PART GRID"
+	//-Mabel Suggestion
 	Thrusters.Empty();
+
+	//These are emptied then never set again? -Mabel Suggestion
 	ThrustersForDirection.Empty();
 	ThrustersForRotation.Empty();
 		
@@ -52,6 +60,7 @@ void UShipMovementComponent::UpdateThrusters()
 	}
 }
 
+//Comment -Mabel Suggestion
 void UShipMovementComponent::RotateShip(bool Clockwise, float Throttle)
 {
 	Throttle = FMath::Clamp(Throttle, 0.f, 1.f);
@@ -61,6 +70,7 @@ void UShipMovementComponent::RotateShip(bool Clockwise, float Throttle)
 	}
 }
 
+//Comment -Mabel Suggestion
 void UShipMovementComponent::Move(FVector2D Direction, float Throttle)
 {
 	Direction.Normalize();
@@ -71,26 +81,31 @@ void UShipMovementComponent::Move(FVector2D Direction, float Throttle)
 	}
 }
 
+//Comment -Mabel Suggestion
 const float UShipMovementComponent::GetLookDirectionErrorTollerance()
 {
 	return LookDirectionErrorTollerance;
 }
 
+//Comment -Mabel Suggestion
 const float UShipMovementComponent::GetMoveSpeedErrorTollerance()
 {
 	return MoveSpeedErrorTollerance;
 }
 
+//Comment -Mabel Suggestion
 const float UShipMovementComponent::GetRotationDirectionUpdateThreshold()
 {
 	return RotationDirectionUpdateThreshold;
 }
 
+//Comment -Mabel Suggestion
 const float UShipMovementComponent::GetRotationDecelerationTargetDuration()
 {
 	return RotationDecelerationTargetDuration;
 }
 
+//Comment -Mabel Suggestion
 TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForDirection(FVector2D Direction)
 {
 	Direction = Direction.GetSafeNormal();
@@ -100,6 +115,7 @@ TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForDirection(FVecto
 	}
 	else
 	{
+		//Rename this to OutThrusters? -Mabel Suggestion
 		TSet<UBaseThrusterPart*> ThrustersToAdd = TSet<UBaseThrusterPart*>();
 
 		for (UBaseThrusterPart* Thruster : Thrusters)
@@ -116,6 +132,7 @@ TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForDirection(FVecto
 	
 }
 
+//Comment -Mabel Suggestion
 TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForRotation(bool Clockwise)
 {
 
@@ -125,6 +142,7 @@ TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForRotation(bool Cl
 	}
 	else
 	{
+		//Rename to out thrusters? -Mabel Suggestion
 		TSet<UBaseThrusterPart*> ThrustersToAdd = TSet<UBaseThrusterPart*>();
 
 		for (UBaseThrusterPart* Thruster : Thrusters)
@@ -144,6 +162,7 @@ TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForRotation(bool Cl
 	}
 }
 
+//Comment -Mabel Suggestion
 const float UShipMovementComponent::GetMaximumAccelerationInDirection(FVector2D Direction, float AtThrottle)
 {
 	float Sum = 0;
@@ -154,6 +173,7 @@ const float UShipMovementComponent::GetMaximumAccelerationInDirection(FVector2D 
 	return Sum;
 }
 
+//Comment -Mabel Suggestion
 const float UShipMovementComponent::GetMaximumAccelerationInRotation(bool Clockwise, float AtThrottle)
 {
 	float Sum = 0;

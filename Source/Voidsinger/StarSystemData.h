@@ -9,6 +9,8 @@
 /**
  * 
  */
+
+//Comment -Mabel Suggestion
 UCLASS(BlueprintType)
 class VOIDSINGER_API UStarSystemData : public UObject
 {
@@ -16,11 +18,15 @@ class VOIDSINGER_API UStarSystemData : public UObject
 	GENERATED_BODY()
 
 public:
+
+	//Comment -Mabel Suggestion
 	UStarSystemData();
 
+	//Comment -Mabel Suggestion
 	UPROPERTY(BlueprintReadOnly)
 	FVector2D Location UMETA(ExposeOnSpawn = "true");
 
+	//Comment -Mabel Suggestion
 	UPROPERTY(BlueprintReadOnly);
 	TEnumAsByte<EDifficulty> Difficulty UMETA(ExposeOnSpawn = "true");
 };

@@ -17,8 +17,6 @@ class VOIDSINGER_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintPure)
-	static FVector SafeDivide(FVector V1, FVector V2);
 
 	//Used for the creation widget. Avoid using this at runtime, it's quite a performance hit. 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Get Child Classes", Keywords = "Get Child Classes"), Category = Class)

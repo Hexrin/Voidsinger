@@ -7,14 +7,9 @@
 #include "Ships/BaseShip.h"
 
 
-FVector UFunctionLibrary::SafeDivide(FVector V1, FVector V2)
-{
-	return FVector((V2.X != 0.0f) ? (V1.X / V2.X) : 0.0f, (V2.Y != 0.0f) ? (V1.Y / V2.Y) : 0.0f, (V2.Z != 0.0f) ? (V1.Z / V2.Z) : 0.0f);
-}
-
 TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
 {
-	UE_LOG(LogTemp, Error, TEXT("Don't Get Classes at runtime!!"));
+	//UE_LOG(LogTemp, Error, TEXT("Don't Get Classes at runtime!!"));
 	TArray<UClass*> Results;
 
 	// get our parent blueprint class

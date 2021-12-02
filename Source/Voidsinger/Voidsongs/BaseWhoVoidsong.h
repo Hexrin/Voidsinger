@@ -10,6 +10,8 @@
 /**
  * 
  */
+
+ //Should be renamed to UBaseFactionVoidsong for consitancy - Liam Suggestion
 UCLASS()
 class VOIDSINGER_API UBaseWhoVoidsong : public UBaseVoidsong
 {

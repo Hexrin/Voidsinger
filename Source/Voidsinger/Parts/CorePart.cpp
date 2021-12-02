@@ -5,6 +5,7 @@
 
 UCorePart::UCorePart()
 {
+	//Ew. Desired shape should be be done in blueprint (I already set up the blueprint for this just needs to be deleated) - Liam Suggestion
 	DesiredShape.Emplace(FIntPoint(2, 2));
 	DesiredShape.Emplace(FIntPoint(1, 2));
 	DesiredShape.Emplace(FIntPoint(0, 2));

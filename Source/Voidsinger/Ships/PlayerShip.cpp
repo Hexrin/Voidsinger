@@ -5,8 +5,10 @@
 
 APlayerShip::APlayerShip()
 {
+    //Magic -Mabel Suggestion
     Pixels=55;
     
+    //Numbers -Mabel Suggestion
     if (!CameraHeight)
     {
         CameraHeight = FMath::GetMappedRangeValueClamped(FVector2D(0,1), FVector2D(CameraMinHeight, CameraMaxHeight), 0.5);
@@ -16,12 +18,15 @@ APlayerShip::APlayerShip()
     Camera->AttachToComponent(MeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
     Camera->SetUsingAbsoluteRotation(true);
     Camera->SetRelativeLocation(FVector(0, 0, CameraHeight));
+
+    //>:( -Mabel Suggestion
     Camera->SetRelativeRotation(FRotator(-90, -90, 90));
 
     AutoPossessPlayer = EAutoReceiveInput::Player0;
 
 }
 
+//Comment -Mabel Suggestion
 void APlayerShip::Tick(float DeltaTime)
 {
     if (!bBuildMode)
@@ -45,6 +50,28 @@ void APlayerShip::Tick(float DeltaTime)
 
     Super::Tick(DeltaTime);
 
+    /*
+    * Ew overcomplicated code can replaced with the following:
+    * 
+    *  if(ResetVoidsongTimer < VoidsongResetDelay)
+    *  {
+    *       ResetVoidsongTimer += DeltaTime;
+    *  }
+    *  else
+    *  {
+    *       ResetVoidsong();
+    *  }
+    *  
+    // OR
+    *  
+    *  if(ResetVoidsongTimer += DeltaTime >= VoidsongResetDelay)
+    *  {
+    *       ResetVoidsong();
+    *  }
+    * 
+    * - Liam Suggestion
+    */
+
     //Deals with the timer for resetting the voidsong inputs. 
     if (ShouldResetVoidsongTimerTick)
     {
@@ -55,12 +82,9 @@ void APlayerShip::Tick(float DeltaTime)
             ResetVoidsongTimer = 0.0;
         }
     }
-
-    
-    
-    
 }
 
+//Comment -Mabel Suggestion
 void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -88,6 +112,7 @@ void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
     InputComponent->BindAxis("MoveRight");
 }
 
+//Comment -Mabel Suggestion
 void APlayerShip::BeginPlay()
 {
     Super::BeginPlay();
@@ -98,6 +123,7 @@ void APlayerShip::BeginPlay()
     
 }
 
+//Comment -Mabel Suggestion
 TMap<TEnumAsByte<EResourceType>, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
 {
     TMap<TEnumAsByte<EResourceType>, float> Costs;
@@ -107,74 +133,88 @@ TMap<TEnumAsByte<EResourceType>, float> APlayerShip::GetTravelCost(class UStarSy
     return Costs;
 }
 
+//Comment -Mabel Suggestion
 bool APlayerShip::TravelToStarSystem(class UStarSystemData* Target)
 {
     CurrentStarSystem = Target;
     return true;
 }
 
+//Comment -Mabel Suggestion
 UStarSystemData* APlayerShip::GetCurrentStarSystem()
 {
     return CurrentStarSystem;
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 //Voidsong inputs
 void APlayerShip::Voidsong1Call()
 {
     AddVoidsongInput(1);
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 void APlayerShip::Voidsong2Call()
 {
     AddVoidsongInput(2);
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 void APlayerShip::Voidsong3Call()
 {
     AddVoidsongInput(3);
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 void APlayerShip::Voidsong4Call()
 {
     AddVoidsongInput(4);
 }
 
+//Function comments from the .h should be copied to the .cpp - Liam Suggestion
 void APlayerShip::Voidsong5Call()
 {
     AddVoidsongInput(5);
 }
 
+//Comment -Mabel Suggestion
 void APlayerShip::AddCameraLocation(FVector2D DeltaLoc)
 {
     SetCameraLocation(FVector2D(Camera->GetRelativeLocation()) + DeltaLoc - PhysicsComponent->GetVelocity() * CameraVelocityAdjScaling);
 }
 
+//Comment -Mabel Suggestion
 void APlayerShip::SetCameraLocation(FVector2D NewLoc)
 {
     Camera->SetRelativeLocation(FVector(NewLoc + PhysicsComponent->GetVelocity() * CameraVelocityAdjScaling, CameraHeight));
 }
 
+//Comment -Mabel Suggestion
 void APlayerShip::SetCameraZoom(float Percent)
 {
     CameraHeight = FMath::Lerp(CameraMinHeight, CameraMaxHeight, FMath::Clamp(Percent, 0.f, 1.f));
     AddCameraLocation(FVector2D(0,0));
 }
 
+//Comment -Mabel Suggestion
 const float APlayerShip::GetCameraZoom()
 {
     return FMath::GetMappedRangeValueUnclamped(FVector2D(CameraMinHeight, CameraMaxHeight), FVector2D(0,1), CameraHeight);
 }
 
+//Comment -Mabel Suggestion
 void APlayerShip::ZoomAxisCall(float AxisValue)
 {
     SetCameraZoom(GetCameraZoom() + -1 * AxisValue * CameraZoomAxisScaling);
 }
 
+//Comment -Mabel Suggestion
 void APlayerShip::ToggleBuildUICall()
 {
     SetBuildMode(!IsInBuildMode());
 }
 
+//Comment -Mabel Suggestion
 void APlayerShip::SetBuildMode(bool NewBuildMode)
 {
     bBuildMode = NewBuildMode;
@@ -190,11 +230,23 @@ void APlayerShip::SetBuildMode(bool NewBuildMode)
     }
 }
 
+//Comment -Mabel Suggestion
 bool APlayerShip::IsInBuildMode()
 {
     return bBuildMode;
 }
 
+/*
+* Function comments from the .h should be copied to the .cpp
+* 
+* UE doesnt like int, use int32 or int64 instead.
+*
+* Confusing Name
+* I don't think add makes sense in this context
+* Consider renaming to RecordVoidsongInput to match the comment or,
+* VoidsongCall to match the input actions that it handels
+* - Liam Suggestion
+*/
 void APlayerShip::AddVoidsongInput(int Input)
 {
     //Add the input to the list of inputs
@@ -205,6 +257,7 @@ void APlayerShip::AddVoidsongInput(int Input)
 
     //Reset the reset voidsong timer
     ResetVoidsongTimer = 0;
+    //Unnecessary Variable - Liam Suggestion
     ShouldResetVoidsongTimerTick = true;
 
     //Play the voidsong instrument
@@ -214,10 +267,16 @@ void APlayerShip::AddVoidsongInput(int Input)
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("The voidsong instrument isn't valid! Set it on the player ship."));
+        UE_LOG(LogTemp, Error, TEXT("The Voidsong instrument isn't valid! Set it on the player ship."));
     }
 }
 
+/*
+* Function comments from the .h should be copied to the .cpp
+*
+* Confusing Name. It is unclear that this is an input action callback
+* - Liam Suggestion
+*/
 void APlayerShip::ActivateVoidsong()
 {
     //Calls play voidsong with the player's current sequence of inputs
@@ -225,17 +284,26 @@ void APlayerShip::ActivateVoidsong()
     ResetVoidsong();
 }
 
+/*
+* Function comments from the .h should be copied to the .cpp
+* 
+* Imprecise name. Consider renaming to ClearVoidsongInput() or similar
+* - Liam Suggestion
+*/
 void APlayerShip::ResetVoidsong()
 {
     //Empties the sequence of inputs
     VoidsongCombo.Empty();
+    //Unnecessary Variable - Liam Suggestion
     ShouldResetVoidsongTimerTick = false;
 
     OnResetVoidsongDelegate.Broadcast();
 }
 
+//Comment -Mabel Suggestion
 void APlayerShip::InvertMoveDirection()
 {
+    //I was looking for what InvertMoveDirection would do, and now I have to look for what bMovementInputInvert does.  Kind of annoying tbh. -Mabel Suggestion
     bMovementInputInvert = !bMovementInputInvert;
 }
 
