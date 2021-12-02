@@ -799,8 +799,10 @@ void UPartGridComponent::ExplodeAtLocation(FVector WorldLocation, float Explosio
 
 }
 
+//Function comments from the .h should be copied to the .cpp. - Liam Suggestion
 bool UPartGridComponent::BoxContainsLocation(FVector2D TopLeft, FVector2D BottomRight, FVector2D Location)
 {
+	//Why are you using an if statment to return a bool? Just return TopLeft.X >= Location.X && TopLeft.Y <= Location.Y && BottomRight.X <= Location.X && BottomRight.Y >= Location.Y; - Liam Suggestion
 	if (TopLeft.X >= Location.X && TopLeft.Y <= Location.Y && BottomRight.X <= Location.X && BottomRight.Y >= Location.Y)
 	{
 		return true;
@@ -808,6 +810,12 @@ bool UPartGridComponent::BoxContainsLocation(FVector2D TopLeft, FVector2D Bottom
 	return false;
 }
 
+/*
+* Function comments from the .h should be copied to the .cpp. 
+* 
+* Logic for function would be *much* easier if it returned a FIntPoint or FVector.
+* - Liam Suggestion
+*/ 
 int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D Origin)
 {
 
@@ -817,6 +825,7 @@ int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D Or
 		return 0;
 	}
 
+	//Code is repeated. Should use a for loop or a function. - Liam Suggestion
 	//Check if the location is on the Y axis.
 	if (Location.X == Origin.X)
 	{
@@ -870,6 +879,7 @@ int UPartGridComponent::GetQuadrantFromLocation(FVector2D Location, FVector2D Or
 	}
 }
 
+//Function comments from the .h should be copied to the .cpp. - Liam Suggestion
 bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float SlopeRise, float SlopeRun, FVector2D origin)
 {
 	float XIntercept = 0;
@@ -878,6 +888,7 @@ bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D Botto
 
 	if (SlopeRise == 0)
 	{
+		//Why are you using an if statment to return a bool? Just return LocalTopLeft.X > XIntercept && LocalBottomRight.X < XIntercept; - Liam Suggestion
 		if (LocalTopLeft.X > XIntercept && LocalBottomRight.X < XIntercept)
 		{
 			return true;
@@ -894,6 +905,11 @@ bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D Botto
 			FVector2D LocalBottomLeft = FVector2D(LocalBottomRight.X, LocalTopLeft.Y);
 			FVector2D LocalTopRight = FVector2D(LocalTopLeft.X, LocalBottomRight.Y);
 
+			/*
+			* Why are you using an if statment to return a bool? Just return (LocalBottomLeft.X <= (SlopeRise / SlopeRun) * (LocalBottomLeft.Y) + XIntercept && LocalTopRight.X >= (SlopeRise/SlopeRun) * (LocalTopRight.Y) + XIntercept;
+			* Long chunk of logic should be commented.
+			* - Liam Suggestion
+			*/
 			if (LocalBottomLeft.X <= (SlopeRise / SlopeRun) * (LocalBottomLeft.Y) + XIntercept && LocalTopRight.X >= (SlopeRise/SlopeRun) * (LocalTopRight.Y) + XIntercept)
 			{
 				return true;
@@ -904,6 +920,11 @@ bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D Botto
 			}
 		}
 	}
+	/*
+	* Why are you using an if statment to return a bool? Just return LocalTopLeft.X >= (SlopeRise / SlopeRun) * (LocalTopLeft.Y) + XIntercept && LocalBottomRight.X <= (SlopeRise / SlopeRun) * (LocalBottomRight.Y) + XIntercept;
+	* Long chunk of logic should be commented.
+	* -Liam Suggestion
+	*/
 	if (LocalTopLeft.X >= (SlopeRise / SlopeRun) * (LocalTopLeft.Y) + XIntercept && LocalBottomRight.X <= (SlopeRise / SlopeRun) * (LocalBottomRight.Y) + XIntercept)
 	{
 		return true;
@@ -914,6 +935,14 @@ bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D Botto
 	}
 }
 
+/*
+* Function comments from the .h should be copied to the .cpp.
+* 
+* What is this function doing?
+* It is not detecting if a line intersects a box because the line is not fully defined, and
+* it does not use all the information of the box, so it returns incorect results.
+* - Liam Suggestion
+*/
 bool UPartGridComponent::DoesLineIntersectBox(FVector2D TopLeft, FVector2D BottomRight, float YIntercept)
 {
 	return TopLeft.Y < YIntercept&& BottomRight.Y > YIntercept;
@@ -1015,12 +1044,24 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 {
 	TArray<FIntPoint> AllParts = PartGrid.GetKeyArray();
 
+	/*
+	* Iterator should have a name that tells what it actualy is and what its iterating through.
+	* Don't use auto&.
+	* - Liam Suggestion
+	*/
 	for (auto& i : AllParts)
 	{
 		RemovePart(i, false);
 	}
+	//Iterator should have a name that tells what it actualy is and what its iterating through. - Liam Suggestion
 	for (int i = 0; i < Parts.Num(); i++)
 	{
+		/*
+		* Delete Debug code or come up with a good way for c++ debug modes.
+		*
+		* Unclear Comment. What is the debug code helping to visualize/test?
+		* - Liam Suggestion
+		*/
 		//Debug
 		//UE_LOG(LogTemp, Warning, TEXT("build ship part class %s"), *Parts[i].PartClass.Get()->GetDisplayNameText().ToString())
 		AddPart(Parts[i].PartClass, Parts[i].PartLocation, Parts[i].PartRotation, false);
@@ -1030,19 +1071,20 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 //Comment -Mabel Suggestion
 void UPartGridComponent::SaveShip(FString ShipName)
 {
-	
 	TArray<FPartData> Parts = PartGrid.GetValueArray();
-
-	
 	
 	USaveGame* SaveGameInstance = UGameplayStatics::CreateSaveGameObject(USaveShip::StaticClass());
-
+	/*
+	* Iterator should have a name that tells what it actualy is and what its iterating through.
+	* Why arent you using a for each loop?
+	* - Liam Suggestion
+	*/
 	for (int i = 0; i < Parts.Num(); i++)
 	{
+		//Use add unque or change SavedShip to a TSet to prevent duplicate parts. - Liam Suggestion
 		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i].Part->GetClass(), Parts[i].Part->GetPartGridLocation(), Parts[i].Part->GetRelativeRotation()));
 	}
 	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);
-
 }
 
 //Comment -Mabel Suggestion
@@ -1224,6 +1266,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 	//Yup, yup, this is bad, use better for loop instead of magic numbering, better iterator name, no auto... yup.
 	for (auto& i : Shape)
 	{
+		//Repeated code should be put in a loop or a function.
 		//If the new shape does NOT contain the checked location
 		if (!NewShape.Contains(FIntPoint(i.X + 1, i.Y)))
 		{
@@ -1307,6 +1350,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 	//If the new shape has changed at all
 	if (NewShape != Shape)
 	{
+		//This could be replaced with: return FindConnectedShape(NewShape, ConnectedPartsMap, CheckFunctionality); - Liam Suggestion
 		//Continue to check for connections by calling the function recursively.
 		NewShape = FindConnectedShape(NewShape, ConnectedPartsMap, CheckFunctionality);
 	}
