@@ -6,12 +6,14 @@
 #include "Parts/BasePart.h"
 #include "Ships/BaseShip.h"
 
-
+//Function comments from the .h should be copied to the .cpp. - Liam Suggestion
 TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
 {
+	//Delete print string or come up with a good way for c++ debug modes. - Liam Suggestion
 	//UE_LOG(LogTemp, Error, TEXT("Don't Get Classes at runtime!!"));
 	TArray<UClass*> Results;
 
+	//Our doesnt make sense - Liam Suggestion
 	// get our parent blueprint class
 	if (IsValid(ParentClass))
 	{
@@ -40,6 +42,7 @@ TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
 	return TArray<UClass*>();
 }
 
+//Function comments from the .h should be copied to the .cpp. - Liam Suggestion
 void UFunctionLibrary::ExplodeAtWorldLocation(const UObject* WorldContextObject, FVector WorldLocation, float ExplosionRadius)
 {
 	TArray <TEnumAsByte<EObjectTypeQuery>> ObjectTypeArray;
@@ -47,8 +50,10 @@ void UFunctionLibrary::ExplodeAtWorldLocation(const UObject* WorldContextObject,
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
 	UKismetSystemLibrary::SphereOverlapActors(World, WorldLocation, ExplosionRadius, ObjectTypeArray, ABaseShip::StaticClass(),TArray<AActor*>(), OutActors);
 
+	//Delete debug code or come up with a good way for c++ debug modes. - Liam Suggestion
 	//DrawDebugSphere(World, WorldLocation, ExplosionRadius, 32, FColor::Red, true);
-
+	
+	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	for (auto& i : OutActors)
 	{
 		if (IsValid(Cast<ABaseShip>(i)))
@@ -58,8 +63,10 @@ void UFunctionLibrary::ExplodeAtWorldLocation(const UObject* WorldContextObject,
 	}
 }
 
+//Function comments from the .h should be copied to the .cpp. - Liam Suggestion
 int UFunctionLibrary::GetBitNumberFromLocation(FIntPoint Location)
 {
+	//There is definently a way to do this with a loop & some math
 	if (Location == FIntPoint(0, 0))
 	{
 		return 0;
@@ -99,6 +106,14 @@ int UFunctionLibrary::GetBitNumberFromLocation(FIntPoint Location)
 	return 0;
 }
 
+/*
+* Function comments from the .h should be copied to the .cpp. 
+* 
+* Shouldnt this be on the PartGrid as it already requries a refernce to one?
+* 
+* Shouldnt this only ever return one part?
+* - Liam Suggestion
+*/
 TArray<UBasePart*> UFunctionLibrary::GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid)
 {
 
@@ -108,6 +123,7 @@ TArray<UBasePart*> UFunctionLibrary::GetPartsHitFromWorldLocation(FVector Locati
 	FIntPoint LocalIntPoint = FVector2D(RelativeLoc.X, RelativeLoc.Y).IntPoint();
 	FIntPoint CheckGridLocation;
 
+	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	for (int i = 0; i < 4; i++)
 	{
 		CheckGridLocation.X = LocalIntPoint.X + (i % 2);
