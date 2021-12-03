@@ -76,7 +76,7 @@ void ABaseShip::Tick(float DeltaTime)
 		float TimeToDestination = TargetRotationDistance / abs(AngVel);
 
 		//Comment your switch, also just use an if statement instead. You only have 2 possible cases, 0 or 1. Perfect
-		//for an if statement. Here, you use an if statement with a switch, so... you only need the if. -Mabel Suggestion
+		//for an if statement. Here, you use an if statement with a switch, so... you only need the if. -Mabel Suggestion //This is false look at the break; - Liam
 		switch ((TargetRotationDistance > MovementComponent->GetLookDirectionErrorTollerance()) ? 1 : 0)
 		{
 		case 1:
