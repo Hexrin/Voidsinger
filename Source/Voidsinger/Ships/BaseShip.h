@@ -16,7 +16,6 @@
 #include "BaseShip.generated.h"
 
 class UBaseResourceSystem;
-
 //Outdated delagate should be deleted - Liam Suggestion
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, DamageMultiplier, float, DurationMultiplier);
 

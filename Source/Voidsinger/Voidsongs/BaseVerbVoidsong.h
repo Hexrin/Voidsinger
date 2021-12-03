@@ -25,15 +25,6 @@ public:
 	\*------------------*/
 
 	/*
-	* Why does this function exist? It sets variables that arent used anywhere and is only called where
-	* it could be replaced with Activate(so long as you make Activate blueprint callable).
-	* - Liam Suggestion
-	*/
-	//Pre-activate calls activate, but it also sets ActorHit, WorldLocation and effectiveness. It's convenient.
-	UFUNCTION(BlueprintCallable)
-	void PreActivate(AActor* NewActorHit, AActor* NewActorThatActivated, TArray<UBasePart*> NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness);
-
-	/*
 	* Should be blueprintcallable so it can replace PreActivate
 	* 
 	* Weird Parameter Names.
@@ -50,39 +41,7 @@ public:
 	* Activate conflicts with the UBasePart::Activate() which is confusing because they are not similar functions.
 	* - Liam Suggestion
 	*/
-	//This will do the effect of the voidsong. It's called within Activate. Needs to be implemented for each Voidsong.
-	UFUNCTION(BlueprintImplementableEvent)
-	void Activate(AActor* NewActorHit, AActor* NewActorThatActivated, const TArray<UBasePart*>& NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness);
-
-	//This will undo the effect of the voidsong. It's also called within activate, after a delay for the duration. Needs to be implemented for each Voidsong. 
-	UFUNCTION(BlueprintImplementableEvent)
-	void Deactivate();
-
-	/*Getters*\
-	\--------*/
-
-protected:
-
-	/*Instanced  Variables*\
-	\*--------------------*/
-
-	// All of the varaiibles in this class are never used so they should be deleted - Liam Suggestion
-	UPROPERTY(BlueprintReadOnly)
-	AActor* ActorHit;
-
-	UPROPERTY(BlueprintReadOnly)
-	AActor* ActorThatActivated;
-
-	UPROPERTY(BlueprintReadOnly)
-	TArray<UBasePart*> PartsHit;
-
-	UPROPERTY(BlueprintReadOnly)
-	FVector LocationCalledFrom;
-
-	UPROPERTY(BlueprintReadOnly)
-	FVector WorldLocation;
-
-	UPROPERTY(BlueprintReadOnly)
-	float Effectiveness;
+	//This will do the effect of the Voidword. Needs to be implemented for each Voidsong.
+	void static Play(UBasePart* Instigator, FHitResult Hit, float Effectiveness);
 
 };
