@@ -46,7 +46,6 @@ public:
 	//Should be commented. What does the constuctor do? -Liam Suggestion
 	AVoidGameMode();
 
-	UBaseVoidsong Test;
 
 	/*
 	* The below function should be commented.
@@ -60,7 +59,7 @@ public:
 	* - Liam Suggestion
 	*/	
 	UFUNCTION(BlueprintCallable)
-	void PlayWithEffects(UBasePart* ArgInstigator, FHitResult Hit, float Effectiveness);
+	void ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness);
 
 	/*
 	* The below function should be commented. 

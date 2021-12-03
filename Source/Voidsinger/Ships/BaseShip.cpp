@@ -228,21 +228,19 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 */
 float ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs)
 {
-	/*float Duration = 0;
+	float Duration = 0;
 
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
-	for (UBaseVoidsong* i : AvailableVoidsongs)
+	for (auto& i : AvailableVoidsongs)
 	{
 		//UE doesnt like int, use int32 or int64 instead. - Liam Suggestion	
 		TArray<int> TrimmedSequence = Sequence;
-
-		//UBaseVoidsong::ActivationCombo
-		TrimmedSequence.SetNum(i->ActivationCombo.Num());
-		if (i->ActivationCombo == TrimmedSequence)
+		TrimmedSequence.SetNum(i->GetActivationCombo().Num());
+		if (i->GetActivationCombo() == TrimmedSequence)
 		{
-			if (IsValid(Cast<UBaseFactionVoidsong>(i)))
+			if (IsValid(Cast<UBaseWhoVoidsong>(i)))
 			{
-				Factions.Emplace(Cast<UBaseFactionVoidsong>(i)->Faction);
+				Factions.Emplace(Cast<UBaseWhoVoidsong>(i)->Faction);
 			}
 			else if (IsValid(Cast<UBaseNounVoidsong>(i)))
 			{
@@ -253,7 +251,7 @@ float ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<
 				Verbs.Emplace(Cast<UBaseVerbVoidsong>(i));
 			}
 
-			Duration += i->Duration;
+			Duration += i->GetDuration();
 
 			//Local variablee unnecessary replace with Sequence - Liam Suggestion
 			TArray<int> RecursiveArray = Sequence;
@@ -269,8 +267,7 @@ float ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<
 			}
 			break;
 		}
-
-	}*/
+	}
 	
 	/*
 	* This is only returns the duration of the first Voidsong in a sentance 
@@ -278,9 +275,7 @@ float ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<
 	* eg: return DecideVoidsongsPlayed(RecursiveArray, Factions, Nouns, Verbs);
 	* - Liam Suggestion
 	*/
-	//return Duration;
-
-	return 0.0;
+	return Duration;
 }
 
 /*

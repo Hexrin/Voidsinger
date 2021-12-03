@@ -465,9 +465,9 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	for (auto& i : AvailableVoidsongs)
 	{
-		if (IsValid(Cast<UBaseFactionVoidsong>(i)))
+		if (IsValid(Cast<UBaseWhoVoidsong>(i)))
 		{
-			AvailableFactions.Emplace(Cast<UBaseFactionVoidsong>(i)->Faction);
+			AvailableFactions.Emplace(Cast<UBaseWhoVoidsong>(i)->Faction);
 		}
 		else if (IsValid(Cast<UBaseNounVoidsong>(i)))
 		{
