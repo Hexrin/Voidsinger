@@ -13,7 +13,7 @@
  */
 
 
-//Comment the class -Mabel
+//Comment the class -Mabel Suggestion
 UCLASS()
 class VOIDSINGER_API AShipPlayerState : public APlayerState
 {
@@ -21,7 +21,7 @@ class VOIDSINGER_API AShipPlayerState : public APlayerState
 	
 public:
 
-	//what is this for -Mabel
+	//what is this for -Mabel Suggestion
 	TGridMap<TSubclassOf<UBasePart>> ShipBlueprint;
 
 	/*UFUNCTION()
