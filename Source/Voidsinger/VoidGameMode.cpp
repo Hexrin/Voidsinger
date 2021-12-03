@@ -23,7 +23,7 @@ AVoidGameMode::AVoidGameMode()
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void AVoidGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness)
+void AVoidGameMode::PlayWithEffects(UBasePart* ArgInstigator, FHitResult Hit, float Effectiveness)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Verbiness is called"));
 	if (!VerbsActive.IsEmpty())
@@ -31,7 +31,7 @@ void AVoidGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActiv
 		//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 		for (auto& i : VerbsActive)
 		{
-			i->PreActivate(ActorHit, ActorThatActivated, PartsHit, LocationCalledFrom, WorldLocation, Effectiveness);
+			//i->Play(ArgInstigator, Hit, Effectiveness);
 		}
 	}
 }
@@ -49,10 +49,10 @@ void AVoidGameMode::UnsetVerbs()
 {
 	//Delete print string or come up with a good way for c++ debug modes
 	UE_LOG(LogTemp, Warning, TEXT("UnsetVerbs"));
-	for (auto& i : VerbsActive)
-	{
-		i->Deactivate();
-	}
+	//for (auto& i : VerbsActive)
+	//{
+		//i->Deactivate();
+	//}
 
 	VerbsActive.Empty();
 

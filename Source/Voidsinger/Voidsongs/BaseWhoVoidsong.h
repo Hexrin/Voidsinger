@@ -13,12 +13,13 @@
 
  //Should be renamed to UBaseFactionVoidsong for consitancy - Liam Suggestion
 UCLASS()
-class VOIDSINGER_API UBaseWhoVoidsong : public UBaseVoidsong
+class VOIDSINGER_API UBaseFactionVoidsong : public UBaseVoidsong
 {
 	GENERATED_BODY()
 	
 public:
 
+	//The faction that this Voidword will activate nouns on
 	UPROPERTY(EditDefaultsOnly)
 	TEnumAsByte<EFactions> Faction;
 

@@ -19,6 +19,7 @@ class VOIDSINGER_API UBaseNounVoidsong : public UBaseVoidsong
 
 public:
 
+	//The class of the noun that this Voidword will activate
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UBasePart> Noun;
 
