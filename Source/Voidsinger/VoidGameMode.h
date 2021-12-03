@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Voidsinger/VoidsingerTypes.h"
-#include "Voidsinger/Voidsongs/BaseVerbVoidsong.h"
+#include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
 #include "VoidGameMode.generated.h"
 
 /*

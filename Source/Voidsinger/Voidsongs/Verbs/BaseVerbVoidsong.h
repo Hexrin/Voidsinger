@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/Voidsongs/BaseVoidsong.h"
-#include "Voidsinger/Voidsongs/BaseNounVoidsong.h"
-#include "Voidsinger/Voidsongs/BaseWhoVoidsong.h"
 #include "BaseVerbVoidsong.generated.h"
 
 /**
