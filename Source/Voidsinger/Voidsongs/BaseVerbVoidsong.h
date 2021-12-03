@@ -35,8 +35,19 @@ public:
 
 	/*
 	* Should be blueprintcallable so it can replace PreActivate
-	* The prefiex New doesn't realy make sense in the context of this functions parameters
+	* 
+	* Weird Parameter Names.
+	* The prefiex New doesn't realy make sense in the context of this functions parameters. What is Old?
 	* NewActorThatActivated should be replaced with Instigator to maintain consitancy with ue5
+	* NewWorldLocation of what?
+	* 
+	* Too many unnessary parmeters.
+	* It should only pass a UBasePart* Instigator, a FHitResult Hit, and a float Magnitude.
+	* The rest of the infromation could be derived from these three.
+	* 
+	* Weird Name.
+	* Not sure activate is the right word. Maybe PlayAt()
+	* Activate conflicts with the UBasePart::Activate() which is confusing because they are not similar functions.
 	* - Liam Suggestion
 	*/
 	//This will do the effect of the voidsong. It's called within Activate. Needs to be implemented for each Voidsong.

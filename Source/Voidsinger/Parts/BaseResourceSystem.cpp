@@ -84,6 +84,15 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 	{
 		TArray<FIntPoint> NumbersFound;
 
+		/*
+		* I've seen lines 98-150 before in PartGridCommponent::DestroyPixel. Should be a function on TGridMap<>
+		* This function should have the signatures:
+		* 1) void CheckForBreaks(TArray<TGridMap<ValueType>>& NewGrids)
+		* 2) void CheckForBreaks(TArray<TGridMap<ValueType>>& NewGrids, Location)
+		*
+		* This function will set NewGrids to all grids created by: 1) any breaks in the map 2) Any breaks created around Location.
+		* 2) assumes pixel at Location is empty.
+		*/
 		//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 		//Check for previously adjacent parts
 		for (auto& i : ConnectedParts)
