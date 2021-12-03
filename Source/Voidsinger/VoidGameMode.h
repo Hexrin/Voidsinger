@@ -46,8 +46,6 @@ public:
 	//Should be commented. What does the constuctor do? -Liam Suggestion
 	AVoidGameMode();
 
-	UBaseVoidsong Test;
-
 	/*
 	* The below function should be commented.
 	* What does the function do?

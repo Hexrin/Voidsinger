@@ -184,9 +184,9 @@ TEnumAsByte<EFactions> ABaseShip::GetFaction()
 void ABaseShip::AddNewVoidsong(TSubclassOf<UBaseVoidsong> Voidsong)
 {
 	//Creates the voidsong object from the given class and adds it to available voidsongs
-	UBaseVoidsong* NewVoidsong = NewObject<UBaseVoidsong>(this, Voidsong);
+	/*UBaseVoidsong* NewVoidsong = NewObject<UBaseVoidsong>(this, Voidsong);
 	AvailableVoidsongs.Emplace(NewVoidsong);
-	OnAddVoidsongDelegate.Broadcast(NewVoidsong);
+	OnAddVoidsongDelegate.Broadcast(NewVoidsong);*/
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion

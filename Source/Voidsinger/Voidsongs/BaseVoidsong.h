@@ -26,6 +26,8 @@ class VOIDSINGER_API UBaseVoidsong : public UObject
 
 public:
 
+	UBaseVoidsong();
+
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
@@ -34,17 +36,17 @@ public:
 	\*----------*/
 
 	//The name of the Voidword that the player will see.
-	static const FText VoidsongDisplayText;
+	//static const FText VoidsongDisplayText;
 
 	/*
 	* UE doesnt like int, use int32 or int64 instead.
 	* - Liam Suggestion
 	*/
 	//The sequence of numbers that when played will activate the Voidword.
-	static const TArray<int32> ActivationCombo;
+	//static const TArray<int32> ActivationCombo;
 
 	//Copy comment form GetDuration() - Liam Suggestion
 	//The amount of time that this Voidword takes to play
-	static const float Duration;
+	//static const float Duration;
 
 };

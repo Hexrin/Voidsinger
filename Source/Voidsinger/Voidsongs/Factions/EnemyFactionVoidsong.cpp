@@ -1,8 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BaseVoidsong.h"
+#include "Voidsinger/Voidsongs/Factions/EnemyFactionVoidsong.h"
 
-UBaseVoidsong::UBaseVoidsong()
-{
-}
