@@ -63,7 +63,7 @@ void UShipMovementComponent::UpdateThrusters()
 		
 	//This shouldn't be needed. You don't need to find all the Thrusters again when a new thruster is added, you can just Thrusters.Emplace(NewThruster). You just need to keep track of 
 	//when the thruster is destroyed. -Mabel Suggestion
-	for (auto& Part : Cast<ABaseShip>(GetOwner())->PartGrid->GetPartGrid().GetValueArray())
+	for (auto& Part : Cast<ABaseShip>(GetOwner())->PartGrid->GetPartGrid().GenerateValueArray())
 	{
 		UBaseThrusterPart* Thruster = Cast<UBaseThrusterPart>(Part.Part);
 		if (Thruster)

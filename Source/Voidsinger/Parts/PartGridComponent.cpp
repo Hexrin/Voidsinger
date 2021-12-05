@@ -1013,7 +1013,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& Dama
 //Comment -Mabel Suggestion
 void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 {
-	TArray<FIntPoint> AllParts = PartGrid.GetKeyArray();
+	TArray<FIntPoint> AllParts = PartGrid.GenerateLocationArray();
 
 	for (auto& i : AllParts)
 	{
@@ -1031,7 +1031,7 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 void UPartGridComponent::SaveShip(FString ShipName)
 {
 	
-	TArray<FPartData> Parts = PartGrid.GetValueArray();
+	TArray<FPartData> Parts = PartGrid.GenerateValueArray();
 
 	
 	
@@ -1210,7 +1210,7 @@ bool UPartGridComponent::PointsConnected(FIntPoint StartPoint, FIntPoint EndPoin
 	}
 	else
 	{
-		return PartGrid.PointsConnected(StartPoint, EndPoint, AlwaysConnect<FPartData>);
+		return PartGrid.PointsConnected(StartPoint, EndPoint);
 	}
 }
 

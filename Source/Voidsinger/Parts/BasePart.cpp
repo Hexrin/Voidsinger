@@ -318,7 +318,7 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 {
 	//Couldn't you just check if Loc is in ActualShape? (as well as IsFunctional() of course, assuming parts split into more parts
 	//when they are split) -Mabel Suggestion
-	return IsFunctional() && TGridMap<bool>(TSet<FIntPoint>(GetShape()), false).PointsConnected(Loc - GetPartGridLocation(), FIntPoint(0, 0), AlwaysConnect<bool>);
+	return IsFunctional() && TGridMap<bool>(TSet<FIntPoint>(GetShape()), false).PointsConnected(Loc - GetPartGridLocation(), FIntPoint(0, 0));
 }
 
 

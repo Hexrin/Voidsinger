@@ -461,7 +461,7 @@ TArray<int32> ABaseShip::CreateTrianglesForSquare(int32 UpperRight, int32 UpperL
 void ABaseShip::SaveEditorShip()
 {
 	//Bad name. It implies that it is storing a return value or a pass by refernce - Liam Suggestion
-	TArray<FPartData> OutArray = PartGrid->GetPartGrid().GetValueArray();;
+	TArray<FPartData> OutArray = PartGrid->GetPartGrid().GenerateValueArray();;
 	
 	TArray<FSavePartInfo> InfoToSave;
 	//Part set unnecessary. You can use AddUnquie() instead. - Liam Suggestion
