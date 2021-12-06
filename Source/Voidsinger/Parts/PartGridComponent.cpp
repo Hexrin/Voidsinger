@@ -316,7 +316,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 					{
 						if (PartGrid.Contains(i))
 						{
-							if (!PartGrid.PointsConnected(CorePart->GetShape()[0], i))
+							if (!PartGrid.PointsConnected(CorePart->GetShape()[0], i, AlwaysConnect<FPartData>))
 							{
 								TArray<FIntPoint> Temp;
 								Temp.Emplace(i);
@@ -337,7 +337,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 						//actually it might not need to be improved but i need to think about it
 						if (PartGrid.Contains(NumbersFound[i]) && PartGrid.Contains(NumbersFound[i + 1]))
 						{
-							if (!PartGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1]))
+							if (!PartGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
 							{
 								//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
 								//also not be connected.
