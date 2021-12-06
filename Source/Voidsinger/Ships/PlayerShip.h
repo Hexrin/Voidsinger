@@ -77,7 +77,7 @@ public:
 	//Gets the travel cost of going to the given star system
 	//Why is this on the player? Shouldn't it be on whatever is storing the start systems? Like the galaxay map or something? -Mabel Suggestion
 	UFUNCTION(BlueprintPure)
-	TMap<TEnumAsByte<EResourceType>, float> GetTravelCost(class UStarSystemData* Target);
+	TMap<EResourceType, float> GetTravelCost(class UStarSystemData* Target);
 
 	//Gets the star system the player is currently in
 	//This maybe should be on the galaxy map as well. Idk -Mabel Suggestion

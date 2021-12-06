@@ -37,7 +37,7 @@ void AVoidGameMode::PlayWithEffects(UBasePart* ArgInstigator, FHitResult Hit, fl
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs)
+void AVoidGameMode::Broadcast(TArray<EFactions> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs)
 {
 	//Shouldnt this be append(+=) not = - Liam Suggestion
 	VerbsActive = Verbs;

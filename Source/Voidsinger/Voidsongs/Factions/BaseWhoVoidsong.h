@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/Voidsongs/BaseVoidsong.h"
+#include "Voidsinger/VoidsingerTypes.h"
 #include "Kismet/GameplayStatics.h"
 #include "BaseWhoVoidsong.generated.h"
 
@@ -12,7 +13,7 @@
  */
 
  //Should be renamed to UBaseFactionVoidsong for consitancy - Liam Suggestion
-UCLASS()
+UCLASS(Abstract, Blueprintable)
 class VOIDSINGER_API UBaseFactionVoidsong : public UBaseVoidsong
 {
 	GENERATED_BODY()
@@ -21,6 +22,7 @@ public:
 
 	//The faction that this Voidword will activate nouns on
 	UPROPERTY(EditDefaultsOnly)
-	TEnumAsByte<EFactions> Faction;
+	EFactions Faction;
+
 
 };

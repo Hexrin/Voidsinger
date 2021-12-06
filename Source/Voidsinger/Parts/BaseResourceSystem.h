@@ -47,10 +47,9 @@ public:
 	/*--Getter Functions--*\
 	\*--------------------*/
 
-	//Update enum to not require TEnumAsByte<>. - Liam Suggestion
 	//Gets the resource type of the resource systen
 	UFUNCTION(BlueprintPure)
-	TEnumAsByte<EResourceType> GetType();
+	EResourceType GetType();
 
 	//Comment not helpful. Comment should describe what a function does. - Liam Suggestion
 	//GetWorld() functionality
@@ -74,7 +73,7 @@ public:
 
 	//Comment needed. What does the function do? - Liam Suggestion
 	UFUNCTION(BlueprintCallable)
-	void SetType(TEnumAsByte<EResourceType> Type);
+	void SetType(EResourceType Type);
 
 
 	/*--Resource Management Functions--*\
@@ -157,6 +156,6 @@ protected:
 	
 	//Stores the type of this system
 	UPROPERTY()
-	TEnumAsByte<EResourceType> SystemType;
+	EResourceType SystemType;
 
 };

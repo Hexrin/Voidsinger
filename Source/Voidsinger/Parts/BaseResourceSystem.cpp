@@ -225,7 +225,7 @@ void UBaseResourceSystem::RemoveSection(TArray<UBasePart*> RemovedParts)
 //}
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-TEnumAsByte<EResourceType> UBaseResourceSystem::GetType()
+EResourceType UBaseResourceSystem::GetType()
 {
 	return SystemType;
 }
@@ -236,7 +236,7 @@ TEnumAsByte<EResourceType> UBaseResourceSystem::GetType()
 * This function should not exist because it makes no sense for a resouse system to change types.
 * - Liam Suggestion
 */ 
-void UBaseResourceSystem::SetType(TEnumAsByte<EResourceType> Type)
+void UBaseResourceSystem::SetType(EResourceType Type)
 {
 	//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
 	//UE_LOG(LogTemp, Warning, TEXT("New Resource System Type = %i"), Type.GetValue());

@@ -21,7 +21,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, DamageMultip
 
 //Delegates should be commented. What functions should they be bound to? - Liam 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*, AddedVoidsong);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FActivatePartsDelegate, const TArray<TEnumAsByte<EFactions>>&, Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FActivatePartsDelegate, const TArray<EFactions>&, Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnsetVerbsDelegate);
 
 UCLASS()
@@ -57,10 +57,8 @@ public:
 
 	/*
 	* Outdated name.
-	* Should be GetResourceCapacity(TEnumAsByte<EResourceType> ResourceType)
+	* Should be GetResourceCapacity(EResourceType ResourceType)
 	* Comment should be updated to match.
-	* 
-	* Update enum to not require TEnumAsByte<>.
 	* 
 	* Comment Confusing.
 	* It gets storage capacity not capacity
@@ -70,14 +68,12 @@ public:
 	*/
 	//Gets the maximum fluid capacity of the given fluid.
 	UFUNCTION(BlueprintPure)
-	float const GetFluidCapacity(TEnumAsByte<EResourceType> Fluid);
+	float const GetFluidCapacity(EResourceType Fluid);
 
 	/*
 	* Outdated name.
-	* Should be GetFluidAmount(TEnumAsByte<EResourceType> ResourceType)
+	* Should be GetFluidAmount(EResourceType ResourceType)
 	* Comment should be updated to match.
-	* 
-	* Update enum to not require TEnumAsByte<>
 	* 
 	* Comment Confusing.
 	* What does amount mean in this context?
@@ -86,7 +82,7 @@ public:
 	*/ 
 	//Gets the amount of a given fluid.
 	UFUNCTION(BlueprintPure)
-	float const GetFluidAmount(TEnumAsByte<EResourceType> Fluid);
+	float const GetFluidAmount(EResourceType Fluid);
 	
 	//Adds a resource system to the systems on the ship.
 	UFUNCTION()
@@ -127,7 +123,7 @@ public:
 	*/
 	//Figures out what Voidsongs are played.
 	UFUNCTION()
-	float DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs);
+	float DecideVoidsongsPlayed(TArray<int> Sequence, TArray<EFactions>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs);
 
 	/*
 	* Confusing Fucntion Name.
@@ -176,7 +172,7 @@ public:
 
 	//Gets the faction of the ship
 	UFUNCTION(BlueprintPure)
-	TEnumAsByte<EFactions> GetFaction();
+	EFactions GetFaction();
 
 	//Outdated disbatcher should be deleted - Liam Suggestion
 	//Event dispatcher for laser.
@@ -406,6 +402,6 @@ public:
 
 	//The faction of the ship
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TEnumAsByte<EFactions> Faction;
+	EFactions Faction;
 
 };

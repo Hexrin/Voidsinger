@@ -250,7 +250,7 @@ TArray<UBaseResourceSystem*> UBasePart::GetSystems()
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
+UBaseResourceSystem* UBasePart::GetSystemByType(EResourceType Type)
 {
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	for (auto& i : GetSystems())
@@ -264,7 +264,7 @@ UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
+TMap<EResourceType, FIntPointArray> UBasePart::GetResourceTypes()
 {
 	return ResourceTypes;
 }
@@ -396,7 +396,7 @@ void UBasePart::ConnectToSystems()
 
 //Function comments from the .h should be identical to the one in the .cpp - Liam Suggestion
 //Create a new resource system
-void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
+void UBasePart::CreateNewSystem(EResourceType ResourceType)
 {
 	//Make the new system, make sure it's the right type, and add the system to the list of systems on the player character
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
@@ -445,7 +445,7 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 * Shouldn't NounClasses have the type: const TArray<TSubclassOf<UBasePart>>&
 * - Liam Suggestion
 */
-void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs)
+void UBasePart::OnDelegateCalled(const TArray<EFactions>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs)
 {
 	/*for (auto& i : NounClasses)
 	{
@@ -459,7 +459,7 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 
 	
 	// Variable sould be global and updated on AddNewVoidsong()	 
-	TArray<TEnumAsByte<EFactions>> AvailableFactions;
+	TArray<EFactions> AvailableFactions;
 	TArray<TSubclassOf<UObject>> AvailableNouns;
 
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion

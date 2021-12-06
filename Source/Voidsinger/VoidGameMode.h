@@ -34,7 +34,7 @@ public:
 };
 
 //The below delagates should be commented - Liam Suggestion
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FVoidsongDelegate, const TArray<TEnumAsByte<EFactions>>& , Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FVoidsongDelegate, const TArray<EFactions>& , Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeactivateVoidsongDelegate);
 
 UCLASS()
@@ -71,7 +71,7 @@ public:
 	* - Liam Suggestion
 	*/
 	UFUNCTION(BlueprintCallable)
-	void Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs);
+	void Broadcast(TArray<EFactions> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs);
 	
 	/*
 	* The below function should be commented. What does the function do?

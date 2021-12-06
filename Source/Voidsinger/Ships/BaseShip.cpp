@@ -129,13 +129,12 @@ void ABaseShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 * **Function needs implementation**
 * 
 * Outdated name.
-* Should be GetResourceCapacity(TEnumAsByte<EResourceType> ResourceType)
+* Should be GetResourceCapacity(EResourceType ResourceType)
 * Comment should be updated to match.
 *
-* Update enum to not require TEnumAsByte<>.
 * - Liam Suggestion
 */
-float const ABaseShip::GetFluidCapacity(TEnumAsByte<EResourceType> Fluid)
+float const ABaseShip::GetFluidCapacity(EResourceType Fluid)
 {
 	return 100.0f;
 }
@@ -147,13 +146,12 @@ float const ABaseShip::GetFluidCapacity(TEnumAsByte<EResourceType> Fluid)
 * **Function needs implementation**
 * 
 * Outdated name.
-* Should be GetFluidAmount(TEnumAsByte<EResourceType> ResourceType)
+* Should be GetFluidAmount(EResourceType ResourceType)
 * Comment should be updated to match.
 *
-* Update enum to not require TEnumAsByte<>
 * - Liam Suggestion
 */
-float const ABaseShip::GetFluidAmount(TEnumAsByte<EResourceType> Fluid)
+float const ABaseShip::GetFluidAmount(EResourceType Fluid)
 {
 	return 100.0f;
 }
@@ -174,7 +172,7 @@ void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-TEnumAsByte<EFactions> ABaseShip::GetFaction()
+EFactions ABaseShip::GetFaction()
 {
 	return Faction;
 }
@@ -195,7 +193,7 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 {
 	if (!Sequence.IsEmpty() && CanActivateVoidsong)
 	{
-		TArray<TEnumAsByte<EFactions>> Factions;
+		TArray<EFactions> Factions;
 		TArray<TSubclassOf<UObject>> Nouns;
 		TArray<UBaseVerbVoidsong*> Verbs;
 
@@ -226,7 +224,7 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 * because it would make the logic for returning duration much easier.
 * - Liam Suggestion
 */
-float ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs)
+float ABaseShip::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<EFactions>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs)
 {
 	/*float Duration = 0;
 
@@ -322,7 +320,7 @@ void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
 void ABaseShip::BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses)
 {
 	//Varialbe name should be meaningful - Liam Suggestion
-	TArray<TEnumAsByte<EFactions>> Temp;
+	TArray<EFactions> Temp;
 	Temp.Emplace(GetFaction());
 	OnActivatePartsDelegate.Broadcast(Temp, NounClasses, AvailableVoidsongs);
 }

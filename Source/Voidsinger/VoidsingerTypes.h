@@ -12,33 +12,33 @@ class UBasePart;
 //Comment -Mabel Suggestion
 //Are we even using this enum anymore? -Mabel Suggestion
 UENUM(BlueprintType)
-enum EDifficulty
+enum class EDifficulty : uint8 
 {
-	Easy			UMETA(DisplayName = "Easy"),
-	Medium			UMETA(DisplayName = "Medium"),
-	Hard			UMETA(DisplayName = "Hard"),
-	VeryHard		UMETA(DisplayName = "Very Hard"),
+	Easy			= 0		UMETA(DisplayName = "Easy"),
+	Medium			= 1		UMETA(DisplayName = "Medium"),
+	Hard			= 2		UMETA(DisplayName = "Hard"),
+	VeryHard		= 3		UMETA(DisplayName = "Very Hard"),
 };
 
 //Comment -Mabel Suggestion
 UENUM(BlueprintType)
-enum EResourceType
+enum class EResourceType : uint8
 {
-	Fuel			UMETA(DisplayName = "Fuel"),
-	Hydrogen		UMETA(DisplayName = "Hydrogen"),
-	InertGas		UMETA(DisplayName = "InertGas"),
-	Coolent			UMETA(DisplayName = "Coolent"),
-	Electricity		UMETA(DisplayName = "Electricity"),
-	Ammo			UMETA(DisplayName = "Ammo"),
+	Fuel			= 0		UMETA(DisplayName = "Fuel"),
+	Hydrogen		= 1		UMETA(DisplayName = "Hydrogen"),
+	InertGas		= 2		UMETA(DisplayName = "InertGas"),
+	Coolent			= 3		UMETA(DisplayName = "Coolent"),
+	Electricity		= 4		UMETA(DisplayName = "Electricity"),
+	Ammo			= 5		UMETA(DisplayName = "Ammo"),
 };
 
 //Faction types. Enemy will probably be changed but it works for now.
 UENUM(BlueprintType)
-enum EFactions
+enum class EFactions : uint8
 {
-	Player			UMETA(DisplayName = "Player"),
-	Enemy			UMETA(DisplayName = "Enemy"),
-	Inanimate		UMETA(DisplayName = "Inanimate")
+	Player			= 0		UMETA(DisplayName = "Player"),
+	Enemy			= 1		UMETA(DisplayName = "Enemy"),
+	Inanimate		= 2		UMETA(DisplayName = "Inanimate")
 };
 
 //Comment -Mabel Suggestion

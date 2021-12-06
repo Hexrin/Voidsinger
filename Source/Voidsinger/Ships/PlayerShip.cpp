@@ -124,9 +124,9 @@ void APlayerShip::BeginPlay()
 }
 
 //Comment -Mabel Suggestion
-TMap<TEnumAsByte<EResourceType>, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
+TMap<EResourceType, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
 {
-    TMap<TEnumAsByte<EResourceType>, float> Costs;
+    TMap<EResourceType, float> Costs;
     
     Costs.Add(EResourceType::Fuel, 100);
     Costs.Add(EResourceType::Hydrogen, 35);

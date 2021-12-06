@@ -191,12 +191,12 @@ public:
 	//Comment technicaly false. It finds the *first* resource system ... - Liam suggestion
 	//Returns the resource system that the part is a part of with a given type, returns null if there is no system with that resource type
 	UFUNCTION(BlueprintPure)
-	UBaseResourceSystem* GetSystemByType(TEnumAsByte<EResourceType> Type);
+	UBaseResourceSystem* GetSystemByType(EResourceType Type);
 
 	//Confuseing name. The function gets more than just the resource types. Consider renaming to GetResourceInterfaceLocations()? - Liam Suggestion
 	//Gets the locations and resource types of pixels of the part
 	UFUNCTION(BlueprintPure)
-	TMap<TEnumAsByte<EResourceType>, FIntPointArray> GetResourceTypes();
+	TMap<EResourceType, FIntPointArray> GetResourceTypes();
 
 	//Gets the strength of the part
 	UFUNCTION(BlueprintPure)
@@ -261,7 +261,7 @@ public:
 
 	//Creates a new resource system that the part is a part of
 	UFUNCTION(BlueprintCallable)
-	void CreateNewSystem(TEnumAsByte<EResourceType> ResourceType);
+	void CreateNewSystem(EResourceType ResourceType);
 
 	//Adds the part to the given resource system
 	UFUNCTION(BlueprintCallable)
@@ -281,7 +281,7 @@ public:
 	*/
 	//Function called when FVoidsongDelegate is broadcasted
 	UFUNCTION(BlueprintCallable)
-	void OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs);
+	void OnDelegateCalled(const TArray<EFactions>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs);
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||
@@ -311,7 +311,7 @@ protected:
 
 	//Stores the locations and resource types of all the pixels of this part, unless the pixel does not have a resource type
 	UPROPERTY(EditDefaultsOnly)
-	TMap<TEnumAsByte<EResourceType>, FIntPointArray> ResourceTypes;
+	TMap<EResourceType, FIntPointArray> ResourceTypes;
 
 	//Strength of the part
 	//Why is this comment calling "PartName" strength of the part -Mabel Suggestion

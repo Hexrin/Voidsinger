@@ -28,5 +28,5 @@ public:
 
 	//Comment -Mabel
 	UPROPERTY(BlueprintReadOnly);
-	TEnumAsByte<EDifficulty> Difficulty UMETA(ExposeOnSpawn = "true");
+	EDifficulty Difficulty UMETA(ExposeOnSpawn = "true");
 };

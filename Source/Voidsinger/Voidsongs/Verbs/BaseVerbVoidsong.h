@@ -12,7 +12,7 @@
 
 class UBasePart;
 
-UCLASS()
+UCLASS(Abstract, Blueprintable)
 class VOIDSINGER_API UBaseVerbVoidsong : public UBaseVoidsong
 {
 	GENERATED_BODY()
