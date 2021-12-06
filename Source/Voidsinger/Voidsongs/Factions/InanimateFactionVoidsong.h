@@ -12,6 +12,7 @@
 UCLASS()
 class VOIDSINGER_API UInanimateFactionVoidsong : public UBaseFactionVoidsong
 {
+
 	GENERATED_BODY()
 	
 };

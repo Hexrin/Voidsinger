@@ -12,6 +12,7 @@
 UCLASS()
 class VOIDSINGER_API UEnemyFactionVoidsong : public UBaseFactionVoidsong
 {
+
 	GENERATED_BODY()
 	
 };

@@ -20,7 +20,7 @@ class VOIDSINGER_API UBaseNounVoidsong : public UBaseVoidsong
 public:
 
 	//The class of the noun that this Voidword will activate
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UBasePart> Noun;
 
 };

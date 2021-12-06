@@ -13,7 +13,7 @@
  */
 
  //Should be renamed to UBaseFactionVoidsong for consitancy - Liam Suggestion
-UCLASS(Abstract, Blueprintable)
+UCLASS(Abstract, Blueprintable, config=VoidSettings)
 class VOIDSINGER_API UBaseFactionVoidsong : public UBaseVoidsong
 {
 	GENERATED_BODY()
@@ -21,7 +21,7 @@ class VOIDSINGER_API UBaseFactionVoidsong : public UBaseVoidsong
 public:
 
 	//The faction that this Voidword will activate nouns on
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, config, BlueprintReadOnly)
 	EFactions Faction;
 
 

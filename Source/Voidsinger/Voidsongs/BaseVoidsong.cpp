@@ -5,4 +5,5 @@
 
 UBaseVoidsong::UBaseVoidsong()
 {
+	LoadConfig();
 }
