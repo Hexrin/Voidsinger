@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "VoidsingerTypes.h"
+#include "Voidsinger/Voidsongs/Factions/BaseWhoVoidsong.h"
+#include "Voidsinger/Voidsongs/Nouns/BaseNounVoidsong.h"
+#include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
 #include "DrawDebugHelpers.h"
 #include "FunctionLibrary.generated.h"
 
@@ -34,4 +37,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	static TArray<UBasePart*> GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid);
 
+	UFUNCTION(BlueprintCallable)
+	static void SetVoidsongFaction(TSubclassOf<UBaseFactionVoidsong> Class, EFactions DefaultFaction);
+
+	UFUNCTION(BlueprintCallable)
+	static void SetVoidsongNoun(TSubclassOf<UBaseNounVoidsong> Class, TSubclassOf<UBasePart> DefaultNoun);
 };

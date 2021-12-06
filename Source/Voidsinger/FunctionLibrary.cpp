@@ -147,3 +147,13 @@ TArray<UBasePart*> UFunctionLibrary::GetPartsHitFromWorldLocation(FVector Locati
 
 }
 
+void UFunctionLibrary::SetVoidsongFaction(TSubclassOf<UBaseFactionVoidsong> Class, EFactions DefaultFaction)
+{
+	GetMutableDefault<UBaseFactionVoidsong>(Class)->Faction = DefaultFaction;
+}
+
+void UFunctionLibrary::SetVoidsongNoun(TSubclassOf<UBaseNounVoidsong> Class, TSubclassOf<UBasePart> DefaultNoun)
+{
+	GetMutableDefault<UBaseNounVoidsong>(Class)->Noun = DefaultNoun;
+}
+
