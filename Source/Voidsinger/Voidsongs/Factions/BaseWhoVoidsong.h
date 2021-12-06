@@ -13,7 +13,7 @@
  */
 
  //Should be renamed to UBaseFactionVoidsong for consitancy - Liam Suggestion
-UCLASS(Abstract, Blueprintable, config=VoidSettings)
+UCLASS(Abstract, Blueprintable)
 class VOIDSINGER_API UBaseFactionVoidsong : public UBaseVoidsong
 {
 	GENERATED_BODY()
