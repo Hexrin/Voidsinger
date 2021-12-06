@@ -35,8 +35,8 @@ Has functions for determining adjacency and connectivity of values
 template <class ValueType>
 class TGridMap
 {
-	/* typedefs *\
-	\* \/    \/ */
+	/* -------------- *\
+	\* \/ typedefs \/ */
 
 private:
 	//The type used for storing a Values and its Location
@@ -45,10 +45,11 @@ private:
 	//The type used for storing Values and thier Locations
 	typedef TArray<LocationValuePairType> GridInfoType;
 
-	/* /\    /\ *\
-	\* typedefs */
-	/* Variables *\
-	\* \/     \/ */
+	/* /\ typedefs /\ *\
+	\* -------------- */
+
+	/* --------------- *\
+	\* \/ Variables \/ */
 
 private:
 	//Stores all values and thier locations
@@ -57,10 +58,11 @@ private:
 	//Stores the size of the grid
 	GridLocationType GridSize;
 
-	/* /\     /\ *\
-	\* Variables */
-	/* Constructors *\
-	\* \/        \/ */
+	/* /\ Variables /\ *\
+	\* --------------- */
+
+	/* ------------------ *\
+	\* \/ Constructors \/ */
 
 public:
 	//Constructs a GridMap with the given dimensions and no Values.
@@ -90,14 +92,15 @@ public:
 	//Constucts a GridMap with the given Values and dimensions.
 	TGridMap(GridInfoType Values, GridLocationType GridDimensions = GridLocationType(250))
 	{
-		GridInfo = Values.Sort(ComparePair);
+		GridInfo = Values.Sort(LocationIDLessThan);
 		GridSize = GridDimensions;
 	}
 
-	/* /\        /\ *\
-	\* Constructors */
-	/* Data Manipulator *\
-	\* \/            \/ */
+	/* /\ Constructors /\ *\
+	\* ------------------ */
+
+	/* ---------------------- *\
+	\* \/ Data Manipulation \/ */
 
 public:
 	/**
@@ -115,7 +118,7 @@ public:
 		}
 
 		//Uses a bianary search to emplace into a sorted aray
-		int32 InsertionIndex = BinaryInsertionSearch(LocationToRelativeValue(Location));
+		int32 InsertionIndex = BinaryInsertionSearch(LocationToLocationID(Location));
 		return GridInfo.EmplaceAt_GetRef(InsertionIndex, LocationValuePairType(Location, Value)).Value;
 	}
 
@@ -129,7 +132,7 @@ public:
 	 */
 	void Remove(GridLocationType Location)
 	{
-		int32 RemovalIndex = BinarySearch(LocationToRelativeValue(Location));
+		int32 RemovalIndex = BinarySearch(LocationToLocationID(Location));
 		Remove(RemovalIndex);
 	}
 private:
@@ -148,10 +151,11 @@ private:
 
 	//	/\ Remove() /\
 
-	/* /\            /\ *\
-	\* Data Manipulator */
-	/* Search Functions *\
-	\* \/            \/ */
+	/* /\ Data Manipulation /\ *\
+	\* ----------------------- */
+
+	/* ------------ *\
+	\* \/ Search \/ */
 
 public:
 	/**
@@ -162,7 +166,7 @@ public:
 	 */
 	bool Contains(GridLocationType Location)
 	{
-		return BinarySearch(LocationToRelativeValue(Location)) >= 0;
+		return BinarySearch(LocationToLocationID(Location)) >= 0;
 	}
 
 	/**
@@ -173,7 +177,7 @@ public:
 	 */
 	ValueType* Find(GridLocationType Location)
 	{
-		int32 Index = BinarySearch(LocationToRelativeValue(Location));
+		int32 Index = BinarySearch(LocationToLocationID(Location));
 		if (Index >= 0)
 		{
 			return &GridInfo[Index].Value;
@@ -189,7 +193,7 @@ public:
 	 */
 	ValueType FindRef(GridLocationType Location)
 	{
-		int32 Index = BinarySearch(LocationToRelativeValue(Location));
+		int32 Index = BinarySearch(LocationToLocationID(Location));
 		if (Index >= 0)
 		{
 			return GridInfo[Index].Value;
@@ -198,10 +202,132 @@ public:
 		return ValueType();
 	}
 
-	/* /\            /\ *\
-	\* Search Functions */
-	/* Grid State Functions *\
-	\* \/			     \/ */
+private:
+	/**
+	 * Checks if A's location ID is less than B's location ID.
+	 * 
+	 * @param A - First value to compare.
+	 * @param B - Second value to compare.
+	 * @return Whether or not A's location ID is less than B's location ID.
+	 */
+	const static bool LocationIDLessThan(LocationValuePairType& A, LocationValuePairType& B)
+	{
+		return LocationToLocationID(A[0]) < LocationToLocationID(B[0]);
+	}
+
+
+	// \/ BinarySearch() \/
+
+	/**
+	 * Uses a bianary search to find the index of a given Location in GridInfo.
+	 *
+	 * @param TargetLoction - The value to search for.
+	 * @param bReturnTargetIndex - Whether or not to return the index where TargetLocation should be inserted rather than -1 when TargetLocation is not found.
+	 * @return The index of TargetLoction in GridInfo. Returns -1 if GridInfo does not contain TargetLoction unless bReturnTargetIndex is true in which case returns the index TargetLocation would have been at.
+	 */
+	const int32 BinarySearch(GridLocationType TargetLocation, bool bReturnTargetIndex = false)
+	{
+		if (GridInfo.Num() == 0)
+		{
+			if (bReturnTargetIndex)
+			{
+				return 0;
+			}
+			return -1;
+		}
+		//Begin recursive Bianary Search
+		return BinarySearch(TargetLoction, 0, GridInfo.Num() - 1, bReturnTargetIndex);
+	}
+
+	/**
+	 * Uses a bianary search between the given indices to find the index of a given location in GridInfo.
+	 *
+	 * @param TargetLoction - The value to search for.
+	 * @param MinIndex - The lower bounds for the search.
+	 * @param MaxIndex - The upper bounds for the search.
+	 * @param bReturnTargetIndex - Whether or not to always return the index TargetLoction.
+	 * @return The index of TargetLoction in GridInfo. Returns -1 if GridInfo does not contain TargetLoction unless bReturnTargetIndex is true in which case returns the index TargetLocation would have been at.
+	 */
+	const int32 BinarySearch(GridLocationType TargetLocation, int32 MinIndex, int32 MaxIndex, bool bReturnTargetIndex = false)
+	{
+		return BinarySearch(LocationToLocationID(TargetLocation), MinIndex, MaxIndex, bReturnTargetIndex);
+	}
+
+	/**
+	 * Uses a bianary search between the given indices to find the index of a given location ID in GridInfo.
+	 *
+	 * @param TargetLocationID - The value to search for.
+	 * @param MinIndex - The lower bounds for the search.
+	 * @param MaxIndex - The upper bounds for the search.
+	 * @param bReturnTargetIndex - Whether or not to always return the index TargetLoction.
+	 * @return The index of TargetLoction in GridInfo. Returns -1 if GridInfo does not contain TargetLoction unless bReturnTargetIndex is true in which case returns the index TargetLocation would have been at.
+	 */
+	const int32 BinarySearch(int32 TargetLocationID, int32 MinIndex, int32 MaxIndex, bool bReturnTargetIndex = false)
+	{
+		//Detect if Target Location was not found
+		if (MinIndex > MaxIndex)
+		{
+			if (bReturnTargetIndex)
+			{
+				return FMath::Max(MinIndex, 0);
+			}
+			return -1;
+		}
+
+		int32 IndexToCheck = (MaxIndex + MinIndex) / 2;
+		int32 CheckValue = LocationToLocationID(GridInfo[IndexToCheck].Location);
+
+		//Check to see if Target found
+		if (CheckValue == TargetLoction)
+		{
+			return IndexToCheck;
+		}
+
+		//Repeate search with bounds excluding indices known to not contain TargetLocationID
+		if (CheckValue < TargetLoction)
+		{
+			return BinarySearch(TargetLoction, IndexToCheck + 1, MaxIndex);
+		}
+		else
+		{
+			return BinarySearch(TargetLoction, MinIndex, IndexToCheck - 1);
+		}
+	}
+
+	// /\ BinarySearch() /\
+
+	/**
+	 * Converts a grid location to a location ID used for sorting GridInfo.
+	 * 
+	 * @param Location -  The value to convert
+	 * @return An int unique to this 2D location.
+	 */
+	const int32 LocationToLocationID(GridLocationType Location)
+	{
+		Location.X = Location.X > 0 ? 2 * Location.X : -2 * Location.X - 1;
+		Location.Y = Location.Y > 0 ? 2 * Location.Y : -2 * Location.Y - 1;
+		return Location.X + GridSize.X * Location.Y;
+	}
+
+	/**
+	 * Converts a location ID to a location.
+	 *
+	 * @param LocationID - The value to convert.
+	 * @return The location LocationID corrasponds to.
+	 */
+	const GridLocationType LocationIDToLocation(int32 LocationID)
+	{
+		GridLocationType ReturnValue = GridLocationType(LocationID % GridSize.X, LocationID / (GridSize.Y / 2));
+		ReturnValue.X = ReturnValue.X % 2 == 0 ? ReturnValue.X / 2 : (ReturnValue.X + 1) / -2;
+		ReturnValue.Y = ReturnValue.Y % 2 == 0 ? ReturnValue.Y / 2 : (ReturnValue.Y + 1) / -2;
+		return ReturnValue;
+	}
+
+	/* /\ Search /\ *\
+	\* ------------ */
+
+	/* ---------------- *\
+	\* \/ Grid State \/ */
 
 public:	
 	/**
@@ -258,10 +384,11 @@ public:
 		return Loactions;
 	}
 
-	/* /\                /\ *\
-	\* Grid State Functions */
-	/* Grid Shape Analysis *\
-	\* \/			    \/ */
+	/* /\ Grid State /\ *\
+	\* ---------------- */
+
+	/* ------------------------- *\
+	\* \/ Grid Shape Analysis \/ */
 
 public:
 	/**
@@ -353,20 +480,17 @@ private:
 		const bool IsXCloser = abs((EndLocation - StartLocation).X) < abs((EndLocation - StartLocation).Y);
 		bool XIsPosive = (EndLocation - StartLocation).X > 0;
 		bool YIsPosive = (EndLocation - StartLocation).Y > 0;
-		//UE_LOG(LogTemp, Warning, TEXT("Direction x=%i, y=%i"), (EndLocation - StartLocation).X, (EndLocation - StartLocation).Y);
-
 
 		//Iterate though and run recursive function for all adjecent pixels
 		for (int i = 0; i < 4; i++)
 		{
 			//Select next pixel to scan based of of direction to EndLocation
-			GridLocationType TargetPoint = StartLocation + ((!IsXCloser ^ (i % 2 == 1)) ? GridLocationType((XIsPosive ^ (i > 1)) ? 1 : -1, 0) : GridLocationType(0, (YIsPosive ^ (i > 1)) ? 1 : -1));
-			//UE_LOG(LogTemp, Warning, TEXT("Target Point x=%i, y=%i, Xclose=%i, Xpos=%i, Ypos=%i"), TargetPoint.X, TargetPoint.Y, (IsXCloser ^ (i % 2 == 1)) ? 1 : 0, !(XIsPosive ^ (i > 1)) ? 1 : 0, !(YIsPosive ^ (i > 1)) ? 1 : 0);
-
-			//Scan Pixel
-			if (!SeachedLocations.Contains(TargetPoint) && Contains(TargetPoint) && ConectivityCondition(FindRef(TargetPoint), TargetPoint))
+			GridLocationType TargetLocation = StartLocation + ((!IsXCloser ^ (i % 2 == 1)) ? GridLocationType((XIsPosive ^ (i > 1)) ? 1 : -1, 0) : GridLocationType(0, (YIsPosive ^ (i > 1)) ? 1 : -1));
+			
+			//Check to see if TargetLocation contains a value and satisfies the Conectivity Condition.
+			if (!SeachedLocations.Contains(TargetLocation) && Contains(TargetLocation) && ConectivityCondition(FindRef(TargetLocation), TargetLocation))
 			{
-				ReturnValue = PointsConnected(TargetPoint, EndLocation, SeachedLocations, ConectivityCondition);
+				ReturnValue = PointsConnected(TargetLocation, EndLocation, SeachedLocations, ConectivityCondition);
 				if (ReturnValue)
 				{
 					break;
@@ -388,87 +512,6 @@ private:
 		return true;
 	}
 
-private:
-	const static bool ComparePair(LocationValuePairType& A, LocationValuePairType& B)
-	{
-		return LocationToRelativeValue(A[0]) < LocationToRelativeValue(B[0]);
-	}
-
-	const int32 BinarySearch(int32 TargetValue)
-	{
-		if (GridInfo.Num() == 0)
-		{
-			return -1;
-		}
-		return BinarySearch(TargetValue, 0, GridInfo.Num() - 1);
-	}
-
-	const int32 BinarySearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
-	{
-		if (MinIndex > MaxIndex)
-		{
-			return -1;
-		}
-
-		int32 IndexToCheck = (MaxIndex + MinIndex) / 2;
-		int32 CheckValue = LocationToRelativeValue(GridInfo[IndexToCheck].Location);
-		if (CheckValue == TargetValue)
-		{
-			return IndexToCheck;
-		}
-		else if (CheckValue < TargetValue)
-		{
-			return BinarySearch(TargetValue, IndexToCheck + 1, MaxIndex);
-		}
-		else
-		{
-			return BinarySearch(TargetValue, MinIndex, IndexToCheck - 1);
-		}
-	}
-	const int32 BinaryInsertionSearch(int32 TargetValue)
-	{
-		if (GridInfo.Num() == 0)
-		{
-			return 0;
-		}
-		return BinaryInsertionSearch(TargetValue, 0, GridInfo.Num() - 1);
-	}
-
-	const int32 BinaryInsertionSearch(int32 TargetValue, int32 MinIndex, int32 MaxIndex)
-	{
-		if (MinIndex > MaxIndex)
-		{
-			return FMath::Max(MinIndex, 0);
-		}
-
-		int32 IndexToCheck = (MaxIndex + MinIndex) / 2;
-		int32 CheckValue = LocationToRelativeValue(GridInfo[IndexToCheck].Location);
-		if (CheckValue == TargetValue)
-		{
-			return IndexToCheck;
-		}
-		else if (CheckValue < TargetValue)
-		{
-			return BinaryInsertionSearch(TargetValue, IndexToCheck + 1, MaxIndex);
-		}
-		else
-		{
-			return BinaryInsertionSearch(TargetValue, MinIndex, IndexToCheck - 1);
-		}
-	}
-
-	const int32 LocationToRelativeValue(GridLocationType Location)
-	{
-		Location.X = Location.X > 0 ? 2 * Location.X : -2 * Location.X - 1;
-		Location.Y = Location.Y > 0 ? 2 * Location.Y : -2 * Location.Y - 1;
-		return Location.X + GridSize.X * Location.Y;
-	}
-
-	const GridLocationType RelativeValueToLocation(int32 Index)
-	{
-		GridLocationType ReturnValue = GridLocationType(Index % GridSize.X, Index / (GridSize.Y / 2));
-		ReturnValue.X = ReturnValue.X % 2 == 0 ? ReturnValue.X / 2 : (ReturnValue.X + 1) / -2;
-		ReturnValue.Y = ReturnValue.Y % 2 == 0 ? ReturnValue.Y / 2 : (ReturnValue.Y + 1) / -2;
-		return ReturnValue;
-	}
+	/* /\ Grid Shape Analysis /\ *\
+	\* ------------------------- */
 };
