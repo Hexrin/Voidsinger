@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsongs/Verbs/BaseVerbVoidsong.h"
+#include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
 #include "FillVerbVoidsong.generated.h"
 
 /**

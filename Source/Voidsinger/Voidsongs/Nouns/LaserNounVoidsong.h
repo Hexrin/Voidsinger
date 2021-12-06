@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsongs/Nouns/BaseNounVoidsong.h"
+#include "Voidsinger/Voidsongs/Nouns/BaseNounVoidsong.h"
 #include "LaserNounVoidsong.generated.h"
 
 /**
