@@ -11,24 +11,9 @@ AVoidgrid::AVoidgrid()
 
 }
 
-// Called when the game starts or when spawned
-void AVoidgrid::BeginPlay()
+
+bool AVoidgrid::AddPart(TSubclassOf<UBasePart> PartClass, GridLocationType Location)
 {
-	Super::BeginPlay();
-	
+	PartClass.GetDefaultObject()->GetDesiredShape();
+	return false;
 }
-
-// Called every frame
-void AVoidgrid::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void AVoidgrid::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-

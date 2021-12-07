@@ -23,15 +23,15 @@ public:
 	static TArray<UClass*> GetClasses(UClass* ParentClass);
 
 	//Explode at a global location, affecting all part grids in the radius
-	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"))
-	static void ExplodeAtWorldLocation(const UObject* WorldContextObject, FVector WorldLocation, float ExplosionRadius);
+	//UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"))
+	//static void ExplodeAtWorldLocation(const UObject* WorldContextObject, FVector WorldLocation, float ExplosionRadius);
 		
 	//This will return a bit based on the location given. The location given should be relative to the pixel in question.
 	//So -1, -1 will be the bottom left, or 16.
 	UFUNCTION()
 	static int GetBitNumberFromLocation(FIntPoint Location);
 
-	UFUNCTION(BlueprintPure)
-	static TArray<UBasePart*> GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid);
+	//UFUNCTION(BlueprintPure)
+	//static TArray<UBasePart*> GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid);
 
 };

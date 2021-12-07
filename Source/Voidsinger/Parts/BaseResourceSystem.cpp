@@ -139,10 +139,10 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 						TSet<UBasePart*> RemovedSet;
 
 						//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
-						for (auto& j : UPartGridComponent::FindConnectedShape(Temp, ConnectedPartsMap, true))
-						{
-							RemovedSet.Emplace(ConnectedPartsMap.Find(j)->Part);
-						}
+						//for (auto& j : UPartGridComponent::FindConnectedShape(Temp, ConnectedPartsMap, true))
+						//{
+						//	RemovedSet.Emplace(ConnectedPartsMap.Find(j)->Part);
+						//}
 						CreateNewSystem(RemovedSet.Array());
 					}
 				}
@@ -160,7 +160,7 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 	{
 		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
 		//UE_LOG(LogTemp, Warning, TEXT("Merge Systems"));
-		Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
+		//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
 	}
 	else
 	{
@@ -180,7 +180,7 @@ void UBaseResourceSystem::CreateNewSystem(TArray<UBasePart*> RemovedParts)
 
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>(ThisClass::StaticClass()));
 	NewSystem->AddSection(RemovedParts);
-	Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->AddResourceSystem(NewSystem);
+	//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->AddResourceSystem(NewSystem);
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion

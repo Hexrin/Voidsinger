@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/VoidGameMode.h"
+#include "Voidsinger/Voidgrids/GridMap.h"
 #include "Voidsinger/FunctionLibrary.h"
 #include "BasePart.generated.h"
 
@@ -14,14 +15,42 @@
 
 class UBaseResourceSystem;
 class UBaseThrusterPart;
-class UPartGridComponent;
+//class UPartGridComponent;
 struct FPartData;
+
+USTRUCT(BlueprintType)
+struct VOIDSINGER_API FPartTransform
+{
+	GENERATED_BODY()
+
+	//Stores the Location in IntPoint form for accessablity in blueprints. Do not use in C++.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FIntPoint Location;
+
+	//Stores the location of the part.
+	GridLocationType GridLocation;
+
+	//Stores the rotation of the part.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Rotation;
+
+	//Constucts a part transform with the given location and a rotation snaped to 90 degree intervals.
+	FPartTransform(GridLocationType Loc = GridLocationType(0, 0), float Rot = 0.f)
+	{
+		Location = Loc;
+		GridLocation = Loc;
+		Rotation = FMath::Fmod(FMath::GridSnap(Rot, 90.f), 90.f);
+	}
+};
+
+typedef TSet<GridLocationType> PartShapeType;
 
 UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject, public IActivateInterface
 {
 
 	GENERATED_BODY()
+
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             FUNCTIONS             ||
@@ -46,7 +75,7 @@ public:
 	// you can use whatever the "place part" function is? or is this the "place part" function? If this is only
 	//for internal use, then this should be a private function. -Mabel Suggestion
 	UFUNCTION()
-	void InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
+	void InitializeVariables(FIntPoint Loc, float Rot, /*UPartGridComponent* PartGrid,*/ TSubclassOf<UBasePart> PartType);
 
 	//Used to initize funtionality once the part has been placed onto the part grid
 	//This is called from part grid then, after it's placed? asking for clarification -Mabel Suggestion
@@ -125,13 +154,13 @@ protected:
 public:
 
 	//Gets the desired shape of the part ignoring any damage the part may have taken
-	UFUNCTION(BlueprintPure)
-	const TArray<FIntPoint> GetDesiredShape();
-	const TArray<FIntPoint> GetDesiredShape(float Rot);
+	//UFUNCTION(BlueprintPure)
+	const PartShapeType GetDesiredShape();
+	const PartShapeType GetDesiredShape(float Rot);
 
 	//Gets the current shape of the part accounting for damage
-	UFUNCTION(BlueprintPure)
-	const TArray<FIntPoint> GetShape();
+	//UFUNCTION(BlueprintPure)
+	const PartShapeType GetShape();
 
 	//Gets the outer bounds of the part
 	//Should the name of this function have the word "Part" in it? Isn't it implied that it would be the part bounds? -Mabel Suggestion
@@ -175,14 +204,14 @@ public:
 
 	//Gets the part grid that this part is attached to
 	//This can be achieved with "GetOuter" and isn't a necessary function -Mabel Suggestion
-	UFUNCTION(BlueprintPure)
-	UPartGridComponent* GetPartGrid();
+	/*UFUNCTION(BlueprintPure)
+	UPartGridComponent* GetPartGrid();*/
 
 	//Gets the ship it's a part of
 	//This could be achieved with "GetOuter()->GetOuter()" currently, though after our refactor it will probably just be
 	//"GetOuter()", so this isn't a necessary function either -Mabel Suggestion
-	UFUNCTION(BlueprintPure)
-	const ABaseShip* GetShip();
+	//UFUNCTION(BlueprintPure)
+	//const ABaseShip* GetShip();
 
 	//Gets the resource systems the part is a part of
 	UFUNCTION(BlueprintPure)
@@ -294,8 +323,8 @@ protected:
 
 	//Stores the default shape of the part 
 	//Either this comment or the variable should be renamed. either "Stores the desired shape of the part" or "DefaultShape" -Mabel Suggestion
-	UPROPERTY(EditDefaultsOnly)
-	TSet<FIntPoint> DesiredShape;
+	//UPROPERTY(EditDefaultsOnly)
+	PartShapeType DesiredShape;
 
 	//Comment -Mabel Suggestion
 	UPROPERTY(EditDefaultsOnly)
@@ -342,8 +371,8 @@ protected:
 	\*--------------------*/
 
 	//Stores the current shape of the part accounting for damage and rotation
-	UPROPERTY()
-	TArray<FIntPoint> ActualShape;
+	//UPROPERTY()
+	PartShapeType ActualShape;
 
 private:
 	
@@ -381,7 +410,7 @@ private:
 	TArray<UBaseResourceSystem*> Systems;
 
 	//Stores a reference to the part grid component
-	UPROPERTY()
-	UPartGridComponent* PartGridComponent;
+	/*UPROPERTY()
+	UPartGridComponent* PartGridComponent;*/
 
 };

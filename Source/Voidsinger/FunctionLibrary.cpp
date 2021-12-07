@@ -42,26 +42,26 @@ TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
 	return TArray<UClass*>();
 }
 
-//Function comments from the .h should be copied to the .cpp. - Liam Suggestion
-void UFunctionLibrary::ExplodeAtWorldLocation(const UObject* WorldContextObject, FVector WorldLocation, float ExplosionRadius)
-{
-	TArray <TEnumAsByte<EObjectTypeQuery>> ObjectTypeArray;
-	TArray<AActor*> OutActors;
-	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
-	UKismetSystemLibrary::SphereOverlapActors(World, WorldLocation, ExplosionRadius, ObjectTypeArray, ABaseShip::StaticClass(),TArray<AActor*>(), OutActors);
-
-	//Delete debug code or come up with a good way for c++ debug modes. - Liam Suggestion
-	//DrawDebugSphere(World, WorldLocation, ExplosionRadius, 32, FColor::Red, true);
-	
-	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
-	for (auto& i : OutActors)
-	{
-		if (IsValid(Cast<ABaseShip>(i)))
-		{
-			Cast<ABaseShip>(i)->PartGrid->ExplodeAtLocation(WorldLocation, ExplosionRadius);
-		}
-	}
-}
+////Function comments from the .h should be copied to the .cpp. - Liam Suggestion
+//void UFunctionLibrary::ExplodeAtWorldLocation(const UObject* WorldContextObject, FVector WorldLocation, float ExplosionRadius)
+//{
+//	TArray <TEnumAsByte<EObjectTypeQuery>> ObjectTypeArray;
+//	TArray<AActor*> OutActors;
+//	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+//	UKismetSystemLibrary::SphereOverlapActors(World, WorldLocation, ExplosionRadius, ObjectTypeArray, ABaseShip::StaticClass(),TArray<AActor*>(), OutActors);
+//
+//	//Delete debug code or come up with a good way for c++ debug modes. - Liam Suggestion
+//	//DrawDebugSphere(World, WorldLocation, ExplosionRadius, 32, FColor::Red, true);
+//	
+//	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
+//	for (auto& i : OutActors)
+//	{
+//		if (IsValid(Cast<ABaseShip>(i)))
+//		{
+//			Cast<ABaseShip>(i)->PartGrid->ExplodeAtLocation(WorldLocation, ExplosionRadius);
+//		}
+//	}
+//}
 
 //Function comments from the .h should be copied to the .cpp. - Liam Suggestion
 int UFunctionLibrary::GetBitNumberFromLocation(FIntPoint Location)
@@ -114,36 +114,36 @@ int UFunctionLibrary::GetBitNumberFromLocation(FIntPoint Location)
 * Shouldnt this only ever return one part?
 * - Liam Suggestion
 */
-TArray<UBasePart*> UFunctionLibrary::GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid)
-{
-
-	TSet<UBasePart*> PartsHit;
-
-	FVector RelativeLoc = UKismetMathLibrary::InverseTransformLocation(PartGrid->GetOwner()->GetActorTransform(), Location) + FVector(Cast<ABaseShip>(PartGrid->GetOwner())->PhysicsComponent->GetCenterOfMass(), 0);
-	FIntPoint LocalIntPoint = FVector2D(RelativeLoc.X, RelativeLoc.Y).IntPoint();
-	FIntPoint CheckGridLocation;
-
-	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
-	for (int i = 0; i < 4; i++)
-	{
-		CheckGridLocation.X = LocalIntPoint.X + (i % 2);
-		if (i > 1)
-		{
-			CheckGridLocation.Y = LocalIntPoint.Y + 1;
-		}
-		else
-		{
-			CheckGridLocation.Y = LocalIntPoint.Y;
-		}
-
-		if (PartGrid->GetPartGrid().Contains(CheckGridLocation))
-		{
-			PartsHit.Emplace(PartGrid->GetPartGrid().Find(CheckGridLocation)->Part);
-		}
-
-	}
-
-	return PartsHit.Array();
-
-}
+//TArray<UBasePart*> UFunctionLibrary::GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid)
+//{
+//
+//	TSet<UBasePart*> PartsHit;
+//
+//	FVector RelativeLoc = UKismetMathLibrary::InverseTransformLocation(PartGrid->GetOwner()->GetActorTransform(), Location) + FVector(Cast<ABaseShip>(PartGrid->GetOwner())->PhysicsComponent->GetCenterOfMass(), 0);
+//	FIntPoint LocalIntPoint = FVector2D(RelativeLoc.X, RelativeLoc.Y).IntPoint();
+//	FIntPoint CheckGridLocation;
+//
+//	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
+//	for (int i = 0; i < 4; i++)
+//	{
+//		CheckGridLocation.X = LocalIntPoint.X + (i % 2);
+//		if (i > 1)
+//		{
+//			CheckGridLocation.Y = LocalIntPoint.Y + 1;
+//		}
+//		else
+//		{
+//			CheckGridLocation.Y = LocalIntPoint.Y;
+//		}
+//
+//		if (PartGrid->GetPartGrid().Contains(CheckGridLocation))
+//		{
+//			PartsHit.Emplace(PartGrid->GetPartGrid().Find(CheckGridLocation)->Part);
+//		}
+//
+//	}
+//
+//	return PartsHit.Array();
+//
+//}
 

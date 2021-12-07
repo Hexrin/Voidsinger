@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Voidsinger/Parts/BasePart.h"
+#include "GridMap.h"
 #include "Voidgrid.generated.h"
-
-//typedef TGrid<FGridspaceInfo> FVoidgrid;
 
 UCLASS()
 class VOIDSINGER_API AVoidgrid : public APawn
@@ -17,15 +17,22 @@ public:
 	// Sets default values for this pawn's properties
 	AVoidgrid();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	/* ---------------- *\ 
+	\* \/ Pixel Mold \/ */
+public:
+	//The type used for storing a ships Pixel Mold
+	typedef TGridMap<UBasePart*> PixelMoldType;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	/**
+	 * Adds a part to this ships Pixel Mold.
+	 * 
+	 * @param PartClass - The class of part to add.
+	 * @param Location - The location to add the part at.
+	 * @return Whether or not a part was placed successfuly.
+	 */
+	bool AddPart(TSubclassOf<UBasePart> PartClass, GridLocationType Location);
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+private:
+	//Stores the Pixel Mold of this ship.
+	PixelMoldType PixelMold;
 };

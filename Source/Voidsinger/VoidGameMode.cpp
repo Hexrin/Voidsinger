@@ -19,7 +19,7 @@ AVoidGameMode::AVoidGameMode()
 {
 	//LoadConfig();
 	PlayerStateClass = AShipPlayerState::StaticClass();
-	DefaultPawnClass = APlayerShip::StaticClass();
+	//DefaultPawnClass = APlayerShip::StaticClass();
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion

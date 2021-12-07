@@ -22,22 +22,22 @@ UBasePart::UBasePart()
 	Location = FIntPoint();
 	TotalPartMass = 1;
 	Cost = 1;
-	DesiredShape = TSet<FIntPoint>();
+	DesiredShape = PartShapeType();
 	Bounds = FArrayBounds();
 	//RotatedShape = TArray<FIntPoint>();
-	ActualShape = TArray<FIntPoint>();
+	ActualShape = PartShapeType();
 	bFunctional = true;
 	bIsBeingDestroyed = false;
 
 }
 
 //Copy comment from .h -Mabel Suggestion
-void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
+void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, /*UPartGridComponent* PartGrid,*/ TSubclassOf<UBasePart> PartType)
 {
 	//Initalize Variables
 	Rotation = FMath::GridSnap<float>(Rot, 90);
 	Location = Loc;
-	PartGridComponent = PartGrid;
+	//PartGridComponent = PartGrid;
 	ActualShape = GetDesiredShape();
 
 }
@@ -51,7 +51,7 @@ void UBasePart::InitializeFunctionality()
 	{
 		//Bind to delegates
 		Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
-		Cast<ABaseShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
+		//Cast<ABaseShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
 		
 		//Initialize Resource System
 		ConnectToSystems();
@@ -133,16 +133,16 @@ TStatId UBasePart::GetStatId() const
 \*--------------------*/
 
 //Copy comment from .h -Mabel Suggestion
-const TArray<FIntPoint> UBasePart::GetDesiredShape()
+const PartShapeType UBasePart::GetDesiredShape()
 {
 	return GetDesiredShape(Rotation);
 }
 
 //Copy comment from .h -Mabel Suggestion
-const TArray<FIntPoint> UBasePart::GetDesiredShape(float Rot)
+const PartShapeType UBasePart::GetDesiredShape(float Rot)
 {
-	TArray<FIntPoint> RotatedShape = TArray<FIntPoint>();
-	for (FIntPoint PixelLoc : DesiredShape)
+	PartShapeType RotatedShape = PartShapeType();
+	for (GridLocationType PixelLoc : DesiredShape)
 	{
 		RotatedShape.Emplace(FVector2D(PixelLoc).GetRotated(FMath::GridSnap<float>(Rot, 90)).RoundToVector().IntPoint());
 	}
@@ -150,7 +150,7 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape(float Rot)
 }
 
 //Copy comment from .h -Mabel Suggestion
-const TArray<FIntPoint> UBasePart::GetShape()
+const PartShapeType UBasePart::GetShape()
 {
 	return ActualShape;
 }
@@ -232,16 +232,16 @@ float UBasePart::GetMass()
 }
 
 //Copy comment from .h -Mabel Suggestion
-UPartGridComponent* UBasePart::GetPartGrid()
-{
-	return PartGridComponent;
-}
+//UPartGridComponent* UBasePart::GetPartGrid()
+//{
+//	return PartGridComponent;
+//}
 
 //Copy comment from .h -Mabel Suggestion
-const ABaseShip* UBasePart::GetShip()
-{
-	return Cast<ABaseShip>(GetPartGrid()->GetOwner());
-}
+//const ABaseShip* UBasePart::GetShip()
+//{
+//	return Cast<ABaseShip>(GetPartGrid()->GetOwner());
+//}
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
 TArray<UBaseResourceSystem*> UBasePart::GetSystems()
