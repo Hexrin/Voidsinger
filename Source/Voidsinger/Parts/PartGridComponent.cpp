@@ -945,7 +945,7 @@ void UPartGridComponent::DistrubuteHeat()
 	NewHeatMap.Reserve(PartGrid.Num());
 
 	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
-	for (int j = 0; j < PartGrid.Num(); j++)
+	for (FGridPair<FPartData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
 	{
 		float NewHeat = 0;
 
@@ -954,19 +954,19 @@ void UPartGridComponent::DistrubuteHeat()
 		{
 			FIntPoint TargetPoint = ((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
 			
-			if (PartGrid.Contains(TargetPoint + PartGrid.LocationAtIndex(j)))
+			if (PartGrid.Contains(TargetPoint + PixelInfo.Location))
 			{
 				//4 is borderline magic number. I understand why you used it but still -Mabel Suggestion
-				NewHeat += PartGrid.FindRef(TargetPoint + PartGrid.LocationAtIndex(j)).GetTemperature() * HeatPropagationFactor / (4);
+				NewHeat += PartGrid.FindRef(TargetPoint + PixelInfo.Location).GetTemperature() * HeatPropagationFactor / (4);
 			}
 		}
 
 		//Math is occuring that needs to be commented. Why is the pixels current temperature mutiplied by 1 - the heat propagation factor? -Mabel Suggestion
-		NewHeat = PartGrid.ValueAtIndex(j).GetTemperature() * (1-HeatPropagationFactor) + NewHeat;
+		NewHeat = PixelInfo.Value.GetTemperature() * (1-HeatPropagationFactor) + NewHeat;
 
 
 		//Why 0.5? comment plz (also, is it.... magic number?) -Mabel Suggestion
-		NewHeatMap.Emplace(PartGrid.LocationAtIndex(j), NewHeat > .05 ? NewHeat : 0);
+		NewHeatMap.Emplace(PixelInfo.Location, NewHeat > .05 ? NewHeat : 0);
 	}
 
 	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
@@ -975,15 +975,15 @@ void UPartGridComponent::DistrubuteHeat()
 	//if this is the way that we're doing it. This is so bad for large ships. 
 	//I wonder if each part could handle it's own heat and distribute to the places around it instead of doing this on the part grid? I don't know how much it would help but 
 	//it might help a little bit. Not sure, that might be just as laggy. -Mabel Suggestion
-	for (int i = 0; i < PartGrid.Num(); i++)
+	for (FGridPair<FPartData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
 	{
-		if (NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)) > PartGrid.ValueAtIndex(i).Part->GetHeatResistance())
+		if (NewHeatMap.FindRef(PixelInfo.Location) > PixelInfo.Value.Part->GetHeatResistance())
 		{
-			KeysToDestroy.Emplace(PartGrid.LocationAtIndex(i));
+			KeysToDestroy.Emplace(PixelInfo.Location);
 		}
 		else
 		{
-			PartGrid.ValueAtIndex(i).SetTemperature(NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)));
+			PixelInfo.Value.SetTemperature(NewHeatMap.FindRef(PixelInfo.Location));
 		}
 	}
 
@@ -1083,9 +1083,9 @@ const FVector2D UPartGridComponent::CalcCenterOfMass()
 	// Also, you don't need to calculate mass the way that you are -- you can just += or -= mass whenever you gain or lose mass.
 	// That way you wouldn't need to iterate through the part grid to calculate mass.
 	//-Mabel Suggestion
-	for (int i = 0; i < PartGrid.Num(); i++)
+	for (FGridPair<FPartData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
 	{
-		Center += FVector2D(PartGrid.LocationAtIndex(i)) * PartGrid.ValueAtIndex(i).Part->GetMass() / Mass;
+		Center += FVector2D(PixelInfo.Location) * PixelInfo.Value.Part->GetMass() / Mass;
 	}
 
 	//DEbuG? whAt shall we ever do??? -Mabel Suggestion
@@ -1103,11 +1103,11 @@ const float UPartGridComponent::CalcMomentOfInertia()
 
 	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion"  -Mabel Suggestion
 	//i cry... not the part grid! spare me!
-	for (int i = 0; i < PartGrid.Num(); i++)
+	for (FGridPair<FPartData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
 	{
 		//Comment your math plz -Mabel Suggestion
-		float PartMass = PartGrid.ValueAtIndex(i).Part->GetMass();
-		ReturnValue += (1 / 12) + PartMass * (FVector2D(PartGrid.ValueAtIndex(i).Part->GetPartRelativeLocation())).SizeSquared();
+		float PartMass = PixelInfo.Value.Part->GetMass();
+		ReturnValue += (1 / 12) + PartMass * (FVector2D(PixelInfo.Value.Part->GetPartRelativeLocation())).SizeSquared();
 	}
 	return ReturnValue;
 }
@@ -1124,9 +1124,9 @@ const float UPartGridComponent::CalcMass()
 	//Interate though Pixels and summate their mass
 	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion"
 	//Waaah! Waluigi!  -Mabel Suggestion
-	for (int i = 0; i < PartGrid.Num(); i++)
+	for (FGridPair<FPartData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
 	{
-		Mass += PartGrid.ValueAtIndex(i).Part->GetMass();
+		Mass += PixelInfo.Value.Part->GetMass();
 	}
 
 	//The horrible, most devious, most destructive, COMMENTED OUT DEBUG!!!! -Mabel Suggestion
@@ -1318,7 +1318,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 }
 
 //Comment -Mabel Suggestion
-bool UPartGridComponent::IsPixelFunctional(FPartData PixelValue, FIntPoint Loc)
+bool UPartGridComponent::IsPixelFunctional(FGridPair<FPartData> PixelInfo)
 {
-	return PixelValue.Part->IsPixelFunctional(Loc);
+	return PixelInfo.Value.Part->IsPixelFunctional(PixelInfo.Location);
 }

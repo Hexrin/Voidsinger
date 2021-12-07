@@ -212,15 +212,13 @@ bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult
 		FQuat DeltaRot = NewTransform.GetRelativeTransform(Start).GetRotation();
 		FVector DeltaTranslation = NewTransform.GetTranslation() - Start.GetTranslation();
 
-		TGridMap<FPartData> Grid = Ship->PartGrid->GetPartGrid();
-
 		//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion"  -Mabel Suggestion
 		//iteration through part grid makes me sad. -Mabel Suggestion
-		for (int i = 0; i < Grid.Num(); i++)
+		for (FGridPair<FPartData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
 		{
 			//Comment! -Mabel Suggestion
-			FVector StartLoc = FVector(FVector2D(Grid.LocationAtIndex(i)).GetRotated(Ship->GetActorRotation().Yaw), 0) + Ship->GetActorLocation();
-			FVector EndLoc = DeltaTranslation + (Start.GetRotation() * DeltaRot).RotateVector(FVector(FVector2D(Grid.LocationAtIndex(i)), 0)) + Ship->GetActorLocation();
+			FVector StartLoc = FVector(FVector2D(PixelInfo.Location).GetRotated(Ship->GetActorRotation().Yaw), 0) + Ship->GetActorLocation();
+			FVector EndLoc = DeltaTranslation + (Start.GetRotation() * DeltaRot).RotateVector(FVector(FVector2D(PixelInfo.Location), 0)) + Ship->GetActorLocation();
 			FHitResult ThisHit = FHitResult();
 
 			if (Ship->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, TraceRot, FCollisionObjectQueryParams::AllObjects, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))

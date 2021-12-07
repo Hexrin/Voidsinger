@@ -373,5 +373,5 @@ public:
 	static TArray<FIntPoint> FindConnectedShape(TArray<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality = false);
 
 	//Comment -Mabel Suggestion
-	static bool IsPixelFunctional(FPartData PixelValue, FIntPoint Loc);
+	static bool IsPixelFunctional(FGridPair<FPartData> GridInfo);
 };

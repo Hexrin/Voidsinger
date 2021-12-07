@@ -118,7 +118,7 @@ public:
 		}
 
 		//Uses a bianary search to emplace into a sorted aray
-		int32 InsertionIndex = BinaryInsertionSearch(LocationToLocationID(Location));
+		int32 InsertionIndex = BinarySearch(LocationToLocationID(Location), true);
 		return GridInfo.EmplaceAt_GetRef(InsertionIndex, LocationValuePairType(Location, Value)).Value;
 	}
 
@@ -221,9 +221,9 @@ private:
 	/**
 	 * Uses a bianary search to find the index of a given Location in GridInfo.
 	 *
-	 * @param TargetLoction - The value to search for.
+	 * @param TargetLocation - The value to search for.
 	 * @param bReturnTargetIndex - Whether or not to return the index where TargetLocation should be inserted rather than -1 when TargetLocation is not found.
-	 * @return The index of TargetLoction in GridInfo. Returns -1 if GridInfo does not contain TargetLoction unless bReturnTargetIndex is true in which case returns the index TargetLocation would have been at.
+	 * @return The index of TargetLocation in GridInfo. Returns -1 if GridInfo does not contain TargetLocation unless bReturnTargetIndex is true in which case returns the index TargetLocation would have been at.
 	 */
 	const int32 BinarySearch(GridLocationType TargetLocation, bool bReturnTargetIndex = false)
 	{
@@ -236,17 +236,17 @@ private:
 			return -1;
 		}
 		//Begin recursive Bianary Search
-		return BinarySearch(TargetLoction, 0, GridInfo.Num() - 1, bReturnTargetIndex);
+		return BinarySearch(TargetLocation, 0, GridInfo.Num() - 1, bReturnTargetIndex);
 	}
 
 	/**
 	 * Uses a bianary search between the given indices to find the index of a given location in GridInfo.
 	 *
-	 * @param TargetLoction - The value to search for.
+	 * @param TargetLocation - The value to search for.
 	 * @param MinIndex - The lower bounds for the search.
 	 * @param MaxIndex - The upper bounds for the search.
-	 * @param bReturnTargetIndex - Whether or not to always return the index TargetLoction.
-	 * @return The index of TargetLoction in GridInfo. Returns -1 if GridInfo does not contain TargetLoction unless bReturnTargetIndex is true in which case returns the index TargetLocation would have been at.
+	 * @param bReturnTargetIndex - Whether or not to always return the index TargetLocation.
+	 * @return The index of TargetLocation in GridInfo. Returns -1 if GridInfo does not contain TargetLocation unless bReturnTargetIndex is true in which case returns the index TargetLocation would have been at.
 	 */
 	const int32 BinarySearch(GridLocationType TargetLocation, int32 MinIndex, int32 MaxIndex, bool bReturnTargetIndex = false)
 	{
@@ -259,8 +259,8 @@ private:
 	 * @param TargetLocationID - The value to search for.
 	 * @param MinIndex - The lower bounds for the search.
 	 * @param MaxIndex - The upper bounds for the search.
-	 * @param bReturnTargetIndex - Whether or not to always return the index TargetLoction.
-	 * @return The index of TargetLoction in GridInfo. Returns -1 if GridInfo does not contain TargetLoction unless bReturnTargetIndex is true in which case returns the index TargetLocation would have been at.
+	 * @param bReturnTargetIndex - Whether or not to always return the index TargetLocation.
+	 * @return The index of TargetLocation in GridInfo. Returns -1 if GridInfo does not contain TargetLocation unless bReturnTargetIndex is true in which case returns the index TargetLocation would have been at.
 	 */
 	const int32 BinarySearch(int32 TargetLocationID, int32 MinIndex, int32 MaxIndex, bool bReturnTargetIndex = false)
 	{
@@ -278,19 +278,19 @@ private:
 		int32 CheckValue = LocationToLocationID(GridInfo[IndexToCheck].Location);
 
 		//Check to see if Target found
-		if (CheckValue == TargetLoction)
+		if (CheckValue == TargetLocationID)
 		{
 			return IndexToCheck;
 		}
 
 		//Repeate search with bounds excluding indices known to not contain TargetLocationID
-		if (CheckValue < TargetLoction)
+		if (CheckValue < TargetLocationID)
 		{
-			return BinarySearch(TargetLoction, IndexToCheck + 1, MaxIndex);
+			return BinarySearch(TargetLocationID, IndexToCheck + 1, MaxIndex);
 		}
 		else
 		{
-			return BinarySearch(TargetLoction, MinIndex, IndexToCheck - 1);
+			return BinarySearch(TargetLocationID, MinIndex, IndexToCheck - 1);
 		}
 	}
 
@@ -352,6 +352,7 @@ public:
 
 	/**
 	 * Creates an Array containing all Values in the GridMap.
+	 * Use GetGridPairs() unless a return type of TArray<ValueType> is required.
 	 *
 	 * @return An Array containing all Values in the GridMap.
 	 */
@@ -369,13 +370,13 @@ public:
 
 	/**
 	 * Creates an Array containing all Locations with values in the GridMap.
+	 * Use GetGridPairs() unless a return type of TArray<GridLocationType> is required.
 	 *
 	 * @return An Array containing all Locations with values in the GridMap.
 	 */
 	TArray<GridLocationType> GenerateLocationArray()
 	{
 		TArray<GridLocationType> Loactions = TArray<GridLocationType>();
-		Loactions.Sort
 		for (LocationValuePairType GridInfoPair : GridInfo)
 		{
 			Loactions.Emplace(GridInfoPair.Location);
@@ -488,7 +489,7 @@ private:
 			GridLocationType TargetLocation = StartLocation + ((!IsXCloser ^ (i % 2 == 1)) ? GridLocationType((XIsPosive ^ (i > 1)) ? 1 : -1, 0) : GridLocationType(0, (YIsPosive ^ (i > 1)) ? 1 : -1));
 			
 			//Check to see if TargetLocation contains a value and satisfies the Conectivity Condition.
-			if (!SeachedLocations.Contains(TargetLocation) && Contains(TargetLocation) && ConectivityCondition(FindRef(TargetLocation), TargetLocation))
+			if (!SeachedLocations.Contains(TargetLocation) && Contains(TargetLocation) && ConectivityCondition(LocationValuePairType(TargetLocation, FindRef(TargetLocation))))
 			{
 				ReturnValue = PointsConnected(TargetLocation, EndLocation, SeachedLocations, ConectivityCondition);
 				if (ReturnValue)
