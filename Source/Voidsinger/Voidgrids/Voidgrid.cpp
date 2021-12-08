@@ -3,7 +3,7 @@
 
 #include "Voidgrid.h"
 
-// Sets default values
+//Sets default values for this voidgrid's properties
 AVoidgrid::AVoidgrid()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -11,9 +11,18 @@ AVoidgrid::AVoidgrid()
 
 }
 
-
+/**
+* Adds a part to this ships Pixel Mold.
+*
+* @param PartClass - The class of part to add.
+* @param Location - The location to add the part at.
+* @return Whether or not a part was placed successfuly.
+*/
 bool AVoidgrid::AddPart(TSubclassOf<UBasePart> PartClass, GridLocationType Location)
 {
-	PartClass.GetDefaultObject()->GetDesiredShape();
+	for (GridLocationType PixelPartRelativeLocation : PartClass.GetDefaultObject()->GetDesiredShape())
+	{
+
+	}
 	return false;
 }

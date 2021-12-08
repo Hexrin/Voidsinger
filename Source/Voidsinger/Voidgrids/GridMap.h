@@ -40,10 +40,10 @@ class TGridMap
 
 private:
 	//The type used for storing a Values and its Location
-	typedef FGridPair<ValueType> LocationValuePairType;
+	typedef TPair<GridLocationType, ValueType> LocationValuePairType;
 
 	//The type used for storing Values and thier Locations
-	typedef TArray<LocationValuePairType> GridInfoType;
+	typedef TMap<GridLocationType, ValueType> GridInfoType;
 
 	/* /\ typedefs /\ *\
 	\* -------------- */
@@ -112,18 +112,8 @@ public:
 	 */
 	ValueType Emplace(GridLocationType Location, ValueType Value = ValueType())
 	{
-		if (GridInfo.Num() == 0)
-		{
-			return GridInfo.Emplace_GetRef(LocationValuePairType(Location, Value)).Value;
-		}
-
-		//Uses a bianary search to emplace into a sorted aray
-		int32 InsertionIndex = BinarySearch(LocationToLocationID(Location), true);
-		return GridInfo.EmplaceAt_GetRef(InsertionIndex, LocationValuePairType(Location, Value)).Value;
+		return GridInfo.Emplace(Location, Value);
 	}
-
-
-	//	\/ Remove() \/
 
 	/**
 	 * Removes an item at a specified location.
@@ -132,24 +122,8 @@ public:
 	 */
 	void Remove(GridLocationType Location)
 	{
-		int32 RemovalIndex = BinarySearch(LocationToLocationID(Location));
-		Remove(RemovalIndex);
+		GridInfo.Remove(Location);
 	}
-private:
-	/**
-	 * Removes an item at a specified internal index.
-	 *
-	 * @param Index - The internal index to remove the item at.
-	 */
-	void Remove(int32 Index)
-	{
-		if (GridInfo.IsValidIndex(Index))
-		{
-			GridInfo.RemoveAt(Index);
-		}
-	}
-
-	//	/\ Remove() /\
 
 	/* /\ Data Manipulation /\ *\
 	\* ----------------------- */
@@ -166,7 +140,7 @@ public:
 	 */
 	bool Contains(GridLocationType Location)
 	{
-		return BinarySearch(LocationToLocationID(Location)) >= 0;
+		return GridInfo.Contains(Location);
 	}
 
 	/**
@@ -177,11 +151,11 @@ public:
 	 */
 	ValueType* Find(GridLocationType Location)
 	{
-		int32 Index = BinarySearch(LocationToLocationID(Location));
-		if (Index >= 0)
+		if (Contains(Location))
 		{
-			return &GridInfo[Index].Value;
+			return &GridInfo[Location];
 		}
+
 		return nullptr;
 	}
 
@@ -193,134 +167,12 @@ public:
 	 */
 	ValueType FindRef(GridLocationType Location)
 	{
-		int32 Index = BinarySearch(LocationToLocationID(Location));
-		if (Index >= 0)
+		if (Contains(Location))
 		{
-			return GridInfo[Index].Value;
+			return GridInfo[Location];
 		}
 
 		return ValueType();
-	}
-
-private:
-	/**
-	 * Checks if A's location ID is less than B's location ID.
-	 * 
-	 * @param A - First value to compare.
-	 * @param B - Second value to compare.
-	 * @return Whether or not A's location ID is less than B's location ID.
-	 */
-	const static bool LocationIDLessThan(LocationValuePairType& A, LocationValuePairType& B)
-	{
-		return LocationToLocationID(A[0]) < LocationToLocationID(B[0]);
-	}
-
-
-	// \/ BinarySearch() \/
-
-	/**
-	 * Uses a bianary search to find the index of a given Location in GridInfo.
-	 *
-	 * @param TargetLocation - The value to search for.
-	 * @param bReturnTargetIndex - Whether or not to return the index where TargetLocation should be inserted rather than -1 when TargetLocation is not found.
-	 * @return The index of TargetLocation in GridInfo. Returns -1 if GridInfo does not contain TargetLocation unless bReturnTargetIndex is true in which case returns the index TargetLocation would have been at.
-	 */
-	const int32 BinarySearch(GridLocationType TargetLocation, bool bReturnTargetIndex = false)
-	{
-		if (GridInfo.Num() == 0)
-		{
-			if (bReturnTargetIndex)
-			{
-				return 0;
-			}
-			return -1;
-		}
-		//Begin recursive Bianary Search
-		return BinarySearch(TargetLocation, 0, GridInfo.Num() - 1, bReturnTargetIndex);
-	}
-
-	/**
-	 * Uses a bianary search between the given indices to find the index of a given location in GridInfo.
-	 *
-	 * @param TargetLocation - The value to search for.
-	 * @param MinIndex - The lower bounds for the search.
-	 * @param MaxIndex - The upper bounds for the search.
-	 * @param bReturnTargetIndex - Whether or not to always return the index TargetLocation.
-	 * @return The index of TargetLocation in GridInfo. Returns -1 if GridInfo does not contain TargetLocation unless bReturnTargetIndex is true in which case returns the index TargetLocation would have been at.
-	 */
-	const int32 BinarySearch(GridLocationType TargetLocation, int32 MinIndex, int32 MaxIndex, bool bReturnTargetIndex = false)
-	{
-		return BinarySearch(LocationToLocationID(TargetLocation), MinIndex, MaxIndex, bReturnTargetIndex);
-	}
-
-	/**
-	 * Uses a bianary search between the given indices to find the index of a given location ID in GridInfo.
-	 *
-	 * @param TargetLocationID - The value to search for.
-	 * @param MinIndex - The lower bounds for the search.
-	 * @param MaxIndex - The upper bounds for the search.
-	 * @param bReturnTargetIndex - Whether or not to always return the index TargetLocation.
-	 * @return The index of TargetLocation in GridInfo. Returns -1 if GridInfo does not contain TargetLocation unless bReturnTargetIndex is true in which case returns the index TargetLocation would have been at.
-	 */
-	const int32 BinarySearch(int32 TargetLocationID, int32 MinIndex, int32 MaxIndex, bool bReturnTargetIndex = false)
-	{
-		//Detect if Target Location was not found
-		if (MinIndex > MaxIndex)
-		{
-			if (bReturnTargetIndex)
-			{
-				return FMath::Max(MinIndex, 0);
-			}
-			return -1;
-		}
-
-		int32 IndexToCheck = (MaxIndex + MinIndex) / 2;
-		int32 CheckValue = LocationToLocationID(GridInfo[IndexToCheck].Location);
-
-		//Check to see if Target found
-		if (CheckValue == TargetLocationID)
-		{
-			return IndexToCheck;
-		}
-
-		//Repeate search with bounds excluding indices known to not contain TargetLocationID
-		if (CheckValue < TargetLocationID)
-		{
-			return BinarySearch(TargetLocationID, IndexToCheck + 1, MaxIndex);
-		}
-		else
-		{
-			return BinarySearch(TargetLocationID, MinIndex, IndexToCheck - 1);
-		}
-	}
-
-	// /\ BinarySearch() /\
-
-	/**
-	 * Converts a grid location to a location ID used for sorting GridInfo.
-	 * 
-	 * @param Location -  The value to convert
-	 * @return An int unique to this 2D location.
-	 */
-	const int32 LocationToLocationID(GridLocationType Location)
-	{
-		Location.X = Location.X > 0 ? 2 * Location.X : -2 * Location.X - 1;
-		Location.Y = Location.Y > 0 ? 2 * Location.Y : -2 * Location.Y - 1;
-		return Location.X + GridSize.X * Location.Y;
-	}
-
-	/**
-	 * Converts a location ID to a location.
-	 *
-	 * @param LocationID - The value to convert.
-	 * @return The location LocationID corrasponds to.
-	 */
-	const GridLocationType LocationIDToLocation(int32 LocationID)
-	{
-		GridLocationType ReturnValue = GridLocationType(LocationID % GridSize.X, LocationID / (GridSize.Y / 2));
-		ReturnValue.X = ReturnValue.X % 2 == 0 ? ReturnValue.X / 2 : (ReturnValue.X + 1) / -2;
-		ReturnValue.Y = ReturnValue.Y % 2 == 0 ? ReturnValue.Y / 2 : (ReturnValue.Y + 1) / -2;
-		return ReturnValue;
 	}
 
 	/* /\ Search /\ *\
@@ -358,14 +210,7 @@ public:
 	 */
 	TArray<ValueType> GenerateValueArray()
 	{
-		TArray<ValueType> Values = TArray<ValueType>();
-
-		for (LocationValuePairType GridInfoPair : GridInfo)
-		{
-			Values.Emplace(GridInfoPair.Value);
-		}
-
-		return Values;
+		return GridInfo.GenerateValueArray();
 	}
 
 	/**
@@ -376,13 +221,7 @@ public:
 	 */
 	TArray<GridLocationType> GenerateLocationArray()
 	{
-		TArray<GridLocationType> Loactions = TArray<GridLocationType>();
-		for (LocationValuePairType GridInfoPair : GridInfo)
-		{
-			Loactions.Emplace(GridInfoPair.Location);
-		}
-
-		return Loactions;
+		return GridInfo.GenerateKeyArray();
 	}
 
 	/* /\ Grid State /\ *\

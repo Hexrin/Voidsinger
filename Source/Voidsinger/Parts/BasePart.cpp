@@ -203,13 +203,13 @@ const FIntPoint UBasePart::GetPartGridLocation()
 //Copy comment from .h -Mabel Suggestion
 const FVector UBasePart::GetPartWorldLocation()
 {
-	return GetPartRelativeLocation() + GetShip()->GetActorLocation();
+	return GetPartRelativeLocation()/* + GetShip()->GetActorLocation()*/;
 }
 
 //Copy comment from .h -Mabel Suggestion
 const FVector UBasePart::GetPartRelativeLocation()
 {
-	return FVector((FVector2D(GetPartGridLocation()) * GetPartGrid()->GetPartGridScale()) - GetShip()->PhysicsComponent->GetCenterOfMass(), 0);
+	return FVector(/*(FVector2D(GetPartGridLocation()) * GetPartGrid()->GetPartGridScale()) - GetShip()->PhysicsComponent->GetCenterOfMass(), 0*/);
 }
 
 //Copy comment from .h -Mabel Suggestion
@@ -221,7 +221,7 @@ const float UBasePart::GetRelativeRotation()
 //Copy comment from .h -Mabel Suggestion
 const float UBasePart::GetWorldRotation()
 {
-	return Rotation + GetShip()->GetActorQuat().GetAngle();
+	return Rotation /*+ GetShip()->GetActorQuat().GetAngle()*/;
 }
 
 //Copy comment from .h -Mabel Suggestion
@@ -377,13 +377,13 @@ void UBasePart::ConnectToSystems()
 		{
 			//Comment outdated - Liam Suggestion
 			//Check the X + 1 location for a part on the part grid
-			if (PartGridComponent->GetPartGrid().Contains(j + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
-			{
-				AddToSystem(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key));
+			//if (PartGridComponent->GetPartGrid().Contains(j + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
+			//{
+			//	AddToSystem(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key));
 
-				//A system was found!
-				SystemFound = true;
-			}
+			//	//A system was found!
+			//	SystemFound = true;
+			//}
 		}
 
 		//If the code gets to this point without finding a system, then it will create a new resource system
@@ -401,7 +401,7 @@ void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 	//Make the new system, make sure it's the right type, and add the system to the list of systems on the player character
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
 	NewSystem->SetType(ResourceType);
-	Cast<ABaseShip>(Cast<UActorComponent>(GetOuter())->GetOwner())->AddResourceSystem(NewSystem);
+	//Cast<ABaseShip>(Cast<UActorComponent>(GetOuter())->GetOwner())->AddResourceSystem(NewSystem);
 
 	//Call this to add the part to the system and double check that merges don't need to happen (see AddToSystem)
 	AddToSystem(NewSystem);
@@ -475,11 +475,11 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 		}
 	}
 	//Long chunk of logic should be commented or made legible - Liam Suggestion
-	if (((Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) && ((NounClasses.IsEmpty() && AvailableNouns.Contains(GetClass())) != NounClasses.Contains(GetClass())))
+	/*if (((Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) && ((NounClasses.IsEmpty() && AvailableNouns.Contains(GetClass())) != NounClasses.Contains(GetClass())))
 	{
 		if (this->Implements<UActivateInterface>())
 		{
 			Cast<IActivateInterface>(this)->Activate();
 		}
-	}
+	}*/
 }

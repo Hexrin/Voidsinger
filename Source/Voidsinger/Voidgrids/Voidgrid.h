@@ -14,7 +14,7 @@ class VOIDSINGER_API AVoidgrid : public APawn
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
+	//Sets default values for this voidgrid's properties
 	AVoidgrid();
 
 	/* ---------------- *\ 
