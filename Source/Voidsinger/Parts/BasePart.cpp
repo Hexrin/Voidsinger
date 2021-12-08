@@ -51,7 +51,7 @@ void UBasePart::InitializeFunctionality()
 	{
 		//Bind to delegates
 		Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
-		Cast<ABaseShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
+		Cast<ABaseShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UBasePart::OnFireDelegateCalled);
 		
 		//Initialize Resource System
 		ConnectToSystems();
@@ -481,5 +481,13 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 		{
 			Cast<IActivateInterface>(this)->Activate();
 		}
+	}
+}
+
+void UBasePart::OnFireDelegateCalled(const TArray<TSubclassOf<UObject>>& NounClasses)
+{
+	if (NounClasses.Contains(GetClass()))
+	{
+		Cast<IActivateInterface>(this)->Activate();
 	}
 }

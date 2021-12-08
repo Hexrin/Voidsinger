@@ -283,6 +283,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs);
 
+	UFUNCTION()
+	void OnFireDelegateCalled(const TArray<TSubclassOf<UObject>>& NounClasses);
+
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
