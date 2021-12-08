@@ -319,7 +319,7 @@ void ABaseShip::BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounC
 	//Varialbe name should be meaningful - Liam Suggestion
 	TArray<TEnumAsByte<EFactions>> Temp;
 	Temp.Emplace(GetFaction());
-	OnActivatePartsDelegate.Broadcast(Temp, NounClasses, AvailableVoidsongs);
+	OnActivatePartsDelegate.Broadcast(NounClasses);
 }
 
 //Outdated function should be deleted - Liam Suggestion
