@@ -51,6 +51,17 @@ void UBaseResourceSystem::AddPart(UBasePart* AddedPart)
 	if (IsValid(AddedPart))
 	{
 		ConnectedParts.Add(AddedPart);
+
+		if (ConnectedParts.Num() == 1)
+		{
+			OwningShip = Cast<ABaseShip>(ConnectedParts[0]->GetOuter()->GetOuter());
+		}
+
+		for (const FIntPoint& PartShape : AddedPart->GetShape())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("added pixel x %i y %i"), PartShape.X + AddedPart->GetPartGridLocation().X, PartShape.Y + AddedPart->GetPartGridLocation().Y)
+			ResourceSystemGrid.Emplace(PartShape + AddedPart->GetPartGridLocation(), AddedPart);
+		}
 	}
 	else
 	{
@@ -79,9 +90,12 @@ void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart)
 */
 void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 {
-	
-	if (GetMapFromConnectedParts().Contains(Pixel))
+
+	UE_LOG(LogTemp, Warning, TEXT("Pixel removed resource system x %i y %i"), Pixel.X, Pixel.Y);
+
+	if (ResourceSystemGrid.Contains(Pixel))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Wait so does it contain the pixel??"));
 		TArray<FIntPoint> NumbersFound;
 
 		/*
@@ -143,10 +157,22 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 						{
 							RemovedSet.Emplace(ConnectedPartsMap.Find(j)->Part);
 						}
+
 						CreateNewSystem(RemovedSet.Array());
+
 					}
 				}
 			}
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("Connected parts num: %i "), ConnectedParts.Num());
+		UE_LOG(LogTemp, Warning, TEXT("Connected parts num: %i "), GetMapFromConnectedParts().Num());
+
+		ResourceSystemGrid.Remove(Pixel);
+		if (ConnectedParts.IsEmpty() || ResourceSystemGrid.Num() == 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("destroy urself"));
+			DestroyResourceSystem();
 		}
 	}
 }
@@ -160,7 +186,8 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 	{
 		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
 		//UE_LOG(LogTemp, Warning, TEXT("Merge Systems"));
-		Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
+		//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
+		OwningShip->RemoveResourceSystem(MergedSystem);
 	}
 	else
 	{
@@ -181,6 +208,13 @@ void UBaseResourceSystem::CreateNewSystem(TArray<UBasePart*> RemovedParts)
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>(ThisClass::StaticClass()));
 	NewSystem->AddSection(RemovedParts);
 	Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->AddResourceSystem(NewSystem);
+}
+
+void UBaseResourceSystem::DestroyResourceSystem()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Resource system outer %s"), *GetOuter()->GetClass()->GetDisplayNameText().ToString())
+	//Cast<ABaseShip>(GetOuter())->RemoveResourceSystem(this);
+	OwningShip->RemoveResourceSystem(this);
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion

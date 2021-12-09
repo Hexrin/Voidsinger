@@ -331,23 +331,28 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	ActualShape.Remove(RelativeLoc);
 	OnDamaged();
 
+	UE_LOG(LogTemp, Warning, TEXT("Does this happen? Destroy pixel base part"));
 	if (IsFunctional())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("IsFunctional() returns true"));
 		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
 		for (auto& i : Systems)
 		{
-			i->RemovePixel(RelativeLoc);
+			UE_LOG(LogTemp, Warning, TEXT("There are systems"));
+			i->RemovePixel(RelativeLoc + GetPartGridLocation());
 		}
 	}
 	else
 	{
+		UE_LOG(LogTemp, Warning, TEXT("IsFunctional() returns false"));
 		OnCriticallyDamaged();
 
 		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
 		for (auto& i : Systems)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("There are systems"));
 			i->RemovePart(this);
-			i->RemovePixel(RelativeLoc);
+			i->RemovePixel(RelativeLoc + GetPartGridLocation());
 		}
 	}
 	if (ActualShape.Num() <= 0)
