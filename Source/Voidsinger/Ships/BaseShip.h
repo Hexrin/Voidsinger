@@ -22,7 +22,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, DamageMultip
 
 //Delegates should be commented. What functions should they be bound to? - Liam 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*, AddedVoidsong);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FActivatePartsDelegate, const TArray<TEnumAsByte<EFactions>>&, Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FActivatePartsDelegate, const TArray<TSubclassOf<UObject>>&, NounClasses);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnsetVerbsDelegate);
 
 UCLASS()
@@ -174,6 +174,9 @@ public:
 
 	/*-Misc-*\
 	\-------*/
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 PixelValue { 0 };
 
 	//Gets the faction of the ship
 	UFUNCTION(BlueprintPure)

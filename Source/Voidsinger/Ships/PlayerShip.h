@@ -324,14 +324,7 @@ private:
 
 	/*-------Misc.-------*\
 	\*-------------------*/
-
 protected:
-
-	//Comment -Mabel Suggestion
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int Pixels;
-
-
 	/*
 	* Delagate needs commenting. When is it called?
 	* 

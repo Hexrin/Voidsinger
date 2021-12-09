@@ -5,8 +5,6 @@
 
 APlayerShip::APlayerShip()
 {
-    //Magic -Mabel Suggestion
-    Pixels=55;
     
     //Numbers -Mabel Suggestion
     if (!CameraHeight)
