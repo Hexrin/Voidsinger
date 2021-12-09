@@ -398,6 +398,10 @@ void UBasePart::ConnectToSystems()
 //Create a new resource system
 void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 {
+	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+
+	UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameText(ResourceType.GetValue()).ToString());
+
 	//Make the new system, make sure it's the right type, and add the system to the list of systems on the player character
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
 	NewSystem->SetType(ResourceType);
