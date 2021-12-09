@@ -59,14 +59,13 @@ void UBaseResourceSystem::AddPart(UBasePart* AddedPart)
 
 		for (const FIntPoint& PartShape : AddedPart->GetShape())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("added pixel x %i y %i"), PartShape.X + AddedPart->GetPartGridLocation().X, PartShape.Y + AddedPart->GetPartGridLocation().Y)
 			ResourceSystemGrid.Emplace(PartShape + AddedPart->GetPartGridLocation(), AddedPart);
 		}
 	}
 	else
 	{
 		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
-		UE_LOG(LogTemp, Warning, TEXT("Why no valid"))
+		UE_LOG(LogTemp, Error, TEXT("Accessed none when trying to add a part to a resource system"))
 	}
 }
 
