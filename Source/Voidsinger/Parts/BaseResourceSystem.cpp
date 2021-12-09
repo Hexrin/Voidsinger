@@ -90,12 +90,8 @@ void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart)
 */
 void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 {
-
-	UE_LOG(LogTemp, Warning, TEXT("Pixel removed resource system x %i y %i"), Pixel.X, Pixel.Y);
-
 	if (ResourceSystemGrid.Contains(Pixel))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Wait so does it contain the pixel??"));
 		TArray<FIntPoint> NumbersFound;
 
 		/*
@@ -139,11 +135,11 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 			for (int i = 0; i < NumbersFound.Num() - 1; i++)
 			{
 				TGridMap<FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
-				if (ConnectedPartsMap.Contains(NumbersFound[i]) && ConnectedPartsMap.Contains(NumbersFound[i + 1]))
+				if (ResourceSystemGrid.Contains(NumbersFound[i]) && ResourceSystemGrid.Contains(NumbersFound[i + 1]))
 				{
 					//This needs to be improved, but right now it checks if the current index is connected to the next index.
 					//actually it might not need to be improved but i need to think about it
-					if (!ConnectedPartsMap.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
+					if (!ResourceSystemGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<UBasePart*>))
 					{
 						//Bad variable name. What is it storing? - Liam Suggestion
 						//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
@@ -165,13 +161,9 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 			}
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("Connected parts num: %i "), ConnectedParts.Num());
-		UE_LOG(LogTemp, Warning, TEXT("Connected parts num: %i "), GetMapFromConnectedParts().Num());
-
 		ResourceSystemGrid.Remove(Pixel);
 		if (ConnectedParts.IsEmpty() || ResourceSystemGrid.Num() == 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("destroy urself"));
 			DestroyResourceSystem();
 		}
 	}
