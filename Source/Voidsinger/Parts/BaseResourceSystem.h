@@ -134,6 +134,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateNewSystem(TArray<UBasePart*> RemovedParts);
 
+	UFUNCTION()
+	void DestroyResourceSystem();
+
 	//Checks 2 shapes to see if they are adjacent. Deprecated for now.
 	//UFUNCTION(BlueprintCallable)
 	//bool AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2);
@@ -147,7 +150,7 @@ protected:
 	/*Instanced  Variables*\
 	\*--------------------*/
 
-	//Stores the currect amount of resource
+	//Stores the correct amount of resource
 	UPROPERTY()
 	float ResourceAmount;
 
@@ -155,8 +158,14 @@ protected:
 	UPROPERTY()
 	TArray<UBasePart*> ConnectedParts;
 	
+	//Stores all the locations that are connected to the resource system and what part corresponds to what location.
+	TGridMap<UBasePart*> ResourceSystemGrid;
+
 	//Stores the type of this system
 	UPROPERTY()
 	TEnumAsByte<EResourceType> SystemType;
+
+	UPROPERTY()
+	ABaseShip* OwningShip;
 
 };

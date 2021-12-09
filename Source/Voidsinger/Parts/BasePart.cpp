@@ -336,7 +336,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
 		for (auto& i : Systems)
 		{
-			i->RemovePixel(RelativeLoc);
+			i->RemovePixel(RelativeLoc + GetPartGridLocation());
 		}
 	}
 	else
@@ -347,7 +347,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 		for (auto& i : Systems)
 		{
 			i->RemovePart(this);
-			i->RemovePixel(RelativeLoc);
+			i->RemovePixel(RelativeLoc + GetPartGridLocation());
 		}
 	}
 	if (ActualShape.Num() <= 0)
