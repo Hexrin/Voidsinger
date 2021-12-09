@@ -491,3 +491,8 @@ void UBasePart::OnFireDelegateCalled(const TArray<TSubclassOf<UObject>>& NounCla
 		Cast<IActivateInterface>(this)->Activate();
 	}
 }
+
+int32 UBasePart::GetCost()
+{
+	return Cost;
+}

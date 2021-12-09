@@ -175,6 +175,9 @@ public:
 	/*-Misc-*\
 	\-------*/
 
+	UPROPERTY(BlueprintReadOnly)
+	int32 PixelValue { 0 };
+
 	//Gets the faction of the ship
 	UFUNCTION(BlueprintPure)
 	TEnumAsByte<EFactions> GetFaction();

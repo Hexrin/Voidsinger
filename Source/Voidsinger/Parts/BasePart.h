@@ -308,9 +308,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, NoClear, BlueprintReadOnly)
 	float TotalPartMass;
 
+public:
+	int32 GetCost();
+
+protected:
 	//Stores the cost to place the part in Pixels
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int Cost;
+	int32 Cost;
 
 	//Stores the locations and resource types of all the pixels of this part, unless the pixel does not have a resource type
 	UPROPERTY(EditDefaultsOnly)

@@ -104,15 +104,20 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 		TArray<FIntPoint> DesiredShape = Part->GetDesiredShape();
 		FArrayBounds PartBounds = Part->GetPartBounds();
 
-		//Detect if placement is in valid position
+		
 		//Move this to a new function called IsValidPosition or something, or IsWithinGridBounds idk -Mabel Suggestion
 		if 
 		(
+			//Detect if placement is in valid position
 			GridHalfSize.X >= Location.X + PartBounds.UpperBounds.X && -GridHalfSize.X <= Location.X + PartBounds.LowerBounds.X
 			&&
 			GridHalfSize.Y >= Location.Y + PartBounds.UpperBounds.Y && -GridHalfSize.Y <= Location.Y + PartBounds.LowerBounds.Y
 			&&
 			(bAlwaysPlace || CanShapeFit(Location, DesiredShape))
+
+			&&
+			//If on the player then check to see if they have enough pixels and withdraw them.
+			Ship->GetFaction() == EFactions::Player && Cast<AShipPlayerState>(Ship->GetPlayerState())->WithdrawPixels(PartType.GetDefaultObject()->GetCost())
 		)
 		{
 
@@ -157,32 +162,6 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 					//Create Mesh
 					Ship->AddMeshAtLocation(CurrentLoc);
 
-					UBaseFreespacePart* PartAsFreeform = Cast<UBaseFreespacePart>(Part);
-					if (PartAsFreeform)
-					{
-						//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
-						for (int32 j = 0; j < 4; j++)
-						{
-							//Comment this, it's a confusing chunck of logic that takes a minute to understand -Mabel Suggestion
-							FIntPoint CheckLocation = (((j % 2 == 0)) ? FIntPoint(((j > 1)) ? 1 : -1, 0) : FIntPoint(0, ((j > 1)) ? 1 : -1)) + Location;
-
-							if (PartGrid.Contains(CheckLocation))
-							{
-
-								//This will merge the new the FreespacePart with any other FreespacePart, even if they aren't the same class. You need to cast this to
-								//the class of the part added, not UBaseFreespacePart. 
-								//I am of course assuming we don't want the hull merging with resource connectors. -Mabel Suggestion
-								UBaseFreespacePart* PartToMergeWith = Cast<UBaseFreespacePart>(PartGrid.Find(CheckLocation)->Part);
-
-								if (PartToMergeWith)
-								{
-									Part->ConnectToSystems();
-									PartToMergeWith->MergeParts(PartAsFreeform);
-									Part = PartToMergeWith;
-								}
-							}
-						}
-					}
 					//set PartGrid and material
 					Ship->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
 
@@ -196,7 +175,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			}
 
 			Part->InitializeFunctionality();
-
+			Ship->PixelValue += Part->GetCost();
 			Ship->PhysicsComponent->UpdateMassCalculations();
 
 			//Maybe instead of doing this here (which feels like it breaks encapsulation), you could do this in InitializeFunctionality() of the thruster. -Mabel Suggestion
@@ -236,6 +215,10 @@ bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
 		//Intialize Variables
 		class UBasePart* PartToRemove = PartGrid.FindRef(Location).Part;
 		FIntPoint PartLoc = PartToRemove->GetPartGridLocation();
+
+		//Refund Part Value
+		Cast<AShipPlayerState>(Ship->GetPlayerState())->DepositPixels(PartToRemove->GetCost());
+		Ship->PixelValue -= PartToRemove->GetCost();
 
 		//Iterate though the shape of PartToRemove and remove them from the part grid
 		for (FIntPoint Loc : PartToRemove->GetShape())
