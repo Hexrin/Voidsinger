@@ -104,7 +104,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 		TArray<FIntPoint> DesiredShape = Part->GetDesiredShape();
 		FArrayBounds PartBounds = Part->GetPartBounds();
 
-		
+		AShipPlayerState* PlayerState = Cast<AShipPlayerState>(Ship->GetPlayerState());
 		//Move this to a new function called IsValidPosition or something, or IsWithinGridBounds idk -Mabel Suggestion
 		if 
 		(
@@ -118,7 +118,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			&&
 
 			//If on the player then check to see if they have enough pixels and withdraw them.
-			(Ship->GetFaction() != EFactions::Player || Cast<AShipPlayerState>(Ship->GetPlayerState())->WithdrawPixels(PartType.GetDefaultObject()->GetCost()))
+			(Ship->GetFaction() != EFactions::Player || (IsValid(PlayerState) && PlayerState->WithdrawPixels(PartType.GetDefaultObject()->GetCost())))
 		)
 		{
 
