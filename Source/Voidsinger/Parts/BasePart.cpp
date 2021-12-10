@@ -252,15 +252,27 @@ TArray<UBaseResourceSystem*> UBasePart::GetSystems()
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
 UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
 {
+	UBaseResourceSystem* FoundResourceSystem = nullptr;
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	for (auto& i : GetSystems())
 	{
+		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+		UE_LOG(LogTemp, Warning, TEXT("All systems types get system by type thing %s"), *EnumPtr->GetDisplayNameTextByValue(i->GetType().GetValue()).ToString());
 		if (i->GetType() == Type)
 		{
-			return i;
+			FoundResourceSystem = i;
+			//return i;
 		}
 	}
-	return nullptr;
+	//return nullptr;
+	if (IsValid(FoundResourceSystem))
+	{
+		return FoundResourceSystem;
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
@@ -400,7 +412,7 @@ void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 {
 	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
 
-	UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameText(ResourceType.GetValue()).ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameTextByValue(ResourceType.GetValue()).ToString());
 
 	//Make the new system, make sure it's the right type, and add the system to the list of systems on the player character
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
