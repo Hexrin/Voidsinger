@@ -177,7 +177,11 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 	{
 		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
 
-		UE_LOG(LogTemp, Warning, TEXT("Merge systems type %s"), *EnumPtr->GetDisplayNameText(GetType().GetValue()).ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Merged system %s"), *MergedSystem->GetFName().ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Merged system type %s"), *EnumPtr->GetDisplayNameTextByValue(MergedSystem->GetType().GetValue()).ToString());
+
+		UE_LOG(LogTemp, Warning, TEXT("This system % s"), *GetFName().ToString());
+		UE_LOG(LogTemp, Warning, TEXT("this system type %s"), *EnumPtr->GetDisplayNameTextByValue(GetType().GetValue()).ToString());
 
 		//You can use += instead of appened - Liam Suggestion
 		ConnectedParts.Append(MergedSystem->ConnectedParts);
@@ -188,8 +192,15 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 			UE_LOG(LogTemp, Warning, TEXT("part merged in class %s"), *PartMergedIn->GetClass()->GetDisplayNameText().ToString())
 			ResourceSystemGrid.Emplace(MergedSystem->ResourceSystemGrid.LocationAtIndex(OtherGridIndex), PartMergedIn);
 
+			for (UBaseResourceSystem* Systems : PartMergedIn->GetSystems())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("systems on part merged in %s"), *Systems->GetFName().ToString())
+				UE_LOG(LogTemp, Warning, TEXT("systems on part merged in type %s"), *EnumPtr->GetDisplayNameTextByValue(Systems->GetType().GetValue()).ToString());
+			}
+
 			PartMergedIn->GetSystems().Remove(MergedSystem);
 			PartMergedIn->GetSystems().Emplace(this);
+
 		}
 
 		if (IsValid(GetWorld()))
@@ -198,6 +209,8 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 			//UE_LOG(LogTemp, Warning, TEXT("Merge Systems"));
 			//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
 			OwningShip->RemoveResourceSystem(MergedSystem);
+
+			UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 		}
 		else
 		{

@@ -391,6 +391,7 @@ void UBasePart::ConnectToSystems()
 			//Check the X + 1 location for a part on the part grid
 			if (PartGridComponent->GetPartGrid().Contains(j + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
 			{
+				UE_LOG(LogTemp, Warning, TEXT("Check location x %i y %i"), j.X, j.Y);
 				AddToSystem(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key));
 
 				//A system was found!
@@ -431,20 +432,23 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 	if (!Systems.Contains(System))
 	{
 		//Add the part to the system
-		System->AddPart(this);
+		//System->AddPart(this);
 
 		//If there is already a system of this resource type on this part, then merge System with that system
 		if ((IsValid(GetSystemByType(System->GetType()))) && (GetSystemByType(System->GetType()) != System))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Merge systems called"));
-			//GetSystemByType(System->GetType())->MergeSystems(System);
-			System->MergeSystems(GetSystemByType(System->GetType()));
+			GetSystemByType(System->GetType())->MergeSystems(System);
+			Systems.Add(GetSystemByType(System->GetType()));
+			//System->MergeSystems(GetSystemByType(System->GetType()));
 		}
 
 		//else just add it to the list of systems on this part.
 		else
 		{
+			System->AddPart(this);
 			UE_LOG(LogTemp, Warning, TEXT("Merge systems not called"));
+			UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 			Systems.Add(System);
 		}
 	}
