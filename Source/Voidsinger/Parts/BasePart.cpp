@@ -256,8 +256,8 @@ UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	for (auto& i : GetSystems())
 	{
-		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
-		UE_LOG(LogTemp, Warning, TEXT("All systems types get system by type thing %s"), *EnumPtr->GetDisplayNameTextByValue(i->GetType().GetValue()).ToString());
+		//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+		//UE_LOG(LogTemp, Warning, TEXT("All systems types get system by type thing %s"), *EnumPtr->GetDisplayNameTextByValue(i->GetType().GetValue()).ToString());
 		if (i->GetType() == Type)
 		{
 			FoundResourceSystem = i;
@@ -410,8 +410,8 @@ void UBasePart::ConnectToSystems()
 //Create a new resource system
 void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 {
-	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
 
+	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
 	UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameTextByValue(ResourceType.GetValue()).ToString());
 
 	//Make the new system, make sure it's the right type, and add the system to the list of systems on the player character
@@ -426,20 +426,25 @@ void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
 void UBasePart::AddToSystem(UBaseResourceSystem* System)
 {
+	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+	UE_LOG(LogTemp, Warning, TEXT("Add to system type %s"), *EnumPtr->GetDisplayNameTextByValue(System->GetType().GetValue()).ToString());
 	if (!Systems.Contains(System))
 	{
 		//Add the part to the system
 		System->AddPart(this);
 
 		//If there is already a system of this resource type on this part, then merge System with that system
-		if (IsValid(GetSystemByType(System->GetType())) && GetSystemByType(System->GetType()) != System)
+		if ((IsValid(GetSystemByType(System->GetType()))) && (GetSystemByType(System->GetType()) != System))
 		{
-			GetSystemByType(System->GetType())->MergeSystems(System);
+			UE_LOG(LogTemp, Warning, TEXT("Merge systems called"));
+			//GetSystemByType(System->GetType())->MergeSystems(System);
+			System->MergeSystems(GetSystemByType(System->GetType()));
 		}
 
 		//else just add it to the list of systems on this part.
 		else
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Merge systems not called"));
 			Systems.Add(System);
 		}
 	}

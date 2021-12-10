@@ -184,7 +184,12 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 
 		for (int OtherGridIndex = 0; OtherGridIndex < MergedSystem->ResourceSystemGrid.Num(); OtherGridIndex++)
 		{
-			ResourceSystemGrid.Emplace(MergedSystem->ResourceSystemGrid.LocationAtIndex(OtherGridIndex), MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex));
+			UBasePart* PartMergedIn = MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex);
+			UE_LOG(LogTemp, Warning, TEXT("part merged in class %s"), *PartMergedIn->GetClass()->GetDisplayNameText().ToString())
+			ResourceSystemGrid.Emplace(MergedSystem->ResourceSystemGrid.LocationAtIndex(OtherGridIndex), PartMergedIn);
+
+			PartMergedIn->GetSystems().Remove(MergedSystem);
+			PartMergedIn->GetSystems().Emplace(this);
 		}
 
 		if (IsValid(GetWorld()))
