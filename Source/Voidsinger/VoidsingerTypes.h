@@ -36,9 +36,9 @@ enum EResourceType
 UENUM(BlueprintType)
 enum EFactions
 {
+	Inanimate		UMETA(DisplayName = "Inanimate"),
 	Player			UMETA(DisplayName = "Player"),
 	Enemy			UMETA(DisplayName = "Enemy"),
-	Inanimate		UMETA(DisplayName = "Inanimate")
 };
 
 //Comment -Mabel Suggestion
