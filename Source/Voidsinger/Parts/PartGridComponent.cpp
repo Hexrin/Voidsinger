@@ -118,7 +118,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			&&
 
 			//If on the player then check to see if they have enough pixels and withdraw them.
-			Ship->GetFaction() != EFactions::Player || Cast<AShipPlayerState>(Ship->GetPlayerState())->WithdrawPixels(PartType.GetDefaultObject()->GetCost())
+			(Ship->GetFaction() != EFactions::Player || Cast<AShipPlayerState>(Ship->GetPlayerState())->WithdrawPixels(PartType.GetDefaultObject()->GetCost()))
 		)
 		{
 
