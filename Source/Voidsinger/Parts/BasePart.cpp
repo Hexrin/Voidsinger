@@ -252,15 +252,27 @@ TArray<UBaseResourceSystem*> UBasePart::GetSystems()
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
 UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
 {
+	UBaseResourceSystem* FoundResourceSystem = nullptr;
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	for (auto& i : GetSystems())
 	{
+		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+		UE_LOG(LogTemp, Warning, TEXT("All systems types get system by type thing %s"), *EnumPtr->GetDisplayNameTextByValue(i->GetType().GetValue()).ToString());
 		if (i->GetType() == Type)
 		{
-			return i;
+			FoundResourceSystem = i;
+			//return i;
 		}
 	}
-	return nullptr;
+	//return nullptr;
+	if (IsValid(FoundResourceSystem))
+	{
+		return FoundResourceSystem;
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
@@ -336,7 +348,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
 		for (auto& i : Systems)
 		{
-			i->RemovePixel(RelativeLoc);
+			i->RemovePixel(RelativeLoc + GetPartGridLocation());
 		}
 	}
 	else
@@ -347,7 +359,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 		for (auto& i : Systems)
 		{
 			i->RemovePart(this);
-			i->RemovePixel(RelativeLoc);
+			i->RemovePixel(RelativeLoc + GetPartGridLocation());
 		}
 	}
 	if (ActualShape.Num() <= 0)
@@ -398,6 +410,10 @@ void UBasePart::ConnectToSystems()
 //Create a new resource system
 void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 {
+	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+
+	UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameTextByValue(ResourceType.GetValue()).ToString());
+
 	//Make the new system, make sure it's the right type, and add the system to the list of systems on the player character
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
 	NewSystem->SetType(ResourceType);

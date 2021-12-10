@@ -170,7 +170,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 
 					//Remember to coment out debug stuff. We should probably add a comment with the word "Debug" in
 					//front of debug stuff -Mabel Suggestion
-					UE_LOG(LogTemp, Warning, TEXT("Added: %s"), *Part->GetFName().ToString());
+					//UE_LOG(LogTemp, Warning, TEXT("Added: %s"), *Part->GetFName().ToString());
 				}
 			}
 

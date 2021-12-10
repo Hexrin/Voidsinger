@@ -51,11 +51,21 @@ void UBaseResourceSystem::AddPart(UBasePart* AddedPart)
 	if (IsValid(AddedPart))
 	{
 		ConnectedParts.Add(AddedPart);
+
+		if (ConnectedParts.Num() == 1)
+		{
+			OwningShip = Cast<ABaseShip>(ConnectedParts[0]->GetOuter()->GetOuter());
+		}
+
+		for (const FIntPoint& PartShape : AddedPart->GetShape())
+		{
+			ResourceSystemGrid.Emplace(PartShape + AddedPart->GetPartGridLocation(), AddedPart);
+		}
 	}
 	else
 	{
 		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
-		UE_LOG(LogTemp, Warning, TEXT("Why no valid"))
+		UE_LOG(LogTemp, Error, TEXT("Accessed none when trying to add a part to a resource system"))
 	}
 }
 
@@ -79,8 +89,7 @@ void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart)
 */
 void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 {
-	
-	if (GetMapFromConnectedParts().Contains(Pixel))
+	if (ResourceSystemGrid.Contains(Pixel))
 	{
 		TArray<FIntPoint> NumbersFound;
 
@@ -125,11 +134,11 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 			for (int i = 0; i < NumbersFound.Num() - 1; i++)
 			{
 				TGridMap<FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
-				if (ConnectedPartsMap.Contains(NumbersFound[i]) && ConnectedPartsMap.Contains(NumbersFound[i + 1]))
+				if (ResourceSystemGrid.Contains(NumbersFound[i]) && ResourceSystemGrid.Contains(NumbersFound[i + 1]))
 				{
 					//This needs to be improved, but right now it checks if the current index is connected to the next index.
 					//actually it might not need to be improved but i need to think about it
-					if (!ConnectedPartsMap.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
+					if (!ResourceSystemGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<UBasePart*>))
 					{
 						//Bad variable name. What is it storing? - Liam Suggestion
 						//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
@@ -143,10 +152,19 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 						{
 							RemovedSet.Emplace(ConnectedPartsMap.Find(j)->Part);
 						}
+
 						CreateNewSystem(RemovedSet.Array());
+
 					}
 				}
 			}
+		}
+
+		ResourceSystemGrid.Remove(Pixel);
+
+		if (ResourceSystemGrid.Num() == 0)
+		{
+			DestroyResourceSystem();
 		}
 	}
 }
@@ -154,24 +172,44 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
 void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 {
-	//You can use += instead of appened - Liam Suggestion
-	ConnectedParts.Append(MergedSystem->ConnectedParts);
-	if (IsValid(GetWorld()))
+
+	if (MergedSystem != this)
 	{
-		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
-		//UE_LOG(LogTemp, Warning, TEXT("Merge Systems"));
-		Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
-	}
-	else
-	{
-		//Delete print string and else{} or come up with a good way for c++ debug modes - Liam Suggestion
-		UE_LOG(LogTemp, Error, TEXT("The world is not valid on the resource system for some unexplicable reason (ask Mabel)"));
+		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+
+		UE_LOG(LogTemp, Warning, TEXT("Merge systems type %s"), *EnumPtr->GetDisplayNameText(GetType().GetValue()).ToString());
+
+		//You can use += instead of appened - Liam Suggestion
+		ConnectedParts.Append(MergedSystem->ConnectedParts);
+
+		for (int OtherGridIndex = 0; OtherGridIndex < MergedSystem->ResourceSystemGrid.Num(); OtherGridIndex++)
+		{
+			ResourceSystemGrid.Emplace(MergedSystem->ResourceSystemGrid.LocationAtIndex(OtherGridIndex), MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex));
+		}
+
+		if (IsValid(GetWorld()))
+		{
+			//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
+			//UE_LOG(LogTemp, Warning, TEXT("Merge Systems"));
+			//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
+			OwningShip->RemoveResourceSystem(MergedSystem);
+		}
+		else
+		{
+			//Delete print string and else{} or come up with a good way for c++ debug modes - Liam Suggestion
+			UE_LOG(LogTemp, Error, TEXT("The world is not valid on a resource system."));
+		}
 	}
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
 void UBaseResourceSystem::CreateNewSystem(TArray<UBasePart*> RemovedParts)
 {
+
+	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+
+	UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameText(GetType().GetValue()).ToString());
+
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	for (int i = 0; i < RemovedParts.Num(); i++)
 	{
@@ -180,7 +218,14 @@ void UBaseResourceSystem::CreateNewSystem(TArray<UBasePart*> RemovedParts)
 
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>(ThisClass::StaticClass()));
 	NewSystem->AddSection(RemovedParts);
-	Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->AddResourceSystem(NewSystem);
+	OwningShip->AddResourceSystem(NewSystem);
+}
+
+void UBaseResourceSystem::DestroyResourceSystem()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Resource system outer %s"), *GetOuter()->GetClass()->GetDisplayNameText().ToString())
+	//Cast<ABaseShip>(GetOuter())->RemoveResourceSystem(this);
+	OwningShip->RemoveResourceSystem(this);
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
