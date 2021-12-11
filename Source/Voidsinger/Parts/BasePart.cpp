@@ -99,6 +99,7 @@ void UBasePart::DestroyPart()
 */
 void UBasePart::Activate()
 {
+	if(IsFunctional())
 	BlueprintActivate();
 }
 
@@ -317,7 +318,7 @@ bool UBasePart::IsFunctional()
 	//be enough pixels for this to be true.
 	if (GetShape().Num() >= PercentFunctional * .01 * GetDesiredShape().Num())
 	{
-		return true;
+		return !bIsBeingDestroyed;
 	}
 	else
 	{
