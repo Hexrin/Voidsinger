@@ -6,7 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/Voidsongs/BaseVerbVoidsong.h"
-#include "VoidGameMode.generated.h"
+#include "StarSystemGameMode.generated.h"
 
 /*
  * As far as I can tell this system doesnt support multiple simultaneous Voidsongs which we were planning to implement - Liam Suggestion
@@ -38,13 +38,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FVoidsongDelegate, const TArray<T
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeactivateVoidsongDelegate);
 
 UCLASS()
-class VOIDSINGER_API AVoidGameMode : public AGameModeBase
+class VOIDSINGER_API AStarSystemGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
 	//Should be commented. What does the constuctor do? -Liam Suggestion
-	AVoidGameMode();
+	AStarSystemGameMode();
 
 
 	/*

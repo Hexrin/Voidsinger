@@ -8,41 +8,41 @@
 
 
 
-//Function comments from the .h should be copied to the .cpp. - Liam Suggestion
-TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
-{
-	//Delete print string or come up with a good way for c++ debug modes. - Liam Suggestion
-	//UE_LOG(LogTemp, Error, TEXT("Don't Get Classes at runtime!!"));
-	TArray<UClass*> Results;
-
-	//Our doesnt make sense - Liam Suggestion
-	// get our parent blueprint class
-	if (IsValid(ParentClass))
-	{
-		const FString ParentClassName = ParentClass->GetName();
-		UObject* ClassPackage = ANY_PACKAGE;
-		UClass* ParentBPClass = FindObject<UClass>(ClassPackage, *ParentClassName);
-
-		// iterate over UClass, this might be heavy on performance, so keep in mind..
-		// better suggestions for a check are welcome
-		for (TObjectIterator<UClass> It; It; ++It)
-		{
-			if (It->IsChildOf(ParentBPClass))
-			{
-				// It is a child of the Parent Class
-				// make sure we don't include our parent class in the array (weak name check, suggestions welcome)
-				if (It->GetName() != ParentClassName)
-				{
-					Results.Add(*It);
-				}
-			}
-		}
-
-		return Results;
-	}
-
-	return TArray<UClass*>();
-}
+////Function comments from the .h should be copied to the .cpp. - Liam Suggestion
+//TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
+//{
+//	//Delete print string or come up with a good way for c++ debug modes. - Liam Suggestion
+//	//UE_LOG(LogTemp, Error, TEXT("Don't Get Classes at runtime!!"));
+//	TArray<UClass*> Results;
+//
+//	//Our doesnt make sense - Liam Suggestion
+//	// get our parent blueprint class
+//	if (IsValid(ParentClass))
+//	{
+//		const FString ParentClassName = ParentClass->GetName();
+//		UObject* ClassPackage = ANY_PACKAGE;
+//		UClass* ParentBPClass = FindObject<UClass>(ClassPackage, *ParentClassName);
+//
+//		// iterate over UClass, this might be heavy on performance, so keep in mind..
+//		// better suggestions for a check are welcome
+//		for (TObjectIterator<UClass> It; It; ++It)
+//		{
+//			if (It->IsChildOf(ParentBPClass))
+//			{
+//				// It is a child of the Parent Class
+//				// make sure we don't include our parent class in the array (weak name check, suggestions welcome)
+//				if (It->GetName() != ParentClassName)
+//				{
+//					Results.Add(*It);
+//				}
+//			}
+//		}
+//
+//		return Results;
+//	}
+//
+//	return TArray<UClass*>();
+//}
 
 //Function comments from the .h should be copied to the .cpp. - Liam Suggestion
 void UFunctionLibrary::ExplodeAtWorldLocation(const UObject* WorldContextObject, FVector WorldLocation, float ExplosionRadius)

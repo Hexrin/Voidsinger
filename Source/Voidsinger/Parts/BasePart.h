@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
-#include "Voidsinger/VoidGameMode.h"
+#include "Voidsinger/StarSystemGameMode.h"
 #include "Voidsinger/FunctionLibrary.h"
 #include "BasePart.generated.h"
 

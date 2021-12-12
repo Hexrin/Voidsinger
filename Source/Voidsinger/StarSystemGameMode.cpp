@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "VoidGameMode.h"
+#include "StarSystemGameMode.h"
 #include "ShipPlayerState.h"
 #include "Ships/PlayerShip.h"
 
@@ -15,7 +15,7 @@ void IActivateInterface::Activate()
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-AVoidGameMode::AVoidGameMode()
+AStarSystemGameMode::AStarSystemGameMode()
 {
 	//LoadConfig();
 	PlayerStateClass = AShipPlayerState::StaticClass();
@@ -23,7 +23,7 @@ AVoidGameMode::AVoidGameMode()
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void AVoidGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness)
+void AStarSystemGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Verbiness is called"));
 	if (!VerbsActive.IsEmpty())
@@ -37,7 +37,7 @@ void AVoidGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActiv
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs)
+void AStarSystemGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs)
 {
 	//Shouldnt this be append(+=) not = - Liam Suggestion
 	VerbsActive = Verbs;
@@ -45,7 +45,7 @@ void AVoidGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TS
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void AVoidGameMode::UnsetVerbs()
+void AStarSystemGameMode::UnsetVerbs()
 {
 	//Delete print string or come up with a good way for c++ debug modes
 	UE_LOG(LogTemp, Warning, TEXT("UnsetVerbs"));
@@ -61,13 +61,13 @@ void AVoidGameMode::UnsetVerbs()
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-FVoidsongDelegate AVoidGameMode::GetVoidsongDelegate()
+FVoidsongDelegate AStarSystemGameMode::GetVoidsongDelegate()
 {
 	return OnVoidsongDelegate;
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-TArray<UBaseVerbVoidsong*> AVoidGameMode::GetVerbsActive()
+TArray<UBaseVerbVoidsong*> AStarSystemGameMode::GetVerbsActive()
 {
 	return VerbsActive;
 }

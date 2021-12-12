@@ -203,7 +203,7 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 
 		if (!Factions.IsEmpty() || !Nouns.IsEmpty() || !Verbs.IsEmpty())
 		{
-			Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs, AvailableVoidsongs);
+			Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs, AvailableVoidsongs);
 		}
 
 		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
@@ -292,7 +292,7 @@ void ABaseShip::DurationDelay()
 	//UE_LOG(LogTemp, Warning, TEXT("Can Activate again"))
 	CanActivateVoidsong = true;
 	//This system definently does not work with multiple simultanous voidsongs - Liam Suggestion
-	Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->UnsetVerbs();
+	Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->UnsetVerbs();
 	OnUnsetVerbsDelegate.Broadcast();
 }
 
