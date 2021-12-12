@@ -121,29 +121,6 @@ void APlayerShip::BeginPlay()
     
 }
 
-//Comment -Mabel Suggestion
-TMap<TEnumAsByte<EResourceType>, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
-{
-    TMap<TEnumAsByte<EResourceType>, float> Costs;
-    
-    Costs.Add(EResourceType::Fuel, 100);
-    Costs.Add(EResourceType::Hydrogen, 35);
-    return Costs;
-}
-
-//Comment -Mabel Suggestion
-bool APlayerShip::TravelToStarSystem(class UStarSystemData* Target)
-{
-    CurrentStarSystem = Target;
-    return true;
-}
-
-//Comment -Mabel Suggestion
-UStarSystemData* APlayerShip::GetCurrentStarSystem()
-{
-    return CurrentStarSystem;
-}
-
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
 //Voidsong inputs
 void APlayerShip::Voidsong1Call()
