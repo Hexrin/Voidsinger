@@ -334,7 +334,7 @@ private:
 	
 	//The path to the pixel mesh. 
 	UPROPERTY(EditAnywhere)
-	FString PathToPixelMesh = TEXT("/Game/Parts/PlaneWithCollision.PlaneWithCollision");
+	FString PathToPixelMesh = TEXT("/Game/3DAssets/PlaneWithCollision.PlaneWithCollision");
 
 	//Comment -Mabel Suggestion
 	UPROPERTY()
