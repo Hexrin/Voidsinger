@@ -207,7 +207,7 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 		}
 
 		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
-		UE_LOG(LogTemp, Warning, TEXT("duration %f"), Duration);
+		//UE_LOG(LogTemp, Warning, TEXT("duration %f"), Duration);
 		if (Duration != 0)
 		{
 			//Does this work with multiple simultaneous Voidsongs? I think it does but be sure to test it. - Liam Suggestion
