@@ -119,33 +119,41 @@ int UFunctionLibrary::GetBitNumberFromLocation(FIntPoint Location)
 TArray<UBasePart*> UFunctionLibrary::GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid)
 {
 
-	TSet<UBasePart*> PartsHit;
-
-	FVector RelativeLoc = UKismetMathLibrary::InverseTransformLocation(PartGrid->GetOwner()->GetActorTransform(), Location) + FVector(Cast<ABaseShip>(PartGrid->GetOwner())->PhysicsComponent->GetCenterOfMass(), 0);
-	FIntPoint LocalIntPoint = FVector2D(RelativeLoc.X, RelativeLoc.Y).IntPoint();
-	FIntPoint CheckGridLocation;
-
-	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
-	for (int i = 0; i < 4; i++)
+	if (IsValid(PartGrid))
 	{
-		CheckGridLocation.X = LocalIntPoint.X + (i % 2);
-		if (i > 1)
+		TSet<UBasePart*> PartsHit;
+
+		FVector RelativeLoc = UKismetMathLibrary::InverseTransformLocation(PartGrid->GetOwner()->GetActorTransform(), Location) + FVector(Cast<ABaseShip>(PartGrid->GetOwner())->PhysicsComponent->GetCenterOfMass(), 0);
+		FIntPoint LocalIntPoint = FVector2D(RelativeLoc.X, RelativeLoc.Y).IntPoint();
+		FIntPoint CheckGridLocation;
+
+		//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
+		for (int i = 0; i < 4; i++)
 		{
-			CheckGridLocation.Y = LocalIntPoint.Y + 1;
-		}
-		else
-		{
-			CheckGridLocation.Y = LocalIntPoint.Y;
+			CheckGridLocation.X = LocalIntPoint.X + (i % 2);
+			if (i > 1)
+			{
+				CheckGridLocation.Y = LocalIntPoint.Y + 1;
+			}
+			else
+			{
+				CheckGridLocation.Y = LocalIntPoint.Y;
+			}
+
+			if (PartGrid->GetPartGrid().Contains(CheckGridLocation))
+			{
+				PartsHit.Emplace(PartGrid->GetPartGrid().Find(CheckGridLocation)->Part);
+			}
+
 		}
 
-		if (PartGrid->GetPartGrid().Contains(CheckGridLocation))
-		{
-			PartsHit.Emplace(PartGrid->GetPartGrid().Find(CheckGridLocation)->Part);
-		}
-
+		return PartsHit.Array();
 	}
-
-	return PartsHit.Array();
-
+	else
+	{
+		//Print an error message instead of crashing the game if the part grid isn't valid.
+		UE_LOG(LogTemp, Error, TEXT("Accessed none when trying to read the PartGrid on GetPartsHitFromWorldLocation()."));
+		return TArray<UBasePart*>();
+	}
 }
 
