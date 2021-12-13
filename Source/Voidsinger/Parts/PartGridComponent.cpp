@@ -79,13 +79,21 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 //I like how you commented the cpp but not the h -Mabel Suggestion
 bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 {
-	TArray<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
-	return AddPart(PartialPartShape, PartType, Location, Rotation, bAlwaysPlace);
+	if (IsValid(PartType))
+	{
+		TArray<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
+		return AddPart(PartialPartShape, PartType, Location, Rotation, bAlwaysPlace);
+	}
+	return false;
 }
 
 //Adds a partial part to PartPrid
 bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 {
+	if (!IsValid(PartType))
+	{
+		return false;
+	}
 	//At first glance this function seems a bit long, it could probably be split into some sub-functions. -Mabel Suggestion
 	if (!PartialPartShape.IsEmpty())
 	{
