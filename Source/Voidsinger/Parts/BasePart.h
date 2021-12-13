@@ -186,7 +186,7 @@ public:
 
 	//Gets the resource systems the part is a part of
 	UFUNCTION(BlueprintPure)
-	TArray<UBaseResourceSystem*> GetSystems();
+	TArray<UBaseResourceSystem*>& GetSystems();
 
 	//Comment technicaly false. It finds the *first* resource system ... - Liam suggestion
 	//Returns the resource system that the part is a part of with a given type, returns null if there is no system with that resource type

@@ -194,12 +194,18 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 
 			for (UBaseResourceSystem* Systems : PartMergedIn->GetSystems())
 			{
-				UE_LOG(LogTemp, Warning, TEXT("systems on part merged in %s"), *Systems->GetFName().ToString())
-				UE_LOG(LogTemp, Warning, TEXT("systems on part merged in type %s"), *EnumPtr->GetDisplayNameTextByValue(Systems->GetType().GetValue()).ToString());
+				UE_LOG(LogTemp, Warning, TEXT("systems on part merged in before change %s"), *Systems->GetFName().ToString())
+				UE_LOG(LogTemp, Warning, TEXT("systems on part merged in type before change %s"), *EnumPtr->GetDisplayNameTextByValue(Systems->GetType().GetValue()).ToString());
 			}
 
 			PartMergedIn->GetSystems().Remove(MergedSystem);
 			PartMergedIn->GetSystems().Emplace(this);
+
+			for (UBaseResourceSystem* Systems : PartMergedIn->GetSystems())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("systems on part merged in after change %s"), *Systems->GetFName().ToString())
+				UE_LOG(LogTemp, Warning, TEXT("systems on part merged in type after change %s"), *EnumPtr->GetDisplayNameTextByValue(Systems->GetType().GetValue()).ToString());
+			}
 
 		}
 

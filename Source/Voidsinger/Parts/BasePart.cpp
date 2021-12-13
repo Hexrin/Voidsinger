@@ -245,7 +245,7 @@ const ABaseShip* UBasePart::GetShip()
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-TArray<UBaseResourceSystem*> UBasePart::GetSystems()
+TArray<UBaseResourceSystem*>& UBasePart::GetSystems()
 {
 	return Systems;
 }
