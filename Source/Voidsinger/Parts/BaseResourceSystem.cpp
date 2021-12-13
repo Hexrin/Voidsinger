@@ -175,13 +175,13 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 
 	if (MergedSystem != this)
 	{
-		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+		//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
 
-		UE_LOG(LogTemp, Warning, TEXT("Merged system %s"), *MergedSystem->GetFName().ToString());
-		UE_LOG(LogTemp, Warning, TEXT("Merged system type %s"), *EnumPtr->GetDisplayNameTextByValue(MergedSystem->GetType().GetValue()).ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("Merged system %s"), *MergedSystem->GetFName().ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("Merged system type %s"), *EnumPtr->GetDisplayNameTextByValue(MergedSystem->GetType().GetValue()).ToString());
 
-		UE_LOG(LogTemp, Warning, TEXT("This system % s"), *GetFName().ToString());
-		UE_LOG(LogTemp, Warning, TEXT("this system type %s"), *EnumPtr->GetDisplayNameTextByValue(GetType().GetValue()).ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("This system % s"), *GetFName().ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("this system type %s"), *EnumPtr->GetDisplayNameTextByValue(GetType().GetValue()).ToString());
 
 		//You can use += instead of appened - Liam Suggestion
 		ConnectedParts.Append(MergedSystem->ConnectedParts);
@@ -189,17 +189,23 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 		for (int OtherGridIndex = 0; OtherGridIndex < MergedSystem->ResourceSystemGrid.Num(); OtherGridIndex++)
 		{
 			UBasePart* PartMergedIn = MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex);
-			UE_LOG(LogTemp, Warning, TEXT("part merged in class %s"), *PartMergedIn->GetClass()->GetDisplayNameText().ToString())
+			//UE_LOG(LogTemp, Warning, TEXT("part merged in class %s"), *PartMergedIn->GetClass()->GetDisplayNameText().ToString())
 			ResourceSystemGrid.Emplace(MergedSystem->ResourceSystemGrid.LocationAtIndex(OtherGridIndex), PartMergedIn);
 
 			for (UBaseResourceSystem* Systems : PartMergedIn->GetSystems())
 			{
-				UE_LOG(LogTemp, Warning, TEXT("systems on part merged in %s"), *Systems->GetFName().ToString())
-				UE_LOG(LogTemp, Warning, TEXT("systems on part merged in type %s"), *EnumPtr->GetDisplayNameTextByValue(Systems->GetType().GetValue()).ToString());
+				//UE_LOG(LogTemp, Warning, TEXT("systems on part merged in before change %s"), *Systems->GetFName().ToString())
+				//UE_LOG(LogTemp, Warning, TEXT("systems on part merged in type before change %s"), *EnumPtr->GetDisplayNameTextByValue(Systems->GetType().GetValue()).ToString());
 			}
 
 			PartMergedIn->GetSystems().Remove(MergedSystem);
 			PartMergedIn->GetSystems().Emplace(this);
+
+			for (UBaseResourceSystem* Systems : PartMergedIn->GetSystems())
+			{
+				//UE_LOG(LogTemp, Warning, TEXT("systems on part merged in after change %s"), *Systems->GetFName().ToString())
+				//UE_LOG(LogTemp, Warning, TEXT("systems on part merged in type after change %s"), *EnumPtr->GetDisplayNameTextByValue(Systems->GetType().GetValue()).ToString());
+			}
 
 		}
 
@@ -210,7 +216,7 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 			//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
 			OwningShip->RemoveResourceSystem(MergedSystem);
 
-			UE_LOG(LogTemp, Warning, TEXT("------------------------"));
+			//UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 		}
 		else
 		{
@@ -224,9 +230,9 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 void UBaseResourceSystem::CreateNewSystem(TArray<UBasePart*> RemovedParts)
 {
 
-	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+	//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
 
-	UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameText(GetType().GetValue()).ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameText(GetType().GetValue()).ToString());
 
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	for (int i = 0; i < RemovedParts.Num(); i++)

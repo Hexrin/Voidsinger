@@ -245,7 +245,7 @@ const ABaseShip* UBasePart::GetShip()
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-TArray<UBaseResourceSystem*> UBasePart::GetSystems()
+TArray<UBaseResourceSystem*>& UBasePart::GetSystems()
 {
 	return Systems;
 }
@@ -392,7 +392,7 @@ void UBasePart::ConnectToSystems()
 			//Check the X + 1 location for a part on the part grid
 			if (PartGridComponent->GetPartGrid().Contains(j + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Check location x %i y %i"), j.X, j.Y);
+				//UE_LOG(LogTemp, Warning, TEXT("Check location x %i y %i"), j.X, j.Y);
 				AddToSystem(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key));
 
 				//A system was found!
@@ -413,8 +413,8 @@ void UBasePart::ConnectToSystems()
 void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 {
 
-	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
-	UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameTextByValue(ResourceType.GetValue()).ToString());
+	//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+	//UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameTextByValue(ResourceType.GetValue()).ToString());
 
 	//Make the new system, make sure it's the right type, and add the system to the list of systems on the player character
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
@@ -428,8 +428,8 @@ void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
 void UBasePart::AddToSystem(UBaseResourceSystem* System)
 {
-	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
-	UE_LOG(LogTemp, Warning, TEXT("Add to system type %s"), *EnumPtr->GetDisplayNameTextByValue(System->GetType().GetValue()).ToString());
+	//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+	//UE_LOG(LogTemp, Warning, TEXT("Add to system type %s"), *EnumPtr->GetDisplayNameTextByValue(System->GetType().GetValue()).ToString());
 	if (!Systems.Contains(System))
 	{
 		//Add the part to the system
@@ -438,7 +438,7 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 		//If there is already a system of this resource type on this part, then merge System with that system
 		if ((IsValid(GetSystemByType(System->GetType()))) && (GetSystemByType(System->GetType()) != System))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Merge systems called"));
+			//UE_LOG(LogTemp, Warning, TEXT("Merge systems called"));
 			GetSystemByType(System->GetType())->MergeSystems(System);
 			Systems.Add(GetSystemByType(System->GetType()));
 			//System->MergeSystems(GetSystemByType(System->GetType()));
@@ -448,8 +448,8 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 		else
 		{
 			System->AddPart(this);
-			UE_LOG(LogTemp, Warning, TEXT("Merge systems not called"));
-			UE_LOG(LogTemp, Warning, TEXT("------------------------"));
+			//UE_LOG(LogTemp, Warning, TEXT("Merge systems not called"));
+			//UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 			Systems.Add(System);
 		}
 	}
@@ -500,8 +500,25 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 			AvailableNouns.Emplace(Cast<UBaseNounVoidsong>(i)->Noun);
 		}
 	}
+
+	bool NounsCheck = false;
+	if (NounClasses.IsEmpty())
+	{
+		for (TSubclassOf<UObject> AvailableNounVoidsong : AvailableNouns)
+		{
+			NounsCheck = GetClass()->IsChildOf(AvailableNounVoidsong);
+		}
+	}
+	else
+	{
+		for (TSubclassOf<UObject> NounPlayed : NounClasses)
+		{
+			NounsCheck = GetClass()->IsChildOf(NounPlayed);
+		}
+	}
+
 	//Long chunk of logic should be commented or made legible - Liam Suggestion
-	if (((Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) && ((NounClasses.IsEmpty() && AvailableNouns.Contains(GetClass())) != NounClasses.Contains(GetClass())))
+	if (((Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) && NounsCheck)
 	{
 		if (this->Implements<UActivateInterface>())
 		{
