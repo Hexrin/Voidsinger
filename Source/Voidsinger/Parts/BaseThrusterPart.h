@@ -63,6 +63,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float ThrustRotation;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float FuelConsumptionAmount{.1};
+
 private:
 
 	//Comment -Mabel Suggestion
