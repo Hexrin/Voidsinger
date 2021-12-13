@@ -48,7 +48,7 @@ void AStarSystemGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TAr
 void AStarSystemGameMode::UnsetVerbs()
 {
 	//Delete print string or come up with a good way for c++ debug modes
-	UE_LOG(LogTemp, Warning, TEXT("UnsetVerbs"));
+	//UE_LOG(LogTemp, Warning, TEXT("UnsetVerbs"));
 	for (auto& i : VerbsActive)
 	{
 		i->Deactivate();
