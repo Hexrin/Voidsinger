@@ -500,8 +500,25 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 			AvailableNouns.Emplace(Cast<UBaseNounVoidsong>(i)->Noun);
 		}
 	}
+
+	bool NounsCheck = false;
+	if (NounClasses.IsEmpty())
+	{
+		for (TSubclassOf<UObject> AvailableNounVoidsong : AvailableNouns)
+		{
+			NounsCheck = GetClass()->IsChildOf(AvailableNounVoidsong);
+		}
+	}
+	else
+	{
+		for (TSubclassOf<UObject> NounPlayed : NounClasses)
+		{
+			NounsCheck = GetClass()->IsChildOf(NounPlayed);
+		}
+	}
+
 	//Long chunk of logic should be commented or made legible - Liam Suggestion
-	if (((Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) && ((NounClasses.IsEmpty() && AvailableNouns.Contains(GetClass())) != NounClasses.Contains(GetClass())))
+	if (((Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) && NounsCheck)
 	{
 		if (this->Implements<UActivateInterface>())
 		{
