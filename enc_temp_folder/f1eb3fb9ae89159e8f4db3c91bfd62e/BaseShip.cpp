@@ -403,8 +403,7 @@ void ABaseShip::AddMeshAtLocation(FIntPoint Location)
 	Triangles += CreateTrianglesForSquare(6, 2, 7, 3);
 
 	MeshComponent->CreateMeshSection(SectionIndex, GetVerticesAroundLocation(Location), Triangles, TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
-	MeshComponent->SetGenerateOverlapEvents(false);
-	MeshComponent->SetGenerateOverlapEvents(true);
+
 	MeshData.Emplace(Location, SectionIndex);
 }
 
