@@ -499,6 +499,7 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 		}
 		else if (IsValid(Cast<UBaseNounVoidsong>(i)))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("noun voidsong %s"), *i->GetFName().ToString())
 			AvailableNouns.Emplace(Cast<UBaseNounVoidsong>(i)->Noun);
 		}
 	}
@@ -508,6 +509,14 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 	{
 		for (TSubclassOf<UObject> AvailableNounVoidsong : AvailableNouns)
 		{
+			if (GetFName().ToString().Contains("BP_Laser"))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("this part %s"), *GetFName().ToString());
+				UE_LOG(LogTemp, Warning, TEXT("Available noun %s"), *AvailableNounVoidsong->GetFName().ToString());
+				UE_LOG(LogTemp, Warning, TEXT("is child of %i"), GetClass()->IsChildOf(AvailableNounVoidsong));
+				UE_LOG(LogTemp, Warning, TEXT("factions emtpy check %i"), Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction()))
+				UE_LOG(LogTemp, Warning, TEXT("factions contains check %i"), Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction()));
+			}
 			NounsCheck = GetClass()->IsChildOf(AvailableNounVoidsong);
 		}
 	}
