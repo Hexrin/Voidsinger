@@ -168,7 +168,7 @@ TSet<UBaseThrusterPart*> UShipMovementComponent::GetThrustersForRotation(bool Cl
 			if (!FMath::IsNearlyZero(CrossProduct, 0.001f) && ((CrossProduct > 0) ^ Clockwise))
 			{
 				//deeeeeebuuuuuuuug -Mabel Suggestion
-				UE_LOG(LogTemp, Warning, TEXT("Is Rotatable: %s   |   Because: %f"), *Thruster->GetThrustRelativeLocation().ToString(), CrossProduct);
+				//UE_LOG(LogTemp, Warning, TEXT("Is Rotatable: %s   |   Because: %f"), *Thruster->GetThrustRelativeLocation().ToString(), CrossProduct);
 				ThrustersToAdd.Emplace(Thruster);
 			}
 		}
