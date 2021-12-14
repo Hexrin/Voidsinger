@@ -68,7 +68,7 @@ void UBaseThrusterPart::Tick(float DeltaTime)
 
 	//I mean you did make a function for the condition of this if statement... maybe it isn't optimal to call the function
 	//though, idk -Mabel Suggestion
-	if (Throttle != 0 && GetSystemByType(EResourceType::Fuel)->DrawResources(FuelConsumptionRate * DeltaTime * Throttle))
+	if (IsFunctional() && Throttle != 0 && GetSystemByType(EResourceType::Fuel)->DrawResources(FuelConsumptionRate * DeltaTime * Throttle))
 	{
 		//Why is delta time being clamped? Why 0.0666666667 specifically? no magic numbers
 		//Isn't there a rotate function for 2d vectors?
