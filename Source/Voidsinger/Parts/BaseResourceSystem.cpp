@@ -186,6 +186,8 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 		//You can use += instead of appened - Liam Suggestion
 		ConnectedParts.Append(MergedSystem->ConnectedParts);
 
+		AddResources(MergedSystem->GetResourceAmount());
+
 		for (int OtherGridIndex = 0; OtherGridIndex < MergedSystem->ResourceSystemGrid.Num(); OtherGridIndex++)
 		{
 			UBasePart* PartMergedIn = MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex);
@@ -213,7 +215,7 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 		{
 			//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
 			//UE_LOG(LogTemp, Warning, TEXT("Merge Systems"));
-			//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
+			Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
 			OwningShip->RemoveResourceSystem(MergedSystem);
 
 			//UE_LOG(LogTemp, Warning, TEXT("------------------------"));
@@ -221,7 +223,7 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 		else
 		{
 			//Delete print string and else{} or come up with a good way for c++ debug modes - Liam Suggestion
-			UE_LOG(LogTemp, Error, TEXT("The world is not valid on a resource system."));
+			//UE_LOG(LogTemp, Error, TEXT("The world is not valid on a resource system."));
 		}
 	}
 }
