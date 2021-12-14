@@ -388,12 +388,14 @@ void UBasePart::ConnectToSystems()
 		//For each pixel location that has this resource type applied to it
 		for (auto& j : i.Value.IntPointArray)
 		{
+			//UE_LOG(LogTemp, Warning, TEXT("has values x %i y %i"), j.X, j.Y);
+
 			//Comment outdated - Liam Suggestion
 			//Check the X + 1 location for a part on the part grid
-			if (PartGridComponent->GetPartGrid().Contains(j + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
+			if (PartGridComponent->GetPartGrid().Contains(FVector2D(j).GetRotated(GetRelativeRotation()).IntPoint() + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(FVector2D(j).GetRotated(GetRelativeRotation()).IntPoint() + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
 			{
 				//UE_LOG(LogTemp, Warning, TEXT("Check location x %i y %i"), j.X, j.Y);
-				AddToSystem(PartGridComponent->GetPartGrid().FindRef(j + GetPartGridLocation()).Part->GetSystemByType(i.Key));
+				AddToSystem(PartGridComponent->GetPartGrid().FindRef(FVector2D(j).GetRotated(GetRelativeRotation()).IntPoint() + GetPartGridLocation()).Part->GetSystemByType(i.Key));
 
 				//A system was found!
 				SystemFound = true;
