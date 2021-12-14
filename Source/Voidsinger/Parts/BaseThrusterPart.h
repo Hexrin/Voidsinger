@@ -39,7 +39,7 @@ public:
 
 	//Apply force in the direction of the thruster 
 	UFUNCTION(BlueprintCallable)
-	void Thrust(float NewThrottle);
+	void SetThrottle(float NewThrottle);
 
 	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintPure)
@@ -64,7 +64,7 @@ protected:
 	float ThrustRotation;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	float FuelConsumptionAmount{.1};
+	float FuelConsumptionRate{.1};
 
 private:
 

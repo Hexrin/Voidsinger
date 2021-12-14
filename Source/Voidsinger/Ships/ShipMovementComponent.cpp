@@ -79,7 +79,7 @@ void UShipMovementComponent::RotateShip(bool Clockwise, float Throttle)
 	Throttle = FMath::Clamp(Throttle, 0.f, 1.f);
 	for (UBaseThrusterPart* Thruster : GetThrustersForRotation(Clockwise))
 	{
-		Thruster->Thrust(Throttle);
+		Thruster->SetThrottle(Throttle);
 	}
 }
 
@@ -90,7 +90,7 @@ void UShipMovementComponent::Move(FVector2D Direction, float Throttle)
 	Throttle = FMath::Clamp(Throttle, 0.f, 1.f);
 	for (UBaseThrusterPart* Thruster : GetThrustersForDirection(Direction.GetSafeNormal()))
 	{
-		Thruster->Thrust(Throttle * FVector2D::DotProduct(Direction, FVector2D(1,0).GetRotated(Thruster->GetThrustRotation())));
+		Thruster->SetThrottle(Throttle * FVector2D::DotProduct(Direction, FVector2D(1,0).GetRotated(Thruster->GetThrustRotation())));
 	}
 }
 

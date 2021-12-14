@@ -55,10 +55,10 @@ const float UBaseThrusterPart::GetThrottle()
 }
 
 //Copy comment from .h -Mabel Suggestion
-void UBaseThrusterPart::Thrust(float NewThrottle)
+void UBaseThrusterPart::SetThrottle(float NewThrottle)
 {
 	//Shouldn't the max of this clamp be like "MaxThrottle" or something? or is throttle a percentage? -Mabel Suggestion
-	Throttle = FMath::Clamp(NewThrottle, 0.f, 1.f);
+	Throttle = FMath::Clamp(NewThrottle, Throttle, 1.f);
 }
 
 //Copy comment from .h -Mabel Suggestion
@@ -68,15 +68,13 @@ void UBaseThrusterPart::Tick(float DeltaTime)
 
 	//I mean you did make a function for the condition of this if statement... maybe it isn't optimal to call the function
 	//though, idk -Mabel Suggestion
-	if (Throttle != 0)
+	if (Throttle != 0 && GetSystemByType(EResourceType::Fuel)->DrawResources(FuelConsumptionRate * DeltaTime * Throttle))
 	{
 		//Why is delta time being clamped? Why 0.0666666667 specifically? no magic numbers
 		//Isn't there a rotate function for 2d vectors?
 		//If you don't delete the "GetShip()" function then use that instead of "GetPartGrid()->GetOwner()" -Mabel Suggestion
-		if (GetSystemByType(EResourceType::Fuel)->DrawResources(FuelConsumptionAmount * DeltaTime))
-		{
-			Cast<ABaseShip>(GetPartGrid()->GetOwner())->PhysicsComponent->AddImpulse(FVector2D(ThrustForce * Throttle * FMath::Clamp(DeltaTime, 0.f, 0.0666666667f), 0).GetRotated(GetThrustRotation() + GetShip()->GetActorRotation().Yaw), FVector2D(GetShip()->GetActorQuat().RotateVector(FVector(GetThrustRelativeLocation(), 0))));
-		}
+		Cast<ABaseShip>(GetPartGrid()->GetOwner())->PhysicsComponent->AddImpulse(FVector2D(ThrustForce * Throttle * FMath::Clamp(DeltaTime, 0.f, 0.0666666667f), 0).GetRotated(GetThrustRotation() + GetShip()->GetActorRotation().Yaw), FVector2D(GetShip()->GetActorQuat().RotateVector(FVector(GetThrustRelativeLocation(), 0))));
+		
 		
 		//Why is throttle reset to 0 every tick?
 		Throttle = 0;

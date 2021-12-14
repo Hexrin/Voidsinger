@@ -470,7 +470,7 @@ void UPartGridComponent::RemoveDisconnectedShape(TArray<FIntPoint> ConnectedShap
 	}
 	else
 	{
-		//Delete print string or come up with a good way for c++ debug modes. - Liam Suggestion
+		//Improve error message. Message should include where the error happened and why it was triggered - Liam Suggestion
 		UE_LOG(LogTemp, Error, TEXT("I don't think this should ever happen. Ask Mabel Suggestion about weird part grid component thing"));
 	}
 }
@@ -488,6 +488,7 @@ void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatTo
 //Comment -Mabel Suggestion
 void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float HeatToApply)
 {
+	DrawDebugPoint(GetWorld(), GetOwner()->GetActorTransform().TransformPosition(FVector(FVector2D(RelativeLocation), .1)), 5, PartGrid.Contains(RelativeLocation) ? FColor::Green : FColor::Red, false, 5);
 	if (PartGrid.Contains(RelativeLocation))
 	{
 		PartGrid.Find(RelativeLocation)->SetTemperature(PartGrid.Find(RelativeLocation)->GetTemperature() + HeatToApply);
