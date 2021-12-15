@@ -496,7 +496,7 @@ void UPartGridComponent::ApplyHeatAtLocation(FVector WorldLocation, float HeatTo
 //Comment -Mabel Suggestion
 void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float HeatToApply)
 {
-	DrawDebugPoint(GetWorld(), GetOwner()->GetActorTransform().TransformPosition(FVector(FVector2D(RelativeLocation), .1)), 5, PartGrid.Contains(RelativeLocation) ? FColor::Green : FColor::Red, false, 5);
+	//DrawDebugPoint(GetWorld(), GetOwner()->GetActorTransform().TransformPosition(FVector(FVector2D(RelativeLocation), .1)), 5, PartGrid.Contains(RelativeLocation) ? FColor::Green : FColor::Red, false, 5);
 	if (PartGrid.Contains(RelativeLocation))
 	{
 		PartGrid.Find(RelativeLocation)->SetTemperature(PartGrid.Find(RelativeLocation)->GetTemperature() + HeatToApply);
