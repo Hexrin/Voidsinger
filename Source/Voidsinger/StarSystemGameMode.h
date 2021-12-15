@@ -30,11 +30,11 @@ public:
 	* How should it be overriden?
 	* - Liam Suggestion
 	*/ 
-	virtual void Activate();
+	virtual void Activate(float Duration);
 };
 
 //The below delagates should be commented - Liam Suggestion
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FVoidsongDelegate, const TArray<TEnumAsByte<EFactions>>& , Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FVoidsongDelegate, const TArray<TEnumAsByte<EFactions>>& , Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs, float, Duration);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeactivateVoidsongDelegate);
 
 UCLASS()
@@ -59,7 +59,7 @@ public:
 	* - Liam Suggestion
 	*/	
 	UFUNCTION(BlueprintCallable)
-	void ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness);
+	void ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness, float Duration);
 
 	/*
 	* The below function should be commented. 
@@ -72,7 +72,7 @@ public:
 	* - Liam Suggestion
 	*/
 	UFUNCTION(BlueprintCallable)
-	void Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs);
+	void Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs, float Duration);
 	
 	/*
 	* The below function should be commented. What does the function do?
