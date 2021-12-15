@@ -79,6 +79,7 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 //I like how you commented the cpp but not the h -Mabel Suggestion
 bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 {
+	UE_LOG(LogTemp, Warning, TEXT("part type %s"), *PartType->GetFName().ToString());
 	if (IsValid(PartType))
 	{
 		TArray<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
@@ -223,18 +224,25 @@ bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
 	{
 		//Intialize Variables
 		class UBasePart* PartToRemove = PartGrid.FindRef(Location).Part;
-		FIntPoint PartLoc = PartToRemove->GetPartGridLocation();
-
-		//Refund Part Value
-		Cast<AShipPlayerState>(Ship->GetPlayerState())->DepositPixels(PartToRemove->GetCost());
-		Ship->PixelValue -= PartToRemove->GetCost();
-
-		//Iterate though the shape of PartToRemove and remove them from the part grid
-		for (FIntPoint Loc : PartToRemove->GetShape())
+		if (!IsValid(Cast<UCorePart>(PartToRemove)))
 		{
-			DestroyPixel(Loc + PartLoc, CheckForBreaks);
+			FIntPoint PartLoc = PartToRemove->GetPartGridLocation();
+
+			//Refund Part Value
+			Cast<AShipPlayerState>(Ship->GetPlayerState())->DepositPixels(PartToRemove->GetCost());
+			Ship->PixelValue -= PartToRemove->GetCost();
+
+			//Iterate though the shape of PartToRemove and remove them from the part grid
+			for (FIntPoint Loc : PartToRemove->GetShape())
+			{
+				DestroyPixel(Loc + PartLoc, CheckForBreaks);
+			}
+			return true;
 		}
-		return true;
+		else
+		{
+			return false;
+		}
 	}
 	else
 	{
