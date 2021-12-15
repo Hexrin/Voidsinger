@@ -31,7 +31,7 @@ public:
 	*/
 	//Pre-activate calls activate, but it also sets ActorHit, WorldLocation and effectiveness. It's convenient.
 	UFUNCTION(BlueprintCallable)
-	void PreActivate(AActor* NewActorHit, AActor* NewActorThatActivated, TArray<UBasePart*> NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness);
+	void PreActivate(AActor* NewActorHit, AActor* NewActorThatActivated, TArray<UBasePart*> NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness, float NewDuration);
 
 	/*
 	* Should be blueprintcallable so it can replace PreActivate
@@ -52,7 +52,7 @@ public:
 	*/
 	//This will do the effect of the voidsong. It's called within Activate. Needs to be implemented for each Voidsong.
 	UFUNCTION(BlueprintImplementableEvent)
-	void Activate(AActor* NewActorHit, AActor* NewActorThatActivated, const TArray<UBasePart*>& NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness);
+	void Activate(AActor* NewActorHit, AActor* NewActorThatActivated, const TArray<UBasePart*>& NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness, float NewDuration);
 
 	//This will undo the effect of the voidsong. It's also called within activate, after a delay for the duration. Needs to be implemented for each Voidsong. 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -84,5 +84,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	float Effectiveness;
+
+	UPROPERTY(BlueprintReadOnly)
+	float FullVoidsongLength;
 
 };
