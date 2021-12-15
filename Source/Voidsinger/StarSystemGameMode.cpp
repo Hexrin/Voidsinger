@@ -10,7 +10,7 @@
 * You may not need to define this function if you mark it as abstract?
 * - Liam Suggestion
 */ 
-void IActivateInterface::Activate()
+void IActivateInterface::Activate(float Duration)
 {
 }
 
@@ -23,7 +23,7 @@ AStarSystemGameMode::AStarSystemGameMode()
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void AStarSystemGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness)
+void AStarSystemGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness, float Duration)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Verbiness is called"));
 	if (!VerbsActive.IsEmpty())
@@ -31,17 +31,17 @@ void AStarSystemGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorTha
 		//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 		for (auto& i : VerbsActive)
 		{
-			i->PreActivate(ActorHit, ActorThatActivated, PartsHit, LocationCalledFrom, WorldLocation, Effectiveness);
+			i->PreActivate(ActorHit, ActorThatActivated, PartsHit, LocationCalledFrom, WorldLocation, Effectiveness, Duration);
 		}
 	}
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void AStarSystemGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs)
+void AStarSystemGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs, float Duration)
 {
 	//Shouldnt this be append(+=) not = - Liam Suggestion
 	VerbsActive = Verbs;
-	OnVoidsongDelegate.Broadcast(Factions, NounClasses, AvailableVoidsongs);
+	OnVoidsongDelegate.Broadcast(Factions, NounClasses, AvailableVoidsongs, Duration);
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion

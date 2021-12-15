@@ -82,7 +82,7 @@ private:
 
 	//Comment not helpful. What does it do? Which interface is it overriding - Liam Suggestion
 	//Interface
-	virtual void Activate() override;
+	virtual void Activate(float Duration) override;
 
 
 	/*--------Tick--------*\
@@ -110,7 +110,7 @@ public:
 	*/ 
 	//Blueprint activate
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BlueprintActivate();
+	void BlueprintActivate(float Duration);
 
 protected:
 
@@ -281,10 +281,10 @@ public:
 	*/
 	//Function called when FVoidsongDelegate is broadcasted
 	UFUNCTION(BlueprintCallable)
-	void OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs);
+	void OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs, float Duration);
 
 	UFUNCTION()
-	void OnFireDelegateCalled(const TArray<TSubclassOf<UObject>>& NounClasses);
+	void OnFireDelegateCalled(const TArray<TSubclassOf<UObject>>& NounClasses, float Duration);
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||

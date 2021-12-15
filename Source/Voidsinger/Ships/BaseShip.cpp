@@ -203,7 +203,7 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 
 		if (!Factions.IsEmpty() || !Nouns.IsEmpty() || !Verbs.IsEmpty())
 		{
-			Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs, AvailableVoidsongs);
+			Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs, AvailableVoidsongs, Duration);
 		}
 
 		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
@@ -314,12 +314,12 @@ void ABaseShip::LoadVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> Voidsongs)
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void ABaseShip::BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses)
+void ABaseShip::BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses, float Duration)
 {
 	//Varialbe name should be meaningful - Liam Suggestion
 	TArray<TEnumAsByte<EFactions>> Temp;
 	Temp.Emplace(GetFaction());
-	OnActivatePartsDelegate.Broadcast(NounClasses);
+	OnActivatePartsDelegate.Broadcast(NounClasses, Duration);
 }
 
 //Outdated function should be deleted - Liam Suggestion

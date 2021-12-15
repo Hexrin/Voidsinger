@@ -97,10 +97,10 @@ void UBasePart::DestroyPart()
 * You should(?) be able to make the interface function as bluepritn implementable
 * - Liam Suggestion
 */
-void UBasePart::Activate()
+void UBasePart::Activate(float Duration)
 {
 	if(IsFunctional())
-	BlueprintActivate();
+	BlueprintActivate(Duration);
 }
 
 /*--------Tick--------*\
@@ -473,7 +473,7 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 * Shouldn't NounClasses have the type: const TArray<TSubclassOf<UBasePart>>&
 * - Liam Suggestion
 */
-void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs)
+void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs, float Duration)
 {
 	/*for (auto& i : NounClasses)
 	{
@@ -534,16 +534,16 @@ void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions,
 	{
 		if (this->Implements<UActivateInterface>())
 		{
-			Cast<IActivateInterface>(this)->Activate();
+			Cast<IActivateInterface>(this)->Activate(Duration);
 		}
 	}
 }
 
-void UBasePart::OnFireDelegateCalled(const TArray<TSubclassOf<UObject>>& NounClasses)
+void UBasePart::OnFireDelegateCalled(const TArray<TSubclassOf<UObject>>& NounClasses, float Duration)
 {
 	if (NounClasses.Contains(GetClass()))
 	{
-		Cast<IActivateInterface>(this)->Activate();
+		Cast<IActivateInterface>(this)->Activate(Duration);
 	}
 }
 

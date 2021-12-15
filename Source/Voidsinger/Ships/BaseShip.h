@@ -22,7 +22,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, DamageMultip
 
 //Delegates should be commented. What functions should they be bound to? - Liam 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*, AddedVoidsong);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FActivatePartsDelegate, const TArray<TSubclassOf<UObject>>&, NounClasses);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActivatePartsDelegate, const TArray<TSubclassOf<UObject>>&, NounClasses, float, Duration);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnsetVerbsDelegate);
 
 UCLASS()
@@ -159,7 +159,7 @@ public:
 	*/
 	//Event dispatcher for activating the parts on the ship.
 	UFUNCTION(BlueprintCallable)
-	void BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses);
+	void BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses, float Duration);
 
 	/*-Ship Creation-*\
 	\*---------------*/
