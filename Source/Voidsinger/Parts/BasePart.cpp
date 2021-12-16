@@ -341,6 +341,10 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 //Copy comment from .h -Mabel Suggestion
 void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 {
+	if (!ActualShape.Contains(RelativeLoc))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Location Not Valid : % s"), *RelativeLoc.ToString());
+	}
 	ActualShape.Remove(RelativeLoc);
 	OnDamaged();
 
@@ -363,7 +367,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 			i->RemovePixel(RelativeLoc + GetPartGridLocation());
 		}
 	}
-	if (ActualShape.Num() <= 0)
+	if (ActualShape.Num() <= 0 || !IsValid(GetShip()))
 	{
 		OnDestroyed();
 		DestroyPart();

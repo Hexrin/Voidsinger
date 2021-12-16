@@ -257,7 +257,8 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 	{
 		//Remove from grid
 		UBasePart* DamagedPart = PartGrid.FindRef(Location).Part;
-		DamagedPart->DestroyPixel(Location - DamagedPart->GetPartGridLocation());
+		UE_LOG(LogTemp, Warning, TEXT("%s: %s -> %s >r> %s"),*DamagedPart->PartName.ToString(), *Location.ToString(), *(Location - DamagedPart->GetPartGridLocation()).ToString(), *FVector2D((Location - DamagedPart->GetPartGridLocation())).GetRotated(-1 * DamagedPart->GetRelativeRotation()).IntPoint().ToString());
+		DamagedPart->DestroyPixel(/*FVector2D(*/(Location - DamagedPart->GetPartGridLocation()))/*.GetRotated(-1*DamagedPart->GetRelativeRotation()).IntPoint())*/;
 
 		//Destroy Mesh
 		Ship->RemoveMeshAtLocation(Location);
@@ -426,6 +427,7 @@ void UPartGridComponent::RemoveDisconnectedShape(TArray<FIntPoint> ConnectedShap
 				{
 					PartialPartShape.Emplace(k);
 					DestroyPixel(k + j->GetPartGridLocation(), false);
+
 				}
 			}
 

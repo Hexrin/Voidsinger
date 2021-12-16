@@ -311,6 +311,9 @@ protected:
 public:
 	int32 GetCost();
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText PartName;
+
 protected:
 	//Stores the cost to place the part in Pixels
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -322,8 +325,7 @@ protected:
 
 	//Strength of the part
 	//Why is this comment calling "PartName" strength of the part -Mabel Suggestion
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FText PartName;
+	
 
 	//Strength of the part
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
