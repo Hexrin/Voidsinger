@@ -100,8 +100,15 @@ struct VOIDSINGER_API FIntPointArray
 {
 	GENERATED_BODY()
 
+public:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FIntPoint> IntPointArray;
+
+	TArray<FIntPoint> GetIntPointArray()
+	{
+		return IntPointArray;
+	}
 
 	FIntPointArray()
 	{
@@ -113,6 +120,8 @@ struct VOIDSINGER_API FIntPointArray
 	{
 		IntPointArray = Array;
 	}
+
+	
 };
 
 USTRUCT(BlueprintType)
