@@ -79,7 +79,7 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 //I like how you commented the cpp but not the h -Mabel Suggestion
 bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 {
-	UE_LOG(LogTemp, Warning, TEXT("part type %s"), *PartType->GetFName().ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("part type %s"), *PartType->GetFName().ToString());
 	if (IsValid(PartType))
 	{
 		TSet<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
@@ -211,7 +211,7 @@ bool UPartGridComponent::AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<U
 	{
 		//This comment is meant to be a warning. I should probably figure out how to make it through an exception without crashing the game. This isn't just some
 		//random debug thing though. I have a couple things like this. -Mabel Suggestion
-		UE_LOG(LogTemp, Warning, TEXT("PartialPartShape was empty"));
+		//UE_LOG(LogTemp, Warning, TEXT("PartialPartShape was empty"));
 		return false;
 	}
 }
@@ -257,7 +257,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 	{
 		//Remove from grid
 		UBasePart* DamagedPart = PartGrid.FindRef(Location).Part;
-		UE_LOG(LogTemp, Warning, TEXT("%s: %s -> %s >r> %s"),*DamagedPart->PartName.ToString(), *Location.ToString(), *(Location - DamagedPart->GetPartGridLocation()).ToString(), *FVector2D((Location - DamagedPart->GetPartGridLocation())).GetRotated(-1 * DamagedPart->GetRelativeRotation()).IntPoint().ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("%s: %s -> %s >r> %s"),*DamagedPart->PartName.ToString(), *Location.ToString(), *(Location - DamagedPart->GetPartGridLocation()).ToString(), *FVector2D((Location - DamagedPart->GetPartGridLocation())).GetRotated(-1 * DamagedPart->GetRelativeRotation()).IntPoint().ToString());
 		DamagedPart->DestroyPixel(/*FVector2D(*/(Location - DamagedPart->GetPartGridLocation()))/*.GetRotated(-1*DamagedPart->GetRelativeRotation()).IntPoint())*/;
 
 		//Destroy Mesh
