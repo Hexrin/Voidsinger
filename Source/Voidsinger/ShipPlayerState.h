@@ -57,5 +57,5 @@ protected:
 
 	//Stores the percent of the pixel value of enemy ships gained when an enemy is defeated.
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float PixelHarvestingEfficiency{ 0.1 };
+	float SalvagingEfficiency{ 0.1 };
 };

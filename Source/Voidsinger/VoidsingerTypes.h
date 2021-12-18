@@ -7,6 +7,7 @@
 #include "Engine/DataTable.h"
 #include "VoidsingerTypes.generated.h"
 
+class UBaseResourceSystem;
 class UBasePart;
 
 //Comment -Mabel Suggestion
@@ -39,6 +40,27 @@ enum EFactions
 	Inanimate		UMETA(DisplayName = "Inanimate"),
 	Player			UMETA(DisplayName = "Player"),
 	Enemy			UMETA(DisplayName = "Enemy"),
+};
+
+//Comment -Mabel Suggestion
+USTRUCT(BlueprintType)
+struct VOIDSINGER_API FResourceSystemArray
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UBaseResourceSystem*> ResourceSystemArray;
+
+	FResourceSystemArray()
+	{
+		FResourceSystemArray(TArray<UBaseResourceSystem*>(0, 0));
+	}
+
+
+	FResourceSystemArray(TArray<UBaseResourceSystem*> Array)
+	{
+		ResourceSystemArray = Array;
+	}
 };
 
 //Comment -Mabel Suggestion
