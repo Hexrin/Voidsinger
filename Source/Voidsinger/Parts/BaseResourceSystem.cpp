@@ -30,12 +30,6 @@ bool UBaseResourceSystem::DrawResources(float Amount)
 {
 	if (ResourceAmount - Amount < 0)
 	{
-		/*
-		* Resouce amount should not be changed when there is insuficant resources to succeed.
-		* This would mean that if you tried to fire a cannon that required 5 ammo but only had 3 you would lose all your ammo while nothing happened.
-		* - Liam Suggestion
-		*/
-		ResourceAmount = 0;
 		return false;
 	}
 	else
