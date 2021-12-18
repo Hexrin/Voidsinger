@@ -83,8 +83,14 @@ void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart)
 */
 void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("Remove pixel called"));
 	if (ResourceSystemGrid.Contains(Pixel))
 	{
+
+		ResourceSystemGrid.Remove(Pixel);
+
+		UE_LOG(LogTemp, Warning, TEXT("grid contains the pixel removed"));
 		TArray<FIntPoint> NumbersFound;
 
 		/*
@@ -98,8 +104,9 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 		*/
 		//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 		//Check for previously adjacent parts
-		for (auto& i : ConnectedParts)
+		/*for (auto& i : ConnectedParts)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("There are connected parts"));
 			//When repeating a task use an iterator/for loop - Liam Suggestion
 			if (i->GetShape().Contains(FIntPoint(Pixel.X + 1, Pixel.Y)))
 			{
@@ -117,12 +124,31 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 			{
 				NumbersFound.Add(FIntPoint(Pixel.X, Pixel.Y - 1));
 			}
+		}*/
+
+		if (ResourceSystemGrid.Contains(FIntPoint(Pixel.X + 1, Pixel.Y)))
+		{
+			NumbersFound.Add(FIntPoint(Pixel.X + 1, Pixel.Y));
 		}
+		if (ResourceSystemGrid.Contains(FIntPoint(Pixel.X - 1, Pixel.Y)))
+		{
+			NumbersFound.Add(FIntPoint(Pixel.X - 1, Pixel.Y));
+		}
+		if (ResourceSystemGrid.Contains(FIntPoint(Pixel.X, Pixel.Y + 1)))
+		{
+			NumbersFound.Add(FIntPoint(Pixel.X, Pixel.Y + 1));
+		}
+		if (ResourceSystemGrid.Contains(FIntPoint(Pixel.X, Pixel.Y - 1)))
+		{
+			NumbersFound.Add(FIntPoint(Pixel.X, Pixel.Y - 1));
+		}
+		
 
 		//Comment should match logic - Liam Suggestion
 		//If NumbersFound is less than 2 then you don't need to bother checking anything since there will be no breaks in the system
 		if (NumbersFound.Num() > 1)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("numbers found num is greater than 1"));
 			//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 			//For each in NumbersFound.Num() - 1 because of how PointsConnected works
 			for (int i = 0; i < NumbersFound.Num() - 1; i++)
@@ -132,11 +158,14 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 				{
 					//This needs to be improved, but right now it checks if the current index is connected to the next index.
 					//actually it might not need to be improved but i need to think about it
+
+					UE_LOG(LogTemp, Warning, TEXT("resource system grid contains both locations"));
 					if (!ResourceSystemGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<UBasePart*>))
 					{
 						//Bad variable name. What is it storing? - Liam Suggestion
 						//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
 						//also not be connected.
+						UE_LOG(LogTemp, Warning, TEXT("Points are not connected"));
 						TSet<FIntPoint> Temp;
 						Temp.Emplace(NumbersFound[i + 1]);
 						TSet<UBasePart*> RemovedSet;
