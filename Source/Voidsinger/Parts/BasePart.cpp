@@ -347,6 +347,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc, bool bCallDamagedEvents)
 	if (bCallDamagedEvents)
 	{
 		OnDamaged();
+		GetShip()->OnDamaged.Broadcast(this);
 	}
 
 	if (IsFunctional())

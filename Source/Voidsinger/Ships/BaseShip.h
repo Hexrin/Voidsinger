@@ -20,7 +20,10 @@ class UBaseResourceSystem;
 //Outdated delagate should be deleted - Liam Suggestion
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, DamageMultiplier, float, DurationMultiplier);
 
-//Delegates should be commented. What functions should they be bound to? - Liam 
+//A delegate for brodcasting events that need a refernce to a part.
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPartDataEventDelagate, UBasePart*, Part);
+
+//Delegates should be commented. What type of functions should they be bound to? - Liam 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*, AddedVoidsong);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActivatePartsDelegate, const TArray<TSubclassOf<UObject>>&, NounClasses, float, Duration);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnsetVerbsDelegate);
@@ -174,6 +177,9 @@ public:
 
 	/*-Misc-*\
 	\-------*/
+
+	UPROPERTY(BlueprintAssignable)
+	FPartDataEventDelagate OnDamaged;
 
 	UPROPERTY(BlueprintReadOnly)
 	int32 PixelValue { 0 };
