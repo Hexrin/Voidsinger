@@ -24,22 +24,20 @@ UBasePart::UBasePart()
 	Cost = 1;
 	DesiredShape = TSet<FIntPoint>();
 	Bounds = FArrayBounds();
-	//RotatedShape = TArray<FIntPoint>();
-	ActualShape = TArray<FIntPoint>();
+	ActualShape = TSet<FIntPoint>();
 	bFunctional = true;
 	bIsBeingDestroyed = false;
 
 }
 
 //Copy comment from .h -Mabel Suggestion
-void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType)
+void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType, TSet<FIntPoint> Shape)
 {
 	//Initalize Variables
 	Rotation = FMath::GridSnap<float>(Rot, 90);
 	Location = Loc;
 	PartGridComponent = PartGrid;
-	ActualShape = GetDesiredShape();
-
+	ActualShape = GetDesiredShape().Intersect(Shape);
 }
 
 //Copy comment from .h -Mabel Suggestion
@@ -134,15 +132,15 @@ TStatId UBasePart::GetStatId() const
 \*--------------------*/
 
 //Copy comment from .h -Mabel Suggestion
-const TArray<FIntPoint> UBasePart::GetDesiredShape()
+const TSet<FIntPoint> UBasePart::GetDesiredShape()
 {
 	return GetDesiredShape(Rotation);
 }
 
 //Copy comment from .h -Mabel Suggestion
-const TArray<FIntPoint> UBasePart::GetDesiredShape(float Rot)
+const TSet<FIntPoint> UBasePart::GetDesiredShape(float Rot)
 {
-	TArray<FIntPoint> RotatedShape = TArray<FIntPoint>();
+	TSet<FIntPoint> RotatedShape = TSet<FIntPoint>();
 	for (FIntPoint PixelLoc : DesiredShape)
 	{
 		RotatedShape.Emplace(FVector2D(PixelLoc).GetRotated(FMath::GridSnap<float>(Rot, 90)).RoundToVector().IntPoint());
@@ -151,7 +149,7 @@ const TArray<FIntPoint> UBasePart::GetDesiredShape(float Rot)
 }
 
 //Copy comment from .h -Mabel Suggestion
-const TArray<FIntPoint> UBasePart::GetShape()
+const TSet<FIntPoint> UBasePart::GetShape()
 {
 	return ActualShape;
 }

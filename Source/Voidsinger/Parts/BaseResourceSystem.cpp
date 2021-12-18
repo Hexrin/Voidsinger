@@ -143,7 +143,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 						//Bad variable name. What is it storing? - Liam Suggestion
 						//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
 						//also not be connected.
-						TArray<FIntPoint> Temp;
+						TSet<FIntPoint> Temp;
 						Temp.Emplace(NumbersFound[i + 1]);
 						TSet<UBasePart*> RemovedSet;
 

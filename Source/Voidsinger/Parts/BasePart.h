@@ -46,7 +46,7 @@ public:
 	// you can use whatever the "place part" function is? or is this the "place part" function? If this is only
 	//for internal use, then this should be a private function. -Mabel Suggestion
 	UFUNCTION()
-	void InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType);
+	void InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType, TSet<FIntPoint> Shape);
 
 	//Used to initize funtionality once the part has been placed onto the part grid
 	//This is called from part grid then, after it's placed? asking for clarification -Mabel Suggestion
@@ -126,12 +126,12 @@ public:
 
 	//Gets the desired shape of the part ignoring any damage the part may have taken
 	UFUNCTION(BlueprintPure)
-	const TArray<FIntPoint> GetDesiredShape();
-	const TArray<FIntPoint> GetDesiredShape(float Rot);
+	const TSet<FIntPoint> GetDesiredShape();
+	const TSet<FIntPoint> GetDesiredShape(float Rot);
 
 	//Gets the current shape of the part accounting for damage
 	UFUNCTION(BlueprintPure)
-	const TArray<FIntPoint> GetShape();
+	const TSet<FIntPoint> GetShape();
 
 	//Gets the outer bounds of the part
 	//Should the name of this function have the word "Part" in it? Isn't it implied that it would be the part bounds? -Mabel Suggestion
@@ -352,15 +352,10 @@ protected:
 
 	//Stores the current shape of the part accounting for damage and rotation
 	UPROPERTY()
-	TArray<FIntPoint> ActualShape;
+	TSet<FIntPoint> ActualShape;
 
 private:
 	
-
-	//Stores the rotated version of DesiredShape 
-	// Why is this commented out? delete if it's not needed anymore -Mabel Suggestion
-	//UPROPERTY()
-	//TArray<FIntPoint> RotatedShape;
 
 	//Stores the bounds of the part
 	UPROPERTY()

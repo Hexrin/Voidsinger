@@ -112,7 +112,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
 	//Maybe the parameter shouldn't be called "PartialPartShape" becuase it might happen to be adding an entire part. It should probably be renamed to "PartShape" or "Shape" -Mabel Suggestion
-	bool AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
+	bool AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
 
 	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintCallable)
@@ -163,7 +163,7 @@ public:
 	*/
 	//Removes the given shape from the part grid and create a new base ship with them.
 	UFUNCTION()
-	void RemoveDisconnectedShape(TArray<FIntPoint> Shape, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius);
+	void RemoveDisconnectedShape(TSet<FIntPoint> Shape, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius);
 
 	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintCallable)
@@ -363,14 +363,14 @@ private:
 
 	//Comment -Mabel Suggestion
 	UFUNCTION()
-	bool const CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape);
+	bool const CanShapeFit(FIntPoint Loc, TSet<FIntPoint> DesiredShape);
 
 	/*Static Functions*\
 	\*----------------*/
 public:
 	//Function should be moved to TGridMap<> - Liam Suggestion
 	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
-	static TArray<FIntPoint> FindConnectedShape(TArray<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality = false);
+	static TSet<FIntPoint> FindConnectedShape(TSet<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality = false);
 
 	//Comment -Mabel Suggestion
 	static bool IsPixelFunctional(FPartData PixelValue, FIntPoint Loc);

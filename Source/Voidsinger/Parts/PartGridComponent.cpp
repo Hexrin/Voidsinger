@@ -82,14 +82,14 @@ bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Loca
 	UE_LOG(LogTemp, Warning, TEXT("part type %s"), *PartType->GetFName().ToString());
 	if (IsValid(PartType))
 	{
-		TArray<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
+		TSet<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
 		return AddPart(PartialPartShape, PartType, Location, Rotation, bAlwaysPlace);
 	}
 	return false;
 }
 
 //Adds a partial part to PartPrid
-bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
+bool UPartGridComponent::AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 {
 	if (!IsValid(PartType))
 	{
@@ -106,11 +106,11 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 		//we create the object when the part is split (in terms of like, oh here, you get half the resources I had on me or something along those lines)
 		//In conclusion, I'm not so certain that this function should be creating a new object. -Mabel Suggestion
 		UBasePart* Part = NewObject<UBasePart>(this, PartType);
-		Part->InitializeVariables(Location, Rotation, this, PartType);
+		Part->InitializeVariables(Location, Rotation, this, PartType, PartialPartShape);
 
 		//Initalize Variables
 		//I find it funny that this comment is after the function "InitializeVariables" is called, haha. -Mabel Suggestion
-		TArray<FIntPoint> DesiredShape = Part->GetDesiredShape();
+		TSet<FIntPoint> DesiredShape = Part->GetDesiredShape();
 		FArrayBounds PartBounds = Part->GetPartBounds();
 
 		AShipPlayerState* PlayerState = Cast<AShipPlayerState>(Ship->GetPlayerState());
@@ -142,7 +142,7 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 			//.... ........... ........................... 
 			//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" 
 			//................ ... -Mabel Suggestion
-			for (int i = 0; i < DesiredShape.Num(); i++)
+			for (FIntPoint PixelToCheck : DesiredShape)
 			{
 				//Ooof... No wonder adding large parts is slow. This is gonna sound dumb but there's got to be a better way...
 				//Adding and removing as they are now will never not be slow with big part/explosions/whatever. Having to iterate through every location of the part is...
@@ -154,9 +154,9 @@ bool UPartGridComponent::AddPart(TArray<FIntPoint> PartialPartShape, TSubclassOf
 				//What this is doing is backwards of how I it should be. If it's a freespace part, it *should* be adding every location in PartialPartShape. If it's not,
 				//it should check if *DesiredShape* contains *PartialPartShape[i]*, not the other way around. 
 				//Feel free to tell me that I am large dumb... -Mabel Suggestion
-				if (PartialPartShape.Contains(DesiredShape[i]))
+				if (PartialPartShape.Contains(PixelToCheck))
 				{
-					FIntPoint CurrentLoc = FIntPoint(DesiredShape[i].X + Location.X, DesiredShape[i].Y + Location.Y);
+					FIntPoint CurrentLoc = FIntPoint(PixelToCheck + Location);
 
 					//Remove Overlapping Parts
 					//Why is this inside the check for "IsValidPosition"? This will never be called if it isn't in a valid 
@@ -311,17 +311,23 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 			{
 				if (IsValid(CorePart) && !CorePart->GetShape().IsEmpty())
 				{
+					FIntPoint CorePixel;
+					for (FIntPoint Pixel : CorePart->GetShape())
+					{
+						CorePixel = Pixel;
+						break;
+					}
 
 					//Don't auto also name iterator -Mabel Suggestion (-Liam suggestion so I don't forget)
 					for (auto& i : NumbersFound)
 					{
 						if (PartGrid.Contains(i))
 						{
-							if (!PartGrid.PointsConnected(CorePart->GetShape()[0], i, AlwaysConnect<FPartData>))
+							if (!PartGrid.PointsConnected(CorePixel, i, AlwaysConnect<FPartData>))
 							{
-								TArray<FIntPoint> Temp;
+								TSet<FIntPoint> Temp;
 								Temp.Emplace(i);
-								TArray<FIntPoint> ConnectedShape = UPartGridComponent::FindConnectedShape(Temp, PartGrid);
+								TSet<FIntPoint> ConnectedShape = UPartGridComponent::FindConnectedShape(Temp, PartGrid);
 
 								RemoveDisconnectedShape(ConnectedShape, FromExplosion, ExplosionLocation, ExplosionRadius);
 							}
@@ -342,9 +348,9 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 							{
 								//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
 								//also not be connected.
-								TArray<FIntPoint> Temp;
+								TSet<FIntPoint> Temp;
 								Temp.Emplace(NumbersFound[i + 1]);
-								TArray<FIntPoint> ConnectedShape = UPartGridComponent::FindConnectedShape(Temp, PartGrid);
+								TSet<FIntPoint> ConnectedShape = UPartGridComponent::FindConnectedShape(Temp, PartGrid);
 
 								RemoveDisconnectedShape(ConnectedShape, FromExplosion, ExplosionLocation, ExplosionRadius);
 
@@ -391,7 +397,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 * Why does the function take in a TArray<FIntPoint> when it could use a TGridMap<FPartData> and BuildShip() instead and reduce the logic required.
 * - Liam Suggestion
 */
-void UPartGridComponent::RemoveDisconnectedShape(TArray<FIntPoint> ConnectedShape, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius)
+void UPartGridComponent::RemoveDisconnectedShape(TSet<FIntPoint> ConnectedShape, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius)
 {
 	TSet<UBasePart*> PartsRemoved;
 
@@ -414,7 +420,7 @@ void UPartGridComponent::RemoveDisconnectedShape(TArray<FIntPoint> ConnectedShap
 		*/
 		for (auto& j : PartsRemoved)
 		{
-			TArray<FIntPoint> PartialPartShape;
+			TSet<FIntPoint> PartialPartShape;
 
 			/*
 			* Iterator should have a name that tells what it actualy is and what its iterating through.
@@ -1187,16 +1193,16 @@ void UPartGridComponent::UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePa
 }
 
 //Detect if a Part can fit in the PartGrid
-bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape)
+bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TSet<FIntPoint> DesiredShape)
 {
 	//There's a clever solution that replaces all this iteration. I do not know what it is. But in any case, this is 
 	//slightly oof for larger parts. -Mabel Suggestion
 	//Iterate through desired shape
 	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
-	for (int i = 0; i < DesiredShape.Num(); i++)
+	for (FIntPoint PixelToCheck : DesiredShape)
 	{
 		//Cheak if there is already a pixel in the grid
-		if (PartGrid.Contains(Loc + DesiredShape[i]))
+		if (PartGrid.Contains(Loc + PixelToCheck))
 		{
 			return false;
 		}
@@ -1218,11 +1224,11 @@ bool UPartGridComponent::PointsConnected(FIntPoint StartPoint, FIntPoint EndPoin
 }
 
 //Comment -Mabel Suggestion
-TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality)
+TSet<FIntPoint> UPartGridComponent::FindConnectedShape(TSet<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality)
 {
 
 	//New shape will return the entire connected shape, indcluding the starting shape
-	TArray<FIntPoint> NewShape = Shape;
+	TSet<FIntPoint> NewShape = Shape;
 
 	//Yup, yup, this is bad, use better for loop instead of magic numbering, better iterator name, no auto... yup.
 	for (auto& i : Shape)
@@ -1309,7 +1315,7 @@ TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape
 	}
 
 	//If the new shape has changed at all
-	if (NewShape != Shape)
+	if (NewShape.Difference(Shape).Num() != 0)
 	{
 		//This could be replaced with: return FindConnectedShape(NewShape, ConnectedPartsMap, CheckFunctionality); - Liam Suggestion
 		//Continue to check for connections by calling the function recursively.
