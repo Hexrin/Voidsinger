@@ -258,7 +258,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, bool CheckForBreaks, b
 		//Remove from grid
 		UBasePart* DamagedPart = PartGrid.FindRef(Location).Part;
 		//UE_LOG(LogTemp, Warning, TEXT("%s: %s -> %s >r> %s"),*DamagedPart->PartName.ToString(), *Location.ToString(), *(Location - DamagedPart->GetPartGridLocation()).ToString(), *FVector2D((Location - DamagedPart->GetPartGridLocation())).GetRotated(-1 * DamagedPart->GetRelativeRotation()).IntPoint().ToString());
-		DamagedPart->DestroyPixel(/*FVector2D(*/(Location - DamagedPart->GetPartGridLocation()))/*.GetRotated(-1*DamagedPart->GetRelativeRotation()).IntPoint())*/;
+		DamagedPart->DestroyPixel(/*FVector2D(*/(Location - DamagedPart->GetPartGridLocation()), CheckForBreaks)/*.GetRotated(-1*DamagedPart->GetRelativeRotation()).IntPoint())*/;
 
 		//Destroy Mesh
 		Ship->RemoveMeshAtLocation(Location);
