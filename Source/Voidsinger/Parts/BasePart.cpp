@@ -257,7 +257,7 @@ UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
 	{
 		//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
 		//UE_LOG(LogTemp, Warning, TEXT("All systems types get system by type thing %s"), *EnumPtr->GetDisplayNameTextByValue(i->GetType().GetValue()).ToString());
-		if (i->GetType() == Type)
+		if (IsValid(i) && i->GetType() == Type)
 		{
 			FoundResourceSystem = i;
 			//return i;
@@ -380,6 +380,8 @@ void UBasePart::ConnectToSystems()
 
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	//This needs to be called for each resource type so a resource system for each type is created.
+
+	//UE_LOG(LogTemp, Warning, TEXT("Begin This part is %s"), *GetFName().ToString());
 	for (auto& i : GetResourceTypes())
 	{
 
@@ -394,13 +396,67 @@ void UBasePart::ConnectToSystems()
 
 			//Comment outdated - Liam Suggestion
 			//Check the X + 1 location for a part on the part grid
-			if (PartGridComponent->GetPartGrid().Contains(FVector2D(j).GetRotated(GetRelativeRotation()).IntPoint() + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(FVector2D(j).GetRotated(GetRelativeRotation()).IntPoint() + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
+			/*if (PartGridComponent->GetPartGrid().Contains(FVector2D(j).GetRotated(GetRelativeRotation()).IntPoint() + GetPartGridLocation()) && IsValid(PartGridComponent->GetPartGrid().FindRef(FVector2D(j).GetRotated(GetRelativeRotation()).IntPoint() + GetPartGridLocation()).Part->GetSystemByType(i.Key)))
 			{
 				//UE_LOG(LogTemp, Warning, TEXT("Check location x %i y %i"), j.X, j.Y);
 				AddToSystem(PartGridComponent->GetPartGrid().FindRef(FVector2D(j).GetRotated(GetRelativeRotation()).IntPoint() + GetPartGridLocation()).Part->GetSystemByType(i.Key));
 
 				//A system was found!
 				SystemFound = true;
+			}*/
+
+			FIntPoint RelativePartGridLocation = FVector2D(j).GetRotated(GetRelativeRotation()).IntPoint() + GetPartGridLocation();
+			//UBasePart* PartAtLocation = PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part;
+
+			/*if (PartGridComponent->GetPartGrid().Contains(RelativePartGridLocation))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Part grid contains location"));
+				if (PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetResourceTypes().Contains(i.Key))
+				{
+					const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+					UE_LOG(LogTemp, Warning, TEXT("resource types contains key"));
+					UE_LOG(LogTemp, Warning, TEXT("other part is: %s"), *PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetFName().ToString());
+					UE_LOG(LogTemp, Warning, TEXT("key is: %s"), *EnumPtr->GetDisplayNameTextByValue(i.Key).ToString());
+
+					if (IsValid(PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetSystemByType(i.Key)))
+					{
+						UE_LOG(LogTemp, Warning, TEXT("ok it does have a system of that type"));
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("why tho does it not have a system of that type"));
+					}
+
+					if (PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetResourceTypes().Find(i.Key)->IntPointArray.Contains(RelativePartGridLocation - PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetPartGridLocation()))
+					{
+						UE_LOG(LogTemp, Warning, TEXT("int point array contains thingy"));
+					}
+				}
+			}*/
+
+			if (
+				PartGridComponent->GetPartGrid().Contains(RelativePartGridLocation)
+				&&
+				PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetResourceTypes().Contains(i.Key)
+				&&
+				PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetResourceTypes().Find(i.Key)->IntPointArray.Contains(RelativePartGridLocation - PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetPartGridLocation())
+				//&&
+				//IsValid(PartGridComponent->GetPartGrid().FindRef(FVector2D(j).GetRotated(GetRelativeRotation()).IntPoint() + GetPartGridLocation()).Part->GetSystemByType(i.Key))
+				)
+			{
+
+				if (PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part != this)
+				{
+					AddToSystem(PartGridComponent->GetPartGrid().FindRef(FVector2D(j).GetRotated(GetRelativeRotation()).IntPoint() + GetPartGridLocation()).Part->GetSystemByType(i.Key));
+
+					//A system was found!
+					SystemFound = true;
+				}
+				else
+				{
+					//If the part found at the location is the same as this part, then resource connection points were set up incorrectly. Print an error message.
+					UE_LOG(LogTemp, Error, TEXT("The resource connection points of %s are wrong! Fix them immediately or resources will not work correctly!"), *GetClass()->GetDisplayNameText().ToString());
+				}
 			}
 		}
 
@@ -410,12 +466,18 @@ void UBasePart::ConnectToSystems()
 			CreateNewSystem(i.Key);
 		}
 	}
+
+	//UE_LOG(LogTemp, Warning, TEXT("---------------------------------------------"));
+
 }
 
 //Function comments from the .h should be identical to the one in the .cpp - Liam Suggestion
 //Create a new resource system
 void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 {
+	//UE_LOG(LogTemp, Warning, TEXT("!"));
+	//UE_LOG(LogTemp, Warning, TEXT("create new system this part is %s"), *GetFName().ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("!"));
 
 	//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
 	//UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameTextByValue(ResourceType.GetValue()).ToString());
@@ -444,7 +506,7 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("Merge systems called"));
 			GetSystemByType(System->GetType())->MergeSystems(System);
-			Systems.Add(GetSystemByType(System->GetType()));
+			//Systems.Add(GetSystemByType(System->GetType()));
 			//System->MergeSystems(GetSystemByType(System->GetType()));
 		}
 
