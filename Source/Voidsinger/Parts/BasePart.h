@@ -220,7 +220,7 @@ public:
 	//returns true if there is at least one functional pixel
 	//This should be changed to if the part is well, functional. I would say that most parts would probably not be functional when
 	//only one pixel is functional -Mabel Suggestion
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	bool IsFunctional();
 
 	//returns true if pixel at loc is functional on Part
