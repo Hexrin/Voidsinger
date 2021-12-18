@@ -202,7 +202,7 @@ const FIntPoint UBasePart::GetPartGridLocation()
 //Copy comment from .h -Mabel Suggestion
 const FVector UBasePart::GetPartWorldLocation()
 {
-	return GetPartRelativeLocation() + GetShip()->GetActorLocation();
+	return GetShip()->GetActorTransform().TransformPosition(GetPartRelativeLocation());
 }
 
 //Copy comment from .h -Mabel Suggestion
@@ -337,14 +337,17 @@ bool UBasePart::IsPixelFunctional(FIntPoint Loc)
 \*--------------------*/
 
 //Copy comment from .h -Mabel Suggestion
-void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
+void UBasePart::DestroyPixel(FIntPoint RelativeLoc, bool bCallDamagedEvents)
 {
 	if (!ActualShape.Contains(RelativeLoc))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Destroy part pixel location not valid : % s"), *RelativeLoc.ToString());
 	}
 	ActualShape.Remove(RelativeLoc);
-	OnDamaged();
+	if (bCallDamagedEvents)
+	{
+		OnDamaged();
+	}
 
 	if (IsFunctional())
 	{
@@ -356,7 +359,10 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc)
 	}
 	else
 	{
-		OnCriticallyDamaged();
+		if (bCallDamagedEvents)
+		{
+			OnCriticallyDamaged();
+		}
 
 		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
 		for (auto& i : Systems)

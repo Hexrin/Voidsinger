@@ -244,7 +244,7 @@ public:
 
 	//Remove a pixel form the actual shape of the part
 	UFUNCTION(BlueprintCallable)
-	void DestroyPixel(FIntPoint RelativeLoc);
+	void DestroyPixel(FIntPoint RelativeLoc, bool bCallDamagedEvents = true);
 
 	/*
 	* Needs comment. What does it do? 
