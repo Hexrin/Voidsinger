@@ -1243,10 +1243,19 @@ TSet<FIntPoint> UPartGridComponent::FindConnectedShape(TSet<FIntPoint> Shape, TG
 				if (CheckFunctionality)
 				{
 					//And the pixel at that location is functional
-					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X + 1, i.Y)))
+
+					if (IsValid(ConnectedPartsMap.Find(FIntPoint(i.X + 1, i.Y))->Part))
 					{
-						//Add that location to the new shape, because it is connected
-						NewShape.Emplace(FIntPoint(i.X + 1, i.Y));
+						UE_LOG(LogTemp, Warning, TEXT("the part is valid"))
+						if (ConnectedPartsMap.Find(FIntPoint(i.X + 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X + 1, i.Y)))
+						{
+							//Add that location to the new shape, because it is connected
+							NewShape.Emplace(FIntPoint(i.X + 1, i.Y));
+						}
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("why is the part not valid? I do not have understanding"));
 					}
 				}
 				else
@@ -1282,7 +1291,7 @@ TSet<FIntPoint> UPartGridComponent::FindConnectedShape(TSet<FIntPoint> Shape, TG
 			{
 				if (CheckFunctionality)
 				{
-					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y + 1)))
+					if (ConnectedPartsMap.Find(FIntPoint(i.X, i.Y + 1))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y + 1)))
 					{
 						NewShape.Emplace(FIntPoint(i.X, i.Y + 1));
 					}
@@ -1301,7 +1310,7 @@ TSet<FIntPoint> UPartGridComponent::FindConnectedShape(TSet<FIntPoint> Shape, TG
 			{
 				if (CheckFunctionality)
 				{
-					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y - 1)))
+					if (ConnectedPartsMap.Find(FIntPoint(i.X, i.Y - 1))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y - 1)))
 					{
 						NewShape.Emplace(FIntPoint(i.X, i.Y - 1));
 					}

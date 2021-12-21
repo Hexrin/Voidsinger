@@ -159,7 +159,7 @@ protected:
 	TArray<UBasePart*> ConnectedParts;
 	
 	//Stores all the locations that are connected to the resource system and what part corresponds to what location.
-	TGridMap<UBasePart*> ResourceSystemGrid;
+	TGridMap<FPartData> ResourceSystemGrid;
 
 	//Stores the type of this system
 	UPROPERTY()

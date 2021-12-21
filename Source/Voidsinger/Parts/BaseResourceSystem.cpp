@@ -53,7 +53,14 @@ void UBaseResourceSystem::AddPart(UBasePart* AddedPart)
 
 		for (const FIntPoint& PartShape : AddedPart->GetShape())
 		{
-			ResourceSystemGrid.Emplace(PartShape + AddedPart->GetPartGridLocation(), AddedPart);
+			FPartData PartData;
+			PartData.Part = AddedPart;
+
+			if (IsValid(PartData.Part))
+			{
+				UE_LOG(LogTemp, Warning, TEXT(" is valid though? "));
+			}
+			ResourceSystemGrid.Emplace(PartShape + AddedPart->GetPartGridLocation(), PartData);
 		}
 	}
 	else
@@ -90,7 +97,12 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 
 		ResourceSystemGrid.Remove(Pixel);
 
-		UE_LOG(LogTemp, Warning, TEXT("grid contains the pixel removed"));
+		UE_LOG(LogTemp, Warning, TEXT("grid contains the pixel removed + pixel should be removed?"));
+
+		if (ResourceSystemGrid.Contains(Pixel))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("??????????"));
+		}
 		TArray<FIntPoint> NumbersFound;
 
 		/*
@@ -153,14 +165,15 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 			//For each in NumbersFound.Num() - 1 because of how PointsConnected works
 			for (int i = 0; i < NumbersFound.Num() - 1; i++)
 			{
-				TGridMap<FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
+				//TGridMap<FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
+
 				if (ResourceSystemGrid.Contains(NumbersFound[i]) && ResourceSystemGrid.Contains(NumbersFound[i + 1]))
 				{
 					//This needs to be improved, but right now it checks if the current index is connected to the next index.
 					//actually it might not need to be improved but i need to think about it
 
 					UE_LOG(LogTemp, Warning, TEXT("resource system grid contains both locations"));
-					if (!ResourceSystemGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<UBasePart*>))
+					if (!ResourceSystemGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
 					{
 						//Bad variable name. What is it storing? - Liam Suggestion
 						//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
@@ -171,9 +184,10 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 						TSet<UBasePart*> RemovedSet;
 
 						//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
-						for (auto& j : UPartGridComponent::FindConnectedShape(Temp, ConnectedPartsMap, true))
+						for (auto& j : UPartGridComponent::FindConnectedShape(Temp, ResourceSystemGrid, true))
 						{
-							RemovedSet.Emplace(ConnectedPartsMap.Find(j)->Part);
+							//if (IsValid(ConnectedPartsMap.Find))
+							RemovedSet.Emplace(ResourceSystemGrid.Find(j)->Part);
 						}
 
 						CreateNewSystem(RemovedSet.Array());
@@ -182,8 +196,6 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 				}
 			}
 		}
-
-		ResourceSystemGrid.Remove(Pixel);
 
 		if (ResourceSystemGrid.Num() == 0)
 		{
@@ -213,9 +225,9 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 
 		for (int OtherGridIndex = 0; OtherGridIndex < MergedSystem->ResourceSystemGrid.Num(); OtherGridIndex++)
 		{
-			UBasePart* PartMergedIn = MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex);
+			UBasePart* PartMergedIn = MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex).Part;
 			//UE_LOG(LogTemp, Warning, TEXT("part merged in class %s"), *PartMergedIn->GetClass()->GetDisplayNameText().ToString())
-			ResourceSystemGrid.Emplace(MergedSystem->ResourceSystemGrid.LocationAtIndex(OtherGridIndex), PartMergedIn);
+			ResourceSystemGrid.Emplace(MergedSystem->ResourceSystemGrid.LocationAtIndex(OtherGridIndex), MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex));
 
 			for (UBaseResourceSystem* Systems : PartMergedIn->GetSystems())
 			{
