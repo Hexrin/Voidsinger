@@ -224,25 +224,28 @@ bool APlayerShip::IsInBuildMode()
 */
 void APlayerShip::AddVoidsongInput(int Input)
 {
-    //Add the input to the list of inputs
-    VoidsongCombo.Emplace(Input);
-
-    //Call the event dispatcher
-    OnVoidsongInputDelegate.Broadcast(FIntArray(VoidsongCombo));
-
-    //Reset the reset voidsong timer
-    ResetVoidsongTimer = 0;
-    //Unnecessary Variable - Liam Suggestion
-    ShouldResetVoidsongTimerTick = true;
-
-    //Play the voidsong instrument
-    if (IsValid(VoidsongInstrument))
+    if (CanActivateVoidsong)
     {
-        VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(Input)));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("The Voidsong instrument isn't valid! Set it on the player ship."));
+        //Add the input to the list of inputs
+        VoidsongCombo.Emplace(Input);
+
+        //Call the event dispatcher
+        OnVoidsongInputDelegate.Broadcast(FIntArray(VoidsongCombo));
+
+        //Reset the reset voidsong timer
+        ResetVoidsongTimer = 0;
+        //Unnecessary Variable - Liam Suggestion
+        ShouldResetVoidsongTimerTick = true;
+
+        //Play the voidsong instrument
+        if (IsValid(VoidsongInstrument))
+        {
+            VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(Input)));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("The Voidsong instrument isn't valid! Set it on the player ship."));
+        }
     }
 }
 

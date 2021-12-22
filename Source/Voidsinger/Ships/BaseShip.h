@@ -246,10 +246,10 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FActivatePartsDelegate OnActivatePartsDelegate;
 
-private:
+protected:
 	//bool property should start with b - Liam Suggestion
 	//Whether the ship can activate another Voidsong
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	bool CanActivateVoidsong = true;
 
 public:
