@@ -127,6 +127,10 @@ public:
 	* Comment is vague. What does "figues out" and "played" mean?
 	* What is this function returning?
 	* What are each of the parameters used for/ what is supposed to be input?
+	* 
+	* Strange Parameter Types.
+	* Factions should be a TArray<UBaseFactionVoidsong*>& type for consistancy
+	* Nouns should be a TArray<UBaseNounVoidsong*>& type for consistancy
 	* - Liam Suggestion
 	*/
 	//Figures out what Voidsongs are played.
@@ -242,10 +246,10 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FActivatePartsDelegate OnActivatePartsDelegate;
 
-private:
+protected:
 	//bool property should start with b - Liam Suggestion
 	//Whether the ship can activate another Voidsong
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	bool CanActivateVoidsong = true;
 
 public:

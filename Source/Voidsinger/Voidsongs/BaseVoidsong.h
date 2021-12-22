@@ -118,9 +118,8 @@ public:
 	\*------------------*/
 
 	//The name of the Voidsong that the player will see.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText VoidsongDisplayText;
-
 
 	/*
 	* UE doesnt like int, use int32 or int64 instead.
@@ -128,7 +127,7 @@ public:
 	* - Liam Suggestion
 	*/
 	//The activation key combo of the voidsong.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<int> ActivationCombo;
 
 	//Copy comment form GetDuration() - Liam Suggestion
