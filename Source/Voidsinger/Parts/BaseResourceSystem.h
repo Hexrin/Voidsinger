@@ -114,14 +114,7 @@ public:
 	
 	//Name/Comment inconsitancy. If this function adds parts than it should be called AddParts. - Liam Suggestion
 	//Adds multiple parts to the resource system
-	UFUNCTION(BlueprintCallable)
-	void AddSection(TArray<UBasePart*> AddedParts);
-
-	//Name/Comment inconsitancy. If this function Removes parts than it should be called RemoveParts. - Liam Suggestion
-	//Removes multiple parts from the variable storing all the parts. Avoid this function if possible.
-	UFUNCTION()
-	void RemoveSection(TArray<UBasePart*> RemovedParts);
-
+	void AddSection(TGridMap<FPartData> AddedResourceGrid);
 
 	/*--System and Break Management Functions--*\
 	\*-----------------------------------------*/
@@ -131,15 +124,12 @@ public:
 	void MergeSystems(UBaseResourceSystem* MergedSystem);
 
 	//Creates a new resource system with the parts inputted into this function
-	UFUNCTION(BlueprintCallable)
-	void CreateNewSystem(TArray<UBasePart*> RemovedParts);
+	void CreateNewSystem(TGridMap<FPartData> ResourceGrid, EResourceType Type);
 
 	UFUNCTION()
 	void DestroyResourceSystem();
 
-	//Checks 2 shapes to see if they are adjacent. Deprecated for now.
-	//UFUNCTION(BlueprintCallable)
-	//bool AreShapesAdjacent(TArray<FIntPoint> Shape1, TArray<FIntPoint> Shape2);
+	ABaseShip* GetOwningShip();
 
 protected:
 
@@ -159,13 +149,11 @@ protected:
 	TArray<UBasePart*> ConnectedParts;
 	
 	//Stores all the locations that are connected to the resource system and what part corresponds to what location.
-	TGridMap<UBasePart*> ResourceSystemGrid;
+	TGridMap<FPartData> ResourceSystemGrid;
 
 	//Stores the type of this system
 	UPROPERTY()
 	TEnumAsByte<EResourceType> SystemType;
 
-	UPROPERTY()
 	ABaseShip* OwningShip;
-
 };

@@ -317,7 +317,7 @@ public:
 		return ValidLocations;
 	}
 
-	//Comment -Mabel Suggestion
+	//Comment. Also, why is it not called "KeyAtIndex"  -Mabel Suggestion
 	FIntPoint& LocationAtIndex(int32 Index)
 	{
 		return ValidLocations[Index];
