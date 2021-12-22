@@ -182,7 +182,7 @@ public:
 	//This could be achieved with "GetOuter()->GetOuter()" currently, though after our refactor it will probably just be
 	//"GetOuter()", so this isn't a necessary function either -Mabel Suggestion
 	UFUNCTION(BlueprintPure)
-	const ABaseShip* GetShip();
+	ABaseShip* GetShip();
 
 	//Gets the resource systems the part is a part of
 	UFUNCTION(BlueprintPure)

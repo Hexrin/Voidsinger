@@ -237,7 +237,7 @@ UPartGridComponent* UBasePart::GetPartGrid()
 }
 
 //Copy comment from .h -Mabel Suggestion
-const ABaseShip* UBasePart::GetShip()
+ABaseShip* UBasePart::GetShip()
 {
 	return Cast<ABaseShip>(GetPartGrid()->GetOwner());
 }
@@ -350,11 +350,13 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc, bool bCallDamagedEvents)
 		GetShip()->OnDamaged.Broadcast(this);
 	}
 
+	TArray<UBaseResourceSystem*> CurrentSystems = Systems;
 	if (IsFunctional())
 	{
 		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
-		for (auto& i : Systems)
+		for (auto& i : CurrentSystems)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("systems on destroy pixel %s"), *i->GetFName().ToString());
 			i->RemovePixel(RelativeLoc + GetPartGridLocation());
 		}
 	}
@@ -366,7 +368,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc, bool bCallDamagedEvents)
 		}
 
 		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
-		for (auto& i : Systems)
+		for (auto& i : CurrentSystems)
 		{
 			i->RemovePart(this);
 			i->RemovePixel(RelativeLoc + GetPartGridLocation());
