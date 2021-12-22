@@ -479,9 +479,11 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 		if ((IsValid(GetSystemByType(System->GetType()))) && (GetSystemByType(System->GetType()) != System))
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("Merge systems called"));
-			GetSystemByType(System->GetType())->MergeSystems(System);
-			Systems.Add(GetSystemByType(System->GetType()));
-			//System->MergeSystems(GetSystemByType(System->GetType()));
+			//GetSystemByType(System->GetType())->MergeSystems(System);
+			//Systems.Add(GetSystemByType(System->GetType()));
+			System->MergeSystems(GetSystemByType(System->GetType()));
+			Systems.Add(System);
+			UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString());
 		}
 
 		//else just add it to the list of systems on this part.
@@ -491,6 +493,8 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 			//UE_LOG(LogTemp, Warning, TEXT("Merge systems not called"));
 			//UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 			Systems.Add(System);
+
+			UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString())
 		}
 	}
 }
