@@ -50,12 +50,9 @@ void UBaseResourceSystem::AddPart(UBasePart* AddedPart)
 			FPartData PartData;
 			PartData.Part = AddedPart;
 
-			if (IsValid(PartData.Part))
-			{
-				UE_LOG(LogTemp, Warning, TEXT(" is valid though? "));
-			}
 			ResourceSystemGrid.Emplace(PartShape + AddedPart->GetPartGridLocation(), PartData);
-
+			UE_LOG(LogTemp, Warning, TEXT("(emplace) From add part. This resource system %s addedd part in part data %s added part param %s Resource system grid num %i "), *GetFName().ToString(), *PartData.Part->GetFName().ToString(), *AddedPart->GetFName().ToString(), ResourceSystemGrid.Num());
+			//UE_LOG(LogTemp, Warning, TEXT("Added part %s"), *AddedPart->GetFName().ToString());
 			GetOwningShip();
 		}
 	}
@@ -94,6 +91,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 		ResourceSystemGrid.Remove(Pixel);
 
 		UE_LOG(LogTemp, Warning, TEXT("grid contains the pixel removed + pixel should be removed?"));
+		UE_LOG(LogTemp, Warning, TEXT("resource system grid num %i"), ResourceSystemGrid.Num());
 
 		if (!ResourceSystemGrid.Num() == 0)
 		{
@@ -188,6 +186,8 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 
 							if (!RemovedGridMap.Num() == 0)
 							{
+								GetOwningShip();
+								RemoveSection(RemovedGridMap);
 								CreateNewSystem(RemovedGridMap, GetType());
 							}
 						}
@@ -197,6 +197,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 		}
 		else
 		{
+			UE_LOG(LogTemp, Warning, TEXT("resource system should be destroyed? %s"), *GetFName().ToString());
 			DestroyResourceSystem();
 		}
 	}
@@ -220,12 +221,13 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 		//ConnectedParts.Append(MergedSystem->ConnectedParts);
 
 		AddResources(MergedSystem->GetResourceAmount());
-
+		UE_LOG(LogTemp, Warning, TEXT("Merge systems. This system %s merged system %s"), *GetFName().ToString(), *MergedSystem->GetFName().ToString());
 		for (int OtherGridIndex = 0; OtherGridIndex < MergedSystem->ResourceSystemGrid.Num(); OtherGridIndex++)
 		{
 			UBasePart* PartMergedIn = MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex).Part;
 			//UE_LOG(LogTemp, Warning, TEXT("part merged in class %s"), *PartMergedIn->GetClass()->GetDisplayNameText().ToString())
 			ResourceSystemGrid.Emplace(MergedSystem->ResourceSystemGrid.LocationAtIndex(OtherGridIndex), MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex));
+			UE_LOG(LogTemp, Warning, TEXT("(emplace) From merge systems. this resource system %s part merged in %s. Resource system grid num %i"), *GetFName().ToString(), *PartMergedIn->GetFName().ToString(), ResourceSystemGrid.Num());
 
 			for (UBaseResourceSystem* Systems : PartMergedIn->GetSystems())
 			{
@@ -249,7 +251,9 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 			//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
 			//UE_LOG(LogTemp, Warning, TEXT("Merge Systems"));
 			//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
-		GetOwningShip()->RemoveResourceSystem(MergedSystem);
+		//GetOwningShip()->RemoveResourceSystem(MergedSystem);
+
+		MergedSystem->DestroyResourceSystem();
 
 			//UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 		//}
@@ -277,8 +281,8 @@ void UBaseResourceSystem::CreateNewSystem(TGridMap<FPartData> ResourceGrid, ERes
 
 	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>(ThisClass::StaticClass()));
 	NewSystem->SetType(Type);
-	NewSystem->AddSection(ResourceGrid);
 	GetOwningShip()->AddResourceSystem(NewSystem);
+	NewSystem->AddSection(ResourceGrid);
 }
 
 void UBaseResourceSystem::DestroyResourceSystem()
@@ -286,6 +290,17 @@ void UBaseResourceSystem::DestroyResourceSystem()
 	//UE_LOG(LogTemp, Warning, TEXT("Resource system outer %s"), *GetOuter()->GetClass()->GetDisplayNameText().ToString())
 	//Cast<ABaseShip>(GetOuter())->RemoveResourceSystem(this);
 	GetOwningShip()->RemoveResourceSystem(this);
+	TArray<FPartData> PartDataRemoved = ResourceSystemGrid.GetValueArray();
+	TSet<UBasePart*> PartsRemoved;
+	for (FPartData EachPartData : PartDataRemoved)
+	{
+		PartsRemoved.Emplace(EachPartData.Part);
+	}
+
+	for (UBasePart* EachRemovedPart : PartsRemoved)
+	{
+		EachRemovedPart->GetSystems().Remove(this);
+	}
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
@@ -298,9 +313,16 @@ void UBaseResourceSystem::AddSection(TGridMap<FPartData> AddedResourceGrid)
 
 	for (int i = 0; i < AddedResourceGrid.Num(); i++)
 	{
-		ResourceSystemGrid.Emplace(Keys[i], Values[i]);
-		GetOwningShip();
+		//if (!ResourceSystemGrid.Contains(Keys[i]))
+		//{
+			//ResourceSystemGrid.Emplace(Keys[i], Values[i]);
+			//UE_LOG(LogTemp, Warning, TEXT("(emplace) From Add section. This resource system %s part added %s resource system grid num %i"), *GetFName().ToString(), *Values[i].Part->GetFName().ToString(), ResourceSystemGrid.Num());
+		//}
+	
+		//Values[i].Part->GetSystems().Emplace(this);
 		Values[i].Part->AddToSystem(this);
+		OwningShip = Values[i].Part->GetShip();
+
 		/*if (IsValid(Values[i].Part->GetSystemByType(GetType())))
 		{
 			if (ResourceSystemGrid.GetKeyArray() != Values[i].Part->GetSystemByType(GetType())->ResourceSystemGrid.GetKeyArray() || ResourceSystemGrid.GetValueArray() != Values[i].Part->GetSystemByType(GetType())->ResourceSystemGrid.GetValueArray())
@@ -388,4 +410,24 @@ ABaseShip* UBaseResourceSystem::GetOwningShip()
 	}
 
 	return OwningShip;
+}
+
+void UBaseResourceSystem::RemoveSection(TGridMap<FPartData> RemovedSection)
+{
+	TArray<FPartData> RemovedPartData = RemovedSection.GetValueArray();
+	TSet<UBasePart*> RemovedParts;
+	for (FPartData EachPartData : RemovedPartData)
+	{
+		RemovedParts.Emplace(EachPartData.Part);
+	}
+
+	for (UBasePart* EachRemovedPart : RemovedParts)
+	{
+		EachRemovedPart->GetSystems().Remove(this);
+	}
+
+	for (int EachRemovedLocation = 0; EachRemovedLocation < RemovedSection.Num(); EachRemovedLocation++)
+	{
+		ResourceSystemGrid.Remove(RemovedSection.LocationAtIndex(EachRemovedLocation));
+	}
 }

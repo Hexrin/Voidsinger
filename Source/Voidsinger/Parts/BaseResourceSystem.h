@@ -131,6 +131,8 @@ public:
 
 	ABaseShip* GetOwningShip();
 
+	void RemoveSection(TGridMap<FPartData> RemovedSection);
+
 protected:
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\

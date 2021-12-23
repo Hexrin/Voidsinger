@@ -314,7 +314,7 @@ bool UBasePart::IsFunctional()
 	//If parts do not split into more parts when they are split, then this wouldn't really work. For example, if you cut
 	//a part in half, this might still return true even if the part totally shouldn't be functional because there might still
 	//be enough pixels for this to be true.
-	if (GetShape().Num() >= PercentFunctional * GetDesiredShape().Num())
+	if (GetShape().Num() >= PercentFunctional * .01 * GetDesiredShape().Num())
 	{
 		return !bIsBeingDestroyed;
 	}
@@ -479,9 +479,11 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 		if ((IsValid(GetSystemByType(System->GetType()))) && (GetSystemByType(System->GetType()) != System))
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("Merge systems called"));
-			GetSystemByType(System->GetType())->MergeSystems(System);
-			Systems.Add(GetSystemByType(System->GetType()));
-			//System->MergeSystems(GetSystemByType(System->GetType()));
+			//GetSystemByType(System->GetType())->MergeSystems(System);
+			//Systems.Add(GetSystemByType(System->GetType()));
+			System->MergeSystems(GetSystemByType(System->GetType()));
+			Systems.Add(System);
+			UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString());
 		}
 
 		//else just add it to the list of systems on this part.
@@ -491,6 +493,8 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 			//UE_LOG(LogTemp, Warning, TEXT("Merge systems not called"));
 			//UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 			Systems.Add(System);
+
+			UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString())
 		}
 	}
 }
