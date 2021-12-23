@@ -197,7 +197,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 		}
 		else
 		{
-		UE_LOG(LogTemp, Warning, TEXT("resource system should be destroyed?"))
+			UE_LOG(LogTemp, Warning, TEXT("resource system should be destroyed? %s"), *GetFName().ToString());
 			DestroyResourceSystem();
 		}
 	}
@@ -221,7 +221,7 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 		//ConnectedParts.Append(MergedSystem->ConnectedParts);
 
 		AddResources(MergedSystem->GetResourceAmount());
-
+		UE_LOG(LogTemp, Warning, TEXT("Merge systems. This system %s merged system %s"), *GetFNmae().ToString, *MergedSystem->GetFName().ToString());
 		for (int OtherGridIndex = 0; OtherGridIndex < MergedSystem->ResourceSystemGrid.Num(); OtherGridIndex++)
 		{
 			UBasePart* PartMergedIn = MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex).Part;
