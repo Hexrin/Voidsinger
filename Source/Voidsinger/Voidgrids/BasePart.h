@@ -4,63 +4,149 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "BasePartTypes.h"
+#include "Voidgrid.h"
 #include "BasePart.generated.h"
 
 /**
- *  Comment what the class is -Mabel Suggestion
+ * The virtual repersntaion of a part.
+ * Handels part statistics and functionality.
  */
-
-class UBaseResourceSystem;
-class UBaseThrusterPart;
-//class UPartGridComponent;
-struct FPartData;
-
-USTRUCT(BlueprintType)
-struct VOIDSINGER_API FPartTransform
-{
-	GENERATED_BODY()
-
-	//Stores the Location in IntPoint form for accessablity in blueprints. Do not use in C++.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FIntPoint Location;
-
-	//Stores the location of the part.
-	GridLocationType GridLocation;
-
-	//Stores the rotation of the part.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Rotation;
-
-	//Constucts a part transform with the given location and a rotation snaped to 90 degree intervals.
-	FPartTransform(GridLocationType Loc = GridLocationType(0, 0), float Rot = 0.f)
-	{
-		Location = Loc;
-		GridLocation = Loc;
-		Rotation = FMath::Fmod(FMath::GridSnap(Rot, 90.f), 90.f);
-	}
-};
-
-typedef TSet<GridLocationType> PartShapeType;
-
-UCLASS(BlueprintType, Blueprintable)
+UCLASS(BlueprintType, Blueprintable, Config=Game)
 class VOIDSINGER_API UBasePart : public UObject/*, public FTickableGameObject, public IActivateInterface*/
 {
 
 	GENERATED_BODY()
 
+public:
+	/**
+	 * Creates and initilizes a new part.
+	 * 
+	 * @param OwningVoidgrid - The Voidgrid the new part is a part of.
+	 * @param PartData - The data pased to the new part.
+	 * @return A pointer to the newly created part.
+	 */
+	static UBasePart* CreatePart(AVoidgrid* OwningVoidgrid, FMinimalPartData PartData);
 
-	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
-	//             FUNCTIONS             ||
-	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
+	//Gets a pointer to the Voidgrid this is a part of.
+	UFUNCTION(BlueprintPure)
+	AVoidgrid* GetVoidgrid();
+
+	FMinimalPartData GetData();
+
+private:
+	//Stores the Voidgrid this is a part of.
+	AVoidgrid* Voidgrid;
+
+	/* ---------------- *\
+	\* \/ Part Shape \/ */
+
+public:
+
+	/**
+	 * Gets the default shape of this part.
+	 * 
+	 * @return The default shape of this part.
+	 */
+	static PartShapeType GetDefaultShape();
+
+	/**
+	 * Gets the shape of this part.
+	 *
+	 * @return The shape of this part.
+	 */
+	PartShapeType GetShape();
+	
+protected:
+	/**
+	 * The percent of the default shape required to be intact for this part to function.
+	 */
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	float FunctionalityPercent{ 0.5f };
+
+	// \/ Blueprint Events \/
+
+	/**
+	 * Called when this part is damaged.
+	 * 
+	 * @param DamageLocation - The location of the damage in part relative coordinates.
+	 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDamaged(FIntPoint DamageLocation);
+
+	/**
+	 * Called when this part is repaired.
+	 *
+	 * @param DamageLocation - The location of the repair in part relative coordinates.
+	 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnRepaired(FIntPoint RepairLocaiton);
+
+	/**
+	 * Called when this part is damaged and becomes unfunctional.
+	 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnFunctionaltyLost();
+
+	/**
+	 * Called when this part is repaired and becomes functional.
+	 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnFunctionaltyRestored();
+
+	/**
+	 * Called when this part is damaged and compleatly destroyed.
+	 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDestroyed();
+
+	/**
+	 * Called when this part is repaired and compleatly healed.
+	 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnFullyRepaired();
+
+	
+
+private:
+	//Stores whether FunctionalityLost has been called since FunctionalityRestored was last called.
+	bool bFunctionalityLostCalled{ false };
+
+	// /\ Blueprint Events /\
+
+	/**
+	 * Updates shape after a pixel of this part has beein damaged
+	 */
+	void PixelDamaged(FIntPoint Location);
+
+	/**
+	 * Updates shape after a pixel of this part has beein repaired
+	 */
+	void PixelRepaired(GridLocationType Location);
+
+	//Stores the current shape of the part
+	PartShapeType Shape;
+
+	//Stores the default part shape
+	UPROPERTY(Config)
+	TSet<FIntPoint> DefaultShape;
+
+	/* /\ Part Shape /\ *\
+	\* ---------------- */
+
+public:
+	FPartTransform GetTransform();
+
+private:
+	//Stores the location and rotation of the part
+	UPROPERTY(VisibleInstanceOnly)
+	FPartTransform Transform;
+
 
 	/*Initializer Functions*\
 	\*--------------------*/
 
 public:
-
-	//Constructor
-	//If you're gonna get on me about "constructor" being a bad comment then i'm gonna get on you about that -Mabel Suggestion
-	UBasePart();
 
 	//The functions "InitializeVariables" and "InitializeFunctionality" feel a bit off. Granted, I'm not totally sure what's
 	// off about them, but something feels off about those. It feels like they break encapsulation somehow. -Mabel Suggestion

@@ -1,34 +1,110 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#pragma once
 
 #include "BasePart.h"
-#include "BaseResourceSystem.h"
-#include "Voidsinger/Parts/PartGridComponent.h"
-#include "BaseThrusterPart.h"
-#include "BaseResourceSystem.h"
-#include "Engine/Engine.h"
-#include "Voidsinger/Ships/BaseShip.h"
+//#include "BaseResourceSystem.h"
+//#include "Voidsinger/Parts/PartGridComponent.h"
+//#include "BaseThrusterPart.h"
+//#include "BaseResourceSystem.h"
+//#include "Engine/Engine.h"
 
+
+UBasePart* UBasePart::CreatePart(AVoidgrid* OwningVoidgrid, FMinimalPartData PartData)
+{
+	UBasePart* NewPart = NewObject<UBasePart>(OwningVoidgrid, PartData.Class);
+
+	//Initialize Variables
+	NewPart->Voidgrid = OwningVoidgrid;
+	NewPart->Transform = PartData.Transform;
+	NewPart->Shape = PartData.Shape;
+
+	OwningVoidgrid->OnDamaged.AddDynamic(NewPart, &UBasePart::PixelDamaged);
+
+	return nullptr;
+}
+
+AVoidgrid* UBasePart::GetVoidgrid()
+{
+	return Voidgrid;
+}
+
+FMinimalPartData UBasePart::GetData()
+{
+	return FMinimalPartData(StaticClass(), GetTransform(), GetShape());
+}
+
+/* ---------------- *\
+\* \/ Part Shape \/ */
+
+PartShapeType UBasePart::GetDefaultShape()
+{
+	return Cast<UBasePart>(StaticClass()->GetDefaultObject())->DefaultShape;
+}
+
+/**
+ * Gets the shape of this part.
+ *
+ * @return The shape of this part.
+ */
+PartShapeType UBasePart::GetShape()
+{
+	return Shape;
+}
+
+void UBasePart::PixelDamaged(GridLocationType Location)
+{
+	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
+	if (Shape.Remove(RelativeLocation))
+	{
+		OnDamaged(RelativeLocation);
+
+		if (!bFunctionalityLostCalled && ((float)Shape.Num() / (float)GetDefaultShape().Num()) < FunctionalityPercent)
+		{
+			OnFunctionaltyLost();
+			bFunctionalityLostCalled = true;
+		}
+
+		if (Shape.Num() == 0)
+		{
+			OnDestroyed();
+		}
+	}
+}
+
+void UBasePart::PixelRepaired(GridLocationType Location)
+{
+	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
+	if (GetDefaultShape().Contains(RelativeLocation))
+	{
+		Shape.Add(RelativeLocation);
+		OnRepaired(RelativeLocation);
+
+		if (bFunctionalityLostCalled && ((float)Shape.Num() / (float)GetDefaultShape().Num()) >= FunctionalityPercent)
+		{
+			OnFunctionaltyRestored();
+			bFunctionalityLostCalled = false;
+		}
+
+		if (Shape.Num() == GetDefaultShape().Num())
+		{
+			OnFullyRepaired();
+		}
+	}
+}
+
+/* /\ Part Shape /\ *\
+\* ---------------- */
+
+FPartTransform UBasePart::GetTransform()
+{
+	return Transform;
+}
 
 /*Initializer Funtions*\
 \*--------------------*/
 
-//Copy comment from .h -Mabel Suggestion
-UBasePart::UBasePart()
-{
-	//Initalize All Variables
-	//This should probably call the "InitializeVariables()" function -Mabel Suggestion
-	/*Rotation = 0;
-	Location = FIntPoint();
-	TotalPartMass = 1;
-	Cost = 1;
-	DesiredShape = PartShapeType();
-	Bounds = FArrayBounds();
-	ActualShape = PartShapeType();
-	bFunctional = true;
-	bIsBeingDestroyed = false;*/
 
-}
 
 ////Copy comment from .h -Mabel Suggestion
 //void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType, PartShapeType Shape)
