@@ -77,15 +77,24 @@
 //
 ////Adds a complete part to the part grid
 ////I like how you commented the cpp but not the h -Mabel Suggestion
-//bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, PixelRelativeLocation Location, float Rotation, bool bAlwaysPlace)
+//bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 //{
-//	PartShapeType PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
-//	return AddPart(PartialPartShape, PartType, Location, Rotation, bAlwaysPlace);
+//	//UE_LOG(LogTemp, Warning, TEXT("part type %s"), *PartType->GetFName().ToString());
+//	if (IsValid(PartType))
+//	{
+//		TSet<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
+//		return AddPart(PartialPartShape, PartType, Location, Rotation, bAlwaysPlace);
+//	}
+//	return false;
 //}
 //
 ////Adds a partial part to PartPrid
-//bool UPartGridComponent::AddPart(PartShapeType PartialPartShape, TSubclassOf<UBasePart> PartType, PixelRelativeLocation Location, float Rotation, bool bAlwaysPlace)
+//bool UPartGridComponent::AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 //{
+//	if (!IsValid(PartType))
+//	{
+//		return false;
+//	}
 //	//At first glance this function seems a bit long, it could probably be split into some sub-functions. -Mabel Suggestion
 //	if (!PartialPartShape.IsEmpty())
 //	{
@@ -97,22 +106,28 @@
 //		//we create the object when the part is split (in terms of like, oh here, you get half the resources I had on me or something along those lines)
 //		//In conclusion, I'm not so certain that this function should be creating a new object. -Mabel Suggestion
 //		UBasePart* Part = NewObject<UBasePart>(this, PartType);
-//		Part->InitializeVariables(Location, Rotation, this, PartType);
+//		Part->InitializeVariables(Location, Rotation, this, PartType, PartialPartShape);
 //
 //		//Initalize Variables
 //		//I find it funny that this comment is after the function "InitializeVariables" is called, haha. -Mabel Suggestion
-//		PartShapeType DesiredShape = Part->GetDesiredShape();
+//		TSet<FIntPoint> DesiredShape = Part->GetDesiredShape();
 //		FArrayBounds PartBounds = Part->GetPartBounds();
 //
-//		//Detect if placement is in valid position
+//		AShipPlayerState* PlayerState = Cast<AShipPlayerState>(Ship->GetPlayerState());
 //		//Move this to a new function called IsValidPosition or something, or IsWithinGridBounds idk -Mabel Suggestion
 //		if 
 //		(
+//			//Detect if placement is in valid position
 //			GridHalfSize.X >= Location.X + PartBounds.UpperBounds.X && -GridHalfSize.X <= Location.X + PartBounds.LowerBounds.X
 //			&&
 //			GridHalfSize.Y >= Location.Y + PartBounds.UpperBounds.Y && -GridHalfSize.Y <= Location.Y + PartBounds.LowerBounds.Y
 //			&&
 //			(bAlwaysPlace || CanShapeFit(Location, DesiredShape))
+//
+//			&&
+//
+//			//If on the player then check to see if they have enough pixels and withdraw them.
+//			(Ship->GetFaction() != EFactions::Player || (IsValid(PlayerState) && PlayerState->WithdrawPixels(PartType.GetDefaultObject()->GetCost())))
 //		)
 //		{
 //
@@ -127,7 +142,7 @@
 //			//.... ........... ........................... 
 //			//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" 
 //			//................ ... -Mabel Suggestion
-//			for (GridLocationType PixelRelativeLocation : DesiredShape)
+//			for (FIntPoint PixelToCheck : DesiredShape)
 //			{
 //				//Ooof... No wonder adding large parts is slow. This is gonna sound dumb but there's got to be a better way...
 //				//Adding and removing as they are now will never not be slow with big part/explosions/whatever. Having to iterate through every location of the part is...
@@ -139,9 +154,9 @@
 //				//What this is doing is backwards of how I it should be. If it's a freespace part, it *should* be adding every location in PartialPartShape. If it's not,
 //				//it should check if *DesiredShape* contains *PartialPartShape[i]*, not the other way around. 
 //				//Feel free to tell me that I am large dumb... -Mabel Suggestion
-//				if (PartialPartShape.Contains(PixelRelativeLocation))
+//				if (PartialPartShape.Contains(PixelToCheck))
 //				{
-//					PixelRelativeLocation CurrentLoc = PixelRelativeLocation + Location;
+//					FIntPoint CurrentLoc = FIntPoint(PixelToCheck + Location);
 //
 //					//Remove Overlapping Parts
 //					//Why is this inside the check for "IsValidPosition"? This will never be called if it isn't in a valid 
@@ -157,32 +172,6 @@
 //					//Create Mesh
 //					Ship->AddMeshAtLocation(CurrentLoc);
 //
-//					UBaseFreespacePart* PartAsFreeform = Cast<UBaseFreespacePart>(Part);
-//					if (PartAsFreeform)
-//					{
-//						//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
-//						for (int32 j = 0; j < 4; j++)
-//						{
-//							//Comment this, it's a confusing chunck of logic that takes a minute to understand -Mabel Suggestion
-//							FIntPoint CheckLocation = (((j % 2 == 0)) ? FIntPoint(((j > 1)) ? 1 : -1, 0) : FIntPoint(0, ((j > 1)) ? 1 : -1)) + Location;
-//
-//							if (PartGrid.Contains(CheckLocation))
-//							{
-//
-//								//This will merge the new the FreespacePart with any other FreespacePart, even if they aren't the same class. You need to cast this to
-//								//the class of the part added, not UBaseFreespacePart. 
-//								//I am of course assuming we don't want the hull merging with resource connectors. -Mabel Suggestion
-//								UBaseFreespacePart* PartToMergeWith = Cast<UBaseFreespacePart>(PartGrid.Find(CheckLocation)->Part);
-//
-//								if (PartToMergeWith)
-//								{
-//									Part->ConnectToSystems();
-//									PartToMergeWith->MergeParts(PartAsFreeform);
-//									Part = PartToMergeWith;
-//								}
-//							}
-//						}
-//					}
 //					//set PartGrid and material
 //					Ship->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
 //
@@ -191,12 +180,12 @@
 //
 //					//Remember to coment out debug stuff. We should probably add a comment with the word "Debug" in
 //					//front of debug stuff -Mabel Suggestion
-//					UE_LOG(LogTemp, Warning, TEXT("Added: %s"), *Part->GetFName().ToString());
+//					//UE_LOG(LogTemp, Warning, TEXT("Added: %s"), *Part->GetFName().ToString());
 //				}
 //			}
 //
 //			Part->InitializeFunctionality();
-//
+//			Ship->PixelValue += Part->GetCost();
 //			Ship->PhysicsComponent->UpdateMassCalculations();
 //
 //			//Maybe instead of doing this here (which feels like it breaks encapsulation), you could do this in InitializeFunctionality() of the thruster. -Mabel Suggestion
@@ -222,7 +211,7 @@
 //	{
 //		//This comment is meant to be a warning. I should probably figure out how to make it through an exception without crashing the game. This isn't just some
 //		//random debug thing though. I have a couple things like this. -Mabel Suggestion
-//		UE_LOG(LogTemp, Warning, TEXT("PartialPartShape was empty"));
+//		//UE_LOG(LogTemp, Warning, TEXT("PartialPartShape was empty"));
 //		return false;
 //	}
 //}
@@ -235,14 +224,25 @@
 //	{
 //		//Intialize Variables
 //		class UBasePart* PartToRemove = PartGrid.FindRef(Location).Part;
-//		FIntPoint PartLoc = PartToRemove->GetPartGridLocation();
-//
-//		//Iterate though the shape of PartToRemove and remove them from the part grid
-//		for (FIntPoint Loc : PartToRemove->GetShape())
+//		if (!IsValid(Cast<UCorePart>(PartToRemove)))
 //		{
-//			DestroyPixel(Loc + PartLoc, CheckForBreaks);
+//			FIntPoint PartLoc = PartToRemove->GetPartGridLocation();
+//
+//			//Refund Part Value
+//			Cast<AShipPlayerState>(Ship->GetPlayerState())->DepositPixels(PartToRemove->GetCost());
+//			Ship->PixelValue -= PartToRemove->GetCost();
+//
+//			//Iterate though the shape of PartToRemove and remove them from the part grid
+//			for (FIntPoint Loc : PartToRemove->GetShape())
+//			{
+//				DestroyPixel(Loc + PartLoc, CheckForBreaks);
+//			}
+//			return true;
 //		}
-//		return true;
+//		else
+//		{
+//			return false;
+//		}
 //	}
 //	else
 //	{
@@ -257,7 +257,8 @@
 //	{
 //		//Remove from grid
 //		UBasePart* DamagedPart = PartGrid.FindRef(Location).Part;
-//		DamagedPart->DestroyPixel(Location - DamagedPart->GetPartGridLocation());
+//		//UE_LOG(LogTemp, Warning, TEXT("%s: %s -> %s >r> %s"),*DamagedPart->PartName.ToString(), *Location.ToString(), *(Location - DamagedPart->GetPartGridLocation()).ToString(), *FVector2D((Location - DamagedPart->GetPartGridLocation())).GetRotated(-1 * DamagedPart->GetRelativeRotation()).IntPoint().ToString());
+//		DamagedPart->DestroyPixel(/*FVector2D(*/(Location - DamagedPart->GetPartGridLocation()), CheckForBreaks)/*.GetRotated(-1*DamagedPart->GetRelativeRotation()).IntPoint())*/;
 //
 //		//Destroy Mesh
 //		Ship->RemoveMeshAtLocation(Location);
@@ -310,17 +311,23 @@
 //			{
 //				if (IsValid(CorePart) && !CorePart->GetShape().IsEmpty())
 //				{
+//					FIntPoint CorePixel;
+//					for (FIntPoint Pixel : CorePart->GetShape())
+//					{
+//						CorePixel = Pixel;
+//						break;
+//					}
 //
 //					//Don't auto also name iterator -Mabel Suggestion (-Liam suggestion so I don't forget)
 //					for (auto& i : NumbersFound)
 //					{
 //						if (PartGrid.Contains(i))
 //						{
-//							if (!PartGrid.PointsConnected(CorePart->GetShape()[0], i))
+//							if (!PartGrid.PointsConnected(CorePixel, i, AlwaysConnect<FPartData>))
 //							{
-//								TArray<FIntPoint> Temp;
+//								TSet<FIntPoint> Temp;
 //								Temp.Emplace(i);
-//								TArray<FIntPoint> ConnectedShape = UPartGridComponent::FindConnectedShape(Temp, PartGrid);
+//								TSet<FIntPoint> ConnectedShape = UPartGridComponent::FindConnectedShape(Temp, PartGrid);
 //
 //								RemoveDisconnectedShape(ConnectedShape, FromExplosion, ExplosionLocation, ExplosionRadius);
 //							}
@@ -337,13 +344,13 @@
 //						//actually it might not need to be improved but i need to think about it
 //						if (PartGrid.Contains(NumbersFound[i]) && PartGrid.Contains(NumbersFound[i + 1]))
 //						{
-//							if (!PartGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1]))
+//							if (!PartGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
 //							{
 //								//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
 //								//also not be connected.
-//								TArray<FIntPoint> Temp;
+//								TSet<FIntPoint> Temp;
 //								Temp.Emplace(NumbersFound[i + 1]);
-//								TArray<FIntPoint> ConnectedShape = UPartGridComponent::FindConnectedShape(Temp, PartGrid);
+//								TSet<FIntPoint> ConnectedShape = UPartGridComponent::FindConnectedShape(Temp, PartGrid);
 //
 //								RemoveDisconnectedShape(ConnectedShape, FromExplosion, ExplosionLocation, ExplosionRadius);
 //
@@ -390,7 +397,7 @@
 //* Why does the function take in a TArray<FIntPoint> when it could use a TGridMap<FPartData> and BuildShip() instead and reduce the logic required.
 //* - Liam Suggestion
 //*/
-//void UPartGridComponent::RemoveDisconnectedShape(TArray<FIntPoint> ConnectedShape, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius)
+//void UPartGridComponent::RemoveDisconnectedShape(TSet<FIntPoint> ConnectedShape, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius)
 //{
 //	TSet<UBasePart*> PartsRemoved;
 //
@@ -413,7 +420,7 @@
 //		*/
 //		for (auto& j : PartsRemoved)
 //		{
-//			TArray<FIntPoint> PartialPartShape;
+//			TSet<FIntPoint> PartialPartShape;
 //
 //			/*
 //			* Iterator should have a name that tells what it actualy is and what its iterating through.
@@ -426,6 +433,7 @@
 //				{
 //					PartialPartShape.Emplace(k);
 //					DestroyPixel(k + j->GetPartGridLocation(), false);
+//
 //				}
 //			}
 //
@@ -478,7 +486,7 @@
 //	}
 //	else
 //	{
-//		//Delete print string or come up with a good way for c++ debug modes. - Liam Suggestion
+//		//Improve error message. Message should include where the error happened and why it was triggered - Liam Suggestion
 //		UE_LOG(LogTemp, Error, TEXT("I don't think this should ever happen. Ask Mabel Suggestion about weird part grid component thing"));
 //	}
 //}
@@ -496,6 +504,7 @@
 ////Comment -Mabel Suggestion
 //void UPartGridComponent::ApplyHeatAtLocation(FIntPoint RelativeLocation, float HeatToApply)
 //{
+//	//DrawDebugPoint(GetWorld(), GetOwner()->GetActorTransform().TransformPosition(FVector(FVector2D(RelativeLocation), .1)), 5, PartGrid.Contains(RelativeLocation) ? FColor::Green : FColor::Red, false, 5);
 //	if (PartGrid.Contains(RelativeLocation))
 //	{
 //		PartGrid.Find(RelativeLocation)->SetTemperature(PartGrid.Find(RelativeLocation)->GetTemperature() + HeatToApply);
@@ -945,7 +954,7 @@
 //	NewHeatMap.Reserve(PartGrid.Num());
 //
 //	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
-//	for (FGridPair<FPartData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
+//	for (int j = 0; j < PartGrid.Num(); j++)
 //	{
 //		float NewHeat = 0;
 //
@@ -954,19 +963,19 @@
 //		{
 //			FIntPoint TargetPoint = ((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
 //			
-//			if (PartGrid.Contains(TargetPoint + PixelInfo.Location))
+//			if (PartGrid.Contains(TargetPoint + PartGrid.LocationAtIndex(j)))
 //			{
 //				//4 is borderline magic number. I understand why you used it but still -Mabel Suggestion
-//				NewHeat += PartGrid.FindRef(TargetPoint + PixelInfo.Location).GetTemperature() * HeatPropagationFactor / (4);
+//				NewHeat += PartGrid.FindRef(TargetPoint + PartGrid.LocationAtIndex(j)).GetTemperature() * HeatPropagationFactor / (4);
 //			}
 //		}
 //
 //		//Math is occuring that needs to be commented. Why is the pixels current temperature mutiplied by 1 - the heat propagation factor? -Mabel Suggestion
-//		NewHeat = PixelInfo.Value.GetTemperature() * (1-HeatPropagationFactor) + NewHeat;
+//		NewHeat = PartGrid.ValueAtIndex(j).GetTemperature() * (1-HeatPropagationFactor) + NewHeat;
 //
 //
 //		//Why 0.5? comment plz (also, is it.... magic number?) -Mabel Suggestion
-//		NewHeatMap.Emplace(PixelInfo.Location, NewHeat > .05 ? NewHeat : 0);
+//		NewHeatMap.Emplace(PartGrid.LocationAtIndex(j), NewHeat > .05 ? NewHeat : 0);
 //	}
 //
 //	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
@@ -975,15 +984,15 @@
 //	//if this is the way that we're doing it. This is so bad for large ships. 
 //	//I wonder if each part could handle it's own heat and distribute to the places around it instead of doing this on the part grid? I don't know how much it would help but 
 //	//it might help a little bit. Not sure, that might be just as laggy. -Mabel Suggestion
-//	for (FGridPair<FPartData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
+//	for (int i = 0; i < PartGrid.Num(); i++)
 //	{
-//		if (NewHeatMap.FindRef(PixelInfo.Location) > PixelInfo.Value.Part->GetHeatResistance())
+//		if (NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)) > PartGrid.ValueAtIndex(i).Part->GetHeatResistance())
 //		{
-//			KeysToDestroy.Emplace(PixelInfo.Location);
+//			KeysToDestroy.Emplace(PartGrid.LocationAtIndex(i));
 //		}
 //		else
 //		{
-//			PixelInfo.Value.SetTemperature(NewHeatMap.FindRef(PixelInfo.Location));
+//			PartGrid.ValueAtIndex(i).SetTemperature(NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)));
 //		}
 //	}
 //
@@ -1013,7 +1022,7 @@
 ////Comment -Mabel Suggestion
 //void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
 //{
-//	TArray<FIntPoint> AllParts = PartGrid.GenerateLocationArray();
+//	TArray<FIntPoint> AllParts = PartGrid.GetKeyArray();
 //
 //	for (auto& i : AllParts)
 //	{
@@ -1031,7 +1040,7 @@
 //void UPartGridComponent::SaveShip(FString ShipName)
 //{
 //	
-//	TArray<FPartData> Parts = PartGrid.GenerateValueArray();
+//	TArray<FPartData> Parts = PartGrid.GetValueArray();
 //
 //	
 //	
@@ -1083,9 +1092,9 @@
 //	// Also, you don't need to calculate mass the way that you are -- you can just += or -= mass whenever you gain or lose mass.
 //	// That way you wouldn't need to iterate through the part grid to calculate mass.
 //	//-Mabel Suggestion
-//	for (FGridPair<FPartData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
+//	for (int i = 0; i < PartGrid.Num(); i++)
 //	{
-//		Center += FVector2D(PixelInfo.Location) * PixelInfo.Value.Part->GetMass() / Mass;
+//		Center += FVector2D(PartGrid.LocationAtIndex(i)) * PartGrid.ValueAtIndex(i).Part->GetMass() / Mass;
 //	}
 //
 //	//DEbuG? whAt shall we ever do??? -Mabel Suggestion
@@ -1103,11 +1112,11 @@
 //
 //	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion"  -Mabel Suggestion
 //	//i cry... not the part grid! spare me!
-//	for (FGridPair<FPartData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
+//	for (int i = 0; i < PartGrid.Num(); i++)
 //	{
 //		//Comment your math plz -Mabel Suggestion
-//		float PartMass = PixelInfo.Value.Part->GetMass();
-//		ReturnValue += (1 / 12) + PartMass * (FVector2D(PixelInfo.Value.Part->GetPartRelativeLocation())).SizeSquared();
+//		float PartMass = PartGrid.ValueAtIndex(i).Part->GetMass();
+//		ReturnValue += (1 / 12) + PartMass * (FVector2D(PartGrid.ValueAtIndex(i).Part->GetPartRelativeLocation())).SizeSquared();
 //	}
 //	return ReturnValue;
 //}
@@ -1124,9 +1133,9 @@
 //	//Interate though Pixels and summate their mass
 //	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion"
 //	//Waaah! Waluigi!  -Mabel Suggestion
-//	for (FGridPair<FPartData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
+//	for (int i = 0; i < PartGrid.Num(); i++)
 //	{
-//		Mass += PixelInfo.Value.Part->GetMass();
+//		Mass += PartGrid.ValueAtIndex(i).Part->GetMass();
 //	}
 //
 //	//The horrible, most devious, most destructive, COMMENTED OUT DEBUG!!!! -Mabel Suggestion
@@ -1184,16 +1193,16 @@
 //}
 //
 ////Detect if a Part can fit in the PartGrid
-//bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, PartShapeType DesiredShape)
+//bool const UPartGridComponent::CanShapeFit(FIntPoint Loc, TSet<FIntPoint> DesiredShape)
 //{
 //	//There's a clever solution that replaces all this iteration. I do not know what it is. But in any case, this is 
 //	//slightly oof for larger parts. -Mabel Suggestion
 //	//Iterate through desired shape
 //	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
-//	for (GridLocationType PixelRelativeLocation : DesiredShape)
+//	for (FIntPoint PixelToCheck : DesiredShape)
 //	{
 //		//Cheak if there is already a pixel in the grid
-//		if (PartGrid.Contains(Loc + PixelRelativeLocation))
+//		if (PartGrid.Contains(Loc + PixelToCheck))
 //		{
 //			return false;
 //		}
@@ -1210,16 +1219,16 @@
 //	}
 //	else
 //	{
-//		return PartGrid.PointsConnected(StartPoint, EndPoint);
+//		return PartGrid.PointsConnected(StartPoint, EndPoint, AlwaysConnect<FPartData>);
 //	}
 //}
 //
 ////Comment -Mabel Suggestion
-//TArray<FIntPoint> UPartGridComponent::FindConnectedShape(TArray<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality)
+//TSet<FIntPoint> UPartGridComponent::FindConnectedShape(TSet<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality)
 //{
 //
 //	//New shape will return the entire connected shape, indcluding the starting shape
-//	TArray<FIntPoint> NewShape = Shape;
+//	TSet<FIntPoint> NewShape = Shape;
 //
 //	//Yup, yup, this is bad, use better for loop instead of magic numbering, better iterator name, no auto... yup.
 //	for (auto& i : Shape)
@@ -1234,10 +1243,19 @@
 //				if (CheckFunctionality)
 //				{
 //					//And the pixel at that location is functional
-//					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X + 1, i.Y)))
+//
+//					if (IsValid(ConnectedPartsMap.Find(FIntPoint(i.X + 1, i.Y))->Part))
 //					{
-//						//Add that location to the new shape, because it is connected
-//						NewShape.Emplace(FIntPoint(i.X + 1, i.Y));
+//						UE_LOG(LogTemp, Warning, TEXT("the part is valid"))
+//						if (ConnectedPartsMap.Find(FIntPoint(i.X + 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X + 1, i.Y)))
+//						{
+//							//Add that location to the new shape, because it is connected
+//							NewShape.Emplace(FIntPoint(i.X + 1, i.Y));
+//						}
+//					}
+//					else
+//					{
+//						UE_LOG(LogTemp, Warning, TEXT("why is the part not valid? I do not have understanding"));
 //					}
 //				}
 //				else
@@ -1273,7 +1291,7 @@
 //			{
 //				if (CheckFunctionality)
 //				{
-//					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y + 1)))
+//					if (ConnectedPartsMap.Find(FIntPoint(i.X, i.Y + 1))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y + 1)))
 //					{
 //						NewShape.Emplace(FIntPoint(i.X, i.Y + 1));
 //					}
@@ -1292,7 +1310,7 @@
 //			{
 //				if (CheckFunctionality)
 //				{
-//					if (ConnectedPartsMap.Find(FIntPoint(i.X - 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y - 1)))
+//					if (ConnectedPartsMap.Find(FIntPoint(i.X, i.Y - 1))->Part->IsPixelFunctional(FIntPoint(i.X, i.Y - 1)))
 //					{
 //						NewShape.Emplace(FIntPoint(i.X, i.Y - 1));
 //					}
@@ -1306,7 +1324,7 @@
 //	}
 //
 //	//If the new shape has changed at all
-//	if (NewShape != Shape)
+//	if (NewShape.Difference(Shape).Num() != 0)
 //	{
 //		//This could be replaced with: return FindConnectedShape(NewShape, ConnectedPartsMap, CheckFunctionality); - Liam Suggestion
 //		//Continue to check for connections by calling the function recursively.
@@ -1318,7 +1336,7 @@
 //}
 //
 ////Comment -Mabel Suggestion
-//bool UPartGridComponent::IsPixelFunctional(FGridPair<FPartData> PixelInfo)
+//bool UPartGridComponent::IsPixelFunctional(FPartData PixelValue, FIntPoint Loc)
 //{
-//	return PixelInfo.Value.Part->IsPixelFunctional(PixelInfo.Location);
+//	return PixelValue.Part->IsPixelFunctional(Loc);
 //}

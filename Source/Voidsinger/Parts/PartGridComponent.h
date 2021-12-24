@@ -1,89 +1,89 @@
-//// Fill out your copyright notice in the Description page of Project Settings.
+////// Fill out your copyright notice in the Description page of Project Settings.
+////
+//#pragma once
+////
+//#include "CoreMinimal.h"
+////#include "Components/ActorComponent.h"
+////#include "Kismet/GameplayStatics.h"
+////#include "Voidsinger/SaveShip.h"
+////#include "DrawDebugHelpers.h"
+//#include "Voidsinger/VoidsingerTypes.h"
+////#include "Kismet/KismetMathLibrary.h"
+////#include "UObject/ConstructorHelpers.h"
+////#include "Misc/Char.h"
+//#include "BasePart.h"
+//#include "PartGridComponent.generated.h"
+////
+////class UBaseThrusterPart;
+////class UCorePart;
+////
+////Comment the struct, what's this used for? -Mabel Suggestion
+//USTRUCT(BlueprintType)
+//struct VOIDSINGER_API FPartData
+//{
+//	GENERATED_BODY()
 //
-#pragma once
+//	//Comment -Mabel Suggestion
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	UBasePart* Part;
 //
-#include "CoreMinimal.h"
-//#include "Components/ActorComponent.h"
-//#include "Kismet/GameplayStatics.h"
-//#include "Voidsinger/SaveShip.h"
-//#include "DrawDebugHelpers.h"
-#include "Voidsinger/VoidsingerTypes.h"
-//#include "Kismet/KismetMathLibrary.h"
-//#include "UObject/ConstructorHelpers.h"
-//#include "Misc/Char.h"
-#include "BasePart.h"
-#include "PartGridComponent.generated.h"
+//	//Comment -Mabel Suggestion
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	UMaterialInstanceDynamic* DynamicMat;
 //
-//class UBaseThrusterPart;
-//class UCorePart;
+//private:
 //
-//Comment the struct, what's this used for? -Mabel Suggestion
-USTRUCT(BlueprintType)
-struct VOIDSINGER_API FPartData
-{
-	GENERATED_BODY()
-
-	//Comment -Mabel Suggestion
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UBasePart* Part;
-
-	//Comment -Mabel Suggestion
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMaterialInstanceDynamic* DynamicMat;
-
-private:
-
-	//Comment -Mabel Suggestion
-	UPROPERTY()
-	int32 AdjacencyIndex = 0;
-
-	//Comment -Mabel Suggestion
-	UPROPERTY()
-	float Temperature = 0;
-
-public:
-
-	//Comment -Mabel Suggestion
-	FPartData()
-	{
-		FPartData(nullptr, 0, 0, nullptr);
-	}
-
-	//Comment -Mabel Suggestion
-	FPartData(UBasePart* PartRef, float Temp, int32 BitwiseIndex, UMaterialInterface* Material)
-	{
-		DynamicMat = UMaterialInstanceDynamic::Create(Material, Cast<UObject>(PartRef));
-		Part = PartRef;
-		SetTemperature(Temp);
-		SetAdjacencyIndex(BitwiseIndex);
-	}
-
-	//Comment -Mabel Suggestion
-	void SetTemperature(const float NewTemp)
-	{
-		Temperature = NewTemp;
-		DynamicMat->SetScalarParameterValue("Temperature", Temperature);
-	}
-
-	//Comment -Mabel Suggestion
-	const float GetTemperature()
-	{
-		return Temperature;
-	}
-
-	//Comment -Mabel Suggestion
-	void SetAdjacencyIndex(int32 NewAdjacencyIndex)
-	{
-		AdjacencyIndex = NewAdjacencyIndex;
-		DynamicMat->SetScalarParameterValue("Adjacency Index", AdjacencyIndex);
-	}
-
-	//Comment -Mabel Suggestion
-	const int32 GetAdjacencyIndex()
-	{
-		return AdjacencyIndex;
-	}
-};
+//	//Comment -Mabel Suggestion
+//	UPROPERTY()
+//	int32 AdjacencyIndex = 0;
+//
+//	//Comment -Mabel Suggestion
+//	UPROPERTY()
+//	float Temperature = 0;
+//
+//public:
+//
+//	//Comment -Mabel Suggestion
+//	FPartData()
+//	{
+//		FPartData(nullptr, 0, 0, nullptr);
+//	}
+//
+//	//Comment -Mabel Suggestion
+//	FPartData(UBasePart* PartRef, float Temp, int32 BitwiseIndex, UMaterialInterface* Material)
+//	{
+//		DynamicMat = UMaterialInstanceDynamic::Create(Material, Cast<UObject>(PartRef));
+//		Part = PartRef;
+//		SetTemperature(Temp);
+//		SetAdjacencyIndex(BitwiseIndex);
+//	}
+//
+//	//Comment -Mabel Suggestion
+//	void SetTemperature(const float NewTemp)
+//	{
+//		Temperature = NewTemp;
+//		DynamicMat->SetScalarParameterValue("Temperature", Temperature);
+//	}
+//
+//	//Comment -Mabel Suggestion
+//	const float GetTemperature()
+//	{
+//		return Temperature;
+//	}
+//
+//	//Comment -Mabel Suggestion
+//	void SetAdjacencyIndex(int32 NewAdjacencyIndex)
+//	{
+//		AdjacencyIndex = NewAdjacencyIndex;
+//		DynamicMat->SetScalarParameterValue("Adjacency Index", AdjacencyIndex);
+//	}
+//
+//	//Comment -Mabel Suggestion
+//	const int32 GetAdjacencyIndex()
+//	{
+//		return AdjacencyIndex;
+//	}
+//};
 //
 ////Comment the class maybe? -Mabel Suggestion
 //UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
@@ -110,9 +110,9 @@ public:
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintCallable)
-//	bool AddPart(TSubclassOf<UBasePart> PartType, GridLocationType Location, float Rotation, bool bAlwaysPlace = false);
+//	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
 //	//Maybe the parameter shouldn't be called "PartialPartShape" becuase it might happen to be adding an entire part. It should probably be renamed to "PartShape" or "Shape" -Mabel Suggestion
-//	bool AddPart(PartShapeType PartialPartShape, TSubclassOf<UBasePart> PartType, GridLocationType Location, float Rotation, bool bAlwaysPlace = false);
+//	bool AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintCallable)
@@ -163,7 +163,7 @@ public:
 //	*/
 //	//Removes the given shape from the part grid and create a new base ship with them.
 //	UFUNCTION()
-//	void RemoveDisconnectedShape(TArray<FIntPoint> Shape, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius);
+//	void RemoveDisconnectedShape(TSet<FIntPoint> Shape, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius);
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintCallable)
@@ -334,7 +334,7 @@ public:
 //	
 //	//The path to the pixel mesh. 
 //	UPROPERTY(EditAnywhere)
-//	FString PathToPixelMesh = TEXT("/Game/Parts/PlaneWithCollision.PlaneWithCollision");
+//	FString PathToPixelMesh = TEXT("/Game/3DAssets/PlaneWithCollision.PlaneWithCollision");
 //
 //	//Comment -Mabel Suggestion
 //	UPROPERTY()
@@ -363,15 +363,16 @@ public:
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION()
-//	bool const CanShapeFit(FIntPoint Loc, TArray<FIntPoint> DesiredShape);
+//	bool const CanShapeFit(FIntPoint Loc, TSet<FIntPoint> DesiredShape);
 //
 //	/*Static Functions*\
 //	\*----------------*/
 //public:
 //	//Function should be moved to TGridMap<> - Liam Suggestion
 //	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
-//	static TArray<FIntPoint> FindConnectedShape(TArray<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality = false);
+//	static TSet<FIntPoint> FindConnectedShape(TSet<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality = false);
 //
 //	//Comment -Mabel Suggestion
-//	static bool IsPixelFunctional(FGridPair<FPartData> GridInfo);
+//	static bool IsPixelFunctional(FPartData PixelValue, FIntPoint Loc);
 //};
+//>>>>>>> Demo-Version

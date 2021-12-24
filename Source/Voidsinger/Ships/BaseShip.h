@@ -20,9 +20,12 @@
 ////Outdated delagate should be deleted - Liam Suggestion
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, DamageMultiplier, float, DurationMultiplier);
 //
-////Delegates should be commented. What functions should they be bound to? - Liam 
+////A delegate for brodcasting events that need a refernce to a part.
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPartDataEventDelagate, UBasePart*, Part);
+//
+////Delegates should be commented. What type of functions should they be bound to? - Liam 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*, AddedVoidsong);
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FActivatePartsDelegate, const TArray<TEnumAsByte<EFactions>>&, Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActivatePartsDelegate, const TArray<TSubclassOf<UObject>>&, NounClasses, float, Duration);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnsetVerbsDelegate);
 //
 //UCLASS()
@@ -124,6 +127,10 @@
 //	* Comment is vague. What does "figues out" and "played" mean?
 //	* What is this function returning?
 //	* What are each of the parameters used for/ what is supposed to be input?
+//	* 
+//	* Strange Parameter Types.
+//	* Factions should be a TArray<UBaseFactionVoidsong*>& type for consistancy
+//	* Nouns should be a TArray<UBaseNounVoidsong*>& type for consistancy
 //	* - Liam Suggestion
 //	*/
 //	//Figures out what Voidsongs are played.
@@ -159,7 +166,7 @@
 //	*/
 //	//Event dispatcher for activating the parts on the ship.
 //	UFUNCTION(BlueprintCallable)
-//	void BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses);
+//	void BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses, float Duration);
 //
 //	/*-Ship Creation-*\
 //	\*---------------*/
@@ -174,6 +181,12 @@
 //
 //	/*-Misc-*\
 //	\-------*/
+//
+//	UPROPERTY(BlueprintAssignable)
+//	FPartDataEventDelagate OnDamaged;
+//
+//	UPROPERTY(BlueprintReadOnly)
+//	int32 PixelValue { 0 };
 //
 //	//Gets the faction of the ship
 //	UFUNCTION(BlueprintPure)
@@ -233,10 +246,10 @@
 //	UPROPERTY(BlueprintAssignable)
 //	FActivatePartsDelegate OnActivatePartsDelegate;
 //
-//private:
+//protected:
 //	//bool property should start with b - Liam Suggestion
 //	//Whether the ship can activate another Voidsong
-//	UPROPERTY()
+//	UPROPERTY(BlueprintReadOnly)
 //	bool CanActivateVoidsong = true;
 //
 //public:

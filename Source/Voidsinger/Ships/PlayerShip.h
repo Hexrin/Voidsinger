@@ -6,7 +6,6 @@
 //#include "BaseShip.h"
 //#include "Voidsinger/VoidsingerTypes.h"
 //#include "Voidsinger/Voidsongs/BaseVoidsong.h"
-//#include "Voidsinger/StarSystemData.h"
 //#include "Components/AudioComponent.h"
 //#include "EngineUtils.h"
 //#include "Camera/CameraComponent.h"
@@ -70,27 +69,6 @@
 //
 //	//Begin play
 //	virtual void BeginPlay() override;
-//
-//	/*Getter Functions*\
-//	\*----------------*/
-//
-//	//Gets the travel cost of going to the given star system
-//	//Why is this on the player? Shouldn't it be on whatever is storing the start systems? Like the galaxay map or something? -Mabel Suggestion
-//	UFUNCTION(BlueprintPure)
-//	TMap<TEnumAsByte<EResourceType>, float> GetTravelCost(class UStarSystemData* Target);
-//
-//	//Gets the star system the player is currently in
-//	//This maybe should be on the galaxy map as well. Idk -Mabel Suggestion
-//	UFUNCTION(BlueprintPure)
-//	class UStarSystemData* GetCurrentStarSystem();
-//
-//	/*Traveling Functions*\
-//	\*-------------------*/
-//
-//	//Travels to the start system given
-//	//Should this also be on the galaxy map -Mabel Suggestion
-//	UFUNCTION(BlueprintCallable)
-//	bool TravelToStarSystem(class UStarSystemData* Target);
 //
 //	/*Voidsong input actions*\
 //	\*----------------------*/
@@ -324,14 +302,7 @@
 //
 //	/*-------Misc.-------*\
 //	\*-------------------*/
-//
 //protected:
-//
-//	//Comment -Mabel Suggestion
-//	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-//	int Pixels;
-//
-//
 //	/*
 //	* Delagate needs commenting. When is it called?
 //	* 
@@ -354,8 +325,4 @@
 //
 //	UPROPERTY(BlueprintAssignable)
 //	FResetVoidsongDelegate OnResetVoidsongDelegate;
-//	
-//	//Comment -Mabel Suggestion
-//	UPROPERTY(VisibleAnywhere)
-//	class UStarSystemData* CurrentStarSystem;
 //};

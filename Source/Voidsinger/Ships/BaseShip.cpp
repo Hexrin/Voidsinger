@@ -203,11 +203,11 @@
 //
 //		if (!Factions.IsEmpty() || !Nouns.IsEmpty() || !Verbs.IsEmpty())
 //		{
-//			Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs, AvailableVoidsongs);
+//			Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs, AvailableVoidsongs, Duration);
 //		}
 //
 //		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
-//		UE_LOG(LogTemp, Warning, TEXT("duration %f"), Duration);
+//		//UE_LOG(LogTemp, Warning, TEXT("duration %f"), Duration);
 //		if (Duration != 0)
 //		{
 //			//Does this work with multiple simultaneous Voidsongs? I think it does but be sure to test it. - Liam Suggestion
@@ -292,7 +292,7 @@
 //	//UE_LOG(LogTemp, Warning, TEXT("Can Activate again"))
 //	CanActivateVoidsong = true;
 //	//This system definently does not work with multiple simultanous voidsongs - Liam Suggestion
-//	Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->UnsetVerbs();
+//	Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->UnsetVerbs();
 //	OnUnsetVerbsDelegate.Broadcast();
 //}
 //
@@ -314,12 +314,12 @@
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//void ABaseShip::BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses)
+//void ABaseShip::BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses, float Duration)
 //{
 //	//Varialbe name should be meaningful - Liam Suggestion
 //	TArray<TEnumAsByte<EFactions>> Temp;
 //	Temp.Emplace(GetFaction());
-//	OnActivatePartsDelegate.Broadcast(Temp, NounClasses, AvailableVoidsongs);
+//	OnActivatePartsDelegate.Broadcast(NounClasses, Duration);
 //}
 //
 ////Outdated function should be deleted - Liam Suggestion
@@ -403,7 +403,8 @@
 //	Triangles += CreateTrianglesForSquare(6, 2, 7, 3);
 //
 //	MeshComponent->CreateMeshSection(SectionIndex, GetVerticesAroundLocation(Location), Triangles, TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
-//
+//	MeshComponent->SetGenerateOverlapEvents(false);
+//	MeshComponent->SetGenerateOverlapEvents(true);
 //	MeshData.Emplace(Location, SectionIndex);
 //}
 //
@@ -461,7 +462,7 @@
 //void ABaseShip::SaveEditorShip()
 //{
 //	//Bad name. It implies that it is storing a return value or a pass by refernce - Liam Suggestion
-//	TArray<FPartData> OutArray = PartGrid->GetPartGrid().GenerateValueArray();;
+//	TArray<FPartData> OutArray = PartGrid->GetPartGrid().GetValueArray();;
 //	
 //	TArray<FSavePartInfo> InfoToSave;
 //	//Part set unnecessary. You can use AddUnquie() instead. - Liam Suggestion
@@ -479,6 +480,3 @@
 //	GetMutableDefault<ABaseShip>(ClassCurrentlyEditing)->DefaultParts.Empty();
 //	GetMutableDefault<ABaseShip>(ClassCurrentlyEditing)->DefaultParts = InfoToSave;
 //}
-//
-//
-//

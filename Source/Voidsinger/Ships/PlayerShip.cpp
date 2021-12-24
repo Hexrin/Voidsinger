@@ -5,8 +5,6 @@
 //
 //APlayerShip::APlayerShip()
 //{
-//    //Magic -Mabel Suggestion
-//    Pixels=55;
 //    
 //    //Numbers -Mabel Suggestion
 //    if (!CameraHeight)
@@ -123,29 +121,6 @@
 //    
 //}
 //
-////Comment -Mabel Suggestion
-//TMap<TEnumAsByte<EResourceType>, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
-//{
-//    TMap<TEnumAsByte<EResourceType>, float> Costs;
-//    
-//    Costs.Add(EResourceType::Fuel, 100);
-//    Costs.Add(EResourceType::Hydrogen, 35);
-//    return Costs;
-//}
-//
-////Comment -Mabel Suggestion
-//bool APlayerShip::TravelToStarSystem(class UStarSystemData* Target)
-//{
-//    CurrentStarSystem = Target;
-//    return true;
-//}
-//
-////Comment -Mabel Suggestion
-//UStarSystemData* APlayerShip::GetCurrentStarSystem()
-//{
-//    return CurrentStarSystem;
-//}
-//
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
 ////Voidsong inputs
 //void APlayerShip::Voidsong1Call()
@@ -249,25 +224,28 @@
 //*/
 //void APlayerShip::AddVoidsongInput(int Input)
 //{
-//    //Add the input to the list of inputs
-//    VoidsongCombo.Emplace(Input);
-//
-//    //Call the event dispatcher
-//    OnVoidsongInputDelegate.Broadcast(FIntArray(VoidsongCombo));
-//
-//    //Reset the reset voidsong timer
-//    ResetVoidsongTimer = 0;
-//    //Unnecessary Variable - Liam Suggestion
-//    ShouldResetVoidsongTimerTick = true;
-//
-//    //Play the voidsong instrument
-//    if (IsValid(VoidsongInstrument))
+//    if (CanActivateVoidsong)
 //    {
-//        VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(Input)));
-//    }
-//    else
-//    {
-//        UE_LOG(LogTemp, Error, TEXT("The Voidsong instrument isn't valid! Set it on the player ship."));
+//        //Add the input to the list of inputs
+//        VoidsongCombo.Emplace(Input);
+//
+//        //Call the event dispatcher
+//        OnVoidsongInputDelegate.Broadcast(FIntArray(VoidsongCombo));
+//
+//        //Reset the reset voidsong timer
+//        ResetVoidsongTimer = 0;
+//        //Unnecessary Variable - Liam Suggestion
+//        ShouldResetVoidsongTimerTick = true;
+//
+//        //Play the voidsong instrument
+//        if (IsValid(VoidsongInstrument))
+//        {
+//            VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(Input)));
+//        }
+//        else
+//        {
+//            UE_LOG(LogTemp, Error, TEXT("The Voidsong instrument isn't valid! Set it on the player ship."));
+//        }
 //    }
 //}
 //
@@ -306,7 +284,4 @@
 //    //I was looking for what InvertMoveDirection would do, and now I have to look for what bMovementInputInvert does.  Kind of annoying tbh. -Mabel Suggestion
 //    bMovementInputInvert = !bMovementInputInvert;
 //}
-//
-//
-//
 //

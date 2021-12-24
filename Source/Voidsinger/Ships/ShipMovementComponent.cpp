@@ -63,7 +63,7 @@
 //		
 //	//This shouldn't be needed. You don't need to find all the Thrusters again when a new thruster is added, you can just Thrusters.Emplace(NewThruster). You just need to keep track of 
 //	//when the thruster is destroyed. -Mabel Suggestion
-//	for (auto& Part : Cast<ABaseShip>(GetOwner())->PartGrid->GetPartGrid().GenerateValueArray())
+//	for (auto& Part : Cast<ABaseShip>(GetOwner())->PartGrid->GetPartGrid().GetValueArray())
 //	{
 //		UBaseThrusterPart* Thruster = Cast<UBaseThrusterPart>(Part.Part);
 //		if (Thruster)
@@ -79,7 +79,7 @@
 //	Throttle = FMath::Clamp(Throttle, 0.f, 1.f);
 //	for (UBaseThrusterPart* Thruster : GetThrustersForRotation(Clockwise))
 //	{
-//		Thruster->Thrust(Throttle);
+//		Thruster->SetThrottle(Throttle);
 //	}
 //}
 //
@@ -90,7 +90,7 @@
 //	Throttle = FMath::Clamp(Throttle, 0.f, 1.f);
 //	for (UBaseThrusterPart* Thruster : GetThrustersForDirection(Direction.GetSafeNormal()))
 //	{
-//		Thruster->Thrust(Throttle * FVector2D::DotProduct(Direction, FVector2D(1,0).GetRotated(Thruster->GetThrustRotation())));
+//		Thruster->SetThrottle(Throttle * FVector2D::DotProduct(Direction, FVector2D(1,0).GetRotated(Thruster->GetThrustRotation())));
 //	}
 //}
 //
@@ -168,7 +168,7 @@
 //			if (!FMath::IsNearlyZero(CrossProduct, 0.001f) && ((CrossProduct > 0) ^ Clockwise))
 //			{
 //				//deeeeeebuuuuuuuug -Mabel Suggestion
-//				UE_LOG(LogTemp, Warning, TEXT("Is Rotatable: %s   |   Because: %f"), *Thruster->GetThrustRelativeLocation().ToString(), CrossProduct);
+//				//UE_LOG(LogTemp, Warning, TEXT("Is Rotatable: %s   |   Because: %f"), *Thruster->GetThrustRelativeLocation().ToString(), CrossProduct);
 //				ThrustersToAdd.Emplace(Thruster);
 //			}
 //		}

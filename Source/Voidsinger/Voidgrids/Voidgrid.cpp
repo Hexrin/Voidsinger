@@ -10,19 +10,3 @@ AVoidgrid::AVoidgrid()
 	PrimaryActorTick.bCanEverTick = true;
 
 }
-
-/**
-* Adds a part to this ships Pixel Mold.
-*
-* @param PartClass - The class of part to add.
-* @param Location - The location to add the part at.
-* @return Whether or not a part was placed successfuly.
-*/
-bool AVoidgrid::AddPart(TSubclassOf<UBasePart> PartClass, GridLocationType Location)
-{
-	for (GridLocationType PixelPartRelativeLocation : PartClass.GetDefaultObject()->GetDesiredShape())
-	{
-
-	}
-	return false;
-}
