@@ -19,12 +19,40 @@ AVoidgrid::AVoidgrid()
  */
 void AVoidgrid::SetPixelMold(MinimalMoldDataType NewPixelMold)
 {
-	MinimalMoldDataType MoldData = GetMoldData();
-	for (FMinimalPartData PartData : NewPixelMold)
+	//Iterates though the pixel mold adding, removing and edditng pixel data to match the new pixel mold.
+	for (TPair<GridLocationType, PixelType> PixelData : PixelMold.GetGridPairs())
 	{
-		if()
+		UBasePart* PartRef = PixelData.Value.Part;
+		FPartTransform PartTransform = PartRef->GetTransform();
+		FMinimalPartData PartData = FMinimalPartData(PartRef->StaticClass(), PartTransform);
+
+		TSet<GridLocationType> PartShapeComponentsToBeRemoved = PartRef->GetShape();
+		//Edits the PixelMold to contain all desiered part shape component locations.
+		if (NewPixelMold.Contains(PartData))
+		{
+			//                                     |                                Gets the desired shape of 
+			for (GridLocationType ShapeComponent : Cast<UBasePart>(NewPixelMold.Find(PartData)->Class->GetDefaultObject())->GetDefaultShape())
+			{
+				GridLocationType EmplaceLoc = PartTransform.TransformGridLocation(ShapeComponent);
+				PartShapeComponentsToBeRemoved.Remove(ShapeComponent);
+				//Create new pixel data if Pixel data does not exist otherwise use old pixel data.
+				PixelType NewPixelData = PixelMold.Contains(EmplaceLoc) ? PixelMold.Find(EmplaceLoc)->SetPart(PartRef) : PixelType(PartRef);
+				PixelMold.Emplace(EmplaceLoc, NewPixelData);
+			}
+		}
+		//Prevent part duplication and unnessecary logic.
+		NewPixelMold.Remove(PartData);
+
+		//Removes Unused Parts
+		for (GridLocationType ShapeComponent : PartShapeComponentsToBeRemoved)
+		{
+			PixelMold.Remove(PartTransform.TransformGridLocation(ShapeComponent));
+		}
+		Parts.Remove(PartRef);		
 	}
 	
+	//Creates parts not added to the 
+	for(FMinimalPartData PartData : NewPixelMold)
 }
 
 /**

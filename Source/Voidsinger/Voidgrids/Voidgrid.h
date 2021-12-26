@@ -16,8 +16,27 @@ struct VOIDSINGER_API FGridPixelData
 {
 	GENERATED_BODY()
 	
+public:
 	//Stores a pointer to the part in this pixel.
 	UBasePart* Part;
+
+	//Constructs a FGridPixelData using a part.
+	FGridPixelData(UBasePart* PartAtPixel)
+	{
+		SetPart(PartAtPixel);
+	}
+
+	/**
+	 * Sets the part of this pixel
+	 * 
+	 * @param NewPart - The new value of part.
+	 * @return A refernce to this.
+	 */
+	FGridPixelData SetPart(UBasePart* NewPart)
+	{
+		Part = NewPart;
+		return *this;
+	}
 };
 
 //Used for disbatching events requireing a grid locaiton
@@ -49,7 +68,7 @@ public:
 	 * 
 	 * @param NewPixelMold - The value to assign to the pixel mold of the ship
 	 */
-	void SetPixelMold(MinimalMoldData NewPixelMold);
+	void SetPixelMold(MinimalMoldDataType NewPixelMold);
 
 	/**
 	 * Gets the part data for all parts on this void grid.
@@ -59,6 +78,10 @@ public:
 	MinimalMoldDataType GetMoldData();
 
 private:
-	//Stores the Pixel Mold of this ship.
+	//Stores the Pixel Mold of this.
 	PixelMoldType PixelMold;
+
+	//Stores a refernce to all parts on this.
+	UPROPERTY()
+	TSet<UBasePart*> Parts;
 };

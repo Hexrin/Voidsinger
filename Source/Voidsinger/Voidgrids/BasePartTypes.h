@@ -128,6 +128,11 @@ public:
 
 		return NewShape;
 	}
+
+	bool operator==(const FPartTransform& Other) const
+	{
+		return Location == Other.Location && Rotation == Other.Rotation;
+	}
 };
 
 /**
@@ -150,11 +155,16 @@ public:
 	//Stores the shape of the part
 	PartShapeType Shape;
 
-	FMinimalPartData(TSubclassOf<UBasePart> PartClass, FPartTransform PartTransform, PartShapeType PartShape)
+	FMinimalPartData(TSubclassOf<UBasePart> PartClass, FPartTransform PartTransform, PartShapeType PartShape = PartShapeType())
 	{
 		Class = PartClass;
 		Transform = PartTransform;
 		Shape = PartShape;
+	}
+
+	bool operator==(const FMinimalPartData& Other) const
+	{
+		return Class == Other.Class && Transform == Other.Transform;
 	}
 };
 

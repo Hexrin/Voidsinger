@@ -23,12 +23,6 @@ UBasePart* UBasePart::CreatePart(AVoidgrid* OwningVoidgrid, FMinimalPartData Par
 
 	return nullptr;
 }
-
-AVoidgrid* UBasePart::GetVoidgrid()
-{
-	return Voidgrid;
-}
-
 FMinimalPartData UBasePart::GetData()
 {
 	return FMinimalPartData(StaticClass(), GetTransform(), GetShape());
@@ -42,16 +36,6 @@ PartShapeType UBasePart::GetDefaultShape()
 	return Cast<UBasePart>(StaticClass()->GetDefaultObject())->DefaultShape;
 }
 
-/**
- * Gets the shape of this part.
- *
- * @return The shape of this part.
- */
-PartShapeType UBasePart::GetShape()
-{
-	return Shape;
-}
-
 void UBasePart::PixelDamaged(GridLocationType Location)
 {
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
@@ -59,10 +43,10 @@ void UBasePart::PixelDamaged(GridLocationType Location)
 	{
 		OnDamaged(RelativeLocation);
 
-		if (!bFunctionalityLostCalled && ((float)Shape.Num() / (float)GetDefaultShape().Num()) < FunctionalityPercent)
+		if (bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) < FunctionalityPercent)
 		{
+			bFunctional = true;
 			OnFunctionaltyLost();
-			bFunctionalityLostCalled = true;
 		}
 
 		if (Shape.Num() == 0)
@@ -80,10 +64,10 @@ void UBasePart::PixelRepaired(GridLocationType Location)
 		Shape.Add(RelativeLocation);
 		OnRepaired(RelativeLocation);
 
-		if (bFunctionalityLostCalled && ((float)Shape.Num() / (float)GetDefaultShape().Num()) >= FunctionalityPercent)
+		if (!bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) >= FunctionalityPercent)
 		{
+			bFunctional = true;
 			OnFunctionaltyRestored();
-			bFunctionalityLostCalled = false;
 		}
 
 		if (Shape.Num() == GetDefaultShape().Num())
@@ -95,11 +79,6 @@ void UBasePart::PixelRepaired(GridLocationType Location)
 
 /* /\ Part Shape /\ *\
 \* ---------------- */
-
-FPartTransform UBasePart::GetTransform()
-{
-	return Transform;
-}
 
 /*Initializer Funtions*\
 \*--------------------*/

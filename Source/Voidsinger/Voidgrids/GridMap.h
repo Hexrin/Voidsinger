@@ -132,6 +132,8 @@ public:
 	\* \/ Search \/ */
 
 public:
+	// \/ Contains \/
+
 	/**
 	 * Checks if there is a value at a given location.
 	 *
@@ -142,6 +144,23 @@ public:
 	{
 		return GridInfo.Contains(Location);
 	}
+
+	/**
+	 * Checks if there is a value at a given location.
+	 *
+	 * @param Location - The location to seach for.
+	 * @param Pred - The predicate that the value must satisfy for this to contain that value.
+	 * @return Whether or not the location has a value.
+	 */
+
+	template<typename Predicate>
+	bool Contains(GridLocationType Location, Predicate Pred)
+	{
+		return GridInfo.Contains(Location) && Pred(GridInfo.Find(Location));
+	}
+
+	// /\ Contains /\
+
 
 	/**
 	 * Finds the value at a given location.

@@ -30,7 +30,7 @@ public:
 
 	//Gets a pointer to the Voidgrid this is a part of.
 	UFUNCTION(BlueprintPure)
-	AVoidgrid* GetVoidgrid();
+	FORCEINLINE AVoidgrid* GetVoidgrid() { return Voidgrid; };
 
 	FMinimalPartData GetData();
 
@@ -55,7 +55,7 @@ public:
 	 *
 	 * @return The shape of this part.
 	 */
-	PartShapeType GetShape();
+	FORCEINLINE PartShapeType GetShape() { return Shape; };
 	
 protected:
 	/**
@@ -106,18 +106,21 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnFullyRepaired();
 
-	
+	// /\ Blueprint Events /\
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE  bool IsFunctional() { return bFunctional; };
 
 private:
-	//Stores whether FunctionalityLost has been called since FunctionalityRestored was last called.
-	bool bFunctionalityLostCalled{ false };
-
-	// /\ Blueprint Events /\
+	/**
+	 * Stores whether this is functional.
+	 */
+	bool bFunctional{ false };
 
 	/**
 	 * Updates shape after a pixel of this part has beein damaged
 	 */
-	void PixelDamaged(FIntPoint Location);
+	void PixelDamaged(GridLocationType Location);
 
 	/**
 	 * Updates shape after a pixel of this part has beein repaired
@@ -135,7 +138,8 @@ private:
 	\* ---------------- */
 
 public:
-	FPartTransform GetTransform();
+	UFUNCTION(BlueprintPure)
+	FPartTransform GetTransform() { return Transform; };
 
 private:
 	//Stores the location and rotation of the part
