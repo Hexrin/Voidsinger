@@ -161,3 +161,30 @@ void UFunctionLibrary::SetVoidsongNoun(TSubclassOf<UBaseNounVoidsong> Class, TSu
 	CDO->SaveConfig();
 }
 
+TArray<FAssetData> UFunctionLibrary::GetAssetsByClass(TSubclassOf<UObject> Class)
+{
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+	TArray<FAssetData> AssetData;
+	bool Test;
+	//const UClass* Class = UStaticMesh::StaticClass();
+	Test = AssetRegistryModule.Get().GetAssetsByClass(Class->GetFName(), AssetData);
+	UE_LOG(LogTemp, Warning, TEXT("return val %i asset data num %i"), Test, AssetData.Num());
+	return AssetData;
+}
+
+TMap<FName, FString> UFunctionLibrary::GetTagsAndValuesFromAssetData(FAssetData AssetData)
+{
+	TMap<FName, FString> ReturnValue;
+
+	TArray<FName> Tags;
+	AssetData.TagsAndValues.GetMap().GenerateKeyArray(Tags);
+	TArray<FString> Values;
+	AssetData.TagsAndValues.GetMap().GenerateValueArray(Values);
+	for (int TagsIndex = 0; TagsIndex < Tags.Num(); TagsIndex++)
+	{
+		ReturnValue.Emplace(Tags[TagsIndex], Values[TagsIndex]);
+	}
+
+	return ReturnValue;
+}
+

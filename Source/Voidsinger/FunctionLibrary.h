@@ -8,6 +8,7 @@
 #include "Voidsinger/Voidsongs/Factions/BaseWhoVoidsong.h"
 #include "Voidsinger/Voidsongs/Nouns/BaseNounVoidsong.h"
 #include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
+#include "AssetRegistryModule.h"
 #include "DrawDebugHelpers.h"
 #include "FunctionLibrary.generated.h"
 
@@ -42,4 +43,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void SetVoidsongNoun(TSubclassOf<UBaseNounVoidsong> Class, TSubclassOf<UBasePart> DefaultNoun);
+
+	UFUNCTION(BlueprintCallable)
+	static TArray<FAssetData> GetAssetsByClass(TSubclassOf<UObject> Class);
+
+	UFUNCTION(BlueprintCallable)
+	static TMap<FName, FString> GetTagsAndValuesFromAssetData(FAssetData AssetData);
 };

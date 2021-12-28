@@ -384,4 +384,7 @@ private:
 	UPROPERTY()
 	UPartGridComponent* PartGridComponent;
 
+	UPROPERTY(AssetRegistrySearchable)
+	int TestVariable;
+
 };
