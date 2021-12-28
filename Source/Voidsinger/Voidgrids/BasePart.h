@@ -4,9 +4,136 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
-#include "BasePartTypes.h"
-#include "Voidgrid.h"
 #include "BasePart.generated.h"
+
+class AVoidgrid;
+
+//Stores the shape of a part
+typedef TSet<GridLocationType> PartShapeType;
+
+/**
+ * Represents a rotation of a part.
+ */
+UENUM(BlueprintType)
+enum class EPartRotation : uint8
+{
+	PR_0Degrees		UMETA(DisplayName = "0°"),
+	PR_90Degrees	UMETA(DisplayName = "90°"),
+	PR_180Degrees	UMETA(DisplayName = "180°"),
+	PR_270Degrees	UMETA(DisplayName = "270°"),
+};
+
+/**
+ * Handels Base Part Type operations.
+ */
+UCLASS()
+class VOIDSINGER_API UBasePartTypesLibrary : public UObject
+{
+	GENERATED_BODY()
+
+		/* -------------------- *\
+		\* \/ Part Transform \/ */
+
+public:
+	/**
+	 * Applies a given rotation to a given IntPoint.
+	 *
+	 * @param Target - The IntPoint to rotate.
+	 * @param Rotation - The rotation to apply.
+	 * @return The rotated IntPoint.
+	 */
+	UFUNCTION(BlueprintPure)
+	static FIntPoint PartRotateIntPoint(FIntPoint Target, EPartRotation Rotation);
+
+	/**
+	 * Undoes a given rotation on a given IntPoint.
+	 *
+	 * @param Target - The IntPoint to rotate.
+	 * @param Rotation - The rotation to Undos.
+	 * @return The unrotated IntPoint.
+	 */
+	UFUNCTION(BlueprintPure)
+	static FIntPoint PartUnRotateIntPoint(FIntPoint Target, EPartRotation Rotation);
+
+	/* /\ Part Transform /\ *\
+	\* -------------------- */
+};
+
+/**
+ *  Stores the location and rotation of a part.
+ */
+USTRUCT(BlueprintType)
+struct VOIDSINGER_API FPartTransform
+{
+	GENERATED_BODY()
+
+protected:
+	//Stores the Location in IntPoint form for accessablity in blueprints.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FIntPoint Location;
+
+public:
+	//Stores the rotation of the part.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPartRotation Rotation;
+
+	//Gets the location of the part.
+	GridLocationType GetGridLocation()
+	{
+		return Location;
+	}
+
+	//Constucts a part transform with the given location and a part rotation.
+	FPartTransform(GridLocationType Loc = GridLocationType(0, 0), EPartRotation Rot = EPartRotation::PR_0Degrees)
+	{
+		Location = Loc;
+		Rotation = Rot;
+	}
+
+	//Constucts a part transform with the given location and a rotation that will be snaped to 90 degree intervals.
+	FPartTransform(GridLocationType Loc, float Rot)
+	{
+		Location = Loc;
+		Rotation = (EPartRotation)(((int32)Rot / 90) % 3);
+	}
+
+	GridLocationType TransformGridLocation(GridLocationType Target)
+	{
+		return UBasePartTypesLibrary::PartRotateIntPoint(Target, Rotation) + GetGridLocation();
+	}
+
+	PartShapeType TransformPartShape(PartShapeType Shape)
+	{
+		PartShapeType NewShape = PartShapeType();
+		for (GridLocationType ShapeComponent : Shape)
+		{
+			NewShape.Emplace(TransformGridLocation(ShapeComponent));
+		}
+
+		return NewShape;
+	}
+
+	GridLocationType InverseTransformGridLocation(GridLocationType Target)
+	{
+		return UBasePartTypesLibrary::PartUnRotateIntPoint(Target - GetGridLocation(), Rotation);
+	}
+
+	PartShapeType InverseTransformPartShape(PartShapeType Shape)
+	{
+		PartShapeType NewShape = PartShapeType();
+		for (GridLocationType ShapeComponent : Shape)
+		{
+			NewShape.Emplace(InverseTransformGridLocation(ShapeComponent));
+		}
+
+		return NewShape;
+	}
+
+	bool operator==(const FPartTransform& Other) const
+	{
+		return Location == Other.Location && Rotation == Other.Rotation;
+	}
+};
 
 /**
  * The virtual repersntaion of a part.
@@ -26,13 +153,25 @@ public:
 	 * @param PartData - The data pased to the new part.
 	 * @return A pointer to the newly created part.
 	 */
-	static UBasePart* CreatePart(AVoidgrid* OwningVoidgrid, FMinimalPartData PartData);
+	static UBasePart* CreatePart(AVoidgrid* OwningVoidgrid, FPartData PartData);
 
 	//Gets a pointer to the Voidgrid this is a part of.
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE AVoidgrid* GetVoidgrid() { return Voidgrid; };
 
-	FMinimalPartData GetData();
+	/**
+	 * Gets the part data for this part.
+	 * 
+	 * @return The part data for this part.
+	 */
+	FPartData GetData();
+
+	/**
+	 * Gets the minimnal part data for this part.
+	 *
+	 * @return The minimnal part data for this part.
+	 */
+	FMinimalPartData GetMinimalData();
 
 private:
 	//Stores the Voidgrid this is a part of.
@@ -138,19 +277,124 @@ private:
 	\* ---------------- */
 
 public:
+	/**
+	 * Gets the location and rotation of this.
+	 * 
+	 * @return The location and rotation of this.
+	 */
 	UFUNCTION(BlueprintPure)
-	FPartTransform GetTransform() { return Transform; };
+	FPartTransform GetTransform();
 
 private:
-	//Stores the location and rotation of the part
+	//Stores the location and rotation of this.
 	UPROPERTY(VisibleInstanceOnly)
 	FPartTransform Transform;
 
+};
 
-	/*Initializer Functions*\
-	\*--------------------*/
+/**
+ * Stores all information required to replicate a part.
+ */
+USTRUCT(BlueprintType)
+struct FMinimalPartData
+{
+	GENERATED_BODY()
 
 public:
+	//Stores the class of the part
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TSubclassOf<UBasePart> Class;
+
+	//Stores the location and rotation of the part
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FPartTransform Transform;
+
+	FMinimalPartData(TSubclassOf<UBasePart> PartClass = UBasePart::StaticClass(), FPartTransform PartTransform = FPartTransform())
+	{
+		Class = PartClass;
+		Transform = PartTransform;
+	}
+
+	FMinimalPartData(UBasePart* Part)
+	{
+		Class = Part->StaticClass();
+		Transform = Part->GetTransform();
+	}
+
+	bool operator==(const FMinimalPartData& Other) const
+	{
+		return Class == Other.Class && Transform == Other.Transform;
+	}
+};
+
+//Hash function for FMinimalPartData
+#if UE_BUILD_DEBUG
+uint32 GetTypeHash(const FMinimalPartData& Thing);
+#else // optimize by inlining in shipping and development builds
+FORCEINLINE uint32 GetTypeHash(const FMinimalPartData& Thing)
+{
+	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FMinimalPartData));
+	return Hash;
+}
+#endif
+
+/**
+ * Stores all information required to replicate a part and its state.
+ */
+USTRUCT(BlueprintType)
+struct FPartData
+{
+	GENERATED_BODY()
+
+public:
+	//Stores the class of the part
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	TSubclassOf<UBasePart> Class;
+
+	//Stores the location and rotation of the part
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	FPartTransform Transform;
+
+	//Stores the shape of the part
+	PartShapeType Shape;
+
+	FPartData(TSubclassOf<UBasePart> PartClass, FPartTransform PartTransform, PartShapeType PartShape)
+	{
+		Class = PartClass;
+		Transform = PartTransform;
+		Shape = PartShape;
+	}
+
+	FPartData(FMinimalPartData MinimalPartData = FMinimalPartData(), PartShapeType PartShape = PartShapeType())
+	{
+		Class = MinimalPartData.Class;
+		Transform = MinimalPartData.Transform;
+		Shape = PartShape;
+	}
+
+	FPartData(UBasePart* Part)
+	{
+		Class = Part->StaticClass();
+		Transform = Part->GetTransform();
+		Shape = Part->GetShape();
+	}
+};
+
+//Hash function for FPartData
+#if UE_BUILD_DEBUG
+uint32 GetTypeHash(const FPartData& Thing);
+#else // optimize by inlining in shipping and development builds
+FORCEINLINE uint32 GetTypeHash(const FPartData& Thing)
+{
+	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FPartData));
+	return Hash;
+}
+#endif
+
+//	/*Initializer Functions*\
+//	\*--------------------*/
+//
+//public:
 
 	//The functions "InitializeVariables" and "InitializeFunctionality" feel a bit off. Granted, I'm not totally sure what's
 	// off about them, but something feels off about those. It feels like they break encapsulation somehow. -Mabel Suggestion
@@ -504,4 +748,4 @@ public:
 //	/*UPROPERTY()
 //	UPartGridComponent* PartGridComponent;*/
 
-};
+//};

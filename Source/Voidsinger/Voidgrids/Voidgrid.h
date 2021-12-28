@@ -4,11 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "BasePartTypes.h"
 #include "GridMap.h"
 #include "Voidgrid.generated.h"
 
 class UBasePart;
+struct FPartData;
+struct FMinimalPartData;
+
+//The type used for storing pixel data
+typedef FGridPixelData PixelType;
+//The type used for storing a ships Pixel Mold
+typedef TGridMap<PixelType> PixelMoldType;
+//Stores all information required to replicate a mold
+typedef TSet<FMinimalPartData> MinimalMoldDataType;
+//Stores all information required to replicate a mold
+typedef TSet<FPartData> MoldDataType;
 
 //Stores data about a pixel.
 USTRUCT()
@@ -21,7 +31,7 @@ public:
 	UBasePart* Part;
 
 	//Constructs a FGridPixelData using a part.
-	FGridPixelData(UBasePart* PartAtPixel)
+	FGridPixelData(UBasePart* PartAtPixel = nullptr)
 	{
 		SetPart(PartAtPixel);
 	}
@@ -53,15 +63,12 @@ public:
 
 	/* ---------------- *\ 
 	\* \/ Pixel Mold \/ */
-public:
-	//The type used for storing pixel data
-	typedef FGridPixelData PixelType;
-	//The type used for storing a ships Pixel Mold
-	typedef TGridMap<PixelType> PixelMoldType;
-	//Stores all information required to replicate a mold
-	typedef TSet<FMinimalPartData> MinimalMoldDataType;
 
+public:
+	//Called when this is damaged
 	FGridLocationDelegate OnDamaged;
+	//Called when this is damaged
+	FGridLocationDelegate OnRepaired;
 
 	/**
 	 * Sets the pixel mold of the ship
@@ -71,11 +78,18 @@ public:
 	void SetPixelMold(MinimalMoldDataType NewPixelMold);
 
 	/**
-	 * Gets the part data for all parts on this void grid.
+	 * Gets the minimal part data for all parts on this void grid.
 	 * 
+	 * @return The minimal part data for all parts on this void grid.
+	 */
+	MinimalMoldDataType GetMinimalMoldData();
+
+	/**
+	 * Gets the part data for all parts on this void grid.
+	 *
 	 * @return The part data for all parts on this void grid.
 	 */
-	MinimalMoldDataType GetMoldData();
+	MoldDataType GetMoldData();
 
 private:
 	//Stores the Pixel Mold of this.

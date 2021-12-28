@@ -3,14 +3,68 @@
 #pragma once
 
 #include "BasePart.h"
-//#include "BaseResourceSystem.h"
-//#include "Voidsinger/Parts/PartGridComponent.h"
-//#include "BaseThrusterPart.h"
-//#include "BaseResourceSystem.h"
-//#include "Engine/Engine.h"
+#include "Voidgrid.h"
 
+/**
+ * Applies a given rotation to a given IntPoint.
+ *
+ * @param Target - The IntPoint to rotate.
+ * @param Rotation - The rotation to apply.
+ * @return The rotated IntPoint.
+ */
+UFUNCTION(BlueprintPure)
+FIntPoint UBasePartTypesLibrary::PartRotateIntPoint(FIntPoint Target, EPartRotation Rotation)
+{
+	switch (Rotation)
+	{
+	case EPartRotation::PR_0Degrees:
+		return Target;
+	case EPartRotation::PR_90Degrees:
+		return FIntPoint(-Target.Y, Target.X);
+	case EPartRotation::PR_180Degrees:
+		return Target * -1;
+	case EPartRotation::PR_270Degrees:
+		return FIntPoint(Target.Y, -Target.X);
+	default:
+		UE_LOG(LogTemp, Error, TEXT("PartRotateIntPoint invalid Rotation"));
+		return Target;
+	}
+}
 
-UBasePart* UBasePart::CreatePart(AVoidgrid* OwningVoidgrid, FMinimalPartData PartData)
+/**
+ * Undoes a given rotation on a given IntPoint.
+ *
+ * @param Target - The IntPoint to unrotate.
+ * @param Rotation - The rotation to undo.
+ * @return The unrotated IntPoint.
+ */
+UFUNCTION(BlueprintPure)
+FIntPoint UBasePartTypesLibrary::PartUnRotateIntPoint(FIntPoint Target, EPartRotation Rotation)
+{
+	switch (Rotation)
+	{
+	case EPartRotation::PR_0Degrees:
+		return Target;
+	case EPartRotation::PR_90Degrees:
+		return FIntPoint(Target.Y, -Target.X);
+	case EPartRotation::PR_180Degrees:
+		return Target * -1;
+	case EPartRotation::PR_270Degrees:
+		return FIntPoint(-Target.Y, Target.X);
+	default:
+		UE_LOG(LogTemp, Error, TEXT("PartRotateIntPoint invalid Rotation"));
+		return Target;
+	}
+}
+
+/**
+ * Creates and initilizes a new part.
+ *
+ * @param OwningVoidgrid - The Voidgrid the new part is a part of.
+ * @param PartData - The data pased to the new part.
+ * @return A pointer to the newly created part.
+ */
+UBasePart* UBasePart::CreatePart(AVoidgrid* OwningVoidgrid, FPartData PartData)
 {
 	UBasePart* NewPart = NewObject<UBasePart>(OwningVoidgrid, PartData.Class);
 
@@ -23,9 +77,25 @@ UBasePart* UBasePart::CreatePart(AVoidgrid* OwningVoidgrid, FMinimalPartData Par
 
 	return nullptr;
 }
-FMinimalPartData UBasePart::GetData()
+
+/**
+ * Gets the part data for this part.
+ *
+ * @return The part data for this part.
+ */
+FPartData UBasePart::GetData()
 {
-	return FMinimalPartData(StaticClass(), GetTransform(), GetShape());
+	return FPartData(StaticClass(), GetTransform(), GetShape());
+}
+
+/**
+ * Gets the minimnal part data for this part.
+ *
+ * @return The minimnal part data for this part.
+ */
+FMinimalPartData UBasePart::GetMinimalData()
+{
+	return FMinimalPartData(StaticClass(), GetTransform());
 }
 
 /* ---------------- *\
@@ -79,6 +149,16 @@ void UBasePart::PixelRepaired(GridLocationType Location)
 
 /* /\ Part Shape /\ *\
 \* ---------------- */
+
+/**
+ * Gets the location and rotation of this.
+ *
+ * @return The location and rotation of this.
+ */
+FPartTransform UBasePart::GetTransform()
+{
+	return Transform;
+}
 
 /*Initializer Funtions*\
 \*--------------------*/
