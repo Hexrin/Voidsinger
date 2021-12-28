@@ -45,7 +45,7 @@ public:
 	static void SetVoidsongNoun(TSubclassOf<UBaseNounVoidsong> Class, TSubclassOf<UBasePart> DefaultNoun);
 
 	UFUNCTION(BlueprintCallable)
-	static TArray<FAssetData> GetAssetsByClass(TSubclassOf<UObject> Class);
+	static TMap<FName, FString> GetClassRegistryTagsAndValues(TSubclassOf<UObject> Class);
 
 	UFUNCTION(BlueprintCallable)
 	static TMap<FName, FString> GetTagsAndValuesFromAssetData(FAssetData AssetData);

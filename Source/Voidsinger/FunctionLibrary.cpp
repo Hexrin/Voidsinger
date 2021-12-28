@@ -161,42 +161,12 @@ void UFunctionLibrary::SetVoidsongNoun(TSubclassOf<UBaseNounVoidsong> Class, TSu
 	CDO->SaveConfig();
 }
 
-TArray<FAssetData> UFunctionLibrary::GetAssetsByClass(TSubclassOf<UObject> Class)
+TMap<FName, FString> UFunctionLibrary::GetClassRegistryTagsAndValues(TSubclassOf<UObject> Class)
 {
-	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-	TArray<FAssetData> AssetData;
-	bool Test;
-	//const UClass* Class = UStaticMesh::StaticClass();
-	// 
-	//Scan specific path
-	TArray<FString> PathsToScan;
-	PathsToScan.Add(TEXT("/Game/"));
-	AssetRegistryModule.Get().ScanPathsSynchronous(PathsToScan);
+	FAssetData AssetData;
+	Class.GetDefaultObject()->GetAssetRegistryTags(AssetData);
 
-	//Get all assets in the path, does not load them
-	TArray<FAssetData> ScriptAssetList;
-	AssetRegistryModule.Get().GetAssetsByPath(FName("/Game/"), ScriptAssetList, /*bRecursive=*/true);
-
-	for (const FAssetData& EachAsset : ScriptAssetList)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Asset has appearedethed name %s class %s"), *EachAsset.AssetName.ToString(), *EachAsset.GetAsset()->GetClass()->GetFName().ToString());
-		//if (EachAsset.GetClass() == Class.Get() || EachAsset.GetClass()->IsChildOf(Class))
-		//{
-			//UE_LOG(LogTemp, Warning, TEXT("Asset is child of class"));
-			//AssetData.Emplace(EachAsset);
-		//}
-
-		if (EachAsset.GetAsset()->GetClass()->IsChildOf(Class))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Asset is child of class"));
-			AssetData.Emplace(EachAsset);
-		}
-	}
-
-	TArray<FAssetData> TestThing;
-	Test = AssetRegistryModule.Get().GetAssetsByClass(Class->GetFName(), TestThing);
-	UE_LOG(LogTemp, Warning, TEXT("return val %i asset data num %i"), Test, TestThing.Num());
-	return AssetData;
+	return GetTagsAndValuesFromAssetData(AssetData);
 }
 
 TMap<FName, FString> UFunctionLibrary::GetTagsAndValuesFromAssetData(FAssetData AssetData)
