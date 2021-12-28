@@ -151,13 +151,6 @@ void UFunctionLibrary::SetVoidsongFaction(TSubclassOf<UBaseFactionVoidsong> Clas
 {
 	UBaseFactionVoidsong* CDO = GetMutableDefault<UBaseFactionVoidsong>(Class);
 	CDO->Faction = DefaultFaction;
-
-	//UFloatProperty Test;
-	//Test.SetPropertyValue_InContainer();
-	UProperty* Property = FindField<UProperty>(Class, FName("Name"));
-	Property->ContainerPtrToValuePtr()
-	//UProperty* Property = Class->FindPropertyByName(FName("idk"))
-	CDO->SetPropertyValue
 	CDO->SaveConfig();
 }
 
@@ -166,10 +159,6 @@ void UFunctionLibrary::SetVoidsongNoun(TSubclassOf<UBaseNounVoidsong> Class, TSu
 	UBaseNounVoidsong* CDO = GetMutableDefault<UBaseNounVoidsong>(Class);
 	CDO->Noun = DefaultNoun;
 	CDO->SaveConfig();
-}
-
-void UFunctionLibrary::SetConfigVariable(TSubclassOf<UObject> Class, FName VarName)
-{
 }
 
 TMap<FName, FString> UFunctionLibrary::GetClassRegistryTagsAndValues(TSubclassOf<UObject> Class)

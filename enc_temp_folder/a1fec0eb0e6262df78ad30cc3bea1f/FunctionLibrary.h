@@ -45,9 +45,6 @@ public:
 	static void SetVoidsongNoun(TSubclassOf<UBaseNounVoidsong> Class, TSubclassOf<UBasePart> DefaultNoun);
 
 	UFUNCTION(BlueprintCallable)
-	static void SetConfigVariable(TSubclassOf<UObject> Class, FName VarName);
-
-	UFUNCTION(BlueprintCallable)
 	static TMap<FName, FString> GetClassRegistryTagsAndValues(TSubclassOf<UObject> Class);
 
 	UFUNCTION(BlueprintCallable)
