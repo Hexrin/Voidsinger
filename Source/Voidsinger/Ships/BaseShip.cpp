@@ -396,7 +396,6 @@
 //
 //	//Magic numbers >:( at least comment them -Mabel Suggestion
 //	TArray<int32> Triangles = CreateTrianglesForSquare(0,2,4,6);
-//	//Triangles += CreateTrianglesForSquare(3, 1, 7, 5);
 //	Triangles += CreateTrianglesForSquare(2, 0, 3, 1);
 //	Triangles += CreateTrianglesForSquare(0, 4, 1, 5);
 //	Triangles += CreateTrianglesForSquare(4, 6, 5, 7);

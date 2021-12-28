@@ -5,20 +5,17 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "GridMap.h"
+#include "BasePart.h"
+#include "ProceduralMeshComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "Voidgrid.generated.h"
-
-class UBasePart;
-struct FPartData;
-struct FMinimalPartData;
 
 //The type used for storing pixel data
 typedef FGridPixelData PixelType;
 //The type used for storing a ships Pixel Mold
 typedef TGridMap<PixelType> PixelMoldType;
 //Stores all information required to replicate a mold
-typedef TSet<FMinimalPartData> MinimalMoldDataType;
-//Stores all information required to replicate a mold
-typedef TSet<FPartData> MoldDataType;
+typedef TSet<FMinimalPartData> MinimalPixelMoldDataType;
 
 //Stores data about a pixel.
 USTRUCT()
@@ -27,26 +24,130 @@ struct VOIDSINGER_API FGridPixelData
 	GENERATED_BODY()
 	
 public:
-	//Stores a pointer to the part in this pixel.
-	UBasePart* Part;
-
 	//Constructs a FGridPixelData using a part.
-	FGridPixelData(UBasePart* PartAtPixel = nullptr)
+	FGridPixelData(UBasePart* PartOfPixel = nullptr, bool bPixelIntact = false)
 	{
-		SetPart(PartAtPixel);
+		SetTargetPart(PartOfPixel);
+		SetCurrentPart(PartOfPixel);
+		SetIntact(bPixelIntact);
 	}
 
 	/**
-	 * Sets the part of this pixel
+	 * Gets whether this pixel is intact.
+	 *
+	 * @return Whether this pixel is intact.
+	 */
+	bool IsIntact()
+	{
+		return bIntact;
+	}
+
+	/**
+	 * Sets whether this pixel is intact.
+	 *
+	 * @param bNewIntact - the new intactness of this pixel.
+	 */
+	void SetIntact(bool bNewIntact)
+	{
+		if (!bNewIntact && bIntact)
+		{			
+			Temperature = 0;
+			SetCurrentPart(GetTargetPart());
+		}
+
+		bIntact = bNewIntact;
+	}
+
+	/**
+	 * Sets the temperature of this pixel.
+	 *
+	 * @param NewTemperature - The new temperature of this pixel.
+	 */
+	void SetTemperature(float NewTemperature)
+	{
+		Temperature = bIntact ? NewTemperature : 0;
+	}
+
+	/**
+	 * Add an amount to the temperature of this pixel.
+	 *
+	 * @param TemperatureToAdd - The amount to add to the temperature of this pixel.
+	 * @return The new temperature of this pixel.
+	 */
+	float AddTemperature(float TemperatureToAdd)
+	{
+		return Temperature += bIntact ? TemperatureToAdd : 0;
+	}
+
+	/**
+	 * Gets the part of this pixel.
+	 *
+	 * @return The part of this pixel.
+	 */
+	UBasePart* GetCurrentPart()
+	{
+		return CurrentPart;
+	}
+
+	/**
+	 * Sets the part of this pixel.
 	 * 
 	 * @param NewPart - The new value of part.
 	 * @return A refernce to this.
 	 */
-	FGridPixelData SetPart(UBasePart* NewPart)
+	FGridPixelData SetCurrentPart(UBasePart* NewPart)
 	{
-		Part = NewPart;
+		if (NewPart && NewPart->GetMaterial())
+		{
+			Material = UMaterialInstanceDynamic::Create(NewPart->GetMaterial(), NewPart);
+		}
+		CurrentPart = NewPart;
 		return *this;
 	}
+
+	/**
+	 * Gets the target part of this pixel.
+	 *
+	 * @return The target part of this pixel.
+	 */
+	UBasePart* GetTargetPart()
+	{
+		return TargetPart;
+	}
+
+	/**
+	 * Sets the new target part of this pixel.
+	 *
+	 * @param NewPart - The new target part of this pixel.
+	 * @return A refernce to this.
+	 */
+	FGridPixelData SetTargetPart(UBasePart* NewPart)
+	{
+		TargetPart = NewPart;
+		return *this;
+	}
+
+	UMaterialInterface* GetMaterial()
+	{
+		return Material;
+	}
+
+private:
+	//Stores a pointer to the part in this pixel.
+	UBasePart* CurrentPart = UNullPart::Get();
+
+	//Stores a pointer to the target part of this pixel.
+	UBasePart* TargetPart = UNullPart::Get();
+
+	//Store whether or not this pixel is intact.
+	bool bIntact = false;
+
+	//Stores the temperature of this pixel.
+	float Temperature = 0.f;
+
+	//Stores a pointer to the material of this pixel.
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* Material;
 };
 
 //Used for disbatching events requireing a grid locaiton
@@ -75,21 +176,28 @@ public:
 	 * 
 	 * @param NewPixelMold - The value to assign to the pixel mold of the ship
 	 */
-	void SetPixelMold(MinimalMoldDataType NewPixelMold);
+	void SetPixelMold(MinimalPixelMoldDataType NewPixelMold);
 
 	/**
 	 * Gets the minimal part data for all parts on this void grid.
 	 * 
 	 * @return The minimal part data for all parts on this void grid.
 	 */
-	MinimalMoldDataType GetMinimalMoldData();
+	MinimalPixelMoldDataType GetMinimalMoldData();
 
 	/**
-	 * Gets the part data for all parts on this void grid.
-	 *
-	 * @return The part data for all parts on this void grid.
+	 * Damages a pixel.
+	 * 
+	 * @param Location - The location of the pixel to damage.
 	 */
-	MoldDataType GetMoldData();
+	void DamagePixel(GridLocationType Location);
+
+	/**
+	 * Repair a pixel.
+	 *
+	 * @param Location - The location of the pixel to repair.
+	 */
+	void RepairPixel(GridLocationType Location);
 
 private:
 	//Stores the Pixel Mold of this.
@@ -98,4 +206,71 @@ private:
 	//Stores a refernce to all parts on this.
 	UPROPERTY()
 	TSet<UBasePart*> Parts;
+
+	//Stores refernces to all the parts that are not part of the mold of this.
+	UPROPERTY()
+	TSet<UBasePart*> TemporaryParts;
+
+	//Stores the Locations of all damaged and temporary part Pixels.
+	TSet<GridLocationType> MutablePixels;
+
+	/* /\ Pixel Mold /\ *\
+	\* ---------------- */
+
+	/* ---------------- *\
+	\* \/ Pixel Mesh \/ */
+
+public:
+	//A procedural mesh component for physicaly representing all pixels on this.
+	UPROPERTY(VisibleAnywhere)
+	class UProceduralMeshComponent* PixelMeshComponent;
+
+	/**
+	 * Creates a mesh segment for a pixel.
+	 * 
+	 * @param Location - The location of the pixel to create a mesh segment for.
+	 */
+	void AddPixelMesh(GridLocationType Location);
+
+	/**
+	 * Removes the mesh segment for a pixel.
+	 *
+	 * @param Location - The location of the pixel to remove the mesh segment of.
+	 */
+	void RemovePixelMesh(GridLocationType Location);
+
+private:
+	/**
+	 * Generates the vertices of a pixel mesh
+	 * 
+	 * @param Location - The location of the pixel to generate vertices for.
+	 * @return An array of vertices that can be used to generate a mesh for a pixel
+	 */
+	TArray<FVector> GetPixelVertices(GridLocationType Location);
+
+	/**
+	 * Generates 2 triangles that conect the four specified vertices.
+	 * 
+	 * @param UpperRight - The vertex index of the upper right corner of the square.
+	 * @param UpperLeft - The vertex index of the upper left corner of the square.
+	 * @param LowerRight - The vertex index of the lower right corner of the square.
+	 * @param LowerLeft - The vertex index of the lower left corner of the square.
+	 * @return An array of vertices that can be used to generate triangles that will form a square between the specified vertices.
+	 */
+	UFUNCTION()
+	TArray<int32> CreateTrianglesForPixelMeshFace(int32 UpperRight = 0, int32 UpperLeft = 1, int32 LowerRight = 2, int32 LowerLeft =3);
+
+	//Stores the mesh segment incisces coresponding to each pixel
+	TMap<GridLocationType, int32> PixelMeshSegmentIndices;
+
+	//Stores the default UVs of a single pixel mesh
+	UPROPERTY()
+	TArray<FVector2D> PixelUVs;
+
+	//Stores the default triangles of a single pixel mesh
+	UPROPERTY()
+	TArray<int32> PixelTriangles;
+
+	/* /\ Pixel Mesh /\ *\
+	\* ---------------- */
 };

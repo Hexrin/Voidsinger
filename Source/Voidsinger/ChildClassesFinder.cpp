@@ -5,9 +5,9 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "ChildClassesFinder.h"
 
+//This is a modifed version of the code created by Zhi_Kang_Shao here: https://forums.unrealengine.com/t/tobjectiterator-uclass-skipping-unloaded-assets/68249/3
 UChildClassesFinder::UChildClassesFinder()
 {
-	//This is a modifed version of the code created by Zhi_Kang_Shao here: https://forums.unrealengine.com/t/tobjectiterator-uclass-skipping-unloaded-assets/68249/3
 	ChildClassesMap = TMap<UClass*, FChildClasses>();
 }
 

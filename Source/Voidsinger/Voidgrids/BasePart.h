@@ -290,6 +290,33 @@ private:
 	UPROPERTY(VisibleInstanceOnly)
 	FPartTransform Transform;
 
+
+public:
+	/**
+	 * Gets the material used to render the pixels of this.
+	 * 
+	 * @return The material used to render the pixels of this.
+	 */
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE UMaterialInterface* GetMaterial() { return Material; };
+
+protected:
+	//Stores the material used to render the pixels of this.
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* Material;
+};
+
+/**
+ * A part repersenting a lack of a part in a pixel.
+ */
+UCLASS(NotBlueprintable, HideDropdown)
+class VOIDSINGER_API UNullPart : public UBasePart
+{
+	GENERATED_BODY()
+		
+public:
+	//Gets a refernce to the gloabal default NullPart.
+	static UNullPart* Get();
 };
 
 /**
@@ -309,7 +336,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FPartTransform Transform;
 
-	FMinimalPartData(TSubclassOf<UBasePart> PartClass = UBasePart::StaticClass(), FPartTransform PartTransform = FPartTransform())
+	FMinimalPartData(TSubclassOf<UBasePart> PartClass = UNullPart::StaticClass(), FPartTransform PartTransform = FPartTransform())
 	{
 		Class = PartClass;
 		Transform = PartTransform;

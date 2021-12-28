@@ -162,6 +162,10 @@ FPartTransform UBasePart::GetTransform()
 
 /*Initializer Funtions*\
 \*--------------------*/
+UNullPart* UNullPart::Get()
+{
+	return Cast<UNullPart>(UNullPart::StaticClass()->GetDefaultObject());
+}
 
 
 
