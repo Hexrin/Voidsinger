@@ -65,7 +65,7 @@ void AVoidgrid::SetPixelMold(MinimalPixelMoldDataType NewPixelMold)
 		UBasePart* Part = UBasePart::CreatePart(this, FPartData(DataOfPartToCreate));
 		Parts.Emplace(Part);
 
-		for (GridLocationType ShapeComponent : Cast<UBasePart>(Part->StaticClass())->GetDefaultShape())
+		for (GridLocationType ShapeComponent : Cast<UBasePart>(Part->StaticClass()->GetDefaultObject())->GetDefaultShape())
 		{
 			PixelMold.Emplace(Part->GetTransform().TransformGridLocation(ShapeComponent), PixelType(Part));
 		}

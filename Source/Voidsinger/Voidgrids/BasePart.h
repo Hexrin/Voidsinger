@@ -196,6 +196,14 @@ public:
 	 */
 	FORCEINLINE PartShapeType GetShape() { return Shape; };
 	
+	//Stores whether this part can be ovrriden when editing the mold.
+	UPROPERTY(Config, EditDefaultsOnly)
+	bool bOverridable{ true };
+
+	//Stores whether this part can be removed from the mold.
+	UPROPERTY(Config, EditDefaultsOnly)
+	bool bRemoveable{ true };
+
 protected:
 	/**
 	 * The percent of the default shape required to be intact for this part to function.
