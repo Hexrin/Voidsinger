@@ -14,4 +14,12 @@ class EDITCONFIGFILES_API UEditConfigBase : public UEditorUtilityWidget
 {
 	GENERATED_BODY()
 	
+public: 
+
+	UFUNCTION(BlueprintPure)
+	UObject* GetCDO(TSubclassOf<UObject> Class);
+
+	UFUNCTION(BlueprintCallable)
+	void SaveObjectConfig(UObject* Object);
+
 };
