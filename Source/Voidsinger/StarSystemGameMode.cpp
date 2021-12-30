@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "StarSystemGameMode.h"
-#include "ShipPlayerState.h"
 #include "Ships/PlayerShip.h"
 
 /*
@@ -18,7 +17,6 @@ void IActivateInterface::Activate(float Duration)
 AStarSystemGameMode::AStarSystemGameMode()
 {
 	//LoadConfig();
-	PlayerStateClass = AShipPlayerState::StaticClass();
 	DefaultPawnClass = APlayerShip::StaticClass();
 }
 

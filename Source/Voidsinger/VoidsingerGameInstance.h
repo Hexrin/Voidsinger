@@ -18,4 +18,49 @@ class VOIDSINGER_API UVoidsingerGameInstance : public UGameInstance
 public:
 	UPROPERTY(EditDefaultsOnly, Instanced, BlueprintReadOnly)
 	UChildClassesFinder* ChildClassFinder;
+
+	/* ------------ *\
+	\* \/ Pixels \/ */
+
+	/**
+	 * Gets the number of pixels the player has.
+	 *
+	 * @return The number of pixels the player has.
+	 */
+	UFUNCTION(BlueprintPure)
+	int32 GetPixels();
+
+	/**
+	 * Sets the number of pixels the player has.
+	 *
+	 * @param NewPixels - The number of pixels the player should have.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void SetPixels(int32 NewPixels);
+
+	/**
+	 * Adds the given number of pixels to the player's bank.
+	 *
+	 * @param Amount - The number of pixels to add.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void DepositPixels(int32 Amount);
+
+	/**
+	 * Withdraw the given number of pixels from the player's bank.
+	 *
+	 * @param Amount - The number of pixels to withdraw.
+	 * @return Wether or not the player has enough pixels.
+	 */
+	UFUNCTION(BlueprintCallable)
+	bool WithdrawPixels(int32 Amount);
+
+protected:
+	//Comment -Mabel Suggestion
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	int32 Pixels{ 100 };
+
+	//Stores the percent of the pixel value of enemy ships gained when an enemy is defeated.
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	float SalvagingEfficiency{ 0.1 };
 };

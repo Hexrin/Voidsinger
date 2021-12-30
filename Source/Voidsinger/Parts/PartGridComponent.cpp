@@ -6,7 +6,7 @@
 #include "BaseThrusterPart.h"
 #include "CorePart.h"
 #include "BaseFreespacePart.h"
-#include "Voidsinger/ShipPlayerState.h"
+#include "Voidsinger/VoidsingerGameInstance.h"
 #include "Voidsinger/Ships/BaseShip.h"
 
 // Sets default values for this component's properties
@@ -113,7 +113,7 @@ bool UPartGridComponent::AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<U
 		TSet<FIntPoint> DesiredShape = Part->GetDesiredShape();
 		FArrayBounds PartBounds = Part->GetPartBounds();
 
-		AShipPlayerState* PlayerState = Cast<AShipPlayerState>(Ship->GetPlayerState());
+		UVoidsingerGameInstance* GameInstance = Cast<UVoidsingerGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 		//Move this to a new function called IsValidPosition or something, or IsWithinGridBounds idk -Mabel Suggestion
 		if 
 		(
@@ -127,7 +127,7 @@ bool UPartGridComponent::AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<U
 			&&
 
 			//If on the player then check to see if they have enough pixels and withdraw them.
-			(Ship->GetFaction() != EFactions::Player || (IsValid(PlayerState) && PlayerState->WithdrawPixels(PartType.GetDefaultObject()->GetCost())))
+			(Ship->GetFaction() != EFactions::Player || (IsValid(GameInstance) && GameInstance->WithdrawPixels(PartType.GetDefaultObject()->GetCost())))
 		)
 		{
 
@@ -174,9 +174,6 @@ bool UPartGridComponent::AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<U
 
 					//set PartGrid and material
 					Ship->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
-
-					//If it's commented out, delete it (unless it's useful debug stuff) -Mabel Suggestion
-					//Cast<AShipPlayerState>(Ship->GetPlayerState())->ShipBlueprint
 
 					//Remember to coment out debug stuff. We should probably add a comment with the word "Debug" in
 					//front of debug stuff -Mabel Suggestion
@@ -229,7 +226,7 @@ bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
 			FIntPoint PartLoc = PartToRemove->GetPartGridLocation();
 
 			//Refund Part Value
-			Cast<AShipPlayerState>(Ship->GetPlayerState())->DepositPixels(PartToRemove->GetCost());
+			Cast<UVoidsingerGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->DepositPixels(PartToRemove->GetCost());
 			Ship->PixelValue -= PartToRemove->GetCost();
 
 			//Iterate though the shape of PartToRemove and remove them from the part grid
