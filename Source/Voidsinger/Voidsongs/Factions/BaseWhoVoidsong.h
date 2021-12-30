@@ -21,7 +21,7 @@ class VOIDSINGER_API UBaseFactionVoidsong : public UBaseVoidsong
 public:
 
 	//The faction that this Voidword will activate nouns on
-	UPROPERTY(EditDefaultsOnly, config, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, config, BlueprintReadOnly, meta = (Category = "Config"))
 	EFactions Faction;
 
 
