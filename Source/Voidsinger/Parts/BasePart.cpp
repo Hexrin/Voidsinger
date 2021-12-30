@@ -587,6 +587,17 @@ void UBasePart::OnFireDelegateCalled(const TArray<TSubclassOf<UObject>>& NounCla
 	{
 		Cast<IActivateInterface>(this)->Activate(Duration);
 	}
+	else
+	{
+		for (TSubclassOf<UObject> NounClass : NounClasses)
+		{
+			if (GetClass()->IsChildOf(*NounClass))
+			{
+				Cast<IActivateInterface>(this)->Activate(Duration);
+				break;
+			}
+		}
+	}
 }
 
 int32 UBasePart::GetCost()
