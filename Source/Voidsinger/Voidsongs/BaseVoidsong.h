@@ -19,7 +19,7 @@
 * If this is done the class should no longer derive from FTickableGameObject.
 */
 
-UCLASS(Abstract, Blueprintable, config=VoidSettings)
+UCLASS(Abstract, Blueprintable, config=VoidSettings, defaultconfig)
 class VOIDSINGER_API UBaseVoidsong : public UObject
 {
 	GENERATED_BODY()

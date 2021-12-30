@@ -10,5 +10,6 @@ UObject* UEditConfigBase::GetCDO(TSubclassOf<UObject> Class)
 
 void UEditConfigBase::SaveObjectConfig(UObject* Object)
 {
-	Object->SaveConfig();
+	//Object->SaveConfig();
+	Object->UpdateDefaultConfigFile();
 }
