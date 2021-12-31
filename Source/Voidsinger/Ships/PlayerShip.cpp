@@ -121,6 +121,7 @@ void APlayerShip::BeginPlay()
     {
         PartGrid->BuildShip(DefaultParts);
         PartGrid->SaveShip(TargetShipSaveSlotName);
+        PartGrid->SaveShip(CurrentShipSaveSlotName);
     }
 
     //Spawns the voidsong instrument
@@ -254,6 +255,7 @@ void APlayerShip::RepairShip()
         GetIsDamagedSave()->IsDamaged = false;
         PartGrid->LoadSavedShip(TargetShipSaveSlotName);
         UGameplayStatics::SaveGameToSlot(GetIsDamagedSave(), IsDamagedSaveSlotName, 0);
+        PartGrid->SaveShip(CurrentShipSaveSlotName);
     }
 }
 
