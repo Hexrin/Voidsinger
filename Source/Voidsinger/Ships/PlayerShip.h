@@ -292,13 +292,37 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsInBuildMode();
 
+	UIsDamagedSave* GetIsDamagedSave();
+
+	UFUNCTION(BlueprintPure)
+	bool IsDamaged();
+
+	UFUNCTION()
+	void Damaged(UBasePart* Part);
+
+	UFUNCTION(BlueprintCallable)
+	void RepairShip();
+
+private:
+	UPROPERTY()
+	UIsDamagedSave* IsDamagedSave;
+
+	UPROPERTY()
+	FString IsDamagedSaveSlotName = TEXT("IsDamaged");
+
+protected:
+
+	UPROPERTY(BlueprintReadOnly)
+	FString CurrentShipSaveSlotName = TEXT("CurrentShip");
+
+	UPROPERTY(BlueprintReadOnly)
+	FString TargetShipSaveSlotName = TEXT("TargetShip");
+
 private:
 
 	//Comment -Mabel Suggestion
 	UPROPERTY()
 	bool bBuildMode{ false };
-
-
 
 	/*-------Misc.-------*\
 	\*-------------------*/

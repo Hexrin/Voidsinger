@@ -108,12 +108,20 @@ void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
     InputComponent->BindAction("ToggleStrafe", IE_Released, this, &APlayerShip::InvertMoveDirection);
     InputComponent->BindAxis("MoveForward");
     InputComponent->BindAxis("MoveRight");
+
+    OnDamaged.AddDynamic(this, &APlayerShip::Damaged);
 }
 
 //Comment -Mabel Suggestion
 void APlayerShip::BeginPlay()
 {
     Super::BeginPlay();
+
+    if (!PartGrid->LoadSavedShip(CurrentShipSaveSlotName))
+    {
+        PartGrid->BuildShip(DefaultParts);
+        PartGrid->SaveShip(TargetShipSaveSlotName);
+    }
 
     //Spawns the voidsong instrument
     VoidsongInstrument = UGameplayStatics::SpawnSound2D(this, Cast<USoundBase>(VoidsongInstrumentAsset.LoadSynchronous()));
@@ -209,6 +217,44 @@ void APlayerShip::SetBuildMode(bool NewBuildMode)
 bool APlayerShip::IsInBuildMode()
 {
     return bBuildMode;
+}
+
+UIsDamagedSave* APlayerShip::GetIsDamagedSave()
+{
+    if (!IsValid(IsDamagedSave))
+    {
+        IsDamagedSave = Cast<UIsDamagedSave>(UGameplayStatics::LoadGameFromSlot(IsDamagedSaveSlotName, 0));
+        if (!IsValid(IsDamagedSave))
+        {
+            IsDamagedSave = Cast<UIsDamagedSave>(UGameplayStatics::CreateSaveGameObject(UIsDamagedSave::StaticClass()));
+        }
+    }
+
+    return IsDamagedSave;
+}
+
+bool APlayerShip::IsDamaged()
+{
+    return GetIsDamagedSave()->IsDamaged;
+}
+
+void APlayerShip::Damaged(UBasePart* Part)
+{
+    if (!GetIsDamagedSave()->IsDamaged)
+    {
+        GetIsDamagedSave()->IsDamaged = true;
+        UGameplayStatics::SaveGameToSlot(GetIsDamagedSave(), IsDamagedSaveSlotName, 0);
+    }
+}
+
+void APlayerShip::RepairShip()
+{
+    if (GetIsDamagedSave()->IsDamaged)
+    {
+        GetIsDamagedSave()->IsDamaged = false;
+        PartGrid->LoadSavedShip(TargetShipSaveSlotName);
+        UGameplayStatics::SaveGameToSlot(GetIsDamagedSave(), IsDamagedSaveSlotName, 0);
+    }
 }
 
 /*

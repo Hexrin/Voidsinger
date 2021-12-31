@@ -110,13 +110,13 @@ public:
 
 	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintCallable)
-	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
+	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false, bool bCostPixels = true);
 	//Maybe the parameter shouldn't be called "PartialPartShape" becuase it might happen to be adding an entire part. It should probably be renamed to "PartShape" or "Shape" -Mabel Suggestion
-	bool AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
+	bool AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false, bool bCostPixels = true);
 
 	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintCallable)
-	bool RemovePart(FIntPoint Location, bool CheckForBreaks = true);
+	bool RemovePart(FIntPoint Location, bool CheckForBreaks = true, bool bRefundPixels = true);
 
 	//---Destruction---
 
@@ -254,7 +254,7 @@ public:
 	*/ 
 	//Builds a ship with the given parts
 	UFUNCTION(BlueprintCallable)
-	void BuildShip(TArray<FSavePartInfo> Parts);
+	void BuildShip(TArray<FSavePartInfo> Parts, bool bCostPixels = true);
 
 	//Saves a ship to a save game object
 	UFUNCTION(BlueprintCallable)
@@ -264,8 +264,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool LoadSavedShip(FString ShipName);
 
+	FString ShipSaveSlotNamePrefix = TEXT("Ship_");
+	
+	
 	//---Getters---
-
 	//Comment -Mabel Suggestion
 	UFUNCTION(BlueprintPure)
 	const FVector2D CalcCenterOfMass();

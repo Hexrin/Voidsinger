@@ -77,19 +77,19 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 //Adds a complete part to the part grid
 //I like how you commented the cpp but not the h -Mabel Suggestion
-bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
+bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace, bool bCostPixels)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("part type %s"), *PartType->GetFName().ToString());
 	if (IsValid(PartType))
 	{
 		TSet<FIntPoint> PartialPartShape = PartType.GetDefaultObject()->GetDesiredShape(Rotation);
-		return AddPart(PartialPartShape, PartType, Location, Rotation, bAlwaysPlace);
+		return AddPart(PartialPartShape, PartType, Location, Rotation, bAlwaysPlace, bCostPixels);
 	}
 	return false;
 }
 
 //Adds a partial part to PartPrid
-bool UPartGridComponent::AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
+bool UPartGridComponent::AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace, bool bCostPixels)
 {
 	if (!IsValid(PartType))
 	{
@@ -127,7 +127,7 @@ bool UPartGridComponent::AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<U
 			&&
 
 			//If on the player then check to see if they have enough pixels and withdraw them.
-			(Ship->GetFaction() != EFactions::Player || (IsValid(GameInstance) && GameInstance->WithdrawPixels(PartType.GetDefaultObject()->GetCost())))
+			(!bCostPixels || Ship->GetFaction() != EFactions::Player || (IsValid(GameInstance) && GameInstance->WithdrawPixels(PartType.GetDefaultObject()->GetCost())))
 		)
 		{
 
@@ -214,7 +214,7 @@ bool UPartGridComponent::AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<U
 }
 
 //Remove an entire part. Returns True if a part was destroyed
-bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
+bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks, bool bRefundPixels)
 {
 	//Check if location is valid
 	if (PartGrid.Contains(Location))
@@ -226,7 +226,10 @@ bool UPartGridComponent::RemovePart(FIntPoint Location, bool CheckForBreaks)
 			FIntPoint PartLoc = PartToRemove->GetPartGridLocation();
 
 			//Refund Part Value
-			Cast<UVoidsingerGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->DepositPixels(PartToRemove->GetCost());
+			if (bRefundPixels)
+			{
+				Cast<UVoidsingerGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->DepositPixels(PartToRemove->GetCost());
+			}
 			Ship->PixelValue -= PartToRemove->GetCost();
 
 			//Iterate though the shape of PartToRemove and remove them from the part grid
@@ -1017,19 +1020,19 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& Dama
 }
 
 //Comment -Mabel Suggestion
-void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts)
+void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts, bool bCostPixels)
 {
 	TArray<FIntPoint> AllParts = PartGrid.GetKeyArray();
 
 	for (auto& i : AllParts)
 	{
-		RemovePart(i, false);
+		RemovePart(i, false, bCostPixels);
 	}
 	for (int i = 0; i < Parts.Num(); i++)
 	{
 		//Debug
 		//UE_LOG(LogTemp, Warning, TEXT("build ship part class %s"), *Parts[i].PartClass.Get()->GetDisplayNameText().ToString())
-		AddPart(Parts[i].PartClass, Parts[i].PartLocation, Parts[i].PartRotation, false);
+		AddPart(Parts[i].PartClass, Parts[i].PartLocation, Parts[i].PartRotation, false, bCostPixels);
 	}
 }
 
@@ -1047,17 +1050,17 @@ void UPartGridComponent::SaveShip(FString ShipName)
 	{
 		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i].Part->GetClass(), Parts[i].Part->GetPartGridLocation(), Parts[i].Part->GetRelativeRotation()));
 	}
-	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipName, 0);
+	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipSaveSlotNamePrefix + ShipName, 0);
 
 }
 
 //Comment -Mabel Suggestion
 bool UPartGridComponent::LoadSavedShip(FString ShipName)
 {
-	USaveGame* SaveGameInstance = UGameplayStatics::LoadGameFromSlot(ShipName, 0);
+	USaveGame* SaveGameInstance = UGameplayStatics::LoadGameFromSlot(ShipSaveSlotNamePrefix + ShipName, 0);
 	if (IsValid(SaveGameInstance))
 	{
-		BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip);
+		BuildShip(Cast<USaveShip>(SaveGameInstance)->SavedShip, false);
 		return true;
 	}
 	else

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
+//#include "Parts/BasePart.h"
 #include "VoidsingerTypes.generated.h"
 
 class UBaseResourceSystem;
@@ -145,38 +146,6 @@ struct VOIDSINGER_API FUBasePartArray
 };
 
 //Comment -Mabel Suggestion
-USTRUCT(BlueprintType)
-struct VOIDSINGER_API FSavePartInfo
-{
-	GENERATED_BODY()
-
-	//Comment -Mabel Suggestion
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UBasePart> PartClass;
-
-	//Comment -Mabel Suggestion
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FIntPoint PartLocation;
-
-	//Comment -Mabel Suggestion
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float PartRotation;
-
-	//Comment -Mabel Suggestion
-	FSavePartInfo()
-	{
-		FSavePartInfo(nullptr, FIntPoint(), 0);
-	}
-
-	//Comment -Mabel Suggestion
-	FSavePartInfo(TSubclassOf<UBasePart> Class, FIntPoint Location, float Rotation)
-	{
-
-		PartClass = Class;
-		PartLocation = Location;
-		PartRotation = Rotation;
-	}
-};
 
 USTRUCT(BlueprintType)
 struct FTextureDataTable : public FTableRowBase

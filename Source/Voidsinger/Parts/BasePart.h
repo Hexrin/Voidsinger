@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/StarSystemGameMode.h"
 #include "Voidsinger/FunctionLibrary.h"
 #include "BasePart.generated.h"
