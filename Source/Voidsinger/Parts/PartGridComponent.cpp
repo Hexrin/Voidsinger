@@ -1020,7 +1020,7 @@ bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& Dama
 }
 
 //Comment -Mabel Suggestion
-void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts, bool bCostPixels)
+void UPartGridComponent::BuildShip(TSet<FSavePartInfo> Parts, bool bCostPixels)
 {
 	TArray<FIntPoint> AllParts = PartGrid.GetKeyArray();
 
@@ -1028,11 +1028,11 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts, bool bCostPixels
 	{
 		RemovePart(i, false, bCostPixels);
 	}
-	for (int i = 0; i < Parts.Num(); i++)
+	for (FSavePartInfo PartInfo : Parts)
 	{
 		//Debug
 		//UE_LOG(LogTemp, Warning, TEXT("build ship part class %s"), *Parts[i].PartClass.Get()->GetDisplayNameText().ToString())
-		AddPart(Parts[i].PartClass, Parts[i].PartLocation, Parts[i].PartRotation, false, bCostPixels);
+		AddPart(PartInfo.PartShape, PartInfo.PartClass, PartInfo.PartLocation, PartInfo.PartRotation, false, bCostPixels);
 	}
 }
 
@@ -1040,16 +1040,14 @@ void UPartGridComponent::BuildShip(TArray<FSavePartInfo> Parts, bool bCostPixels
 void UPartGridComponent::SaveShip(FString ShipName)
 {
 	
-	TArray<FPartData> Parts = PartGrid.GetValueArray();
-
-	
-	
+	TSet<FPartData> Parts = TSet<FPartData>(PartGrid.GetValueArray());
 	USaveGame* SaveGameInstance = UGameplayStatics::CreateSaveGameObject(USaveShip::StaticClass());
 
-	for (int i = 0; i < Parts.Num(); i++)
+	for (FPartData Part : Parts)
 	{
-		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Parts[i].Part->GetClass(), Parts[i].Part->GetPartGridLocation(), Parts[i].Part->GetRelativeRotation()));
+		Cast<USaveShip>(SaveGameInstance)->SavedShip.Add(FSavePartInfo(Part.Part));
 	}
+
 	UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, ShipSaveSlotNamePrefix + ShipName, 0);
 
 }

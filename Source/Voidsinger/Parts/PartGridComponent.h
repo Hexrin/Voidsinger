@@ -83,7 +83,24 @@ public:
 	{
 		return AdjacencyIndex;
 	}
+
+	bool operator==(const FPartData& Other) const
+	{
+		return Part == Other.Part && DynamicMat == Other.DynamicMat && AdjacencyIndex == Other.AdjacencyIndex && Temperature == Other.Temperature;
+	}
 };
+
+//Hash function for FPartData
+#if UE_BUILD_DEBUG
+uint32 GetTypeHash(const FPartData& Thing);
+#else // optimize by inlining in shipping and development builds
+FORCEINLINE uint32 GetTypeHash(const FPartData& Thing)
+{
+	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FPartData));
+	return Hash;
+}
+#endif
+
 
 //Comment the class maybe? -Mabel Suggestion
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
@@ -254,7 +271,7 @@ public:
 	*/ 
 	//Builds a ship with the given parts
 	UFUNCTION(BlueprintCallable)
-	void BuildShip(TArray<FSavePartInfo> Parts, bool bCostPixels = true);
+	void BuildShip(TSet<FSavePartInfo> Parts, bool bCostPixels = true);
 
 	//Saves a ship to a save game object
 	UFUNCTION(BlueprintCallable)

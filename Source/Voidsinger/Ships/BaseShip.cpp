@@ -41,11 +41,11 @@ ABaseShip::ABaseShip()
 void ABaseShip::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	//Debug... OH NO! -Mabel Suggestion
-	//UE_LOG(LogTemp, Warning, TEXT("Default parts num %i"), DefaultParts.Num())
 
-	PartGrid->BuildShip(DefaultParts);
+	if (PartGrid->GetPartGrid().Num() == 0)
+	{
+		PartGrid->BuildShip(DefaultParts, false);
+	}
 }
 
 // Called every frame
@@ -464,7 +464,7 @@ void ABaseShip::SaveEditorShip()
 	//Bad name. It implies that it is storing a return value or a pass by refernce - Liam Suggestion
 	TArray<FPartData> OutArray = PartGrid->GetPartGrid().GetValueArray();;
 	
-	TArray<FSavePartInfo> InfoToSave;
+	TSet<FSavePartInfo> InfoToSave;
 	//Part set unnecessary. You can use AddUnquie() instead. - Liam Suggestion
 	TSet<UBasePart*> PartSet;
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
@@ -472,7 +472,7 @@ void ABaseShip::SaveEditorShip()
 	{
 		if (!PartSet.Contains(i.Part))
 		{
-			InfoToSave.Emplace(FSavePartInfo(i.Part->GetClass(), i.Part->GetPartGridLocation(), i.Part->GetRelativeRotation()));
+			InfoToSave.Emplace(FSavePartInfo(i.Part));
 			PartSet.Emplace(i.Part);
 		}
 	}

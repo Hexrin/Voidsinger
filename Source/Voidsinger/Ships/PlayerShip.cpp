@@ -119,7 +119,6 @@ void APlayerShip::BeginPlay()
 
     if (!PartGrid->LoadSavedShip(CurrentShipSaveSlotName))
     {
-        PartGrid->BuildShip(DefaultParts);
         PartGrid->SaveShip(TargetShipSaveSlotName);
         PartGrid->SaveShip(CurrentShipSaveSlotName);
     }
@@ -246,6 +245,7 @@ void APlayerShip::Damaged(UBasePart* Part)
         GetIsDamagedSave()->IsDamaged = true;
         UGameplayStatics::SaveGameToSlot(GetIsDamagedSave(), IsDamagedSaveSlotName, 0);
     }
+    PartGrid->SaveShip(CurrentShipSaveSlotName);
 }
 
 void APlayerShip::RepairShip()

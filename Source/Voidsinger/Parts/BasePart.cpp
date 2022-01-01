@@ -344,11 +344,6 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc, bool bCallDamagedEvents)
 		UE_LOG(LogTemp, Error, TEXT("Destroy part pixel location not valid : % s"), *RelativeLoc.ToString());
 	}
 	ActualShape.Remove(RelativeLoc);
-	if (bCallDamagedEvents)
-	{
-		OnDamaged();
-		GetShip()->OnDamaged.Broadcast(this);
-	}
 
 	TArray<UBaseResourceSystem*> CurrentSystems = Systems;
 	if (IsFunctional())
@@ -374,6 +369,13 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc, bool bCallDamagedEvents)
 			i->RemovePixel(RelativeLoc + GetPartGridLocation());
 		}
 	}
+
+	if (bCallDamagedEvents)
+	{
+		OnDamaged();
+		GetShip()->OnDamaged.Broadcast(this);
+	}
+
 	if (ActualShape.Num() <= 0 || !IsValid(GetShip()))
 	{
 		OnDestroyed();

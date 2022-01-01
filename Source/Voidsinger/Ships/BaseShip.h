@@ -319,7 +319,7 @@ public:
 	* - Liam suggestion
 	*/ 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FSavePartInfo> DefaultParts;
+	TSet<FSavePartInfo> DefaultParts;
 
 
 	/*-Movement Control-*\

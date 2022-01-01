@@ -133,6 +133,9 @@ public:
 
 	void RemoveSection(TGridMap<FPartData> RemovedSection);
 
+	UFUNCTION()
+	FORCEINLINE TArray<UBasePart*> GetConnectedParts() { return ConnectedParts; };
+
 protected:
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
