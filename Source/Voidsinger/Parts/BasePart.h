@@ -313,6 +313,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText PartName;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bIsPlacable{ true };
+
 protected:
 	//Stores the cost to place the part in Pixels
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
