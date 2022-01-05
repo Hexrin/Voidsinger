@@ -184,7 +184,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 								RemovedGridMap.Emplace(j, ResourceSystemGrid.FindRef(j));
 							}
 
-							if (!RemovedGridMap.Num() == 0)
+							if (RemovedGridMap.Num() != 0)
 							{
 								GetOwningShip();
 								RemoveSection(RemovedGridMap);
