@@ -93,7 +93,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 		UE_LOG(LogTemp, Warning, TEXT("grid contains the pixel removed + pixel should be removed?"));
 		UE_LOG(LogTemp, Warning, TEXT("resource system grid num %i"), ResourceSystemGrid.Num());
 
-		if (!ResourceSystemGrid.Num() == 0)
+		if (ResourceSystemGrid.Num() != 0)
 		{
 
 
