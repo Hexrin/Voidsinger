@@ -4,7 +4,7 @@
 #include "PixelMoldEditor.h"
 
 //Constucts a UPixelMoldEditor and initializes its save games.
-UPixelMoldEditor::UPixelMoldEditor()
+void UPixelMoldEditor::NativeOnInitialized()
 {
 	MoldNamesSave = Cast<USlotNamesSave>(UGameplayStatics::LoadGameFromSlot(MoldNamesSaveSlotName, 0));
 	if (!MoldNamesSave)

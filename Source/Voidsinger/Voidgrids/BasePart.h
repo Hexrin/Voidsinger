@@ -157,7 +157,11 @@ public:
 	 */
 	static UBasePart* CreatePart(AVoidgrid* OwningVoidgrid, FPartData PartData);
 
-	//Gets a pointer to the Voidgrid this is a part of.
+	/**
+	 * Gets the Voidgrid this is a part of.
+	 * 
+	 * @return A pointer to the Voidgrid this is a part of.
+	 */
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE AVoidgrid* GetVoidgrid() { return Voidgrid; };
 
@@ -308,12 +312,12 @@ public:
 	 * @return The material used to render the pixels of this.
 	 */
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE UMaterialInterface* GetMaterial() { return Material; };
+	FORCEINLINE UTexture* GetTexture() { return Texture; };
 
 protected:
 	//Stores the material used to render the pixels of this.
-	UPROPERTY(EditDefaultsOnly)
-	UMaterialInterface* Material;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UTexture* Texture;
 };
 
 /**

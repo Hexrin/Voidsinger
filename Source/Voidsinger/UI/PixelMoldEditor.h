@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/Widget.h"
+#include "Blueprint/UserWidget.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 #include "GameFramework/SaveGame.h"
 #include "PixelMoldEditor.generated.h"
@@ -12,13 +12,12 @@
  * A widget to editing, saveing and loading pixel molds
  */
 UCLASS()
-class VOIDSINGER_API UPixelMoldEditor : public UWidget
+class VOIDSINGER_API UPixelMoldEditor : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	//Constucts a UPixelMoldEditor and initializes its save games.
-	UPixelMoldEditor();
+	virtual void NativeOnInitialized() override;
 protected:
 	//Stores the Voidgrid this is editing.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

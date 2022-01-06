@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "UObject/UObjectGlobals.h"
 #include "GridMap.h"
 #include "BasePart.h"
 #include "ProceduralMeshComponent.h"
@@ -27,6 +28,11 @@ public:
 	//Constructs a FGridPixelData using a part.
 	FGridPixelData(UBasePart* PartOfPixel = nullptr, bool bPixelIntact = false)
 	{
+		if (PartOfPixel)
+		{
+			Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), PartOfPixel->GetOuter());
+		}
+		
 		SetTargetPart(PartOfPixel);
 		SetCurrentPart(PartOfPixel);
 		SetIntact(bPixelIntact);
@@ -97,9 +103,9 @@ public:
 	 */
 	FGridPixelData SetCurrentPart(UBasePart* NewPart)
 	{
-		if (NewPart && NewPart->GetMaterial())
+		if (Material && NewPart && NewPart->GetTexture())
 		{
-			Material = UMaterialInstanceDynamic::Create(NewPart->GetMaterial(), NewPart);
+			Material->SetTextureParameterValue(TEXT("PartTexture"), NewPart->GetTexture());
 		}
 		CurrentPart = NewPart;
 		return *this;
@@ -147,7 +153,7 @@ private:
 
 	//Stores a pointer to the material of this pixel.
 	UPROPERTY(EditDefaultsOnly)
-	UMaterialInterface* Material;
+	UMaterialInstanceDynamic* Material;
 };
 
 //Used for disbatching events requireing a grid locaiton
