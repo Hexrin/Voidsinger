@@ -142,9 +142,11 @@ public:
 UCLASS(BlueprintType, Blueprintable, Config=Game)
 class VOIDSINGER_API UBasePart : public UObject/*, public FTickableGameObject, public IActivateInterface*/
 {
-
 	GENERATED_BODY()
 
+
+	//Part Editor is used to change the defaults of a part.
+	friend class UPartEditor;
 public:
 	/**
 	 * Creates and initilizes a new part.
