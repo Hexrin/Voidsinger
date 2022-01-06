@@ -6,54 +6,52 @@
 #include "Voidgrid.h"
 
 /**
- * Applies a given rotation to a given IntPoint.
+ * Applies a given rotation to a given location.
  *
- * @param Target - The IntPoint to rotate.
+ * @param GridLocation - The location to rotate.
  * @param Rotation - The rotation to apply.
- * @return The rotated IntPoint.
+ * @return The rotated location.
  */
-UFUNCTION(BlueprintPure)
-FIntPoint UBasePartTypesLibrary::PartRotateIntPoint(FIntPoint Target, EPartRotation Rotation)
+GridLocationType UPartRotationFunctions::RotateGridLocation(GridLocationType GridLocation, EPartRotation Rotation)
 {
 	switch (Rotation)
 	{
 	case EPartRotation::PR_0Degrees:
-		return Target;
+		return GridLocation;
 	case EPartRotation::PR_90Degrees:
-		return FIntPoint(-Target.Y, Target.X);
+		return FIntPoint(-GridLocation.Y, GridLocation.X);
 	case EPartRotation::PR_180Degrees:
-		return Target * -1;
+		return GridLocation * -1;
 	case EPartRotation::PR_270Degrees:
-		return FIntPoint(Target.Y, -Target.X);
+		return FIntPoint(GridLocation.Y, -GridLocation.X);
 	default:
-		UE_LOG(LogTemp, Error, TEXT("PartRotateIntPoint invalid Rotation"));
-		return Target;
+		UE_LOG(LogTemp, Error, TEXT("RotateGridLocation invalid Rotation"));
+		return GridLocation;
 	}
 }
 
 /**
- * Undoes a given rotation on a given IntPoint.
+ * Undoes a given rotation on a given location.
  *
- * @param Target - The IntPoint to unrotate.
+ * @param GridLocation - The location to unrotate.
  * @param Rotation - The rotation to undo.
- * @return The unrotated IntPoint.
+ * @return The unrotated location.
  */
-UFUNCTION(BlueprintPure)
-FIntPoint UBasePartTypesLibrary::PartUnRotateIntPoint(FIntPoint Target, EPartRotation Rotation)
+GridLocationType UPartRotationFunctions::UnrotateGridLocation(GridLocationType GridLocation, EPartRotation Rotation)
 {
 	switch (Rotation)
 	{
 	case EPartRotation::PR_0Degrees:
-		return Target;
+		return GridLocation;
 	case EPartRotation::PR_90Degrees:
-		return FIntPoint(Target.Y, -Target.X);
+		return FIntPoint(GridLocation.Y, -GridLocation.X);
 	case EPartRotation::PR_180Degrees:
-		return Target * -1;
+		return GridLocation * -1;
 	case EPartRotation::PR_270Degrees:
-		return FIntPoint(-Target.Y, Target.X);
+		return FIntPoint(-GridLocation.Y, GridLocation.X);
 	default:
-		UE_LOG(LogTemp, Error, TEXT("PartRotateIntPoint invalid Rotation"));
-		return Target;
+		UE_LOG(LogTemp, Error, TEXT("UnrotateGridLocation invalid Rotation"));
+		return GridLocation;
 	}
 }
 
@@ -294,18 +292,18 @@ UNullPart* UNullPart::Get()
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const FArrayBounds UBasePart::GetPartBounds()
+//const FIntBoxBounds UBasePart::GetPartBounds()
 //{
 //	return GetPartBounds(Rotation);
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const FArrayBounds UBasePart::GetPartBounds(float Rot)
+//const FIntBoxBounds UBasePart::GetPartBounds(float Rot)
 //{
 //	//Couldn't you just rotate the current Bounds variable with the parts current rotation
 //	//instead of recalculating the bounds? If you do want to recalculate
 //	//bounds this function should be renamed "RecalculateBounds" -Mabel Suggestion
-//	if ((Bounds.LowerBounds == FArrayBounds().LowerBounds && Bounds.UpperBounds == FArrayBounds().UpperBounds) || this == this->GetClass()->GetDefaultObject())
+//	if ((Bounds.LowerBounds == FIntBoxBounds().LowerBounds && Bounds.UpperBounds == FIntBoxBounds().UpperBounds) || this == this->GetClass()->GetDefaultObject())
 //	{
 //		
 //		for (FIntPoint i : GetDesiredShape(Rot))

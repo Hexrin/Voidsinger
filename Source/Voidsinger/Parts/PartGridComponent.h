@@ -289,7 +289,7 @@
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintPure)
-//	const FArrayBounds GetPartGridBounds();
+//	const FIntBoxBounds GetPartGridBounds();
 //
 //	//Misc
 //
@@ -320,7 +320,7 @@
 //
 //	//Comment -Mabel Suggestion
 //	UPROPERTY()
-//	FArrayBounds GridBounds;
+//	FIntBoxBounds GridBounds;
 //
 //	//Comment -Mabel Suggestion
 //	//You sure this should be edit anywhere and not edit defaults only?

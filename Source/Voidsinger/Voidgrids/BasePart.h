@@ -17,43 +17,38 @@ typedef TSet<GridLocationType> PartShapeType;
 UENUM(BlueprintType)
 enum class EPartRotation : uint8
 {
-	PR_0Degrees		UMETA(DisplayName = "0°"),
-	PR_90Degrees	UMETA(DisplayName = "90°"),
-	PR_180Degrees	UMETA(DisplayName = "180°"),
-	PR_270Degrees	UMETA(DisplayName = "270°"),
+	PR_0Degrees		UMETA(DisplayName = "0 Degrees"),
+	PR_90Degrees	UMETA(DisplayName = "90 Degrees"),
+	PR_180Degrees	UMETA(DisplayName = "180 Degrees"),
+	PR_270Degrees	UMETA(DisplayName = "270 Degrees"),
 };
 
 /**
  * Handels Base Part Type operations.
  */
-UCLASS()
-class VOIDSINGER_API UBasePartTypesLibrary : public UObject
+class VOIDSINGER_API UPartRotationFunctions
 {
-	GENERATED_BODY()
-
-		/* -------------------- *\
-		\* \/ Part Transform \/ */
+	/* -------------------- *\
+	\* \/ Part Transform \/ */
 
 public:
 	/**
-	 * Applies a given rotation to a given IntPoint.
+	 * Applies a given rotation to a given location.
 	 *
-	 * @param Target - The IntPoint to rotate.
+	 * @param Target - The location to rotate.
 	 * @param Rotation - The rotation to apply.
-	 * @return The rotated IntPoint.
+	 * @return The rotated location.
 	 */
-	UFUNCTION(BlueprintPure)
-	static FIntPoint PartRotateIntPoint(FIntPoint Target, EPartRotation Rotation);
+	static GridLocationType RotateGridLocation(GridLocationType GridLocation, EPartRotation Rotation);
 
 	/**
-	 * Undoes a given rotation on a given IntPoint.
+	 * Undoes a given rotation on a given location.
 	 *
-	 * @param Target - The IntPoint to rotate.
-	 * @param Rotation - The rotation to Undos.
-	 * @return The unrotated IntPoint.
+	 * @param Target - The location to rotate.
+	 * @param Rotation - The rotation to undo.
+	 * @return The unrotated location.
 	 */
-	UFUNCTION(BlueprintPure)
-	static FIntPoint PartUnRotateIntPoint(FIntPoint Target, EPartRotation Rotation);
+	static GridLocationType UnrotateGridLocation(GridLocationType GridLocation, EPartRotation Rotation);
 
 	/* /\ Part Transform /\ *\
 	\* -------------------- */
@@ -99,7 +94,7 @@ public:
 
 	GridLocationType TransformGridLocation(GridLocationType Target)
 	{
-		return UBasePartTypesLibrary::PartRotateIntPoint(Target, Rotation) + GetGridLocation();
+		return UPartRotationFunctions::RotateGridLocation(Target, Rotation) + GetGridLocation();
 	}
 
 	PartShapeType TransformPartShape(PartShapeType Shape)
@@ -115,7 +110,7 @@ public:
 
 	GridLocationType InverseTransformGridLocation(GridLocationType Target)
 	{
-		return UBasePartTypesLibrary::PartUnRotateIntPoint(Target - GetGridLocation(), Rotation);
+		return UPartRotationFunctions::UnrotateGridLocation(Target - GetGridLocation(), Rotation);
 	}
 
 	PartShapeType InverseTransformPartShape(PartShapeType Shape)
@@ -536,8 +531,8 @@ FORCEINLINE uint32 GetTypeHash(const FPartData& Thing)
 //	//Gets the outer bounds of the part
 //	//Should the name of this function have the word "Part" in it? Isn't it implied that it would be the part bounds? -Mabel Suggestion
 //	UFUNCTION(BlueprintPure)
-//	const FArrayBounds GetPartBounds();
-//	const FArrayBounds GetPartBounds(float Rot);
+//	const FIntBoxBounds GetPartBounds();
+//	const FIntBoxBounds GetPartBounds(float Rot);
 //
 //	//Gets the location of the origin of the part relative to the part grid
 //	// Isn't it implied that it would be the origin of the part? -Mabel Suggestion
@@ -760,7 +755,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartData& Thing)
 //
 //	//Stores the bounds of the part
 //	UPROPERTY()
-//	FArrayBounds Bounds;
+//	FIntBoxBounds Bounds;
 //
 //	//Stores whether or not the part is functional
 //	UPROPERTY()

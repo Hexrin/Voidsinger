@@ -184,7 +184,7 @@
 //	FTransform Start = Ship->GetActorTransform();
 //	FQuat TraceRot = Start.GetRotation();
 //
-//	FArrayBounds ShipBounds = Ship->PartGrid->GetPartGridBounds();
+//	FIntBoxBounds ShipBounds = Ship->PartGrid->GetPartGridBounds();
 //
 //	//Comment math -Mabel Suggestion
 //	FVector BoundsExtent = FVector(FVector2D(ShipBounds.UpperBounds - ShipBounds.LowerBounds) / 2, 0.5);

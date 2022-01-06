@@ -64,32 +64,35 @@
 //	}
 //};
 //
-//Comment -Mabel Suggestion
-//Is this ever used outside of the part grid? If not, move it to the part grid -Mabel Suggestion
+
+
+/**
+ * Stores the bounds of a 2D Box measured using Ints
+ */
 USTRUCT(BlueprintType)
-struct VOIDSINGER_API FArrayBounds
+struct VOIDSINGER_API FIntBoxBounds
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FIntPoint LowerBounds = FIntPoint(0);
+	FIntPoint LowerBounds = FIntPoint::ZeroValue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FIntPoint UpperBounds = FIntPoint(0);
+	FIntPoint UpperBounds = FIntPoint::ZeroValue;
 
-	FArrayBounds()
+	FIntBoxBounds()
 	{
-		LowerBounds = FIntPoint(0, 0);
-		UpperBounds = FIntPoint(0, 0);
+		LowerBounds = FIntPoint::ZeroValue;
+		UpperBounds = FIntPoint::ZeroValue;
 	}
 
-	FArrayBounds(FIntPoint Lower, FIntPoint Upper)
+	FIntBoxBounds(FIntPoint Lower, FIntPoint Upper)
 	{
 		LowerBounds = Lower;
 		UpperBounds = Upper;
 	}
 
-	FArrayBounds(int32 LowerX, int32 LowerY, int32 UpperX, int32 UpperY)
+	FIntBoxBounds(int32 LowerX, int32 LowerY, int32 UpperX, int32 UpperY)
 	{
 		LowerBounds = FIntPoint(LowerX, LowerY);
 		UpperBounds = FIntPoint(UpperX, UpperY);

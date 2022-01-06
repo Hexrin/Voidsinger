@@ -20,7 +20,7 @@
 //	//Initialize Variables
 //	//Could GridBounds and GridHalfSize be done in the h file? Why is grid half size 250? that shouldn't be hard
 //	//coded -Mabel Suggestion
-//	GridBounds = FArrayBounds(FIntPoint(0, 0), FIntPoint(0, 0));
+//	GridBounds = FIntBoxBounds(FIntPoint(0, 0), FIntPoint(0, 0));
 //	Ship = Cast<ABaseShip>(GetOwner());
 //	GridHalfSize = FIntPoint(250);
 //	
@@ -51,7 +51,7 @@
 //	//Why is this done in the construction script and begin play? -Mabel Suggestion
 //	Ship = Cast<ABaseShip>(GetOwner());
 //	Super::BeginPlay();
-//	GridBounds = FArrayBounds(FIntPoint(0, 0), FIntPoint(0, 0));
+//	GridBounds = FIntBoxBounds(FIntPoint(0, 0), FIntPoint(0, 0));
 //	// ...
 //	
 //}
@@ -111,7 +111,7 @@
 //		//Initalize Variables
 //		//I find it funny that this comment is after the function "InitializeVariables" is called, haha. -Mabel Suggestion
 //		TSet<FIntPoint> DesiredShape = Part->GetDesiredShape();
-//		FArrayBounds PartBounds = Part->GetPartBounds();
+//		FIntBoxBounds PartBounds = Part->GetPartBounds();
 //
 //		AShipPlayerState* PlayerState = Cast<AShipPlayerState>(Ship->GetPlayerState());
 //		//Move this to a new function called IsValidPosition or something, or IsWithinGridBounds idk -Mabel Suggestion
@@ -1158,7 +1158,7 @@
 //}
 //
 ////Comment -Mabel Suggestion
-//const FArrayBounds UPartGridComponent::GetPartGridBounds()
+//const FIntBoxBounds UPartGridComponent::GetPartGridBounds()
 //{
 //	return GridBounds;
 //}
