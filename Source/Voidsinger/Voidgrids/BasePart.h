@@ -152,6 +152,10 @@ public:
 	 */
 	static UBasePart* CreatePart(AVoidgrid* OwningVoidgrid, FPartData PartData);
 
+	//Stores the display name of this.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText PartDisplayName;
+
 	/**
 	 * Gets the Voidgrid this is a part of.
 	 * 
@@ -285,6 +289,36 @@ private:
 	/* /\ Part Shape /\ *\
 	\* ---------------- */
 
+	/* --------------------------- *\
+	\* \/ Part Mold Editor Data \/ */
+
+public:
+	/**
+	 * Gets cost to place the part in Pixels.
+	 * 
+	 * @return The cost to place the part in Pixels. 
+	 */
+	int32 GetCost();
+
+protected:
+	//Stores the cost to place the part in Pixels.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 Cost;
+
+	//Stores whether or not this part is placable by the player.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bPlaceable{ true };
+
+	//Stores whether or not this part can be removed by the player.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bRemovable{ true };
+
+	//Stores whether or not this part can be rotated.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bRotatable{ true };
+
+	/* /\ Part Mold Editor Data /\ *\
+	\* --------------------------- */
 public:
 	/**
 	 * Gets the location and rotation of this.
