@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "EditConfigFiles",
+	"Description": "Allows for easy editing of config files for user-created classes",
+	"Category": "Other",
+	"CreatedBy": "Hexrin",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "EditConfigFiles",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
