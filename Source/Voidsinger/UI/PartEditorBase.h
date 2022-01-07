@@ -3,15 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EditorUtilityWidget.h"
 #include "Voidsinger/Voidgrids/BasePart.h"
-#include "PartEditor.generated.h"
+#include "EditorUtilityWidget.h"
+#include "PartEditorBase.generated.h"
 
 /**
- * A Widget for editing part defaults, shape, and resouce systems.
+ * 
  */
 UCLASS()
-class VOIDSINGER_API UPartEditor : public UEditorUtilityWidget
+class VOIDSINGER_API UPartEditorBase : public UEditorUtilityWidget
 {
 	GENERATED_BODY()
 

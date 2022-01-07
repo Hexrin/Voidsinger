@@ -1,11 +1,14 @@
-#include "PartEditor.h"
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "PartEditorBase.h"
 
 /**
  * Gets the mutable default of the part this is curently editing.
  *
  * @return The mutable default of the part this is curently editing.
  */
-UBasePart* UPartEditor::GetMutableDefaultPart()
+UBasePart* UPartEditorBase::GetMutableDefaultPart()
 {
 	return GetMutableDefault<UBasePart>(PartBeingEdited);
 }
@@ -15,7 +18,7 @@ UBasePart* UPartEditor::GetMutableDefaultPart()
  *
  * @return The locations of all the pixels of the shape.
  */
-TArray<FIntPoint> UPartEditor::GetPartShape()
+TArray<FIntPoint> UPartEditorBase::GetPartShape()
 {
 	return GetMutableDefaultPart()->DefaultShape.Array();
 }
@@ -25,7 +28,7 @@ TArray<FIntPoint> UPartEditor::GetPartShape()
  *
  * @param NewShape - The locations of all the pixels of the shape.
  */
-void UPartEditor::SetPartShape(TArray<FIntPoint> NewShape)
+void UPartEditorBase::SetPartShape(TArray<FIntPoint> NewShape)
 {
 	GetMutableDefaultPart()->DefaultShape = TSet<FIntPoint>(NewShape);
 	SavePart();
@@ -36,7 +39,7 @@ void UPartEditor::SetPartShape(TArray<FIntPoint> NewShape)
  *
  * @param PixelLocation - The location of the pixel to add.
  */
-void UPartEditor::AddPixelToPartShape(FIntPoint PixelLocation)
+void UPartEditorBase::AddPixelToPartShape(FIntPoint PixelLocation)
 {
 	GetMutableDefaultPart()->DefaultShape.Add(PixelLocation);
 	SavePart();
@@ -47,7 +50,7 @@ void UPartEditor::AddPixelToPartShape(FIntPoint PixelLocation)
  *
  * @param PixelLocation - The location of the pixel to remove.
  */
-void UPartEditor::RemovePixelFromPartShape(FIntPoint PixelLocation)
+void UPartEditorBase::RemovePixelFromPartShape(FIntPoint PixelLocation)
 {
 	GetMutableDefaultPart()->DefaultShape.Remove(PixelLocation);
 	SavePart();
@@ -56,7 +59,7 @@ void UPartEditor::RemovePixelFromPartShape(FIntPoint PixelLocation)
 /**
  * Saves any changes made to the mutable default part.
  */
-void UPartEditor::SavePart()
+void UPartEditorBase::SavePart()
 {
 	GetMutableDefaultPart()->UpdateDefaultConfigFile();
 }

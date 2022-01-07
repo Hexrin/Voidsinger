@@ -141,7 +141,8 @@ class VOIDSINGER_API UBasePart : public UObject/*, public FTickableGameObject, p
 
 
 	//Part Editor is used to change the defaults of a part.
-	friend class UPartEditor;
+	friend class UPartEditorBase;
+
 public:
 	/**
 	 * Creates and initilizes a new part.
