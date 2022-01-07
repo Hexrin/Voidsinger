@@ -134,7 +134,7 @@ public:
  * The virtual repersntaion of a part.
  * Handels part statistics and functionality.
  */
-UCLASS(BlueprintType, Blueprintable, Config=Game)
+UCLASS(BlueprintType, Blueprintable, config=PartDefaults, defaultconfig)
 class VOIDSINGER_API UBasePart : public UObject/*, public FTickableGameObject, public IActivateInterface*/
 {
 	GENERATED_BODY()
@@ -200,14 +200,6 @@ public:
 	 * @return The shape of this part.
 	 */
 	FORCEINLINE PartShapeType GetShape() { return Shape; };
-	
-	//Stores whether this part can be ovrriden when editing the mold.
-	UPROPERTY(Config, EditDefaultsOnly)
-	bool bOverridable{ true };
-
-	//Stores whether this part can be removed from the mold.
-	UPROPERTY(Config, EditDefaultsOnly)
-	bool bRemoveable{ true };
 
 protected:
 	/**
@@ -270,12 +262,16 @@ private:
 	bool bFunctional{ false };
 
 	/**
-	 * Updates shape after a pixel of this part has beein damaged
+	 * Updates shape after a pixel of this part has beein damaged.
+	 * 
+	 * @param Location - The location of the pixel that was damaged.
 	 */
 	void PixelDamaged(GridLocationType Location);
 
 	/**
 	 * Updates shape after a pixel of this part has beein repaired
+	 * 
+	 * @param Location - The location of the pixel that was repaired.
 	 */
 	void PixelRepaired(GridLocationType Location);
 
@@ -298,23 +294,55 @@ public:
 	 * 
 	 * @return The cost to place the part in Pixels. 
 	 */
-	int32 GetCost();
+	FORCEINLINE int32 GetCost() { return Cost; };
+
+	/**
+	 * Gets whether or not this part is placable by the player.
+	 * 
+	 * @return Whether or not this part is placable by the player.
+	 */
+	FORCEINLINE bool IsPlaceable() { return bPlaceable; };
+
+	/**
+	 * Gets whether or not this part can be removed by the player.
+	 *
+	 * @return Whether or not this part can be removed by the player.
+	 */
+	FORCEINLINE bool IsRemovable() { return bRemovable; };
+
+	/**
+	 * Gets whether this part can be ovrriden when editing the mold.
+	 * 
+	 * @return Whether this part can be ovrriden when editing the mold.
+	 */
+	FORCEINLINE bool IsOverridable() { return bOverridable; };
+
+	/**
+	 * Gets whether or not this part can be rotated.
+	 * 
+	 * @return Whether or not this part can be rotated.
+	 */
+	FORCEINLINE bool IsRotatable() { return bRotatable; };
 
 protected:
 	//Stores the cost to place the part in Pixels.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly)
 	int32 Cost;
 
 	//Stores whether or not this part is placable by the player.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly)
 	bool bPlaceable{ true };
 
 	//Stores whether or not this part can be removed by the player.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly)
 	bool bRemovable{ true };
 
+	//Stores whether this part can be ovrriden when editing the mold.
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly)
+	bool bOverridable{ true };
+
 	//Stores whether or not this part can be rotated.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly)
 	bool bRotatable{ true };
 
 	/* /\ Part Mold Editor Data /\ *\

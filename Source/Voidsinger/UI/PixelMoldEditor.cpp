@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Kismet/GameplayStatics.h"
 #include "PixelMoldEditor.h"
+#include "Kismet/GameplayStatics.h"
+
 
 //Constucts a UPixelMoldEditor and initializes its save games.
 void UPixelMoldEditor::NativeOnInitialized()
@@ -97,12 +98,12 @@ TArray<FString> UPixelMoldEditor::GetAllMoldNames()
 bool UPixelMoldEditor::PlacePart(TSubclassOf<UBasePart> Part, FPartTransform Transform, bool bOverrridePriorParts)
 {
 	TSet<FMinimalPartData> PartsToRemove = TSet<FMinimalPartData>();
-	for (GridLocationType ShapeComponent : Cast<UBasePart>(Part->GetDefaultObject())->GetDefaultShape())
+	for (GridLocationType ShapeComponent : Part.GetDefaultObject()->GetDefaultShape())
 	{
 		GridLocationType ShapeComonentGirdLocation = Transform.TransformGridLocation(ShapeComponent);
 		if (PartLocations.Contains(ShapeComonentGirdLocation))
 		{
-			if (bOverrridePriorParts && Cast<UBasePart>(Part->GetDefaultObject())->bOverridable && Cast<UBasePart>(Part->GetDefaultObject())->bRemoveable)
+			if (bOverrridePriorParts && Part.GetDefaultObject()->IsOverridable() && Part.GetDefaultObject()->IsRemovable())
 			{
 				PartsToRemove.Add(PartLocations.FindRef(ShapeComonentGirdLocation));
 			}
@@ -119,7 +120,7 @@ bool UPixelMoldEditor::PlacePart(TSubclassOf<UBasePart> Part, FPartTransform Tra
 	}
 
 	Mold.Add(FMinimalPartData(Part, Transform));
-	for (GridLocationType ShapeComponent : Cast<UBasePart>(Part->GetDefaultObject())->GetDefaultShape())
+	for (GridLocationType ShapeComponent : Part.GetDefaultObject()->GetDefaultShape())
 	{
 		PartLocations.Emplace(Transform.TransformGridLocation(ShapeComponent));
 	}
@@ -162,7 +163,7 @@ bool UPixelMoldEditor::RemovePart(FIntPoint Location, bool bCallUpdatedEvent)
 	}
 
 	FMinimalPartData PartToRemove = PartLocations.FindRef(Location);
-	for (GridLocationType ShapeComponent : Cast<UBasePart>(PartToRemove.Class->GetDefaultObject())->GetDefaultShape())
+	for (GridLocationType ShapeComponent : PartToRemove.Class.GetDefaultObject()->GetDefaultShape())
 	{
 		PartLocations.Remove(PartToRemove.Transform.TransformGridLocation(ShapeComponent));
 	}

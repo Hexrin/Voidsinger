@@ -58,5 +58,5 @@ void UPartEditor::RemovePixelFromPartShape(FIntPoint PixelLocation)
  */
 void UPartEditor::SavePart()
 {
-	GetMutableDefaultPart()->SaveConfig();
+	GetMutableDefaultPart()->UpdateDefaultConfigFile();
 }

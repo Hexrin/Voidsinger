@@ -99,11 +99,21 @@ FMinimalPartData UBasePart::GetMinimalData()
 /* ---------------- *\
 \* \/ Part Shape \/ */
 
+/**
+ * Gets the default shape of this part.
+ *
+ * @return The default shape of this part.
+ */
 PartShapeType UBasePart::GetDefaultShape()
 {
 	return Cast<UBasePart>(StaticClass()->GetDefaultObject())->DefaultShape;
 }
 
+/**
+ * Updates shape after a pixel of this part has beein repaired
+ *
+ * @param Location - The location of the pixel that was repaired.
+ */
 void UBasePart::PixelDamaged(GridLocationType Location)
 {
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
@@ -124,6 +134,11 @@ void UBasePart::PixelDamaged(GridLocationType Location)
 	}
 }
 
+/**
+ * Updates shape after a pixel of this part has beein repaired
+ *
+ * @param Location - The location of the pixel that was repaired.
+ */
 void UBasePart::PixelRepaired(GridLocationType Location)
 {
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);

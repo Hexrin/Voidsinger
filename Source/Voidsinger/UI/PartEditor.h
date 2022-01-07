@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EditorUtilityWidgetBlueprint.h"
+#include "EditorUtilityWidget.h"
 #include "Voidsinger/Voidgrids/BasePart.h"
 #include "PartEditor.generated.h"
 
@@ -11,13 +11,13 @@
  * A Widget for editing part defaults, shape, and resouce systems.
  */
 UCLASS()
-class VOIDSINGER_API UPartEditor : public UEditorUtilityWidgetBlueprint
+class VOIDSINGER_API UPartEditor : public UEditorUtilityWidget
 {
 	GENERATED_BODY()
 
 public:
 	//Stores the part this is currently editing
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TSubclassOf<UBasePart> PartBeingEdited;
 
 	/**
