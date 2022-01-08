@@ -74,11 +74,12 @@ struct VOIDSINGER_API FIntBoxBounds
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FIntPoint LowerBounds = FIntPoint::ZeroValue;
+	FIntPoint LowerBounds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FIntPoint UpperBounds = FIntPoint::ZeroValue;
+	FIntPoint UpperBounds;
 
 	FIntBoxBounds()
 	{
