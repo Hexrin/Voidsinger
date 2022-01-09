@@ -53,13 +53,3 @@ FIntPoint UVoidgridBlueprintUtilityLibrary::InverseTransformGridLocation(FIntPoi
 
 /* /\ Part Transform /\ *\
 \* -------------------- */
-
-/**
- * Gets the default shape of this part.
- *
- * @return An array of all the locations of the pixels in the default shape.
- */
-TArray<FIntPoint> UVoidgridBlueprintUtilityLibrary::GetDefaultShapeArray(TSubclassOf<UBasePart> PartClass)
-{
-	return PartClass.GetDefaultObject()->GetDefaultShape().Array();
-}

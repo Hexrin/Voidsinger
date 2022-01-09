@@ -10,7 +10,11 @@
  */
 UBasePart* UPartEditorBase::GetMutableDefaultPart()
 {
-	return GetMutableDefault<UBasePart>(PartBeingEdited);
+	if (IsValid(PartBeingEdited))
+	{
+		return GetMutableDefault<UBasePart>(PartBeingEdited);
+	}
+	return nullptr;
 }
 
 /**
@@ -20,7 +24,11 @@ UBasePart* UPartEditorBase::GetMutableDefaultPart()
  */
 TArray<FIntPoint> UPartEditorBase::GetPartShape()
 {
-	return GetMutableDefaultPart()->DefaultShape.Array();
+	if (IsValid(GetMutableDefaultPart()))
+	{
+		return GetMutableDefaultPart()->DefaultShape.Array();
+	}
+	return TArray<FIntPoint>();
 }
 
 /**
@@ -30,7 +38,10 @@ TArray<FIntPoint> UPartEditorBase::GetPartShape()
  */
 void UPartEditorBase::SetPartShape(TArray<FIntPoint> NewShape)
 {
-	GetMutableDefaultPart()->DefaultShape = TSet<FIntPoint>(NewShape);
+	if (IsValid(GetMutableDefaultPart()))
+	{
+		GetMutableDefaultPart()->DefaultShape = TSet<FIntPoint>(NewShape);
+	}
 }
 
 /**
@@ -40,7 +51,10 @@ void UPartEditorBase::SetPartShape(TArray<FIntPoint> NewShape)
  */
 void UPartEditorBase::AddPixelToPartShape(FIntPoint PixelLocation)
 {
-	GetMutableDefaultPart()->DefaultShape.Add(PixelLocation);
+	if (IsValid(GetMutableDefaultPart()))
+	{
+		GetMutableDefaultPart()->DefaultShape.Add(PixelLocation);
+	}
 }
 
 /**
@@ -50,7 +64,10 @@ void UPartEditorBase::AddPixelToPartShape(FIntPoint PixelLocation)
  */
 void UPartEditorBase::RemovePixelFromPartShape(FIntPoint PixelLocation)
 {
-	GetMutableDefaultPart()->DefaultShape.Remove(PixelLocation);
+	if (IsValid(GetMutableDefaultPart()))
+	{
+		GetMutableDefaultPart()->DefaultShape.Remove(PixelLocation);
+	}
 }
 
 /**
@@ -58,5 +75,8 @@ void UPartEditorBase::RemovePixelFromPartShape(FIntPoint PixelLocation)
  */
 void UPartEditorBase::SavePart()
 {
-	GetMutableDefaultPart()->UpdateDefaultConfigFile();
+	if (IsValid(GetMutableDefaultPart()))
+	{
+		GetMutableDefaultPart()->UpdateDefaultConfigFile();
+	}
 }

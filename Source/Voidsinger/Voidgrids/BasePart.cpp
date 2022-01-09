@@ -106,7 +106,7 @@ FMinimalPartData UBasePart::GetMinimalData()
  */
 PartShapeType UBasePart::GetDefaultShape()
 {
-	return Cast<UBasePart>(StaticClass()->GetDefaultObject())->DefaultShape;
+	return DefaultShape;
 }
 
 /**

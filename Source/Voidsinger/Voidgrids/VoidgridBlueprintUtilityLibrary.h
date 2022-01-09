@@ -62,12 +62,4 @@ public:
 
 	/* /\ Part Transform /\ *\
 	\* -------------------- */
-
-	/**
-	 * Gets the default shape of this part.
-	 *
-	 * @return An array of all the locations of the pixels in the default shape.
-	 */
-	UFUNCTION(BlueprintPure)
-	static TArray<FIntPoint> GetDefaultShapeArray(TSubclassOf<UBasePart> PartClass);
 };

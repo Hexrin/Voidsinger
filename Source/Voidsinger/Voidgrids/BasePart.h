@@ -73,7 +73,7 @@ public:
 	EPartRotation Rotation;
 
 	//Gets the location of the part.
-	GridLocationType GetGridLocation()
+	GridLocationType GetGridLocation() const
 	{
 		return Location;
 	}
@@ -130,11 +130,22 @@ public:
 	}
 };
 
+//Hash function for FPartTransform
+#if UE_BUILD_DEBUG
+uint32 GetTypeHash(const FPartTransform& Thing);
+#else // optimize by inlining in shipping and development builds
+FORCEINLINE uint32 GetTypeHash(const FPartTransform& Thing)
+{
+	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FPartTransform));
+	return Hash;
+}
+#endif
+
 /**
  * The virtual repersntaion of a part.
  * Handels part statistics and functionality.
  */
-UCLASS(BlueprintType, Blueprintable, config=PartDefaults, defaultconfig)
+UCLASS(BlueprintType, Blueprintable, config=PartDefaults, defaultconfig, HideDropdown, PerObjectConfig)
 class VOIDSINGER_API UBasePart : public UObject/*, public FTickableGameObject, public IActivateInterface*/
 {
 	GENERATED_BODY()
@@ -193,7 +204,7 @@ public:
 	 * 
 	 * @return The default shape of this part.
 	 */
-	static PartShapeType GetDefaultShape();
+	PartShapeType GetDefaultShape();
 
 	/**
 	 * Gets the shape of this part.
@@ -256,6 +267,10 @@ protected:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE  bool IsFunctional() { return bFunctional; };
 
+	//Stores the default part shape
+	UPROPERTY(Config, BlueprintReadOnly)
+	TSet<FIntPoint> DefaultShape;
+
 private:
 	/**
 	 * Stores whether this is functional.
@@ -279,9 +294,6 @@ private:
 	//Stores the current shape of the part
 	PartShapeType Shape;
 
-	//Stores the default part shape
-	UPROPERTY(Config)
-	TSet<FIntPoint> DefaultShape;
 
 	/* /\ Part Shape /\ *\
 	\* ---------------- */
@@ -359,7 +371,7 @@ public:
 
 private:
 	//Stores the location and rotation of this.
-	UPROPERTY(VisibleInstanceOnly)
+	UPROPERTY()
 	FPartTransform Transform;
 
 
@@ -401,11 +413,11 @@ struct FMinimalPartData
 
 public:
 	//Stores the class of the part
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	TSubclassOf<UBasePart> Class;
 
 	//Stores the location and rotation of the part
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	FPartTransform Transform;
 
 	FMinimalPartData(TSubclassOf<UBasePart> PartClass = UNullPart::StaticClass(), FPartTransform PartTransform = FPartTransform())
@@ -433,6 +445,7 @@ uint32 GetTypeHash(const FMinimalPartData& Thing);
 FORCEINLINE uint32 GetTypeHash(const FMinimalPartData& Thing)
 {
 	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FMinimalPartData));
+	UE_LOG(LogTemp, Warning, TEXT("Hash of %s, %s, %i = %i"), *Thing.Class->GetFName().ToString(), *(Thing.Transform.GetGridLocation().ToString()), (int32)Thing.Transform.Rotation, Hash)
 	return Hash;
 }
 #endif

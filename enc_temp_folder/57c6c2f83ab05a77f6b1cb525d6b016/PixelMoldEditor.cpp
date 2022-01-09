@@ -4,7 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 
 
-//Initilize the save game.
+//Constucts a UPixelMoldEditor and initializes its save games.
 void UPixelMoldEditor::NativeOnInitialized()
 {
 	MoldNamesSave = Cast<USlotNamesSave>(UGameplayStatics::LoadGameFromSlot(MoldNamesSaveSlotName, 0));
@@ -38,7 +38,7 @@ void UPixelMoldEditor::LoadMoldFromTarget()
  */
 void UPixelMoldEditor::SaveMold(FString MoldName)
 {
-	//Saves the mold's data
+	//Saves the molds data
 	UPixelMoldSave* MoldSave = Cast<UPixelMoldSave>(UGameplayStatics::CreateSaveGameObject(UPixelMoldSave::StaticClass()));
 	MoldSave->Data = Mold;
 	UGameplayStatics::SaveGameToSlot(MoldSave, MoldSaveSlotNamePrefix.Append(MoldName), 0);
@@ -99,15 +99,12 @@ bool UPixelMoldEditor::PlacePart(TSubclassOf<UBasePart> Part, FPartTransform Tra
 {
 	if (IsValid(Part.Get()) && Part.GetDefaultObject()->GetDefaultShape().Num() != 0)
 	{
-		//Search for overlaping parts.
 		TSet<FMinimalPartData> PartsToRemove = TSet<FMinimalPartData>();
 		for (GridLocationType ShapeComponent : Part.GetDefaultObject()->GetDefaultShape())
 		{
-			//If part is not rotatable then only translate part.
-			GridLocationType ShapeComonentGirdLocation = Part.GetDefaultObject()->IsRotatable() ? Transform.TransformGridLocation(ShapeComponent) : ShapeComponent + Transform.GetGridLocation();
+			GridLocationType ShapeComonentGirdLocation = Transform.TransformGridLocation(ShapeComponent);
 			if (PartLocations.Contains(ShapeComonentGirdLocation))
 			{
-				//Mark ovrridable parts for removal.
 				if (bOverrridePriorParts && Part.GetDefaultObject()->IsOverridable() && Part.GetDefaultObject()->IsRemovable())
 				{
 					PartsToRemove.Add(PartLocations.FindRef(ShapeComonentGirdLocation));
@@ -119,13 +116,11 @@ bool UPixelMoldEditor::PlacePart(TSubclassOf<UBasePart> Part, FPartTransform Tra
 			}
 		}
 
-		//Remove overridable parts.
 		for (FMinimalPartData PartToRemove : PartsToRemove)
 		{
 			RemovePart(PartToRemove.Transform.GetGridLocation());
 		}
 
-		//Propagate Mold with new part
 		Mold.Add(FMinimalPartData(Part, Transform));
 		for (GridLocationType ShapeComponent : Part.GetDefaultObject()->GetDefaultShape())
 		{
@@ -166,13 +161,19 @@ bool UPixelMoldEditor::RemovePart(FIntPoint Location, bool bCallUpdatedEvent)
 		return false;
 	}
 
-	//Remove part from mold.
 	FMinimalPartData PartToRemove = PartLocations.FindRef(Location);
 	for (GridLocationType ShapeComponent : PartToRemove.Class.GetDefaultObject()->GetDefaultShape())
 	{
 		PartLocations.Remove(PartToRemove.Transform.TransformGridLocation(ShapeComponent));
 	}
-	Mold.Remove(PartToRemove);
+	if (Mold.Contains(PartToRemove))
+	{
+		Mold.Remove(PartToRemove);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("It no work"));
+	}
 
 	if (bCallUpdatedEvent)
 	{

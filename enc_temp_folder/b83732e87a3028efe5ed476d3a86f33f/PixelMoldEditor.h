@@ -17,7 +17,6 @@ class VOIDSINGER_API UPixelMoldEditor : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	//Initilize the save game of this mold
 	virtual void NativeOnInitialized() override;
 protected:
 	//Stores the Voidgrid this is editing.
