@@ -145,7 +145,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartTransform& Thing)
  * The virtual repersntaion of a part.
  * Handels part statistics and functionality.
  */
-UCLASS(BlueprintType, Blueprintable, config=PartDefaults, defaultconfig, HideDropdown, PerObjectConfig)
+UCLASS(BlueprintType, Blueprintable, config=PartDefaults, defaultconfig)
 class VOIDSINGER_API UBasePart : public UObject/*, public FTickableGameObject, public IActivateInterface*/
 {
 	GENERATED_BODY()
@@ -445,7 +445,6 @@ uint32 GetTypeHash(const FMinimalPartData& Thing);
 FORCEINLINE uint32 GetTypeHash(const FMinimalPartData& Thing)
 {
 	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FMinimalPartData));
-	UE_LOG(LogTemp, Warning, TEXT("Hash of %s, %s, %i = %i"), *Thing.Class->GetFName().ToString(), *(Thing.Transform.GetGridLocation().ToString()), (int32)Thing.Transform.Rotation, Hash)
 	return Hash;
 }
 #endif

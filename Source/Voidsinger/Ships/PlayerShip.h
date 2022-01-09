@@ -16,27 +16,7 @@
 // */
 //
 ////Struct needs commenting. What does it store(yes i know its obvious) - Liam Suggestion
-//USTRUCT(BlueprintType)
-//struct FIntArray
-//{
-//	GENERATED_BODY()
-//
-//
-//	//UE doesnt like int, use int32 or int64 instead - Liam Suggestion
-//	UPROPERTY(BlueprintReadWrite)
-//	TArray<int> IntArray = TArray<int>();
-//
-//	//What does default constuctor do? What are the default values of its properties? - Liam Suggestion
-//	FIntArray()
-//	{
-//	}
-//
-//	//UE doesnt like int, use int32 or int64 instead - Liam Suggestion
-//	FIntArray(TArray<int> NewInts)
-//	{
-//		IntArray = NewInts;
-//	}
-//};
+
 //
 ////Delagates should be commented. What are they supposed to be bound to? - Liam Suggestion
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVoidsongInputDelegate, FIntArray, CurrentInput);

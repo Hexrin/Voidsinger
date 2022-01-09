@@ -28,7 +28,7 @@ void UPixelMoldEditor::ApplyMoldToTarget()
 void UPixelMoldEditor::LoadMoldFromTarget()
 {
 	Mold = Target->GetMinimalMoldData();
-	OnMoldUpdated(Mold.Array());
+	OnMoldUpdated(Mold.Array(), Mold.Array(), false);
 }
 
 /**
@@ -125,14 +125,15 @@ bool UPixelMoldEditor::PlacePart(TSubclassOf<UBasePart> Part, FPartTransform Tra
 			RemovePart(PartToRemove.Transform.GetGridLocation());
 		}
 
+
+		FMinimalPartData PartBeingAdded = FMinimalPartData(Part, Transform);
 		//Propagate Mold with new part
-		Mold.Add(FMinimalPartData(Part, Transform));
+		Mold.Add(PartBeingAdded);
 		for (GridLocationType ShapeComponent : Part.GetDefaultObject()->GetDefaultShape())
 		{
-			PartLocations.Emplace(Transform.TransformGridLocation(ShapeComponent), FMinimalPartData(Part, Transform));
+			PartLocations.Emplace(Transform.TransformGridLocation(ShapeComponent), PartBeingAdded);
 		}
-
-		OnMoldUpdated(Mold.Array());
+		OnMoldUpdated(Mold.Array(), TArray<FMinimalPartData>(&PartBeingAdded, 1), false);
 		return true;
 	}
 	return false;
@@ -166,17 +167,29 @@ bool UPixelMoldEditor::RemovePart(FIntPoint Location, bool bCallUpdatedEvent)
 		return false;
 	}
 
-	//Remove part from mold.
+
 	FMinimalPartData PartToRemove = PartLocations.FindRef(Location);
+	if (Mold.Contains(PartToRemove))
+	{
+		Mold.Remove(PartToRemove);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("--- Removing of %s, %s, %i Faild ---\n\t\tSet hashing failed. Cause: unkown"), *PartToRemove.Class->GetFName().ToString(), *(PartToRemove.Transform.GetGridLocation().ToString()), (int32)PartToRemove.Transform.Rotation);
+		Mold.Compact();
+		Mold.Remove(PartToRemove);
+	}
+
+	//Remove part from mold.
 	for (GridLocationType ShapeComponent : PartToRemove.Class.GetDefaultObject()->GetDefaultShape())
 	{
 		PartLocations.Remove(PartToRemove.Transform.TransformGridLocation(ShapeComponent));
 	}
-	Mold.Remove(PartToRemove);
+	
 
 	if (bCallUpdatedEvent)
 	{
-		OnMoldUpdated(Mold.Array());
+		OnMoldUpdated(Mold.Array(), TArray<FMinimalPartData>(&PartToRemove, 1), true);
 	}
 
 	return true;

@@ -65,6 +65,27 @@
 //};
 //
 
+/**
+ * Stores the an array of int32s
+ */
+USTRUCT(BlueprintType)
+struct FIntArray
+{
+	GENERATED_BODY()
+
+
+	//Stores an aray of integers
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<int32> IntArray;
+
+	/**
+	 * Constucts an IntArray using a TArray.
+	 */
+	FIntArray(TArray<int32> Array = TArray<int32>())
+	{
+		IntArray = Array;
+	}
+};
 
 /**
  * Stores the bounds of a 2D Box measured using Ints

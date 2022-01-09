@@ -17,7 +17,7 @@ class VOIDSINGER_API UPixelMoldEditor : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	//Initilize the save game of this mold
+	//Initilize the save game 
 	virtual void NativeOnInitialized() override;
 protected:
 	//Stores the Voidgrid this is editing.
@@ -120,7 +120,7 @@ protected:
 	 * @param NewMold - The mold of this.
 	 */
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnMoldUpdated(const TArray<FMinimalPartData>& NewMold);
+	void OnMoldUpdated(const TArray<FMinimalPartData>& NewMold, const TArray<FMinimalPartData>& ChangedData, bool bDataRemoved);
 
 private:
 	//Stores the mold of this.
