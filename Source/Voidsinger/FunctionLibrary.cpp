@@ -47,10 +47,16 @@
 //Function comments from the .h should be copied to the .cpp. - Liam Suggestion
 void UFunctionLibrary::ExplodeAtWorldLocation(const UObject* WorldContextObject, FVector WorldLocation, float ExplosionRadius)
 {
+
+	
 	TArray <TEnumAsByte<EObjectTypeQuery>> ObjectTypeArray;
 	TArray<AActor*> OutActors;
+
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+
 	UKismetSystemLibrary::SphereOverlapActors(World, WorldLocation, ExplosionRadius, ObjectTypeArray, ABaseShip::StaticClass(),TArray<AActor*>(), OutActors);
+
+	Cast<UVoidsingerGameInstance>(UGameplayStatics::GetGameInstance(World))->OnExplodeDelegate.Broadcast(WorldLocation, ExplosionRadius);
 
 	//Delete debug code or come up with a good way for c++ debug modes. - Liam Suggestion
 	//DrawDebugSphere(World, WorldLocation, ExplosionRadius, 32, FColor::Red, true);

@@ -10,6 +10,9 @@
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FExplodeDelegate, FVector, ExplosionLocation, float, ExplosionRadius);
+
 UCLASS()
 class VOIDSINGER_API UVoidsingerGameInstance : public UGameInstance
 {
@@ -54,6 +57,9 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	bool WithdrawPixels(int32 Amount);
+
+	UPROPERTY(BlueprintAssignable)
+	FExplodeDelegate OnExplodeDelegate;
 
 protected:
 	//Comment -Mabel Suggestion
