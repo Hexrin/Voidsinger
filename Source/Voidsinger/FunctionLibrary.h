@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "VoidsingerTypes.h"
 #include "DrawDebugHelpers.h"
+#include "VoidsingerGameInstance.h"
 #include "FunctionLibrary.generated.h"
 
 /**
