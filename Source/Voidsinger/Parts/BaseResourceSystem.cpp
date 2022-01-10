@@ -167,7 +167,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 						//actually it might not need to be improved but i need to think about it
 
 						UE_LOG(LogTemp, Warning, TEXT("resource system grid contains both locations"));
-						if (!ResourceSystemGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
+						/*if (!ResourceSystemGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
 						{
 							//Bad variable name. What is it storing? - Liam Suggestion
 							//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
@@ -189,8 +189,8 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 								GetOwningShip();
 								RemoveSection(RemovedGridMap);
 								CreateNewSystem(RemovedGridMap, GetType());
-							}
-						}
+							}*/
+						//}
 					}
 				}
 			}
