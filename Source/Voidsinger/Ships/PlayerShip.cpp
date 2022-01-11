@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerShip.h"
-#include "Voidsinger/Parts/BasePart.h"
+#include "Voidsinger/Voidgrids/BasePart.h"
 
 APlayerShip::APlayerShip()
 {
@@ -124,27 +124,27 @@ void APlayerShip::BeginPlay()
 }
 
 //Comment -Mabel Suggestion
-TMap<EResourceType, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
-{
-    TMap<EResourceType, float> Costs;
-    
-    Costs.Add(EResourceType::Fuel, 100);
-    Costs.Add(EResourceType::Hydrogen, 35);
-    return Costs;
-}
-
-//Comment -Mabel Suggestion
-bool APlayerShip::TravelToStarSystem(class UStarSystemData* Target)
-{
-    CurrentStarSystem = Target;
-    return true;
-}
-
-//Comment -Mabel Suggestion
-UStarSystemData* APlayerShip::GetCurrentStarSystem()
-{
-    return CurrentStarSystem;
-}
+//TMap<EResourceType, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
+//{
+//    TMap<EResourceType, float> Costs;
+//    
+//    Costs.Add(EResourceType::Fuel, 100);
+//    Costs.Add(EResourceType::Hydrogen, 35);
+//    return Costs;
+//}
+//
+////Comment -Mabel Suggestion
+//bool APlayerShip::TravelToStarSystem(class UStarSystemData* Target)
+//{
+//    CurrentStarSystem = Target;
+//    return true;
+//}
+//
+////Comment -Mabel Suggestion
+//UStarSystemData* APlayerShip::GetCurrentStarSystem()
+//{
+//    return CurrentStarSystem;
+//}
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
 //Voidsong inputs
@@ -180,13 +180,13 @@ void APlayerShip::Voidsong5Call()
 //Comment -Mabel Suggestion
 void APlayerShip::AddCameraLocation(FVector2D DeltaLoc)
 {
-    SetCameraLocation(FVector2D(Camera->GetRelativeLocation()) + DeltaLoc - PhysicsComponent->GetVelocity() * CameraVelocityAdjScaling);
+    //SetCameraLocation(FVector2D(Camera->GetRelativeLocation()) + DeltaLoc - PhysicsComponent->GetVelocity() * CameraVelocityAdjScaling);
 }
 
 //Comment -Mabel Suggestion
 void APlayerShip::SetCameraLocation(FVector2D NewLoc)
 {
-    Camera->SetRelativeLocation(FVector(NewLoc + PhysicsComponent->GetVelocity() * CameraVelocityAdjScaling, CameraHeight));
+    //Camera->SetRelativeLocation(FVector(NewLoc + PhysicsComponent->GetVelocity() * CameraVelocityAdjScaling, CameraHeight));
 }
 
 //Comment -Mabel Suggestion

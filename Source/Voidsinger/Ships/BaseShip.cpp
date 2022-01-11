@@ -16,9 +16,9 @@ ABaseShip::ABaseShip()
 	MeshComponent->bUseComplexAsSimpleCollision = true;
 	MeshComponent->bRenderCustomDepth = true;
 
-	PhysicsComponent = CreateDefaultSubobject<UShipPhysicsComponent>(TEXT("Physics Component"));
-	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
-	MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));	
+	//PhysicsComponent = CreateDefaultSubobject<UShipPhysicsComponent>(TEXT("Physics Component"));
+	//PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
+	//MovementComponent = CreateDefaultSubobject<UShipMovementComponent>(TEXT("Movement Component"));	
 	
 	MeshData = TMap<FIntPoint, int32>();
 
@@ -45,7 +45,7 @@ void ABaseShip::BeginPlay()
 	//Debug... OH NO! -Mabel Suggestion
 	//UE_LOG(LogTemp, Warning, TEXT("Default parts num %i"), DefaultParts.Num())
 
-	PartGrid->BuildShip(DefaultParts);
+	//PartGrid->BuildShip(DefaultParts);
 }
 
 // Called every frame
@@ -58,45 +58,45 @@ void ABaseShip::Tick(float DeltaTime)
 	//descriptive of what is being done on tick. -Mabel Suggestion
 	if (TargetLookDirection.SizeSquared2D() != 0)
 	{
-		float AngVel = PhysicsComponent->GetAngularVelocity();
+		//float AngVel = PhysicsComponent->GetAngularVelocity();
 
 		//Why are booleans named "Direction"? Directions are typically associated with vectors. I don't understand what 
 		//saying "DecelDirection" is true would actually mean based on the english. Name better, like bIsClockwise or something.
 		//bDecelDirection? -Mabel Suggestion
-		bool DecelDirection = AngVel < 0;
+		//bool DecelDirection = AngVel < 0;
 		//bTargetRotationDirection? -MabelSuggestion
 		bool TargetRotationDirection = FVector::CrossProduct(TargetLookDirection, GetActorForwardVector()).Z < 0;
 
 		float TargetRotationDistance = abs(FMath::Acos(FVector::DotProduct(TargetLookDirection, GetActorForwardVector())));
 
-		float MaxDecelerationSpeed = abs(MovementComponent->GetMaximumAccelerationInRotation(DecelDirection));
-		float MaxTurnSpeed = abs(MovementComponent->GetMaximumAccelerationInRotation(TargetRotationDirection));
+		//float MaxDecelerationSpeed = abs(MovementComponent->GetMaximumAccelerationInRotation(DecelDirection));
+		//float MaxTurnSpeed = abs(MovementComponent->GetMaximumAccelerationInRotation(TargetRotationDirection));
 
-		float TimeToDecelerate = abs(AngVel / MaxDecelerationSpeed);
-		float TimeToDestination = TargetRotationDistance / abs(AngVel);
+		//float TimeToDecelerate = abs(AngVel / MaxDecelerationSpeed);
+		//float TimeToDestination = TargetRotationDistance / abs(AngVel);
 
 		//Comment your switch, also just use an if statement instead. You only have 2 possible cases, 0 or 1. Perfect
 		//for an if statement. Here, you use an if statement with a switch, so... you only need the if. -Mabel Suggestion
-		switch ((TargetRotationDistance > MovementComponent->GetLookDirectionErrorTollerance()) ? 1 : 0)
-		{
-		case 1:
-			if (abs(TimeToDecelerate - TimeToDestination) > MovementComponent->GetRotationDirectionUpdateThreshold())
-			{
-				bCurrentRotationDeccelerationStatus = (TimeToDecelerate > TimeToDestination);
-			}
+		//switch ((TargetRotationDistance > MovementComponent->GetLookDirectionErrorTollerance()) ? 1 : 0)
+		//{
+		//case 1:
+		//	if (abs(TimeToDecelerate - TimeToDestination) > MovementComponent->GetRotationDirectionUpdateThreshold())
+		//	{
+		//		bCurrentRotationDeccelerationStatus = (TimeToDecelerate > TimeToDestination);
+		//	}
 
-			if (!bCurrentRotationDeccelerationStatus)
-			{
-				MovementComponent->RotateShip(TargetRotationDirection, 1);
-				//UE_LOG(LogTemp, Warning, TEXT("Turn"));
-				break;
-			}
+		//	if (!bCurrentRotationDeccelerationStatus)
+		//	{
+		//		MovementComponent->RotateShip(TargetRotationDirection, 1);
+		//		//UE_LOG(LogTemp, Warning, TEXT("Turn"));
+		//		break;
+		//	}
 
-		default:
-			MovementComponent->RotateShip(DecelDirection, TimeToDecelerate / TimeToDestination);
-			//UE_LOG(LogTemp, Warning, TEXT("Decel"));
-			break;
-		}
+		//default:
+		//	MovementComponent->RotateShip(DecelDirection, TimeToDecelerate / TimeToDestination);
+		//	//UE_LOG(LogTemp, Warning, TEXT("Decel"));
+		//	break;
+		//}
 	}
 
 	//Handle Target Move Direction
@@ -109,8 +109,8 @@ void ABaseShip::Tick(float DeltaTime)
 		// FVector2D DeltaV = TargetVelocity - CurrentRelativeVelocity
 		// -Mabel Suggestion
 		//				   |----------Target Velocity----------|   |----------------------Current Relative Velocity----------------------|
-		FVector2D DeltaV = TargetMoveDirection * TargetMoveSpeed - PhysicsComponent->GetVelocity().GetRotated(GetActorRotation().Yaw * -1);
-		MovementComponent->Move(DeltaV, DeltaV.SizeSquared() - FMath::Square(MovementComponent->GetMoveSpeedErrorTollerance()));
+		//FVector2D DeltaV = TargetMoveDirection * TargetMoveSpeed - PhysicsComponent->GetVelocity().GetRotated(GetActorRotation().Yaw * -1);
+		//MovementComponent->Move(DeltaV, DeltaV.SizeSquared() - FMath::Square(MovementComponent->GetMoveSpeedErrorTollerance()));
 	}	
 }
 
@@ -157,19 +157,19 @@ float const ABaseShip::GetFluidAmount(EResourceType Fluid)
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void ABaseShip::AddResourceSystem(UBaseResourceSystem* System)
-{
-	ResourceSystems.Add(System);
-}
+//void ABaseShip::AddResourceSystem(UBaseResourceSystem* System)
+//{
+	//ResourceSystems.Add(System);
+//}
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
-{
-	if (ResourceSystems.Contains(System))
-	{
-		ResourceSystems.Remove(System);
-	}
-}
+//void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
+//{
+	//if (ResourceSystems.Contains(System))
+	//{
+		//ResourceSystems.Remove(System);
+	//}
+//}
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
 EFactions ABaseShip::GetFaction()
@@ -201,7 +201,7 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 
 		if (!Factions.IsEmpty() || !Nouns.IsEmpty() || !Verbs.IsEmpty())
 		{
-			Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs, AvailableVoidsongs);
+			//Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs, AvailableVoidsongs);
 		}
 
 		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
@@ -295,7 +295,7 @@ void ABaseShip::DurationDelay()
 	//UE_LOG(LogTemp, Warning, TEXT("Can Activate again"))
 	CanActivateVoidsong = true;
 	//This system definently does not work with multiple simultanous voidsongs - Liam Suggestion
-	Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->UnsetVerbs();
+	//Cast<AVoidGameMode>(GetWorld()->GetAuthGameMode())->UnsetVerbs();
 	OnUnsetVerbsDelegate.Broadcast();
 }
 
@@ -325,17 +325,11 @@ void ABaseShip::BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounC
 	OnActivatePartsDelegate.Broadcast(Temp, NounClasses, AvailableVoidsongs);
 }
 
-//Outdated function should be deleted - Liam Suggestion
-void ABaseShip::CallLaser(float DamageMultiplier, float DurationMultiplier)
-{
-	OnLaserDelegate.Broadcast(DamageMultiplier, DurationMultiplier);
-}
-
 //Function comments from the.h should be copied to the.cpp - Liam Suggestion
-TArray<UBaseResourceSystem*> ABaseShip::GetResourceSystems()
-{
-	return ResourceSystems;
-}
+//TArray<UBaseResourceSystem*> ABaseShip::GetResourceSystems()
+//{
+//	return ResourceSystems;
+//}
 
 //Comment -Mabel Suggestion
 void ABaseShip::SetTargetMoveDirection(FVector2D Vector)
@@ -422,7 +416,7 @@ void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
 	MeshComponent->SetRelativeLocation(FVector(Location, 0));
 
 	//Why does setting a meshes location move the entire ship? That seems a bit odd. -Mabel
-	AddActorWorldOffset(FVector(-1 * Location - PhysicsComponent->GetCenterOfMass(), 0));
+	//AddActorWorldOffset(FVector(-1 * Location - PhysicsComponent->GetCenterOfMass(), 0));
 }
 
 //Comment -Mabel Suggestion
@@ -437,10 +431,10 @@ TArray<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
 	TArray<FVector> ReturnValue = TArray<FVector>();
 	for (int i = 0; i < 4; i++)
 	{
-		float AdjustmentValue1 = PartGrid->GetPartGridScale() / (i < 2 ? 2 : -2);
-		float AdjustmentValue2 = PartGrid->GetPartGridScale() / ((i % 2 == 0) ? 2 : -2);
-		ReturnValue.Emplace(FVector(Location, 0) + FVector(AdjustmentValue1, AdjustmentValue2, 0.1));
-		ReturnValue.Emplace(FVector(Location, 0) + FVector(AdjustmentValue1, AdjustmentValue2, -0.1));
+		//float AdjustmentValue1 = PartGrid->GetPartGridScale() / (i < 2 ? 2 : -2);
+		//float AdjustmentValue2 = PartGrid->GetPartGridScale() / ((i % 2 == 0) ? 2 : -2);
+		//ReturnValue.Emplace(FVector(Location, 0) + FVector(AdjustmentValue1, AdjustmentValue2, 0.1));
+		//ReturnValue.Emplace(FVector(Location, 0) + FVector(AdjustmentValue1, AdjustmentValue2, -0.1));
 	}
 	
 	return ReturnValue;
@@ -464,23 +458,23 @@ TArray<int32> ABaseShip::CreateTrianglesForSquare(int32 UpperRight, int32 UpperL
 void ABaseShip::SaveEditorShip()
 {
 	//Bad name. It implies that it is storing a return value or a pass by refernce - Liam Suggestion
-	TArray<FPartData> OutArray = PartGrid->GetPartGrid().GetValueArray();;
-	
-	TArray<FSavePartInfo> InfoToSave;
-	//Part set unnecessary. You can use AddUnquie() instead. - Liam Suggestion
-	TSet<UBasePart*> PartSet;
-	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
-	for (auto& i : OutArray)
-	{
-		if (!PartSet.Contains(i.Part))
-		{
-			InfoToSave.Emplace(FSavePartInfo(i.Part->GetClass(), i.Part->GetPartGridLocation(), i.Part->GetRelativeRotation()));
-			PartSet.Emplace(i.Part);
-		}
-	}
-	//ClassCurrentlyEditing should be a parameter of SaveEditorShips(). - Liam Suggestion
-	GetMutableDefault<ABaseShip>(ClassCurrentlyEditing)->DefaultParts.Empty();
-	GetMutableDefault<ABaseShip>(ClassCurrentlyEditing)->DefaultParts = InfoToSave;
+//	TArray<FPartData> OutArray = PartGrid->GetPartGrid().GetValueArray();;
+//	
+//	TArray<FSavePartInfo> InfoToSave;
+//	//Part set unnecessary. You can use AddUnquie() instead. - Liam Suggestion
+//	TSet<UBasePart*> PartSet;
+//	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
+//	for (auto& i : OutArray)
+//	{
+//		if (!PartSet.Contains(i.Part))
+//		{
+//			InfoToSave.Emplace(FSavePartInfo(i.Part->GetClass(), i.Part->GetPartGridLocation(), i.Part->GetRelativeRotation()));
+//			PartSet.Emplace(i.Part);
+//		}
+//	}
+//	//ClassCurrentlyEditing should be a parameter of SaveEditorShips(). - Liam Suggestion
+//	GetMutableDefault<ABaseShip>(ClassCurrentlyEditing)->DefaultParts.Empty();
+//	GetMutableDefault<ABaseShip>(ClassCurrentlyEditing)->DefaultParts = InfoToSave;
 }
 
 

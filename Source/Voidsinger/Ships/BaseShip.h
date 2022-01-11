@@ -15,16 +15,14 @@
 #include "ProceduralMeshComponent.h"
 #include "BaseShip.generated.h"
 
-class UBaseResourceSystem;
-//Outdated delagate should be deleted - Liam Suggestion
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, DamageMultiplier, float, DurationMultiplier);
+//class UBaseResourceSystem;
 
 //Delegates should be commented. What functions should they be bound to? - Liam 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*, AddedVoidsong);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FActivatePartsDelegate, const TArray<EFactions>&, Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnsetVerbsDelegate);
 
-UCLASS()
+UCLASS(Blueprintable)
 class VOIDSINGER_API ABaseShip : public APawn
 {
 	GENERATED_BODY()
@@ -85,16 +83,16 @@ public:
 	float const GetFluidAmount(EResourceType Fluid);
 	
 	//Adds a resource system to the systems on the ship.
-	UFUNCTION()
-	void AddResourceSystem(UBaseResourceSystem* System);
+	//UFUNCTION()
+	//void AddResourceSystem(UBaseResourceSystem* System);
 
 	//Removes a resource system from the systems on the ship.
-	UFUNCTION()
-	void RemoveResourceSystem(UBaseResourceSystem* System);
+	//UFUNCTION()
+	//void RemoveResourceSystem(UBaseResourceSystem* System);
 
 	//Gets all the resource systems on the ship.
-	UFUNCTION(BlueprintPure)
-	TArray<UBaseResourceSystem*> GetResourceSystems();
+	//UFUNCTION(BlueprintPure)
+	//TArray<UBaseResourceSystem*> GetResourceSystems();
 
 	/*-Voidsong Control-*\
 	\*------------------*/
@@ -176,8 +174,8 @@ public:
 
 	//Outdated disbatcher should be deleted - Liam Suggestion
 	//Event dispatcher for laser.
-	UFUNCTION(BlueprintCallable)
-	void CallLaser(float DamageMultiplier, float DurationMultiplier);
+	//UFUNCTION(BlueprintCallable)
+	//void CallLaser(float DamageMultiplier, float DurationMultiplier);
 
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
 	//             VARIABLES             ||
@@ -187,8 +185,8 @@ public:
 	\*--------------------*/
 
 	//An array of all the resource systems on the base ship
-	UPROPERTY()
-	TArray<UBaseResourceSystem*> ResourceSystems;
+	//UPROPERTY()
+	//TArray<UBaseResourceSystem*> ResourceSystems;
 
 	/*-Voidsong Managment-*\
 	\*--------------------*/
@@ -277,21 +275,16 @@ public:
 	class UProceduralMeshComponent* MeshComponent;
 
 	//Comment -Mabel Suggestion
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class UPartGridComponent* PartGrid;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	//class UPartGridComponent* PartGrid;
 
 	//Comment -Mabel Suggestion
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class UShipPhysicsComponent* PhysicsComponent;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	//class UShipPhysicsComponent* PhysicsComponent;
 
 	//Comment -Mabel Suggestion
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class UShipMovementComponent* MovementComponent;
-
-	//Outdated disbatcher should be deleted - Liam Suggestion
-	//For the laser Event Dispatcher
-	UPROPERTY(BlueprintAssignable)
-	FLaserDelegate OnLaserDelegate;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	//class UShipMovementComponent* MovementComponent;
 
 	/*
 	* Comment needed*.
@@ -300,8 +293,8 @@ public:
 	* *Low priority as it should be replaced by upcomming blueprint system.
 	* - Liam suggestion
 	*/ 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FSavePartInfo> DefaultParts;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//TArray<FSavePartInfo> DefaultParts;
 
 
 	/*-Movement Control-*\

@@ -6,7 +6,7 @@
 #include "BaseShip.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/Voidsongs/BaseVoidsong.h"
-#include "Voidsinger/StarSystemData.h"
+//#include "Voidsinger/StarSystemData.h"
 #include "Components/AudioComponent.h"
 #include "EngineUtils.h"
 #include "Camera/CameraComponent.h"
@@ -17,7 +17,7 @@
  */
 
 //Struct needs commenting. What does it store(yes i know its obvious) - Liam Suggestion
-USTRUCT(BlueprintType)
+/*USTRUCT(BlueprintType)
 struct FIntArray
 {
 	GENERATED_BODY()
@@ -37,7 +37,7 @@ struct FIntArray
 	{
 		IntArray = NewInts;
 	}
-};
+};*/
 
 //Delagates should be commented. What are they supposed to be bound to? - Liam Suggestion
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVoidsongInputDelegate, FIntArray, CurrentInput);
@@ -76,21 +76,21 @@ public:
 
 	//Gets the travel cost of going to the given star system
 	//Why is this on the player? Shouldn't it be on whatever is storing the start systems? Like the galaxay map or something? -Mabel Suggestion
-	UFUNCTION(BlueprintPure)
-	TMap<EResourceType, float> GetTravelCost(class UStarSystemData* Target);
+	//UFUNCTION(BlueprintPure)
+	//TMap<EResourceType, float> GetTravelCost(class UStarSystemData* Target);
 
 	//Gets the star system the player is currently in
 	//This maybe should be on the galaxy map as well. Idk -Mabel Suggestion
-	UFUNCTION(BlueprintPure)
-	class UStarSystemData* GetCurrentStarSystem();
+	//UFUNCTION(BlueprintPure)
+	//class UStarSystemData* GetCurrentStarSystem();
 
 	/*Traveling Functions*\
 	\*-------------------*/
 
 	//Travels to the start system given
 	//Should this also be on the galaxy map -Mabel Suggestion
-	UFUNCTION(BlueprintCallable)
-	bool TravelToStarSystem(class UStarSystemData* Target);
+	//UFUNCTION(BlueprintCallable)
+	//bool TravelToStarSystem(class UStarSystemData* Target);
 
 	/*Voidsong input actions*\
 	\*----------------------*/
@@ -356,6 +356,6 @@ protected:
 	FResetVoidsongDelegate OnResetVoidsongDelegate;
 	
 	//Comment -Mabel Suggestion
-	UPROPERTY(VisibleAnywhere)
-	class UStarSystemData* CurrentStarSystem;
+	//UPROPERTY(VisibleAnywhere)
+	//class UStarSystemData* CurrentStarSystem;
 };
