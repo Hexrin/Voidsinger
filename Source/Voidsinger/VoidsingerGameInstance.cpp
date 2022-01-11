@@ -31,7 +31,11 @@ void UVoidsingerGameInstance::SetPixels(int32 NewPixels)
  */
 void UVoidsingerGameInstance::DepositPixels(int32 Amount)
 {
-    Pixels += FMath::Max(Amount, 0);
+    if (Amount > 0)
+    {
+        Pixels += Amount;
+        OnPixelBalenceChanged.Broadcast(Amount);
+    }
 }
 
 /**
@@ -44,7 +48,11 @@ bool UVoidsingerGameInstance::WithdrawPixels(int32 Amount)
 {
     if (Pixels >= Amount)
     {
-        Pixels -= Amount;
+        if (Amount > 0)
+        {
+            Pixels -= Amount;
+            OnPixelBalenceChanged.Broadcast(-1 * Amount);
+        }
         return true;
     }
 

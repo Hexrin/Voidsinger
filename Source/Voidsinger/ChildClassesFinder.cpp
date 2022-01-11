@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ChildClassesFinder.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "ChildClassesFinder.h"
 
@@ -44,7 +43,7 @@ void UChildClassesFinder::GenerateChildClassesMap()
 		{
 			//Skip non blueprint assets
 			const UBlueprint* BlueprintObj = Cast<UBlueprint>(Asset.GetAsset());
-			if (!BlueprintObj)
+			if (!BlueprintObj || BlueprintObj->BlueprintType == BPTYPE_MacroLibrary)
 				continue;
 
 			//Check whether blueprint class has parent class we're looking for
