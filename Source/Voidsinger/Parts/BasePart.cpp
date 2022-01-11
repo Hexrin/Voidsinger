@@ -25,7 +25,6 @@ UBasePart::UBasePart()
 	DesiredShape = TSet<FIntPoint>();
 	Bounds = FArrayBounds();
 	ActualShape = TSet<FIntPoint>();
-	bFunctional = true;
 	bIsBeingDestroyed = false;
 
 }
@@ -314,7 +313,7 @@ bool UBasePart::IsFunctional()
 	//If parts do not split into more parts when they are split, then this wouldn't really work. For example, if you cut
 	//a part in half, this might still return true even if the part totally shouldn't be functional because there might still
 	//be enough pixels for this to be true.
-	if (GetShape().Num() >= PercentFunctional * .01 * GetDesiredShape().Num())
+	if (GetShape().Num() >= PercentFunctional * GetDesiredShape().Num())
 	{
 		return !bIsBeingDestroyed;
 	}
