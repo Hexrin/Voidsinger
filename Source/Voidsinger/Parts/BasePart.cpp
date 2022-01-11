@@ -390,6 +390,7 @@ void UBasePart::ConnectToSystems()
 
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	//This needs to be called for each resource type so a resource system for each type is created.
+
 	for (auto& i : GetResourceTypes())
 	{
 
@@ -416,13 +417,10 @@ void UBasePart::ConnectToSystems()
 
 					FIntPoint ConnectionPointRelativeToPartGrid = FVector2D(EachConnectionPoint).GetRotated(PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetRelativeRotation()).IntPoint() + PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetPartGridLocation();
 					
-					//UE_LOG(LogTemp, Warning, TEXT("Connection point relative to part grid %s"), *ConnectionPointRelativeToPartGrid.ToString());
 
 					FIntPoint ConnectionPointRelativeToThisPart = FVector2D(ConnectionPointRelativeToPartGrid - GetPartGridLocation()).GetRotated(-GetRelativeRotation()).IntPoint();
 
-					//UE_LOG(LogTemp, Warning, TEXT("Connection point relative to this part %s"), *ConnectionPointRelativeToThisPart.ToString());
-
-					if (GetDesiredShape().Contains(ConnectionPointRelativeToThisPart))
+					if (GetDesiredShape(0).Contains(ConnectionPointRelativeToThisPart))
 					{
 						if (PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part != this)
 						{
