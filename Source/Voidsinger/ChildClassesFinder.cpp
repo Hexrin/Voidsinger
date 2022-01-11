@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "AssetRegistry/AssetRegistryModule.h"
 #include "ChildClassesFinder.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 
 UChildClassesFinder::UChildClassesFinder()
 {
