@@ -25,7 +25,6 @@ UBasePart::UBasePart()
 	DesiredShape = TSet<FIntPoint>();
 	Bounds = FArrayBounds();
 	ActualShape = TSet<FIntPoint>();
-	bFunctional = true;
 	bIsBeingDestroyed = false;
 
 }
@@ -314,7 +313,7 @@ bool UBasePart::IsFunctional()
 	//If parts do not split into more parts when they are split, then this wouldn't really work. For example, if you cut
 	//a part in half, this might still return true even if the part totally shouldn't be functional because there might still
 	//be enough pixels for this to be true.
-	if (GetShape().Num() >= PercentFunctional * .01 * GetDesiredShape().Num())
+	if (GetShape().Num() >= PercentFunctional * GetDesiredShape().Num())
 	{
 		return !bIsBeingDestroyed;
 	}
@@ -391,6 +390,7 @@ void UBasePart::ConnectToSystems()
 
 	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 	//This needs to be called for each resource type so a resource system for each type is created.
+
 	for (auto& i : GetResourceTypes())
 	{
 
@@ -417,13 +417,10 @@ void UBasePart::ConnectToSystems()
 
 					FIntPoint ConnectionPointRelativeToPartGrid = FVector2D(EachConnectionPoint).GetRotated(PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetRelativeRotation()).IntPoint() + PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetPartGridLocation();
 					
-					//UE_LOG(LogTemp, Warning, TEXT("Connection point relative to part grid %s"), *ConnectionPointRelativeToPartGrid.ToString());
 
 					FIntPoint ConnectionPointRelativeToThisPart = FVector2D(ConnectionPointRelativeToPartGrid - GetPartGridLocation()).GetRotated(-GetRelativeRotation()).IntPoint();
 
-					//UE_LOG(LogTemp, Warning, TEXT("Connection point relative to this part %s"), *ConnectionPointRelativeToThisPart.ToString());
-
-					if (GetDesiredShape().Contains(ConnectionPointRelativeToThisPart))
+					if (GetDesiredShape(0).Contains(ConnectionPointRelativeToThisPart))
 					{
 						if (PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part != this)
 						{
