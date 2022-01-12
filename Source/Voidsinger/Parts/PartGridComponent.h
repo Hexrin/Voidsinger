@@ -25,11 +25,11 @@ struct VOIDSINGER_API FPartData
 
 	//Comment -Mabel Suggestion
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UBasePart* Part;
+	UBasePart* Part = nullptr;
 
 	//Comment -Mabel Suggestion
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMaterialInstanceDynamic* DynamicMat;
+	UMaterialInstanceDynamic* DynamicMat = nullptr;
 
 private:
 

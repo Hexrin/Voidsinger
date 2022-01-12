@@ -154,7 +154,17 @@ struct FTextureDataTable : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* Texture;
+	UTexture2D* Texture = nullptr;
+
+	FTextureDataTable()
+	{
+		FTextureDataTable(nullptr);
+	}
+
+	FTextureDataTable(UTexture2D* NewTexture)
+	{
+		Texture = NewTexture;
+	}
 
 };
 
