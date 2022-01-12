@@ -14,7 +14,6 @@
 class UBaseResourceSystem;
 class UBaseThrusterPart;
 class UPartGridComponent;
-struct FPartData;
 
 UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject, public IActivateInterface

@@ -52,10 +52,18 @@ public:
 	//Comment -Mabel Suggestion
 	FPartData(UBasePart* PartRef, float Temp, int32 BitwiseIndex, UMaterialInterface* Material)
 	{
-		DynamicMat = UMaterialInstanceDynamic::Create(Material, Cast<UObject>(PartRef));
-		Part = PartRef;
-		SetTemperature(Temp);
-		SetAdjacencyIndex(BitwiseIndex);
+		if (IsValid(PartRef) && IsValid(Material))
+		{
+			DynamicMat = UMaterialInstanceDynamic::Create(Material, Cast<UObject>(PartRef));
+			Part = PartRef;
+			SetTemperature(Temp);
+			SetAdjacencyIndex(BitwiseIndex);
+		}
+		else
+		{
+			Part = nullptr;
+			DynamicMat = nullptr;
+		}
 	}
 
 	//Comment -Mabel Suggestion

@@ -12,7 +12,7 @@
  */
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FExplodeDelegate, FVector, ExplosionLocation, float, ExplosionRadius);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPixelBalenceChangedDelegate, int32, ChangeAmount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPixelBalanceChangedDelegate, int32, ChangeAmount);
 
 UCLASS()
 class VOIDSINGER_API UVoidsingerGameInstance : public UGameInstance
@@ -63,7 +63,7 @@ public:
 	 * Called When the pixel balence of the player changes.
 	 */
 	UPROPERTY(BlueprintAssignable)
-	FPixelBalenceChangedDelegate OnPixelBalenceChanged;
+	FPixelBalanceChangedDelegate OnPixelBalenceChanged;
 
 	UPROPERTY(BlueprintAssignable)
 	FExplodeDelegate OnExplodeDelegate;
