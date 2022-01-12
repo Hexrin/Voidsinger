@@ -116,50 +116,6 @@ public:
 	//             VARIABLES             ||
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
 
-	/*-Resource Managment-*\
-	\*--------------------*/
-
-	//An array of all the resource systems on the base ship
-	//UPROPERTY()
-	//TArray<UBaseResourceSystem*> ResourceSystems;
-
-	/*-Voidsong Managment-*\
-	\*--------------------*/
-
-	/*
-	* Comment phrasing wierd
-	* Consider "Stores the voidsongs that this ship can play" or something similar.
-	* 
-	* If suggestion on lines 11-18 of BaseVoidsong.h are followed then
-	* this should be TSet<TSubclassOf<UBaseVoidsong>>
-	* - Liam Suggestion
-	*/
-	//Array of the Voidsongs that are available to play
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<UBaseVoidsong*> AvailableVoidsongs;
-
-	/*
-	* Comment unclear
-	* Reader does not need to know where this is called but what it stores.
-	* Since it stores a delegate the reader should know when the delagate is broadcast
-	* - Liam Suggestion
-	*/
-	//For the add voidsong event dispatcher
-	UPROPERTY(BlueprintAssignable)
-	FAddVoidsongDelegate OnAddVoidsongDelegate;
-
-	/*
-	* Comment unclear
-	* Reader does not need to know what the functiosn bound to this do but what it stores.
-	* Since it stores a delegate the reader should know when the delagate is broadcast
-	* 
-	* Why does this delegate exist?
-	* It is only called on BroadcastActivateParts() which itself is never called
-	* - Liam Suggestion
-	*/
-	//For firing parts on the ship
-	UPROPERTY(BlueprintAssignable)
-	FActivatePartsDelegate OnActivatePartsDelegate;
 
 private:
 	//bool property should start with b - Liam Suggestion
