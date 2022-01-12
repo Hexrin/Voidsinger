@@ -432,7 +432,7 @@ void UBasePart::ConnectToSystems()
 						else
 						{
 							//If the part found at the location is the same as this part, then resource connection points were set up incorrectly. Print an error message.
-							UE_LOG(LogTemp, Error, TEXT("The resource connection points of %s are wrong! Fix them immediately or resources will not work correctly!"), *GetClass()->GetDisplayNameText().ToString());
+							UE_LOG(LogTemp, Error, TEXT("The resource connection points of %s are wrong! Fix them immediately or resources will not work correctly!"), *GetFName().ToString());
 						}
 					}
 				}
