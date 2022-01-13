@@ -13,10 +13,10 @@
 /*Initializer Funtions*\
 \*--------------------*/
 
-FPrimaryAssetId UBasePart::GetPrimaryAssetId() const
-{
-	return FPrimaryAssetId(GetClass()->GetFName(), GetOutermost()->GetFName());
-}
+//FPrimaryAssetId UBasePart::GetPrimaryAssetId() const
+//{
+//	return FPrimaryAssetId(FPrimaryAssetType(FName("Part")), GetClass()->GetFName());
+//}
 
 //Copy comment from .h -Mabel Suggestion
 UBasePart::UBasePart()

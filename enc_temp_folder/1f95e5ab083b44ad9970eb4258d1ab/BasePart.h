@@ -30,7 +30,7 @@ class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject, pub
 
 public:
 
-	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
+	//virtual FPrimaryAssetId GetPrimaryAssetId() const override;
 
 	//Constructor
 	//If you're gonna get on me about "constructor" being a bad comment then i'm gonna get on you about that -Mabel Suggestion
