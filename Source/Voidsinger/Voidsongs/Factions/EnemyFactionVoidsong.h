@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidsongs/Factions/BaseWhoVoidsong.h"
+#include "Voidsinger/Voidsongs/Factions/BaseFactionVoidsong.h"
 #include "EnemyFactionVoidsong.generated.h"
 
 /**

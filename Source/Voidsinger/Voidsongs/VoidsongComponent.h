@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "BaseVoidsong.h"
-#include ""
+#include "Factions/BaseFactionVoidsong.h"
+#include "Nouns/BaseNounVoidsong.h"
+#include "Verbs/BaseVerbVoidsong.h"
 #include "VoidsongComponent.generated.h"
 
 //Old delegates from ABaseShip (put here for reference, will be deleted)
@@ -24,17 +26,34 @@ class VOIDSINGER_API UVoidsongComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+	/* -------------------- *\
+	\* \/ Initialization \/ */
+
 public:	
-	// Sets default values for this component's properties
+
+	/**
+	 * Sets default values for this component's properties
+	 */
 	UVoidsongComponent();
 
+	/**
+	 * Called every frame
+	 * 
+	 * @param DeltaTime - Time since the previous tick
+	 * @param TickType - The tick type
+	 * @param ThisTickFunction - I have no idea
+	 */
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 protected:
-	// Called when the game starts
+
+	/**
+	 * Called when the game starts
+	 */
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	/* /\ Initialization /\ *\
+	\* -------------------- */
 
 	/* ------------------------------------------------------------------------------------- *\
 	\* \/ Old Voidsong functions from ABaseShip (put here for reference, will be deleted) \/ */
@@ -142,6 +161,8 @@ public:
 	/* ---------------------------------- *\
 	\* \/ Playable Voidsong Management \/ */
 
+public:
+
 	/**
 	 * Adds Voidsongs to the list of Voidsongs that this component can play.
 	 * 
@@ -150,9 +171,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PlayableVoidsongManagement")
 	void AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdded);
 
+private:
+
 	//Stores the Voidsongs that this component can play.
-	UPROPERTY(Category = "PlayableVoidsongManagement")
 	TArray<TSubclassOf<UBaseVoidsong>> PlayableVoidsongs;
+
+	/* /\ Playable Voidsong Management /\ *\
+	\* ---------------------------------- */
+
+	/* ------------------------- *\
+	\* \/ Voidsong Activation \/ */
+
+private:
+
+	void PlaySequence(TArray<int32> )
+	/* /\ Voidsong Activation /\ *\
+	\* ------------------------- */
 
 
 };

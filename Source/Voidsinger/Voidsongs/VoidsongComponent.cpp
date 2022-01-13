@@ -1,10 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Voidsongs/VoidsongComponent.h"
+#include "Voidsinger/Voidsongs/VoidsongComponent.h"
 #include "VoidsongComponent.h"
 
-// Sets default values for this component's properties
+/* -------------------- *\
+\* \/ Initialization \/ */
+
+/**
+ * Sets defaults for this component's properties
+ */
 UVoidsongComponent::UVoidsongComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -14,8 +19,21 @@ UVoidsongComponent::UVoidsongComponent()
 	// ...
 }
 
+/**
+ * Called every frame
+ *
+ * @param DeltaTime - Time since the previous tick
+ * @param TickType - The tick type
+ * @param ThisTickFunction - I have no idea
+ */
+void UVoidsongComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
 
- Called when the game starts
+/**
+ * Called when the game starts
+ */
 void UVoidsongComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -24,20 +42,24 @@ void UVoidsongComponent::BeginPlay()
 	
 }
 
+/* /\ Initialization /\ *\
+\* -------------------- */
 
- Called every frame
-void UVoidsongComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+/* ---------------------------------- *\
+\* \/ Playable Voidsong Management \/ */
 
-	// ...
-}
-
+/**
+ * Adds Voidsongs to the list of Voidsongs that this component can play.
+ *
+ * @param VoidsongsAdded - The new playable Voidsongs
+*/
  void UVoidsongComponent::AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdded)
  {
-	 PlayableVoidsongs += VoidsongAdded;
+	 PlayableVoidsongs += VoidsongsAdded;
  }
 
+/* /\ Playable Voidsong Management /\ *\
+\* ---------------------------------- */
 
 /* ------------------------------------------------------------------------------------- *\
 \* \/ Old Voidsong functions from ABaseShip (put here for reference, will be deleted) \/ */

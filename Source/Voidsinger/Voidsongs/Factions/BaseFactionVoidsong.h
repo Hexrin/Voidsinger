@@ -6,7 +6,7 @@
 #include "Voidsinger/Voidsongs/BaseVoidsong.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Kismet/GameplayStatics.h"
-#include "BaseWhoVoidsong.generated.h"
+#include "BaseFactionVoidsong.generated.h"
 
 /**
  * 

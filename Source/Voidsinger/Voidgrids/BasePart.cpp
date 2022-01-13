@@ -688,9 +688,9 @@ UNullPart* UNullPart::Get()
 //	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 //	for (auto& i : AvailableVoidsongs)
 //	{
-//		if (IsValid(Cast<UBaseWhoVoidsong>(i)))
+//		if (IsValid(Cast<UBaseFactionVoidsong>(i)))
 //		{
-//			AvailableFactions.Emplace(Cast<UBaseWhoVoidsong>(i)->Faction);
+//			AvailableFactions.Emplace(Cast<UBaseFactionVoidsong>(i)->Faction);
 //		}
 //		else if (IsValid(Cast<UBaseNounVoidsong>(i)))
 //		{

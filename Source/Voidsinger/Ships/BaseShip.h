@@ -11,7 +11,7 @@
 #include "Voidsinger/Voidsongs/BaseVoidsong.h"
 #include "Voidsinger/Voidsongs/Nouns/BaseNounVoidsong.h"
 #include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
-#include "Voidsinger/Voidsongs/Factions/BaseWhoVoidsong.h"
+#include "Voidsinger/Voidsongs/Factions/BaseFactionVoidsong.h"
 #include "ProceduralMeshComponent.h"
 #include "BaseShip.generated.h"
 
