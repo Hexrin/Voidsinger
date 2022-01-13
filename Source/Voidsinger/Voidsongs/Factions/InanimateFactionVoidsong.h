@@ -7,7 +7,7 @@
 #include "InanimateFactionVoidsong.generated.h"
 
 /**
- * This subclass of BaseFactionVoidsong sets the faction to Inanimate.
+ * This subclass of BaseFactionVoidsong sets the faction to Inanimate through config files.
  */
 UCLASS()
 class VOIDSINGER_API UInanimateFactionVoidsong : public UBaseFactionVoidsong

@@ -7,7 +7,7 @@
 #include "CoreNounVoidsong.generated.h"
 
 /**
- * 
+ * This subclass of BaseNounVoidsong sets the noun to Core through config files
  */
 UCLASS()
 class VOIDSINGER_API UCoreNounVoidsong : public UBaseNounVoidsong

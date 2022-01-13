@@ -7,7 +7,7 @@
 #include "PlayerFactionVoidsong.generated.h"
 
 /**
- * This subclass of BaseFactionVoidsong sets the faction to Player.
+ * This subclass of BaseFactionVoidsong sets the faction to Player through config files.
  */
 UCLASS()
 class VOIDSINGER_API UPlayerFactionVoidsong : public UBaseFactionVoidsong

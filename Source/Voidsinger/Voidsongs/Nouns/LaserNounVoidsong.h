@@ -7,11 +7,10 @@
 #include "LaserNounVoidsong.generated.h"
 
 /**
- * 
+ * This subclass of BaseNounVoidsong sets the noun to Laser through config files
  */
 UCLASS()
 class VOIDSINGER_API ULaserNounVoidsong : public UBaseNounVoidsong
 {
 	GENERATED_BODY()
-	
 };

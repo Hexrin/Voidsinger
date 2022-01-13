@@ -6,13 +6,18 @@
 #include "Voidsinger/Voidsongs/BaseVoidsong.h"
 #include "BaseNounVoidsong.generated.h"
 
-/**
- * The BaseNounVoidsong stores a part class on it. It is the base class for all Noun Voidsongs. When this type of Voidsong is activated, any other Voidsongs played will only apply to
- * the part class stored on this Voidsong (or any other Noun Voidsongs that were also played).
- */
+/* -------------------------- *\
+\* \/ Forward Declarations \/ */
 
 class UBasePart;
 
+/* /\ Foward Declarations /\ *\
+\* ------------------------- */
+
+/**
+ * The BaseNounVoidsong stores a part class on it. It is the base class for all Noun Voidsongs. When this type of Voidsong is performed, any other Voidsongs played will only apply to
+ * the part class stored on this Voidsong (or any other Noun Voidsongs that were also played).
+ */
 UCLASS(Abstract, Blueprintable)
 class VOIDSINGER_API UBaseNounVoidsong : public UBaseVoidsong
 {
@@ -23,7 +28,7 @@ public:
 	/* ------------------- *\
 	\* \/ Voidsong Data \/ */
 
-	//The class of the noun that this Voidword will activate
+	//The class of the noun that this Voidsong will activate
 	UPROPERTY(EditDefaultsOnly, config, BlueprintReadOnly, meta = (Category = "Config|VoidsongData"))
 	TSubclassOf<UBasePart> Noun;
 

@@ -7,7 +7,7 @@
 #include "CannonNounVoidsong.generated.h"
 
 /**
- * 
+ * This subclass of BaseNounVoidsong sets the noun to Cannon through config files.
  */
 UCLASS()
 class VOIDSINGER_API UCannonNounVoidsong : public UBaseNounVoidsong
