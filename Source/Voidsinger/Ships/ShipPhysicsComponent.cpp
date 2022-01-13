@@ -53,45 +53,45 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	{
 		GetOwner()->SetActorTransform(NewTransform);
 
-		//New function: Collide() -Mabel Suggestion
-		if (UShipPhysicsComponent::SweepShip(NewTransform, Result))
-		{
-			//dEBUG -Mabel Suggestion
-			//DrawDebugPoint(GetWorld(), Result.Location, 25, FColor::Orange, true);
-			FVector2D RelativeHitLocation = FVector2D(Result.Location - GetOwner()->GetActorLocation());
+		////New function: Collide() -Mabel Suggestion
+		//if (UShipPhysicsComponent::SweepShip(NewTransform, Result))
+		//{
+		//	//dEBUG -Mabel Suggestion
+		//	//DrawDebugPoint(GetWorld(), Result.Location, 25, FColor::Orange, true);
+		//	FVector2D RelativeHitLocation = FVector2D(Result.Location - GetOwner()->GetActorLocation());
 
-			FVector2D ImpactNormal = FVector2D(Result.Normal);
-			ImpactNormal.Normalize();
+		//	FVector2D ImpactNormal = FVector2D(Result.Normal);
+		//	ImpactNormal.Normalize();
 
-			//Comment scary math -Mabel
-			if (FVector2D::DotProduct(GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) < 0)
-			{
-				ABaseShip* OtherShip = Cast<ABaseShip>(Result.GetActor());
+		//	//Comment scary math -Mabel
+		//	if (FVector2D::DotProduct(GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) < 0)
+		//	{
+		//		ABaseShip* OtherShip = Cast<ABaseShip>(Result.GetActor());
 
-				float CollisionImpulseFactor;
+		//		float CollisionImpulseFactor;
 
-				if (IsValid(OtherShip))
-				{
-					UShipPhysicsComponent* OtherPhysicsComponent = OtherShip->PhysicsComponent;
-					FVector2D OtherRelativeHitLocation = FVector2D(Result.Location - OtherShip->GetActorLocation());
+		//		if (IsValid(OtherShip))
+		//		{
+		//			UShipPhysicsComponent* OtherPhysicsComponent = OtherShip->PhysicsComponent;
+		//			FVector2D OtherRelativeHitLocation = FVector2D(Result.Location - OtherShip->GetActorLocation());
 
-					CollisionImpulseFactor = FVector2D::DotProduct(-1 * (1 + CollisionElasticity) * GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) /
-						(1 / GetMass() + 1 / OtherPhysicsComponent->GetMass() + FMath::Square(FVector2D::CrossProduct(RelativeHitLocation, ImpactNormal)) / GetMomentOfInertia() + FMath::Square(FVector2D::CrossProduct(OtherRelativeHitLocation, ImpactNormal)) / OtherPhysicsComponent->GetMomentOfInertia());
+		//			CollisionImpulseFactor = FVector2D::DotProduct(-1 * (1 + CollisionElasticity) * GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) /
+		//				(1 / GetMass() + 1 / OtherPhysicsComponent->GetMass() + FMath::Square(FVector2D::CrossProduct(RelativeHitLocation, ImpactNormal)) / GetMomentOfInertia() + FMath::Square(FVector2D::CrossProduct(OtherRelativeHitLocation, ImpactNormal)) / OtherPhysicsComponent->GetMomentOfInertia());
 
-					//You shouldn't add an impulse to the other physics component *and* this physics component, because the other physics component will be doing the same thing.
-					//Only handle *this* physics component's impulse, not the other one. (or only handle the other one and not this one.) -Mabel Suggestion
-					OtherPhysicsComponent->AddImpulse(-1 * CollisionImpulseFactor * ImpactNormal, OtherRelativeHitLocation);
-				}
-				else
-				{
-					//You shouldn't be colliding with anything that isn't a ship, right? this might not be needed -Mabel Suggestion
-					CollisionImpulseFactor = FVector2D::DotProduct(-1 * (1 + CollisionElasticity) * GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) /
-						(1 / GetMass() + FMath::Square(FVector2D::CrossProduct(RelativeHitLocation, ImpactNormal)) / GetMomentOfInertia());
-				}
+		//			//You shouldn't add an impulse to the other physics component *and* this physics component, because the other physics component will be doing the same thing.
+		//			//Only handle *this* physics component's impulse, not the other one. (or only handle the other one and not this one.) -Mabel Suggestion
+		//			OtherPhysicsComponent->AddImpulse(-1 * CollisionImpulseFactor * ImpactNormal, OtherRelativeHitLocation);
+		//		}
+		//		else
+		//		{
+		//			//You shouldn't be colliding with anything that isn't a ship, right? this might not be needed -Mabel Suggestion
+		//			CollisionImpulseFactor = FVector2D::DotProduct(-1 * (1 + CollisionElasticity) * GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) /
+		//				(1 / GetMass() + FMath::Square(FVector2D::CrossProduct(RelativeHitLocation, ImpactNormal)) / GetMomentOfInertia());
+		//		}
 
-				AddImpulse(CollisionImpulseFactor * ImpactNormal, RelativeHitLocation);				
-			}
-		}
+		//		AddImpulse(CollisionImpulseFactor * ImpactNormal, RelativeHitLocation);				
+		//	}
+		//}
 	}
 	
 
