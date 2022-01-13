@@ -7,7 +7,7 @@
 #include "EnemyFactionVoidsong.generated.h"
 
 /**
- * 
+ * This subclass of BaseFactionVoidsong sets the faction to Enemy.
  */
 UCLASS()
 class VOIDSINGER_API UEnemyFactionVoidsong : public UBaseFactionVoidsong

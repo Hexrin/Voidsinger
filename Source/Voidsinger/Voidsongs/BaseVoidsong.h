@@ -19,34 +19,37 @@
 * If this is done the class should no longer derive from FTickableGameObject.
 */
 
+/**
+ * The base Voidsong is the base class for all Voidsongs. It holds information such as the activation sequence for the Voidsong.
+ */
 UCLASS(Abstract, Blueprintable, config=VoidSettings, defaultconfig)
 class VOIDSINGER_API UBaseVoidsong : public UObject
 {
 	GENERATED_BODY()
 
+	/* -------------------- *\
+	\* \/ Initialization \/ */
+
 public:
 
+	/**
+	 * Sets default values for this object's properties
+	 */
 	UBaseVoidsong();
 
-	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-\\
-	//             VARIABLES             ||
-	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
+	/* /\ Initialization /\ *\
+	\* -------------------- */
 
-	/*-Defaults-*\
-	\*----------*/
+	/* ------------------- *\
+	\* \/ Voidsong Data \/ */
 
-	//The name of the Voidword that the player will see.
-	//static const FText VoidsongDisplayText;
+public:
 
-	/*
-	* UE doesnt like int, use int32 or int64 instead.
-	* - Liam Suggestion
-	*/
-	//The sequence of numbers that when played will activate the Voidword.
-	//static const TArray<int32> ActivationCombo;
+	//Stores a sequence of numbers that will activate the Voidsong when played.
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, config, meta = (Category = "Config|VoidsongData"))
+	TArray<int32> ActivationSequence;
 
-	//Copy comment form GetDuration() - Liam Suggestion
-	//The amount of time that this Voidword takes to play
-	//static const float Duration;
-
+	/* /\ VoidsongData /\ *\
+	\* ------------------ */
+	
 };

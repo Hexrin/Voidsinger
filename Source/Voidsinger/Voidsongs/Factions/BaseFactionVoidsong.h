@@ -9,20 +9,24 @@
 #include "BaseFactionVoidsong.generated.h"
 
 /**
- * 
+ * The BaseFactionVoidsong stores a faction on it. It is the base class for all Faction Voidsongs. When this type of Voidsong is activated, any other Voidsongs played will only apply to
+ * ship that are part of this Voidsong's faction (or any other Faction Voidsongs that were also played).
  */
-
- //Should be renamed to UBaseFactionVoidsong for consitancy - Liam Suggestion
 UCLASS(Abstract, Blueprintable)
 class VOIDSINGER_API UBaseFactionVoidsong : public UBaseVoidsong
 {
 	GENERATED_BODY()
 	
+	/* ------------------- *\
+	\* \/ Voidsong Data \/ */
+
 public:
 
-	//The faction that this Voidword will activate nouns on
-	UPROPERTY(EditDefaultsOnly, config, BlueprintReadOnly, meta = (Category = "Config"))
+	//The faction that this Voidsong will make all other Voidsongs apply to
+	UPROPERTY(EditDefaultsOnly, config, BlueprintReadOnly, meta = (Category = "Config|VoidsongData"))
 	EFactions Faction;
 
+	/* /\ VoidsongData /\ *\
+	\* ------------------ */
 
 };

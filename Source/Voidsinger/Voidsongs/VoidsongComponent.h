@@ -184,7 +184,8 @@ private:
 
 private:
 
-	void PlaySequence(TArray<int32> )
+	void PlaySequence(TArray<int32> Sequence);
+
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */
 

@@ -7,7 +7,8 @@
 #include "BaseNounVoidsong.generated.h"
 
 /**
- * 
+ * The BaseNounVoidsong stores a part class on it. It is the base class for all Noun Voidsongs. When this type of Voidsong is activated, any other Voidsongs played will only apply to
+ * the part class stored on this Voidsong (or any other Noun Voidsongs that were also played).
  */
 
 class UBasePart;
@@ -19,8 +20,13 @@ class VOIDSINGER_API UBaseNounVoidsong : public UBaseVoidsong
 
 public:
 
+	/* ------------------- *\
+	\* \/ Voidsong Data \/ */
+
 	//The class of the noun that this Voidword will activate
-	UPROPERTY(EditDefaultsOnly, config, BlueprintReadOnly, meta = (Category = "Config"))
+	UPROPERTY(EditDefaultsOnly, config, BlueprintReadOnly, meta = (Category = "Config|VoidsongData"))
 	TSubclassOf<UBasePart> Noun;
 
+	/* /\ VoidsongData /\ *\
+	\* ------------------ */
 };
