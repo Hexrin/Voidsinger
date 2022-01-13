@@ -15,7 +15,10 @@
 
 FPrimaryAssetId UBasePart::GetPrimaryAssetId() const
 {
-	return FPrimaryAssetId(GetClass()->GetFName(), GetOutermost()->GetFName());
+	FString Thing = GetClass()->GetName();
+	Thing.RemoveFromEnd("_C");
+
+	return FPrimaryAssetId(FName("Part"), FName(Thing));
 }
 
 //Copy comment from .h -Mabel Suggestion

@@ -3,6 +3,14 @@
 
 #include "BaseVoidsong.h"
 
+FPrimaryAssetId UBaseVoidsong::GetPrimaryAssetId() const
+{
+	FString Thing = GetClass()->GetName();
+	Thing.RemoveFromEnd("_C");
+
+	return FPrimaryAssetId(FName("Voidsong"), FName(Thing));
+}
+
 /*
 * Function comments from the .h should be copied to the .cpp 
 * 

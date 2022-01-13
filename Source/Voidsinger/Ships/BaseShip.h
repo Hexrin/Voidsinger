@@ -38,6 +38,8 @@ public:
 	/*-Initializers-*\
 	\*--------------*/
 
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
+
 	// Sets default values for this pawn's properties
 	ABaseShip();
 

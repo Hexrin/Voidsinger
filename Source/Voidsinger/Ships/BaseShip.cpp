@@ -5,6 +5,14 @@
 #include "Voidsinger/Parts/BaseResourceSystem.h"
 #include "Voidsinger/Parts/BaseFreespacePart.h"
 
+FPrimaryAssetId ABaseShip::GetPrimaryAssetId() const
+{
+	FString Thing = GetClass()->GetName();
+	Thing.RemoveFromEnd("_C");
+
+	return FPrimaryAssetId(FName("Ship"), FName(Thing));
+}
+
 // Sets default values
 ABaseShip::ABaseShip()
 {

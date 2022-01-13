@@ -33,6 +33,8 @@ public:
 	/*Initializer Functions*\
 	\*---------------------*/
 
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
+
 	/*
 	* Comment not helpful. What does the constuctor do? 
 	* 
