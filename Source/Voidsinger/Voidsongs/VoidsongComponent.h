@@ -174,7 +174,7 @@ public:
 private:
 
 	//Stores the Voidsongs that this component can play.
-	TArray<TSubclassOf<UBaseVoidsong>> PlayableVoidsongs;
+	TSet<TSubclassOf<UBaseVoidsong>> PlayableVoidsongs;
 
 	/* /\ Playable Voidsong Management /\ *\
 	\* ---------------------------------- */
@@ -184,7 +184,26 @@ private:
 
 private:
 
+	/**
+	 * 
+	 */
 	void PlaySequence(TArray<int32> Sequence);
+
+	/**
+	 *
+	 */
+	float ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFactions>& OutFactions, TArray<TSubclassOf<UBasePart>>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs);
+
+	/**
+	 *
+	 */
+	void EndSequence();
+
+	//
+	bool bCanPlaySequences;
+
+	//
+	TArray<TSubclassOf<UBaseVoidsong>> ActiveVoidsongs;
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */

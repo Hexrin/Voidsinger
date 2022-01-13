@@ -15,8 +15,6 @@ UVoidsongComponent::UVoidsongComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 /**
@@ -36,10 +34,7 @@ void UVoidsongComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
  */
 void UVoidsongComponent::BeginPlay()
 {
-	Super::BeginPlay();
-
-	// ...
-	
+	Super::BeginPlay();	
 }
 
 /* /\ Initialization /\ *\
@@ -60,6 +55,88 @@ void UVoidsongComponent::BeginPlay()
 
 /* /\ Playable Voidsong Management /\ *\
 \* ---------------------------------- */
+
+/* ------------------------- *\
+\* \/ Voidsong Activation \/ */
+
+ void UVoidsongComponent::PlaySequence(TArray<int32> Sequence)
+ {
+	 if (!Sequence.IsEmpty() && bCanPlaySequences)
+	 {
+		 TArray<EFactions> Factions;
+		 TArray<TSubclassOf<UBasePart>> Nouns;
+		 TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs;
+
+		 float Duration = ParseSequenceIntoVoidsongData(Sequence, Factions, Nouns, Verbs);
+
+		 if (!Factions.IsEmpty() || !Nouns.IsEmpty() || !Verbs.IsEmpty())
+		 {
+			 //activate voidsong here
+		 }
+
+		 if (Duration != 0)
+		 {
+			 bCanPlaySequences = false;
+			 FTimerHandle DurationTimer;
+			 GetWorld()->GetTimerManager().SetTimer(DurationTimer, this, &UVoidsongComponent::EndSequence, Duration);
+		 }
+	 }
+ }
+
+ float UVoidsongComponent::ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFactions>& OutFactions, TArray<TSubclassOf<UBasePart>>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs)
+ {
+	 float Duration = 0;
+
+	 for (TSubclassOf<UBaseVoidsong> EachPlayableVoidsong : PlayableVoidsongs)
+	 {
+		 UBaseVoidsong* EachPlayableVoidsongDefaultObject = EachPlayableVoidsong.GetDefaultObject();
+		 TArray<int32> TrimmedSequence = Sequence;
+		 TrimmedSequence.SetNum(EachPlayableVoidsongDefaultObject->ActivationSequence.Num());
+
+		 if (TrimmedSequence == EachPlayableVoidsongDefaultObject->ActivationSequence)
+		 {
+
+			 Duration += EachPlayableVoidsongDefaultObject->Duration;
+
+			 if (IsValid(Cast<UBaseFactionVoidsong>(EachPlayableVoidsongDefaultObject)))
+			 {
+				 OutFactions.Emplace(Cast<UBaseFactionVoidsong>(EachPlayableVoidsongDefaultObject)->Faction);
+			 }
+			 else if (IsValid(Cast<UBaseNounVoidsong>(EachPlayableVoidsongDefaultObject)))
+			 {
+				 OutNouns.Emplace(Cast<UBaseNounVoidsong>(EachPlayableVoidsongDefaultObject)->Noun);
+			 }
+			 else if (IsValid(Cast<UBaseVerbVoidsong>(EachPlayableVoidsongDefaultObject)))
+			 {
+				 OutVerbs.Emplace(Cast<UBaseVerbVoidsong>(EachPlayableVoidsongDefaultObject));
+			 }
+
+			 for (int EachIndex : EachPlayableVoidsongDefaultObject->ActivationSequence)
+			 {
+				 Sequence.RemoveAt(0);
+			 }
+
+			 if (!Sequence.IsEmpty())
+			 {
+				 Duration += ParseSequenceIntoVoidsongData(Sequence, OutFactions, OutNouns, OutVerbs);
+			 }
+
+			 break;
+		 }
+	 }
+
+	 return Duration;
+ }
+
+ void UVoidsongComponent::EndSequence()
+ {
+	 bCanPlaySequences = true;
+
+	 //unsetify the verbs here
+ }
+
+/* /\ Voidsong Activation /\ *\
+\* ------------------------- */
 
 /* ------------------------------------------------------------------------------------- *\
 \* \/ Old Voidsong functions from ABaseShip (put here for reference, will be deleted) \/ */

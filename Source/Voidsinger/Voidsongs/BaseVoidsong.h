@@ -48,6 +48,10 @@ public:
 	//Stores a sequence of numbers that will activate the Voidsong when played.
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, config, meta = (Category = "Config|VoidsongData"))
 	TArray<int32> ActivationSequence;
+	
+	//Stores the amount of time that this Voidsong plays for
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, config, meta = (Category = "Config|VoidsongData"))
+	float Duration;
 
 	/* /\ VoidsongData /\ *\
 	\* ------------------ */
