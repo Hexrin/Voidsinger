@@ -95,20 +95,21 @@ TArray<FString> UPixelMoldEditor::GetAllMoldNames()
  * @param OverrridePriorParts - Whether or not the part you are placing should override the parts it is placed on top of if possible.
  * @return Whether the part placement was a success.
  */
-bool UPixelMoldEditor::PlacePart(TSubclassOf<UPart> Part, FPartTransform Transform, bool bOverrridePriorParts)
+bool UPixelMoldEditor::PlacePart(UPartData* Part, FPartTransform Transform, bool bOverrridePriorParts)
 {
-	if (IsValid(Part.Get()) && Part.GetDefaultObject()->GetDefaultShape().Num() != 0)
+	if (IsValid(Part) && Part->Shape.Num() != 0)
 	{
 		//Search for overlaping parts.
 		TSet<FMinimalPartInstanceData> PartsToRemove = TSet<FMinimalPartInstanceData>();
-		for (GridLocationType ShapeComponent : Part.GetDefaultObject()->GetDefaultShape())
+		for (GridLocationType ShapeComponent : Part->Shape)
 		{
 			//If part is not rotatable then only translate part.
-			GridLocationType ShapeComonentGirdLocation = Part.GetDefaultObject()->IsRotatable() ? Transform.TransformGridLocation(ShapeComponent) : ShapeComponent + Transform.GetGridLocation();
+			GridLocationType ShapeComonentGirdLocation = Part->bRotatable ? Transform.TransformGridLocation(ShapeComponent) : ShapeComponent + Transform.GetGridLocation();
 			if (PartLocations.Contains(ShapeComonentGirdLocation))
 			{
+				FMinimalPartInstanceData OverLapingPart = PartLocations.FindRef(ShapeComonentGirdLocation);
 				//Mark ovrridable parts for removal.
-				if (bOverrridePriorParts && Part.GetDefaultObject()->IsOverridable() && Part.GetDefaultObject()->IsRemovable())
+				if (bOverrridePriorParts && OverLapingPart.Data->bOverridable && OverLapingPart.Data->bRemovable)
 				{
 					PartsToRemove.Add(PartLocations.FindRef(ShapeComonentGirdLocation));
 				}
@@ -129,7 +130,7 @@ bool UPixelMoldEditor::PlacePart(TSubclassOf<UPart> Part, FPartTransform Transfo
 		FMinimalPartInstanceData PartBeingAdded = FMinimalPartInstanceData(Part, Transform);
 		//Propagate Mold with new part
 		Mold.Add(PartBeingAdded);
-		for (GridLocationType ShapeComponent : Part.GetDefaultObject()->GetDefaultShape())
+		for (GridLocationType ShapeComponent : Part->Shape)
 		{
 			PartLocations.Emplace(Transform.TransformGridLocation(ShapeComponent), PartBeingAdded);
 		}
@@ -175,13 +176,13 @@ bool UPixelMoldEditor::RemovePart(FIntPoint Location, bool bCallUpdatedEvent)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("--- Removing of %s, %s, %i Faild ---\n\t\tSet hashing failed. Cause: unkown"), *PartToRemove.Class->GetFName().ToString(), *(PartToRemove.Transform.GetGridLocation().ToString()), (int32)PartToRemove.Transform.Rotation);
+		UE_LOG(LogTemp, Error, TEXT("--- Removing of %s, %s, %i Faild ---\n\t\tSet hashing failed. Cause: unkown"), *PartToRemove.Data->GetFName().ToString(), *(PartToRemove.Transform.GetGridLocation().ToString()), (int32)PartToRemove.Transform.Rotation);
 		Mold.Compact();
 		Mold.Remove(PartToRemove);
 	}
 
 	//Remove part from mold.
-	for (GridLocationType ShapeComponent : PartToRemove.Class.GetDefaultObject()->GetDefaultShape())
+	for (GridLocationType ShapeComponent : PartToRemove.Data->Shape)
 	{
 		PartLocations.Remove(PartToRemove.Transform.TransformGridLocation(ShapeComponent));
 	}

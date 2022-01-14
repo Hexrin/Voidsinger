@@ -24,7 +24,7 @@ TArray<FIntPoint> UPartEditorBase::GetPartShape()
  */
 void UPartEditorBase::SetPartShape(TArray<FIntPoint> NewShape)
 {
-	if (IsValid(GetMutableDefaultPart()))
+	if (IsValid(PartBeingEdited))
 	{
 		PartBeingEdited->Shape = TSet<FIntPoint>(NewShape);
 	}
@@ -37,7 +37,7 @@ void UPartEditorBase::SetPartShape(TArray<FIntPoint> NewShape)
  */
 void UPartEditorBase::AddPixelToPartShape(FIntPoint PixelLocation)
 {
-	if (IsValid(GetMutableDefaultPart()))
+	if (IsValid(PartBeingEdited))
 	{
 		PartBeingEdited->Shape.Add(PixelLocation);
 	}
@@ -50,7 +50,7 @@ void UPartEditorBase::AddPixelToPartShape(FIntPoint PixelLocation)
  */
 void UPartEditorBase::RemovePixelFromPartShape(FIntPoint PixelLocation)
 {
-	if (IsValid(GetMutableDefaultPart()))
+	if (IsValid(PartBeingEdited))
 	{
 		PartBeingEdited->Shape.Remove(PixelLocation);
 	}
@@ -63,6 +63,6 @@ void UPartEditorBase::SavePart()
 {
 	if (IsValid(PartBeingEdited))
 	{
-		FPa
+		
 	}
 }

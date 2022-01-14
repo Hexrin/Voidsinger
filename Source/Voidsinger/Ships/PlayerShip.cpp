@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerShip.h"
-#include "Voidsinger/Voidgrids/BasePart.h"
+#include "Voidsinger/Voidgrids/Part.h"
 
 APlayerShip::APlayerShip()
 {
