@@ -62,9 +62,9 @@ GridLocationType UPartRotationFunctions::UnrotateGridLocation(GridLocationType G
  * @param PartData - The data pased to the new part.
  * @return A pointer to the newly created part.
  */
-UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInfo PartData)
+UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData* PartData)
 {
-	UPart* NewPart = NewObject<UPart>(OwningVoidgrid, PartData.Class);
+	UPart* NewPart = NewObject<UPart>(OwningVoidgrid, UPart::StaticClass());
 
 	//Initialize Variables
 	NewPart->Voidgrid = OwningVoidgrid;
@@ -81,9 +81,9 @@ UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInfo PartData)
  *
  * @return The part data for this part.
  */
-FPartInfo UPart::GetData()
+FPartInstanceData UPart::GetData()
 {
-	return FPartInfo(StaticClass(), GetTransform(), GetShape());
+	return FPartInstanceData(StaticClass(), GetTransform(), GetShape());
 }
 
 /**
@@ -91,9 +91,9 @@ FPartInfo UPart::GetData()
  *
  * @return The minimnal part data for this part.
  */
-FMinimalPartData UPart::GetMinimalData()
+FMinimalPartInstanceData UPart::GetMinimalPartInstanceData()
 {
-	return FMinimalPartData(StaticClass(), GetTransform());
+	return FMinimalPartInstanceData(StaticClass(), GetTransform());
 }
 
 /* ---------------- *\

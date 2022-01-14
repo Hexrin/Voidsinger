@@ -19,7 +19,7 @@
 ////
 ////Comment the struct, what's this used for? -Mabel Suggestion
 //USTRUCT(BlueprintType)
-//struct VOIDSINGER_API FPartInfo
+//struct VOIDSINGER_API FPartInstanceData
 //{
 //	GENERATED_BODY()
 //
@@ -44,13 +44,13 @@
 //public:
 //
 //	//Comment -Mabel Suggestion
-//	FPartInfo()
+//	FPartInstanceData()
 //	{
-//		FPartInfo(nullptr, 0, 0, nullptr);
+//		FPartInstanceData(nullptr, 0, 0, nullptr);
 //	}
 //
 //	//Comment -Mabel Suggestion
-//	FPartInfo(UPart* PartRef, float Temp, int32 BitwiseIndex, UMaterialInterface* Material)
+//	FPartInstanceData(UPart* PartRef, float Temp, int32 BitwiseIndex, UMaterialInterface* Material)
 //	{
 //		DynamicMat = UMaterialInstanceDynamic::Create(Material, Cast<UObject>(PartRef));
 //		Part = PartRef;
@@ -224,15 +224,15 @@
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintPure)
-//	FPartInfo GetPartDataAtGridLocation(FIntPoint Location);
+//	FPartInstanceData GetPartDataAtGridLocation(FIntPoint Location);
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintPure)
-//	FPartInfo GetPartDataAtRelativeLocation(FVector Location);
+//	FPartInstanceData GetPartDataAtRelativeLocation(FVector Location);
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintPure)
-//	FPartInfo GetPartDataAtWorldLocation(FVector Location);
+//	FPartInstanceData GetPartDataAtWorldLocation(FVector Location);
 //
 //private:
 //
@@ -281,7 +281,7 @@
 //	//Comment -Mabel Suggestion
 //	//Why is this not blueprint pure but GetPartGridScale is?
 //	//UFUNCTION(BlueprintPure)
-//	TGridMap<FPartInfo> GetPartGrid();
+//	TGridMap<FPartInstanceData> GetPartGrid();
 //	
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintPure)
@@ -316,7 +316,7 @@
 //
 //	//Comment -Mabel Suggestion
 //	//It's a bit odd to have a variable named the same thing as the component. Makes it a bit confusing to say the least. -Mabel Suggestion
-//	TGridMap<FPartInfo> PartGrid;
+//	TGridMap<FPartInstanceData> PartGrid;
 //
 //	//Comment -Mabel Suggestion
 //	UPROPERTY()
@@ -370,9 +370,9 @@
 //public:
 //	//Function should be moved to TGridMap<> - Liam Suggestion
 //	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
-//	static TSet<FIntPoint> FindConnectedShape(TSet<FIntPoint> Shape, TGridMap<FPartInfo> ConnectedPartsMap, bool CheckFunctionality = false);
+//	static TSet<FIntPoint> FindConnectedShape(TSet<FIntPoint> Shape, TGridMap<FPartInstanceData> ConnectedPartsMap, bool CheckFunctionality = false);
 //
 //	//Comment -Mabel Suggestion
-//	static bool IsPixelFunctional(FPartInfo PixelValue, FIntPoint Loc);
+//	static bool IsPixelFunctional(FPartInstanceData PixelValue, FIntPoint Loc);
 //};
 //>>>>>>> Demo-Version

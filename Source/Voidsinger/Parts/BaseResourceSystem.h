@@ -62,8 +62,8 @@
 //	* Comment Unclear. Which UBaseParts?
 //	* - Liam Suggestion
 //	*/ 
-//	//Gets a FIntPoint to FPartInfo map from a list of UBaseParts. FIntPoints will be the pixel locations of the UBaseParts. 
-//	TGridMap<FPartInfo> GetMapFromConnectedParts();
+//	//Gets a FIntPoint to FPartInstanceData map from a list of UBaseParts. FIntPoints will be the pixel locations of the UBaseParts. 
+//	TGridMap<FPartInstanceData> GetMapFromConnectedParts();
 //
 //	//Comment needed. What does the function do and what does it return? - Liam Suggestion
 //	UFUNCTION(BlueprintPure)
@@ -114,7 +114,7 @@
 //	
 //	//Name/Comment inconsitancy. If this function adds parts than it should be called AddParts. - Liam Suggestion
 //	//Adds multiple parts to the resource system
-//	void AddSection(TGridMap<FPartInfo> AddedResourceGrid);
+//	void AddSection(TGridMap<FPartInstanceData> AddedResourceGrid);
 //
 //	/*--System and Break Management Functions--*\
 //	\*-----------------------------------------*/
@@ -124,14 +124,14 @@
 //	void MergeSystems(UBaseResourceSystem* MergedSystem);
 //
 //	//Creates a new resource system with the parts inputted into this function
-//	void CreateNewSystem(TGridMap<FPartInfo> ResourceGrid, EResourceType Type);
+//	void CreateNewSystem(TGridMap<FPartInstanceData> ResourceGrid, EResourceType Type);
 //
 //	UFUNCTION()
 //	void DestroyResourceSystem();
 //
 //	ABaseShip* GetOwningShip();
 //
-//	void RemoveSection(TGridMap<FPartInfo> RemovedSection);
+//	void RemoveSection(TGridMap<FPartInstanceData> RemovedSection);
 //
 //protected:
 //
@@ -151,7 +151,7 @@
 //	TArray<UPart*> ConnectedParts;
 //	
 //	//Stores all the locations that are connected to the resource system and what part corresponds to what location.
-//	TGridMap<FPartInfo> ResourceSystemGrid;
+//	TGridMap<FPartInstanceData> ResourceSystemGrid;
 //
 //	//Stores the type of this system
 //	UPROPERTY()

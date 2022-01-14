@@ -214,7 +214,7 @@
 //
 //		//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion"  -Mabel Suggestion
 //		//iteration through part grid makes me sad. -Mabel Suggestion
-//		for (FGridPair<FPartInfo> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
+//		for (FGridPair<FPartInstanceData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
 //		{
 //			//Comment! -Mabel Suggestion
 //			FVector StartLoc = FVector(FVector2D(PixelInfo.Location).GetRotated(Ship->GetActorRotation().Yaw), 0) + Ship->GetActorLocation();
