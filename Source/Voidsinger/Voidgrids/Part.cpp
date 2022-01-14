@@ -68,7 +68,7 @@ UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData PartData)
 
 	//Initialize Variables
 	NewPart->Voidgrid = OwningVoidgrid;
-	NewPart->SetData(PartData.GetData())
+	NewPart->Data = PartData.GetData();
 	NewPart->Transform = PartData.GetTransform();
 	NewPart->Shape = PartData.GetShape();
 
@@ -84,7 +84,7 @@ UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData PartData)
  */
 FMinimalPartInstanceData UPart::GetMinimalPartInstanceData()
 {
-	return FMinimalPartInstanceData(StaticClass(), GetTransform());
+	return FMinimalPartInstanceData(GetData(), GetTransform());
 }
 
 /* ---------------- *\
@@ -97,7 +97,7 @@ FMinimalPartInstanceData UPart::GetMinimalPartInstanceData()
  */
 PartShapeType UPart::GetDefaultShape()
 {
-	return Data.Shape;
+	return Data->Shape;
 }
 
 /**
@@ -112,7 +112,7 @@ void UPart::PixelDamaged(GridLocationType Location)
 	{
 		OnDamaged(RelativeLocation);
 
-		if (bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) < FunctionalityPercent)
+		if (bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent)
 		{
 			bFunctional = true;
 			OnFunctionaltyLost();
@@ -138,7 +138,7 @@ void UPart::PixelRepaired(GridLocationType Location)
 		Shape.Add(RelativeLocation);
 		OnRepaired(RelativeLocation);
 
-		if (!bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) >= FunctionalityPercent)
+		if (!bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) >= GetData()->FunctionalityPercent)
 		{
 			bFunctional = true;
 			OnFunctionaltyRestored();

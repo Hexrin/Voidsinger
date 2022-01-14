@@ -333,7 +333,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	FPartTransform Transform;
 
-	FMinimalPartInstanceData(UPartData* PartData, FPartTransform PartTransform = FPartTransform())
+	FMinimalPartInstanceData(UPartData* PartData = nullptr, FPartTransform PartTransform = FPartTransform())
 	{
 		Data = PartData;
 		Transform = PartTransform;
@@ -386,9 +386,9 @@ struct FPartInstanceData
 	}
 
 
-	FPartInstanceData(TSubclassOf<UPart> PartClass, FPartTransform PartTransform, PartShapeType PartShape)
+	FPartInstanceData(UPartData* PartData, FPartTransform PartTransform, PartShapeType PartShape)
 	{
-		MinimalData = FMinimalPartInstanceData(PartClass, PartTransform);
+		MinimalData = FMinimalPartInstanceData(PartData, PartTransform);
 		Shape = PartShape;
 	}
 

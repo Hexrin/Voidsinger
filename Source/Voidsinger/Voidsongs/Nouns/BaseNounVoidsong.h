@@ -9,7 +9,7 @@
 /* -------------------------- *\
 \* \/ Forward Declarations \/ */
 
-class UBasePart;
+class UPart;
 
 /* /\ Foward Declarations /\ *\
 \* ------------------------- */
