@@ -8,6 +8,7 @@
 #include "Voidsinger/Voidsongs/Factions/BaseFactionVoidsong.h"
 #include "Voidsinger/Voidsongs/Nouns/BaseNounVoidsong.h"
 #include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
+#include "Voidsinger/VoidsingerTypes.h"
 #include "PartModule.generated.h"
 
 /**
@@ -45,13 +46,53 @@ class VOIDSINGER_API UPartModule : public UObject
 {
 	GENERATED_BODY()
 
-	void Activate(float Effectivness);
-	void Activate(const TArray<EFactions>& Factions, const TArray<TSubclassOf<UPart>>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, const TArray<TSubclassOf<UBaseVoidsong>>& PlayableVoidsongs, float Effectivness);
+	/* -------------------- *\
+	\* \/ Initialization \/ */
 
-	UFUNCTION(BlueprintImplementable, DisplayName = ("Activate"))
-	void OnActivate(TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs);
+public:
+
+	/**
+	 * Initializes the part module's private variables
+	 * 
+	 * @param OwningPart - The part that this module is being initialized from
+	 */
+	void InitializeVariables(UPart* OwningPart);
+
+private:
+
+	// The part that this module is on
+	UPart* Part;
+
+	/* /\ Initialization /\ *\
+	\* -------------------- */
+
+	/* ---------------- *\
+	\* \/ Activation \/ */
+
+public:
+
+	/**
+	 * Allows for blueprint logic when the part module is activated
+	 */
+	UFUNCTION(BlueprintImplementable, DisplayName = ("Activate"), Category = ("Activation"))
+	void OnActivate(TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs, float Effectiveness);
+
+	// \/ Activate \/
+
+	/**
+	 * Calls the "OnActivate" function so the part module's functionality is executed
+	 * 
+	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
+	 */
+	void Activate(float Effectiveness);
+
+	/**
+	 * Activate overload - Checks whether "OnActivate" should be called by seeing if 
+	 */
+	void Activate(const TArray<EFactions>& Factions, const TArray<TSubclassOf<UPart>>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, const TArray<TSubclassOf<UBaseVoidsong>>& PlayableVoidsongs, float Effectiveness);
 
 
-	//UPROPERTY(EditAnywhere)
+	/* /\ Activation /\ *\
+	\* ---------------- */
 
 };

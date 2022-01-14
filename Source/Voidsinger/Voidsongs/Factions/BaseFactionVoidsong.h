@@ -24,7 +24,7 @@ public:
 
 	//The faction that this Voidsong will make all other Voidsongs apply to
 	UPROPERTY(EditDefaultsOnly, config, BlueprintReadOnly, meta = (Category = "Config|VoidsongData"))
-	EFactions Faction;
+	const EFactions Faction;
 
 	/* /\ VoidsongData /\ *\
 	\* ------------------ */
