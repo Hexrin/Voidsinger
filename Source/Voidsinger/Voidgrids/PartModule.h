@@ -4,10 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Voidsinger/Voidsongs/BaseVoidsong.h"
+#include "Voidsinger/Voidsongs/Factions/BaseFactionVoidsong.h"
+#include "Voidsinger/Voidsongs/Nouns/BaseNounVoidsong.h"
+#include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
 #include "PartModule.generated.h"
 
 /**
- * This 
+ * This enum stores delegate names. Module functions can be bound to these delegates by choosing options in this enum.
  */
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EActivationCue : uint8
@@ -20,11 +24,10 @@ enum class EActivationCue : uint8
 	OnFunctionalityRestored		UMETA(DisplayName = "OnFunctionalityRestored", Tooltip = "When the part gains enough pixels to function"),
 	OnVoidsongCue				UMETA(DisplayName = "OnVoidsong", Tooltip = "When a Voidsong cue is called"),
 };
-
 ENUM_CLASS_FLAGS(EActivationCue);
 
 /**
- * 
+ * This enum stores delegate names specific to Voidsongs. Module functions can be bound to these delegates by choosing options in this enum.
  */
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EVoidsongCue : uint8
@@ -32,7 +35,6 @@ enum class EVoidsongCue : uint8
 	Beat		UMETA(DisplayName = "Beat"),
 	Tick		UMETA(DisplayName="Tick"),
 };
-
 ENUM_CLASS_FLAGS(EVoidsongCue)
 
 /**
@@ -43,8 +45,12 @@ class VOIDSINGER_API UPartModule : public UObject
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
-	float Range;
+	void Activate();
+	void Activate(TArray<EFactions> Factions, TArray<TSubclassOf<UPart>> Nouns, TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs);
+
+	UFUNCTION(BlueprintImplementable, DisplayName = ("Activate"))
+	void OnActivate(TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs);
+
 
 	//UPROPERTY(EditAnywhere)
 
