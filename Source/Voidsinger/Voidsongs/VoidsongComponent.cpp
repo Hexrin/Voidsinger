@@ -108,7 +108,7 @@ void UVoidsongComponent::BeginPlay()
 			 }
 			 else if (IsValid(Cast<UBaseVerbVoidsong>(EachPlayableVoidsongDefaultObject)))
 			 {
-				 OutVerbs.Emplace(Cast<UBaseVerbVoidsong>(EachPlayableVoidsongDefaultObject));
+				 OutVerbs.Emplace(Cast<UBaseVerbVoidsong>(EachPlayableVoidsongDefaultObject)->GetClass());
 			 }
 
 			 for (int EachIndex : EachPlayableVoidsongDefaultObject->ActivationSequence)
