@@ -14,6 +14,7 @@
 void UPartModule::InitializeVariables(UPart* OwningPart)
 {
 	Part = OwningPart;
+	BindToDelegates();
 }
 
 /* /\ Initialization /\ *\
@@ -56,7 +57,8 @@ void UPartModule::Activate(const TArray<EFactions>& Factions, const TArray<TSubc
 			PlayableNouns.Emplace(Cast<UBaseNounVoidsong>(EachPlayableVoidsong->GetDefaultObject())->Noun);
 		}
 	}
-	//bool bFactionsCheck = ((Factions.IsEmpty() && PlayableFactions.Contains()))
+
+	//bool bFactionsCheck = ((Factions.IsEmpty() && PlayableFactions.Contains(Part->GetVoidgrid())))
 	//if (Factions.IsEmpty())
 }
 
@@ -64,3 +66,13 @@ void UPartModule::Activate(const TArray<EFactions>& Factions, const TArray<TSubc
 
 /* /\ Activation /\ *\
 \* ---------------- */
+
+/* ---------------------- *\
+\* \/ Delegate Binding \/ */
+
+void UPartModule::BindToDelegates()
+{
+}
+
+/* /\ Delegate Binding /\ *\
+\* ---------------------- */

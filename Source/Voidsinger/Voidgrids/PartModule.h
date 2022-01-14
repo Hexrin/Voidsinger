@@ -121,6 +121,19 @@ public:
 	/* ---------------------- *\
 	\* \/ Delegate Binding \/ */
 
+	/**
+	 * Binds the activate function to all selected delegates
+	 */
+	void BindToDelegates();
+
+	// The events to bind Activate to
+	UPROPERTY(EditAnywhere, Category = ("DelegateBinding"))
+	EActivationCue ActivationCues;
+
+	// The Voidsong events to bind Activate to
+	UPROPERTY(EditAnywhere, Category = ("DelegateBinding"))
+	EVoidsongCue VoidsongCues;
+
 	/* /\ Delegate Binding /\ *\
 	\* ---------------------- */
 
