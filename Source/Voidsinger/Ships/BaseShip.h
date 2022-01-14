@@ -21,7 +21,7 @@
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLaserDelegate, float, DamageMultiplier, float, DurationMultiplier);
 //
 ////A delegate for brodcasting events that need a refernce to a part.
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPartDataEventDelagate, UBasePart*, Part);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPartDataEventDelagate, UPart*, Part);
 //
 ////Delegates should be commented. What type of functions should they be bound to? - Liam 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*, AddedVoidsong);
@@ -161,7 +161,7 @@
 //	* Either rename the parameter to PartClasses or, 
 //	* rename the function to something realted to Noun Voidsongs, maybe BrodcastPlayNouns.
 //	* 
-//	* Souldn't NounClasses be a TArray<TSubclassOf<UBasePart>>&? Especially if the function is called activate *parts*.
+//	* Souldn't NounClasses be a TArray<TSubclassOf<UPart>>&? Especially if the function is called activate *parts*.
 //	* - Liam Suggestion
 //	*/
 //	//Event dispatcher for activating the parts on the ship.

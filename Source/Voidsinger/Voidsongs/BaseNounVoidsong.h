@@ -10,7 +10,7 @@
 // * 
 // */
 //
-//class UBasePart;
+//class UPart;
 //
 //UCLASS()
 //class VOIDSINGER_API UBaseNounVoidsong : public UBaseVoidsong
@@ -20,6 +20,6 @@
 //public:
 //
 //	UPROPERTY(EditDefaultsOnly)
-//	TSubclassOf<UBasePart> Noun;
+//	TSubclassOf<UPart> Noun;
 //
 //};

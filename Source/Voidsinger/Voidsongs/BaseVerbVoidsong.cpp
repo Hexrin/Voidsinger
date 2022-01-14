@@ -11,7 +11,7 @@
 //* Function comments from the .h should be copied to the .cpp
 //* - Liam Suggestion
 //*/
-//void UBaseVerbVoidsong::PreActivate(AActor* NewActorHit, AActor* NewActorThatActivated, TArray<UBasePart*> NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness, float NewDuration)
+//void UBaseVerbVoidsong::PreActivate(AActor* NewActorHit, AActor* NewActorThatActivated, TArray<UPart*> NewPartsHit, FVector NewLocationCalledFrom, FVector NewWorldLocation, float NewEffectiveness, float NewDuration)
 //{
 //	
 //	ActorHit = NewActorHit;

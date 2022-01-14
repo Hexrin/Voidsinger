@@ -9,7 +9,7 @@
 #include "VoidsingerTypes.generated.h"
 //
 //class UBaseResourceSystem;
-//class UBasePart;
+//class UPart;
 //
 ////Comment -Mabel Suggestion
 ////Are we even using this enum anymore? -Mabel Suggestion
@@ -156,15 +156,15 @@ public:
 //	GENERATED_BODY()
 //
 //	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-//	TArray<UBasePart*> UBasePartArray;
+//	TArray<UPart*> UBasePartArray;
 //
 //	FUBasePartArray()
 //	{
-//		FUBasePartArray(TArray<UBasePart*>(0,0));
+//		FUBasePartArray(TArray<UPart*>(0,0));
 //	}
 //
 //
-//	FUBasePartArray(TArray<UBasePart*> Array)
+//	FUBasePartArray(TArray<UPart*> Array)
 //	{
 //		UBasePartArray = Array;
 //	}
@@ -178,7 +178,7 @@ public:
 //
 //	//Comment -Mabel Suggestion
 //	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-//	TSubclassOf<UBasePart> PartClass;
+//	TSubclassOf<UPart> PartClass;
 //
 //	//Comment -Mabel Suggestion
 //	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -195,7 +195,7 @@ public:
 //	}
 //
 //	//Comment -Mabel Suggestion
-//	FSavePartInfo(TSubclassOf<UBasePart> Class, FIntPoint Location, float Rotation)
+//	FSavePartInfo(TSubclassOf<UPart> Class, FIntPoint Location, float Rotation)
 //	{
 //
 //		PartClass = Class;

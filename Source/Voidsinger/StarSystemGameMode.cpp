@@ -23,7 +23,7 @@
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//void AStarSystemGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness, float Duration)
+//void AStarSystemGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UPart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness, float Duration)
 //{
 //	//UE_LOG(LogTemp, Warning, TEXT("Verbiness is called"));
 //	if (!VerbsActive.IsEmpty())

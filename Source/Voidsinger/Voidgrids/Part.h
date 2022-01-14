@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
-#include "BasePart.generated.h"
+#include "PartData.h"
+#include "Part.generated.h"
 
 class AVoidgrid;
 
@@ -146,7 +147,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartTransform& Thing)
  * Handels part statistics and functionality.
  */
 UCLASS(BlueprintType, Blueprintable, config=PartDefaults, defaultconfig)
-class VOIDSINGER_API UBasePart : public UObject/*, public FTickableGameObject, public IActivateInterface*/
+class VOIDSINGER_API UPart : public UObject/*, public FTickableGameObject, public IActivateInterface*/
 {
 	GENERATED_BODY()
 
@@ -155,6 +156,9 @@ class VOIDSINGER_API UBasePart : public UObject/*, public FTickableGameObject, p
 	friend class UPartEditorBase;
 
 public:
+	UPROPERTY(Meta = (ExposeOnSpawn = "true"), BlueprintReadOnly, EditAnywhere)
+	UPartData* PartData;
+
 	/**
 	 * Creates and initilizes a new part.
 	 * 
@@ -162,7 +166,7 @@ public:
 	 * @param PartData - The data pased to the new part.
 	 * @return A pointer to the newly created part.
 	 */
-	static UBasePart* CreatePart(AVoidgrid* OwningVoidgrid, FPartData PartData);
+	static UPart* CreatePart(AVoidgrid* OwningVoidgrid, FPartInfo PartData);
 
 	//Stores the display name of this.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -181,7 +185,7 @@ public:
 	 * 
 	 * @return The part data for this part.
 	 */
-	FPartData GetData();
+	FPartInfo GetData();
 
 	/**
 	 * Gets the minimnal part data for this part.
@@ -394,7 +398,7 @@ protected:
  * A part repersenting a lack of a part in a pixel.
  */
 UCLASS(NotBlueprintable, HideDropdown)
-class VOIDSINGER_API UNullPart : public UBasePart
+class VOIDSINGER_API UNullPart : public UPart
 {
 	GENERATED_BODY()
 		
@@ -414,19 +418,19 @@ struct FMinimalPartData
 public:
 	//Stores the class of the part
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-	TSubclassOf<UBasePart> Class;
+	TSubclassOf<UPart> Class;
 
 	//Stores the location and rotation of the part
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	FPartTransform Transform;
 
-	FMinimalPartData(TSubclassOf<UBasePart> PartClass = UNullPart::StaticClass(), FPartTransform PartTransform = FPartTransform())
+	FMinimalPartData(TSubclassOf<UPart> PartClass = UNullPart::StaticClass(), FPartTransform PartTransform = FPartTransform())
 	{
 		Class = PartClass;
 		Transform = PartTransform;
 	}
 
-	FMinimalPartData(UBasePart* Part)
+	FMinimalPartData(UPart* Part)
 	{
 		Class = Part->StaticClass();
 		Transform = Part->GetTransform();
@@ -453,14 +457,14 @@ FORCEINLINE uint32 GetTypeHash(const FMinimalPartData& Thing)
  * Stores all information required to replicate a part and its state.
  */
 USTRUCT(BlueprintType)
-struct FPartData
+struct FPartInfo
 {
 	GENERATED_BODY()
 
 public:
 	//Stores the class of the part
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	TSubclassOf<UBasePart> Class;
+	TSubclassOf<UPart> Class;
 
 	//Stores the location and rotation of the part
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
@@ -469,21 +473,21 @@ public:
 	//Stores the shape of the part
 	PartShapeType Shape;
 
-	FPartData(TSubclassOf<UBasePart> PartClass, FPartTransform PartTransform, PartShapeType PartShape)
+	FPartInfo(TSubclassOf<UPart> PartClass, FPartTransform PartTransform, PartShapeType PartShape)
 	{
 		Class = PartClass;
 		Transform = PartTransform;
 		Shape = PartShape;
 	}
 
-	FPartData(FMinimalPartData MinimalPartData = FMinimalPartData(), PartShapeType PartShape = PartShapeType())
+	FPartInfo(FMinimalPartData MinimalPartData = FMinimalPartData(), PartShapeType PartShape = PartShapeType())
 	{
 		Class = MinimalPartData.Class;
 		Transform = MinimalPartData.Transform;
 		Shape = PartShape;
 	}
 
-	FPartData(UBasePart* Part)
+	FPartInfo(UPart* Part)
 	{
 		Class = Part->StaticClass();
 		Transform = Part->GetTransform();
@@ -491,13 +495,13 @@ public:
 	}
 };
 
-//Hash function for FPartData
+//Hash function for FPartInfo
 #if UE_BUILD_DEBUG
-uint32 GetTypeHash(const FPartData& Thing);
+uint32 GetTypeHash(const FPartInfo& Thing);
 #else // optimize by inlining in shipping and development builds
-FORCEINLINE uint32 GetTypeHash(const FPartData& Thing)
+FORCEINLINE uint32 GetTypeHash(const FPartInfo& Thing)
 {
-	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FPartData));
+	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FPartInfo));
 	return Hash;
 }
 #endif
@@ -517,7 +521,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartData& Thing)
 	// you can use whatever the "place part" function is? or is this the "place part" function? If this is only
 	////for internal use, then this should be a private function. -Mabel Suggestion
 
-	//void InitializeVariables(FIntPoint Loc, float Rot, AVoidGrid* VoidGrid, TSubclassOf<UBasePart> PartType, PartShapeType Shape);
+	//void InitializeVariables(FIntPoint Loc, float Rot, AVoidGrid* VoidGrid, TSubclassOf<UPart> PartType, PartShapeType Shape);
 
 	//Used to initize funtionality once the part has been placed onto the part grid
 	//This is called from part grid then, after it's placed? asking for clarification -Mabel Suggestion

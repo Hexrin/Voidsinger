@@ -2,7 +2,7 @@
 //
 //#pragma once
 //
-//#include "BasePart.h"
+//#include "Part.h"
 //#include "Kismet/GameplayStatics.h"
 //#include "Kismet/KismetMathLibrary.h"
 //#include "Voidsinger/VoidsingerTypes.h"
@@ -62,8 +62,8 @@
 //	* Comment Unclear. Which UBaseParts?
 //	* - Liam Suggestion
 //	*/ 
-//	//Gets a FIntPoint to FPartData map from a list of UBaseParts. FIntPoints will be the pixel locations of the UBaseParts. 
-//	TGridMap<FPartData> GetMapFromConnectedParts();
+//	//Gets a FIntPoint to FPartInfo map from a list of UBaseParts. FIntPoints will be the pixel locations of the UBaseParts. 
+//	TGridMap<FPartInfo> GetMapFromConnectedParts();
 //
 //	//Comment needed. What does the function do and what does it return? - Liam Suggestion
 //	UFUNCTION(BlueprintPure)
@@ -95,7 +95,7 @@
 //
 //	//Adds a new part to the resource system
 //	UFUNCTION(BlueprintCallable)
-//	void AddPart(UBasePart* AddedPart);
+//	void AddPart(UPart* AddedPart);
 //
 //	/*
 //	* Comment Issues
@@ -105,7 +105,7 @@
 //	*/
 //	//Removes a part from the variable storing all the parts. Call RemovePixel over this if possible.
 //	UFUNCTION()
-//	void RemovePart(UBasePart* RemovedPart);
+//	void RemovePart(UPart* RemovedPart);
 //
 //	//"Call this during gameplay" is implied and unessary. - Liam Suggestion
 //	//Removes a pixel from the resource system. Checks the resource system for breaks in the system. Call this during gameplay.
@@ -114,7 +114,7 @@
 //	
 //	//Name/Comment inconsitancy. If this function adds parts than it should be called AddParts. - Liam Suggestion
 //	//Adds multiple parts to the resource system
-//	void AddSection(TGridMap<FPartData> AddedResourceGrid);
+//	void AddSection(TGridMap<FPartInfo> AddedResourceGrid);
 //
 //	/*--System and Break Management Functions--*\
 //	\*-----------------------------------------*/
@@ -124,14 +124,14 @@
 //	void MergeSystems(UBaseResourceSystem* MergedSystem);
 //
 //	//Creates a new resource system with the parts inputted into this function
-//	void CreateNewSystem(TGridMap<FPartData> ResourceGrid, EResourceType Type);
+//	void CreateNewSystem(TGridMap<FPartInfo> ResourceGrid, EResourceType Type);
 //
 //	UFUNCTION()
 //	void DestroyResourceSystem();
 //
 //	ABaseShip* GetOwningShip();
 //
-//	void RemoveSection(TGridMap<FPartData> RemovedSection);
+//	void RemoveSection(TGridMap<FPartInfo> RemovedSection);
 //
 //protected:
 //
@@ -148,10 +148,10 @@
 //
 //	//Stores all the parts that are connected to this system
 //	UPROPERTY()
-//	TArray<UBasePart*> ConnectedParts;
+//	TArray<UPart*> ConnectedParts;
 //	
 //	//Stores all the locations that are connected to the resource system and what part corresponds to what location.
-//	TGridMap<FPartData> ResourceSystemGrid;
+//	TGridMap<FPartInfo> ResourceSystemGrid;
 //
 //	//Stores the type of this system
 //	UPROPERTY()

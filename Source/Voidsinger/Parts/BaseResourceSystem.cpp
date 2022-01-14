@@ -40,14 +40,14 @@
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//void UBaseResourceSystem::AddPart(UBasePart* AddedPart)
+//void UBaseResourceSystem::AddPart(UPart* AddedPart)
 //{
 //	if (IsValid(AddedPart))
 //	{
 //
 //		for (const FIntPoint& PartShape : AddedPart->GetShape())
 //		{
-//			FPartData PartData;
+//			FPartInfo PartData;
 //			PartData.Part = AddedPart;
 //
 //			ResourceSystemGrid.Emplace(PartShape + AddedPart->GetPartGridLocation(), PartData);
@@ -64,7 +64,7 @@
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart)
+//void UBaseResourceSystem::RemovePart(UPart* RemovedPart)
 //{
 //	ConnectedParts.Remove(RemovedPart);
 //}
@@ -159,7 +159,7 @@
 //				//For each in NumbersFound.Num() - 1 because of how PointsConnected works
 //				for (int i = 0; i < NumbersFound.Num() - 1; i++)
 //				{
-//					//TGridMap<FPartData> ConnectedPartsMap = GetMapFromConnectedParts();
+//					//TGridMap<FPartInfo> ConnectedPartsMap = GetMapFromConnectedParts();
 //
 //					if (ResourceSystemGrid.Contains(NumbersFound[i]) && ResourceSystemGrid.Contains(NumbersFound[i + 1]))
 //					{
@@ -167,7 +167,7 @@
 //						//actually it might not need to be improved but i need to think about it
 //
 //						UE_LOG(LogTemp, Warning, TEXT("resource system grid contains both locations"));
-//						if (!ResourceSystemGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
+//						if (!ResourceSystemGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartInfo>))
 //						{
 //							//Bad variable name. What is it storing? - Liam Suggestion
 //							//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
@@ -175,7 +175,7 @@
 //							UE_LOG(LogTemp, Warning, TEXT("Points are not connected"));
 //							TSet<FIntPoint> Temp;
 //							Temp.Emplace(NumbersFound[i + 1]);
-//							TGridMap<FPartData> RemovedGridMap;
+//							TGridMap<FPartInfo> RemovedGridMap;
 //
 //							//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 //							for (auto& j : UPartGridComponent::FindConnectedShape(Temp, ResourceSystemGrid, true))
@@ -223,7 +223,7 @@
 //		UE_LOG(LogTemp, Warning, TEXT("Merge systems. This system %s merged system %s"), *GetFName().ToString(), *MergedSystem->GetFName().ToString());
 //		for (int OtherGridIndex = 0; OtherGridIndex < MergedSystem->ResourceSystemGrid.Num(); OtherGridIndex++)
 //		{
-//			UBasePart* PartMergedIn = MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex).Part;
+//			UPart* PartMergedIn = MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex).Part;
 //			//UE_LOG(LogTemp, Warning, TEXT("part merged in class %s"), *PartMergedIn->GetClass()->GetDisplayNameText().ToString())
 //			ResourceSystemGrid.Emplace(MergedSystem->ResourceSystemGrid.LocationAtIndex(OtherGridIndex), MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex));
 //			UE_LOG(LogTemp, Warning, TEXT("(emplace) From merge systems. this resource system %s part merged in %s. Resource system grid num %i"), *GetFName().ToString(), *PartMergedIn->GetFName().ToString(), ResourceSystemGrid.Num());
@@ -265,7 +265,7 @@
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//void UBaseResourceSystem::CreateNewSystem(TGridMap<FPartData> ResourceGrid, EResourceType Type)
+//void UBaseResourceSystem::CreateNewSystem(TGridMap<FPartInfo> ResourceGrid, EResourceType Type)
 //{
 //
 //	//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
@@ -290,26 +290,26 @@
 //	//UE_LOG(LogTemp, Warning, TEXT("Resource system outer %s"), *GetOuter()->GetClass()->GetDisplayNameText().ToString())
 //	//Cast<ABaseShip>(GetOuter())->RemoveResourceSystem(this);
 //	GetOwningShip()->RemoveResourceSystem(this);
-//	TArray<FPartData> PartDataRemoved = ResourceSystemGrid.GetValueArray();
-//	TSet<UBasePart*> PartsRemoved;
-//	for (FPartData EachPartData : PartDataRemoved)
+//	TArray<FPartInfo> PartDataRemoved = ResourceSystemGrid.GetValueArray();
+//	TSet<UPart*> PartsRemoved;
+//	for (FPartInfo EachPartData : PartDataRemoved)
 //	{
 //		PartsRemoved.Emplace(EachPartData.Part);
 //	}
 //
-//	for (UBasePart* EachRemovedPart : PartsRemoved)
+//	for (UPart* EachRemovedPart : PartsRemoved)
 //	{
 //		EachRemovedPart->GetSystems().Remove(this);
 //	}
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//void UBaseResourceSystem::AddSection(TGridMap<FPartData> AddedResourceGrid)
+//void UBaseResourceSystem::AddSection(TGridMap<FPartInfo> AddedResourceGrid)
 //{
 //	//You can use += instead of appened - Liam Suggestion
 //	//ConnectedParts.Append(AddedParts);
 //	TArray<FIntPoint> Keys = AddedResourceGrid.GetKeyArray();
-//	TArray<FPartData> Values = AddedResourceGrid.GetValueArray();
+//	TArray<FPartInfo> Values = AddedResourceGrid.GetValueArray();
 //
 //	for (int i = 0; i < AddedResourceGrid.Num(); i++)
 //	{
@@ -363,15 +363,15 @@
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
 //UWorld* UBaseResourceSystem::GetWorld() const
 //{
-//	TGridMap<FPartData> CPlusPlusIsDumbVar = ResourceSystemGrid;
+//	TGridMap<FPartInfo> CPlusPlusIsDumbVar = ResourceSystemGrid;
 //	return CPlusPlusIsDumbVar.ValueAtIndex(0).Part->GetWorld();
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//TGridMap<FPartData> UBaseResourceSystem::GetMapFromConnectedParts()
+//TGridMap<FPartInfo> UBaseResourceSystem::GetMapFromConnectedParts()
 //{
 //	//Bad variable name. What is it storing? - Liam Suggestion
-//	TGridMap<FPartData> Temp;
+//	TGridMap<FPartInfo> Temp;
 //
 //	/*
 //	* Iterator should have a name that tells what it actualy is and what its iterating through.
@@ -389,7 +389,7 @@
 //		*/
 //		for (auto& j : i->GetShape())
 //		{
-//			FPartData PartData = FPartData(i, 0.f, (int32)0, i->GetPixelMaterial());
+//			FPartInfo PartData = FPartInfo(i, 0.f, (int32)0, i->GetPixelMaterial());
 //			Temp.Emplace(j, PartData);
 //		}
 //	}
@@ -412,16 +412,16 @@
 //	return OwningShip;
 //}
 //
-//void UBaseResourceSystem::RemoveSection(TGridMap<FPartData> RemovedSection)
+//void UBaseResourceSystem::RemoveSection(TGridMap<FPartInfo> RemovedSection)
 //{
-//	TArray<FPartData> RemovedPartData = RemovedSection.GetValueArray();
-//	TSet<UBasePart*> RemovedParts;
-//	for (FPartData EachPartData : RemovedPartData)
+//	TArray<FPartInfo> RemovedPartData = RemovedSection.GetValueArray();
+//	TSet<UPart*> RemovedParts;
+//	for (FPartInfo EachPartData : RemovedPartData)
 //	{
 //		RemovedParts.Emplace(EachPartData.Part);
 //	}
 //
-//	for (UBasePart* EachRemovedPart : RemovedParts)
+//	for (UPart* EachRemovedPart : RemovedParts)
 //	{
 //		EachRemovedPart->GetSystems().Remove(this);
 //	}

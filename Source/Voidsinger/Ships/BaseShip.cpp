@@ -461,11 +461,11 @@
 //void ABaseShip::SaveEditorShip()
 //{
 //	//Bad name. It implies that it is storing a return value or a pass by refernce - Liam Suggestion
-//	TArray<FPartData> OutArray = PartGrid->GetPartGrid().GetValueArray();;
+//	TArray<FPartInfo> OutArray = PartGrid->GetPartGrid().GetValueArray();;
 //	
 //	TArray<FSavePartInfo> InfoToSave;
 //	//Part set unnecessary. You can use AddUnquie() instead. - Liam Suggestion
-//	TSet<UBasePart*> PartSet;
+//	TSet<UPart*> PartSet;
 //	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 //	for (auto& i : OutArray)
 //	{

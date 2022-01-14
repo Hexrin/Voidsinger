@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "BasePart.h"
+#include "Part.h"
 #include "Voidgrid.h"
 
 /**
@@ -62,16 +62,16 @@ GridLocationType UPartRotationFunctions::UnrotateGridLocation(GridLocationType G
  * @param PartData - The data pased to the new part.
  * @return A pointer to the newly created part.
  */
-UBasePart* UBasePart::CreatePart(AVoidgrid* OwningVoidgrid, FPartData PartData)
+UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInfo PartData)
 {
-	UBasePart* NewPart = NewObject<UBasePart>(OwningVoidgrid, PartData.Class);
+	UPart* NewPart = NewObject<UPart>(OwningVoidgrid, PartData.Class);
 
 	//Initialize Variables
 	NewPart->Voidgrid = OwningVoidgrid;
 	NewPart->Transform = PartData.Transform;
 	NewPart->Shape = PartData.Shape;
 
-	OwningVoidgrid->OnDamaged.AddDynamic(NewPart, &UBasePart::PixelDamaged);
+	OwningVoidgrid->OnDamaged.AddDynamic(NewPart, &UPart::PixelDamaged);
 
 	return nullptr;
 }
@@ -81,9 +81,9 @@ UBasePart* UBasePart::CreatePart(AVoidgrid* OwningVoidgrid, FPartData PartData)
  *
  * @return The part data for this part.
  */
-FPartData UBasePart::GetData()
+FPartInfo UPart::GetData()
 {
-	return FPartData(StaticClass(), GetTransform(), GetShape());
+	return FPartInfo(StaticClass(), GetTransform(), GetShape());
 }
 
 /**
@@ -91,7 +91,7 @@ FPartData UBasePart::GetData()
  *
  * @return The minimnal part data for this part.
  */
-FMinimalPartData UBasePart::GetMinimalData()
+FMinimalPartData UPart::GetMinimalData()
 {
 	return FMinimalPartData(StaticClass(), GetTransform());
 }
@@ -104,7 +104,7 @@ FMinimalPartData UBasePart::GetMinimalData()
  *
  * @return The default shape of this part.
  */
-PartShapeType UBasePart::GetDefaultShape()
+PartShapeType UPart::GetDefaultShape()
 {
 	return DefaultShape;
 }
@@ -114,7 +114,7 @@ PartShapeType UBasePart::GetDefaultShape()
  *
  * @param Location - The location of the pixel that was repaired.
  */
-void UBasePart::PixelDamaged(GridLocationType Location)
+void UPart::PixelDamaged(GridLocationType Location)
 {
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
 	if (Shape.Remove(RelativeLocation))
@@ -139,7 +139,7 @@ void UBasePart::PixelDamaged(GridLocationType Location)
  *
  * @param Location - The location of the pixel that was repaired.
  */
-void UBasePart::PixelRepaired(GridLocationType Location)
+void UPart::PixelRepaired(GridLocationType Location)
 {
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
 	if (GetDefaultShape().Contains(RelativeLocation))
@@ -168,7 +168,7 @@ void UBasePart::PixelRepaired(GridLocationType Location)
  *
  * @return The location and rotation of this.
  */
-FPartTransform UBasePart::GetTransform()
+FPartTransform UPart::GetTransform()
 {
 	return Transform;
 }
@@ -183,7 +183,7 @@ UNullPart* UNullPart::Get()
 
 
 ////Copy comment from .h -Mabel Suggestion
-//void UBasePart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UBasePart> PartType, PartShapeType Shape)
+//void UPart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UPart> PartType, PartShapeType Shape)
 //{
 //	//Initalize Variables
 //	Rotation = FMath::GridSnap<float>(Rot, 90);
@@ -193,15 +193,15 @@ UNullPart* UNullPart::Get()
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//void UBasePart::InitializeFunctionality()
+//void UPart::InitializeFunctionality()
 //{
 //
 //	//Would this function ever have a chance of being called again? If not, then this bool isn't needed. -Mabel Suggestion
 //	if (!bHasFunctionalityBeenInitialized)
 //	{
 //		//Bind to delegates
-//		Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
-//		Cast<ABaseShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UBasePart::OnFireDelegateCalled);
+//		Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UPart::OnDelegateCalled);
+//		Cast<ABaseShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UPart::OnFireDelegateCalled);
 //		
 //		//Initialize Resource System
 //		ConnectToSystems();
@@ -214,7 +214,7 @@ UNullPart* UNullPart::Get()
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//UWorld* UBasePart::GetWorld() const
+//UWorld* UPart::GetWorld() const
 //{
 //	if (GetOuter() == nullptr)
 //	{
@@ -233,7 +233,7 @@ UNullPart* UNullPart::Get()
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//void UBasePart::DestroyPart()
+//void UPart::DestroyPart()
 //{
 //	
 //	ConditionalBeginDestroy();
@@ -247,7 +247,7 @@ UNullPart* UNullPart::Get()
 //* You should(?) be able to make the interface function as bluepritn implementable
 //* - Liam Suggestion
 //*/
-//void UBasePart::Activate(float Duration)
+//void UPart::Activate(float Duration)
 //{
 //	if(IsFunctional())
 //	BlueprintActivate(Duration);
@@ -257,7 +257,7 @@ UNullPart* UNullPart::Get()
 //\*--------------------*/
 //
 ////Copy comment from .h -Mabel Suggestion
-//void UBasePart::Tick(float DeltaTime)
+//void UPart::Tick(float DeltaTime)
 //{
 //
 //	if (!bIsBeingDestroyed)
@@ -269,13 +269,13 @@ UNullPart* UNullPart::Get()
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//bool UBasePart::IsTickable() const
+//bool UPart::IsTickable() const
 //{
 //	return (!IsTemplate(RF_ClassDefaultObject));
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//TStatId UBasePart::GetStatId() const
+//TStatId UPart::GetStatId() const
 //{
 //	return TStatId();
 //}
@@ -284,13 +284,13 @@ UNullPart* UNullPart::Get()
 //\*--------------------*/
 //
 ////Copy comment from .h -Mabel Suggestion
-//const PartShapeType UBasePart::GetDesiredShape()
+//const PartShapeType UPart::GetDesiredShape()
 //{
 //	return GetDesiredShape(Rotation);
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const PartShapeType UBasePart::GetDesiredShape(float Rot)
+//const PartShapeType UPart::GetDesiredShape(float Rot)
 //{
 //	PartShapeType RotatedShape = PartShapeType();
 //	for (GridLocationType PixelLoc : DesiredShape)
@@ -301,19 +301,19 @@ UNullPart* UNullPart::Get()
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const PartShapeType UBasePart::GetShape()
+//const PartShapeType UPart::GetShape()
 //{
 //	return ActualShape;
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const FIntBoxBounds UBasePart::GetPartBounds()
+//const FIntBoxBounds UPart::GetPartBounds()
 //{
 //	return GetPartBounds(Rotation);
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const FIntBoxBounds UBasePart::GetPartBounds(float Rot)
+//const FIntBoxBounds UPart::GetPartBounds(float Rot)
 //{
 //	//Couldn't you just rotate the current Bounds variable with the parts current rotation
 //	//instead of recalculating the bounds? If you do want to recalculate
@@ -346,63 +346,63 @@ UNullPart* UNullPart::Get()
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const FIntPoint UBasePart::GetPartGridLocation()
+//const FIntPoint UPart::GetPartGridLocation()
 //{
 //	return Location;
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const FVector UBasePart::GetPartWorldLocation()
+//const FVector UPart::GetPartWorldLocation()
 //{
 //	return GetShip()->GetActorTransform().TransformPosition(GetPartRelativeLocation());
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const FVector UBasePart::GetPartRelativeLocation()
+//const FVector UPart::GetPartRelativeLocation()
 //{
 //	return FVector(/*(FVector2D(GetPartGridLocation()) * GetPartGrid()->GetPartGridScale()) - GetShip()->PhysicsComponent->GetCenterOfMass(), 0*/);
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const float UBasePart::GetRelativeRotation()
+//const float UPart::GetRelativeRotation()
 //{
 //	return Rotation;
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const float UBasePart::GetWorldRotation()
+//const float UPart::GetWorldRotation()
 //{
 //	return Rotation /*+ GetShip()->GetActorQuat().GetAngle()*/;
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//float UBasePart::GetMass()
+//float UPart::GetMass()
 //{
 //	//UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i"), TotalPartMass / GetDesiredShape().Num(), GetDesiredShape().Num());
 //	return TotalPartMass / GetDesiredShape().Num();
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-////UPartGridComponent* UBasePart::GetPartGrid()
+////UPartGridComponent* UPart::GetPartGrid()
 ////{
 ////	return PartGridComponent;
 ////}
 //
 ////Copy comment from .h -Mabel Suggestion
 //
-//ABaseShip* UBasePart::GetShip()
+//ABaseShip* UPart::GetShip()
 //{
 //	return Cast<ABaseShip>(GetPartGrid()->GetOwner());
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//TArray<UBaseResourceSystem*>& UBasePart::GetSystems()
+//TArray<UBaseResourceSystem*>& UPart::GetSystems()
 //{
 //	return Systems;
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//UBaseResourceSystem* UBasePart::GetSystemByType(TEnumAsByte<EResourceType> Type)
+//UBaseResourceSystem* UPart::GetSystemByType(TEnumAsByte<EResourceType> Type)
 //{
 //	UBaseResourceSystem* FoundResourceSystem = nullptr;
 //	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
@@ -428,25 +428,25 @@ UNullPart* UNullPart::Get()
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//TMap<TEnumAsByte<EResourceType>, FIntPointArray> UBasePart::GetResourceTypes()
+//TMap<TEnumAsByte<EResourceType>, FIntPointArray> UPart::GetResourceTypes()
 //{
 //	return ResourceTypes;
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const int UBasePart::GetStrength()
+//const int UPart::GetStrength()
 //{
 //	return Strength;
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//const int UBasePart::GetHeatResistance()
+//const int UPart::GetHeatResistance()
 //{
 //	return HeatResistance;
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//UMaterialInterface* UBasePart::GetPixelMaterial()
+//UMaterialInterface* UPart::GetPixelMaterial()
 //{
 //	return PixelMaterial;
 //}
@@ -455,7 +455,7 @@ UNullPart* UNullPart::Get()
 //\*--------------------*/
 //
 ////Copy comment from .h -Mabel Suggestion
-//bool UBasePart::IsFunctional()
+//bool UPart::IsFunctional()
 //{
 //
 //	//If you don't need it, delete it -Mabel Suggestion
@@ -478,7 +478,7 @@ UNullPart* UNullPart::Get()
 //}
 //
 ////Copy comment from .h -Mabel Suggestion
-//bool UBasePart::IsPixelFunctional(FIntPoint Loc)
+//bool UPart::IsPixelFunctional(FIntPoint Loc)
 //{
 //	//Couldn't you just check if Loc is in ActualShape? (as well as IsFunctional() of course, assuming parts split into more parts
 //	//when they are split) -Mabel Suggestion
@@ -490,7 +490,7 @@ UNullPart* UNullPart::Get()
 //\*--------------------*/
 //
 ////Copy comment from .h -Mabel Suggestion
-//void UBasePart::DestroyPixel(FIntPoint RelativeLoc, bool bCallDamagedEvents)
+//void UPart::DestroyPixel(FIntPoint RelativeLoc, bool bCallDamagedEvents)
 //{
 //	if (!ActualShape.Contains(RelativeLoc))
 //	{
@@ -535,7 +535,7 @@ UNullPart* UNullPart::Get()
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//void UBasePart::ConnectToSystems()
+//void UPart::ConnectToSystems()
 //{
 //	//Basic description: for each pixel on this part that has a resource type, check around that location for another part that has a pixel with that resource type next to the
 //	// pixel currently being checked. If there is no adjacent resource system create a new one.
@@ -603,7 +603,7 @@ UNullPart* UNullPart::Get()
 //
 ////Function comments from the .h should be identical to the one in the .cpp - Liam Suggestion
 ////Create a new resource system
-//void UBasePart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
+//void UPart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 //{
 //	//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
 //	//UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameTextByValue(ResourceType.GetValue()).ToString());
@@ -618,7 +618,7 @@ UNullPart* UNullPart::Get()
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//void UBasePart::AddToSystem(UBaseResourceSystem* System)
+//void UPart::AddToSystem(UBaseResourceSystem* System)
 //{
 //	//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
 //	//UE_LOG(LogTemp, Warning, TEXT("Add to system type %s"), *EnumPtr->GetDisplayNameTextByValue(System->GetType().GetValue()).ToString());
@@ -665,10 +665,10 @@ UNullPart* UNullPart::Get()
 //* Nounclasses for what?
 //* Inconsitant names. To fix either: rename Factions to FactionNames or FactionTypes, or rename NounClasses to Nouns
 //* 
-//* Shouldn't NounClasses have the type: const TArray<TSubclassOf<UBasePart>>&
+//* Shouldn't NounClasses have the type: const TArray<TSubclassOf<UPart>>&
 //* - Liam Suggestion
 //*/
-//void UBasePart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs, float Duration)
+//void UPart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs, float Duration)
 //{
 //	/*for (auto& i : NounClasses)
 //	{
@@ -734,7 +734,7 @@ UNullPart* UNullPart::Get()
 //	}*/
 //}
 //
-//void UBasePart::OnFireDelegateCalled(const TArray<TSubclassOf<UObject>>& NounClasses, float Duration)
+//void UPart::OnFireDelegateCalled(const TArray<TSubclassOf<UObject>>& NounClasses, float Duration)
 //{
 //	if (NounClasses.Contains(GetClass()))
 //	{
@@ -742,7 +742,7 @@ UNullPart* UNullPart::Get()
 //	}
 //}
 //
-//int32 UBasePart::GetCost()
+//int32 UPart::GetCost()
 //{
 //	return Cost;
 //}

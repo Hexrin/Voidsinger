@@ -79,7 +79,7 @@ protected:
 	 * @return Whether the part placement was a success.
 	 */
 	UFUNCTION(BlueprintCallable)
-	bool PlacePart(TSubclassOf<UBasePart> Part, FPartTransform Transform, bool bOverrridePriorParts = false);
+	bool PlacePart(TSubclassOf<UPart> Part, FPartTransform Transform, bool bOverrridePriorParts = false);
 
 
 	// \/ RemovePart() \/

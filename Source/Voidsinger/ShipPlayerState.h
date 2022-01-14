@@ -5,7 +5,7 @@
 //#include "CoreMinimal.h"
 //#include "GameFramework/PlayerState.h"
 //#include "VoidsingerTypes.h"
-//#include "Parts/BasePart.h"
+//#include "Parts/Part.h"
 //#include "ShipPlayerState.generated.h"
 //
 ///**
@@ -22,7 +22,7 @@
 //public:
 //
 //	//what is this for -Mabel Suggestion
-//	TGridMap<TSubclassOf<UBasePart>> ShipBlueprint;
+//	TGridMap<TSubclassOf<UPart>> ShipBlueprint;
 //
 //public:
 //	/**

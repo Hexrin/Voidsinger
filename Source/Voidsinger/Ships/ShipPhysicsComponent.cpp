@@ -4,7 +4,7 @@
 //#include "ShipPhysicsComponent.h"
 //#include "BaseShip.h"
 //#include "PlayerShip.h"
-//#include "Voidsinger/Parts/BasePart.h"
+//#include "Voidsinger/Parts/Part.h"
 //
 //// Sets default values for this component's properties
 //UShipPhysicsComponent::UShipPhysicsComponent()
@@ -214,7 +214,7 @@
 //
 //		//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion"  -Mabel Suggestion
 //		//iteration through part grid makes me sad. -Mabel Suggestion
-//		for (FGridPair<FPartData> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
+//		for (FGridPair<FPartInfo> PixelInfo : Ship->PartGrid->GetPartGrid().GetGridPairs())
 //		{
 //			//Comment! -Mabel Suggestion
 //			FVector StartLoc = FVector(FVector2D(PixelInfo.Location).GetRotated(Ship->GetActorRotation().Yaw), 0) + Ship->GetActorLocation();
