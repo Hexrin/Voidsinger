@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/Voidgrids/PartData.h"
+#include "EditorAssetLibrary.h"
 #include "EditorUtilityWidget.h"
 #include "PartEditorBase.generated.h"
 
@@ -53,8 +54,16 @@ public:
 	void RemovePixelFromPartShape(FIntPoint PixelLocation);
 
 	/**
-	 * Saves any changes made to the mutable default part.
+	 * Saves the part this is editing
+	 * 
+	 * @return Whether or not the part was succesfuly saved.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void SavePart();
+	bool SavePart();
+
+	/**
+	 * Creates a factory for making new parts.
+	 */
+	UFUNCTION(BlueprintPure)
+	UFactory* CreatePartFactory();
 };
