@@ -112,7 +112,7 @@ protected:
 	 * @return Wether or not a part exists at Location.
 	 */
 	UFUNCTION(BlueprintCallable)
-	bool GetPart(FIntPoint Location, FMinimalPartData& PartData);
+	bool GetPart(FIntPoint Location, FMinimalPartInstanceData& PartData);
 
 	/**
 	 * Called when the mold of this is changed in any way.
@@ -120,14 +120,14 @@ protected:
 	 * @param NewMold - The mold of this.
 	 */
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnMoldUpdated(const TArray<FMinimalPartData>& NewMold, const TArray<FMinimalPartData>& ChangedData, bool bDataRemoved);
+	void OnMoldUpdated(const TArray<FMinimalPartInstanceData>& NewMold, const TArray<FMinimalPartInstanceData>& ChangedData, bool bDataRemoved);
 
 private:
 	//Stores the mold of this.
 	MinimalPixelMoldDataType Mold;
 
 	//Stores the locations of all parts in the mold of this.
-	TGridMap<FMinimalPartData> PartLocations;
+	TGridMap<FMinimalPartInstanceData> PartLocations;
 
 	//Stores the prefix of all molds saved by this.
 	FString MoldSaveSlotNamePrefix = TEXT("Mold_");

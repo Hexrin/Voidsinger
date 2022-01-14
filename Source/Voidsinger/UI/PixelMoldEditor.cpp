@@ -100,7 +100,7 @@ bool UPixelMoldEditor::PlacePart(TSubclassOf<UPart> Part, FPartTransform Transfo
 	if (IsValid(Part.Get()) && Part.GetDefaultObject()->GetDefaultShape().Num() != 0)
 	{
 		//Search for overlaping parts.
-		TSet<FMinimalPartData> PartsToRemove = TSet<FMinimalPartData>();
+		TSet<FMinimalPartInstanceData> PartsToRemove = TSet<FMinimalPartInstanceData>();
 		for (GridLocationType ShapeComponent : Part.GetDefaultObject()->GetDefaultShape())
 		{
 			//If part is not rotatable then only translate part.
@@ -120,20 +120,20 @@ bool UPixelMoldEditor::PlacePart(TSubclassOf<UPart> Part, FPartTransform Transfo
 		}
 
 		//Remove overridable parts.
-		for (FMinimalPartData PartToRemove : PartsToRemove)
+		for (FMinimalPartInstanceData PartToRemove : PartsToRemove)
 		{
 			RemovePart(PartToRemove.Transform.GetGridLocation());
 		}
 
 
-		FMinimalPartData PartBeingAdded = FMinimalPartData(Part, Transform);
+		FMinimalPartInstanceData PartBeingAdded = FMinimalPartInstanceData(Part, Transform);
 		//Propagate Mold with new part
 		Mold.Add(PartBeingAdded);
 		for (GridLocationType ShapeComponent : Part.GetDefaultObject()->GetDefaultShape())
 		{
 			PartLocations.Emplace(Transform.TransformGridLocation(ShapeComponent), PartBeingAdded);
 		}
-		OnMoldUpdated(Mold.Array(), TArray<FMinimalPartData>(&PartBeingAdded, 1), false);
+		OnMoldUpdated(Mold.Array(), TArray<FMinimalPartInstanceData>(&PartBeingAdded, 1), false);
 		return true;
 	}
 	return false;
@@ -168,7 +168,7 @@ bool UPixelMoldEditor::RemovePart(FIntPoint Location, bool bCallUpdatedEvent)
 	}
 
 
-	FMinimalPartData PartToRemove = PartLocations.FindRef(Location);
+	FMinimalPartInstanceData PartToRemove = PartLocations.FindRef(Location);
 	if (Mold.Contains(PartToRemove))
 	{
 		Mold.Remove(PartToRemove);
@@ -189,7 +189,7 @@ bool UPixelMoldEditor::RemovePart(FIntPoint Location, bool bCallUpdatedEvent)
 
 	if (bCallUpdatedEvent)
 	{
-		OnMoldUpdated(Mold.Array(), TArray<FMinimalPartData>(&PartToRemove, 1), true);
+		OnMoldUpdated(Mold.Array(), TArray<FMinimalPartInstanceData>(&PartToRemove, 1), true);
 	}
 
 	return true;
@@ -204,7 +204,7 @@ bool UPixelMoldEditor::RemovePart(FIntPoint Location, bool bCallUpdatedEvent)
  * @param PartData - Is set to the part data at Location.
  * @return Wether or not a part exists at Location.
  */
-bool UPixelMoldEditor::GetPart(FIntPoint Location, FMinimalPartData& PartData)
+bool UPixelMoldEditor::GetPart(FIntPoint Location, FMinimalPartInstanceData& PartData)
 {
 	if (!PartLocations.Contains(Location))
 	{

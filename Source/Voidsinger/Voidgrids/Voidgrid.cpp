@@ -47,7 +47,7 @@ void AVoidgrid::SetPixelMold(MinimalPixelMoldDataType NewPixelMold)
 	//Remove Unneccesary Parts
 	for (TPair<GridLocationType, PixelType> PixelData : PixelMold.GetGridPairs())
 	{
-		FMinimalPartData PartData = FMinimalPartData(PixelData.Value.GetTargetPart()->StaticClass(), PixelData.Value.GetTargetPart()->GetTransform());
+		FMinimalPartInstanceData PartData = FMinimalPartInstanceData(PixelData.Value.GetTargetPart()->StaticClass(), PixelData.Value.GetTargetPart()->GetTransform());
 		if (!NewPixelMold.Contains(PartData))
 		{
 			PixelMold.Find(PixelData.Key)->SetTargetPart(UNullPart::Get());
@@ -60,9 +60,9 @@ void AVoidgrid::SetPixelMold(MinimalPixelMoldDataType NewPixelMold)
 		}
 	}
 
-	for (FMinimalPartData DataOfPartToCreate : DataOfPartsToCreate)
+	for (FMinimalPartInstanceData DataOfPartToCreate : DataOfPartsToCreate)
 	{
-		UPart* Part = UPart::CreatePart(this, FPartInfo(DataOfPartToCreate));
+		UPart* Part = UPart::CreatePart(this, FPartInstanceData(DataOfPartToCreate));
 		Parts.Emplace(Part);
 
 		for (GridLocationType ShapeComponent : DataOfPartToCreate.Class.GetDefaultObject()->GetDefaultShape())
@@ -82,7 +82,7 @@ MinimalPixelMoldDataType AVoidgrid::GetMinimalMoldData()
 	MinimalPixelMoldDataType AllPartsData = MinimalPixelMoldDataType();
 	for (TPair<GridLocationType, PixelType> PixelData : PixelMold.GetGridPairs())
 	{
-		AllPartsData.Add(PixelData.Value.GetTargetPart()->GetMinimalData());
+		AllPartsData.Add(PixelData.Value.GetTargetPart()->GetMinimalPartInstanceData());
 	}
 	return AllPartsData;
 }

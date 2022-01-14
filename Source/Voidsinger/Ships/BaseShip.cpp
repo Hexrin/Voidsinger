@@ -439,7 +439,7 @@ void ABaseShip::SaveEditorShip()
 //void ABaseShip::SaveEditorShip()
 //{
 //	//Bad name. It implies that it is storing a return value or a pass by refernce - Liam Suggestion
-//	TArray<FPartInfo> OutArray = PartGrid->GetPartGrid().GetValueArray();;
+//	TArray<FPartInstanceData> OutArray = PartGrid->GetPartGrid().GetValueArray();;
 //	
 //	TArray<FSavePartInfo> InfoToSave;
 //	//Part set unnecessary. You can use AddUnquie() instead. - Liam Suggestion

@@ -16,7 +16,7 @@ typedef FGridPixelData PixelType;
 //The type used for storing a ships Pixel Mold
 typedef TGridMap<PixelType> PixelMoldType;
 //Stores all information required to replicate a mold
-typedef TSet<FMinimalPartData> MinimalPixelMoldDataType;
+typedef TSet<FMinimalPartInstanceData> MinimalPixelMoldDataType;
 
 //Stores data about a pixel.
 USTRUCT()
