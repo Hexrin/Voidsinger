@@ -21,28 +21,28 @@
 //	Hard			UMETA(DisplayName = "Hard"),
 //	VeryHard		UMETA(DisplayName = "Very Hard"),
 //};
-//
-////Comment -Mabel Suggestion
-//UENUM(BlueprintType)
-//enum EResourceType
-//{
-//	Fuel			UMETA(DisplayName = "Fuel"),
-//	Hydrogen		UMETA(DisplayName = "Hydrogen"),
-//	InertGas		UMETA(DisplayName = "InertGas"),
-//	Coolent			UMETA(DisplayName = "Coolent"),
-//	Electricity		UMETA(DisplayName = "Electricity"),
-//	Ammo			UMETA(DisplayName = "Ammo"),
-//};
-//
-////Faction types. Enemy will probably be changed but it works for now.
-//UENUM(BlueprintType)
-//enum EFactions
-//{
-//	Inanimate		UMETA(DisplayName = "Inanimate"),
-//	Player			UMETA(DisplayName = "Player"),
-//	Enemy			UMETA(DisplayName = "Enemy"),
-//};
-//
+
+//Resource types. 
+UENUM(BlueprintType)
+enum class EResourceType : uint8
+{
+	Fuel			UMETA(DisplayName = "Fuel"),
+	Hydrogen		UMETA(DisplayName = "Hydrogen"),
+	InertGas		UMETA(DisplayName = "InertGas"),
+	Coolent			UMETA(DisplayName = "Coolent"),
+	Electricity		UMETA(DisplayName = "Electricity"),
+	Ammo			UMETA(DisplayName = "Ammo"),
+};
+
+//Faction types. Enemy will probably be changed but it works for now.
+UENUM(BlueprintType)
+enum class EFactions : uint8 
+{
+	Inanimate		UMETA(DisplayName = "Inanimate"),
+	Player			UMETA(DisplayName = "Player"),
+	Enemy			UMETA(DisplayName = "Enemy"),
+};
+
 ////Comment -Mabel Suggestion
 //USTRUCT(BlueprintType)
 //struct VOIDSINGER_API FResourceSystemArray
