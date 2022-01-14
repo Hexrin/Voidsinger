@@ -45,8 +45,8 @@ class VOIDSINGER_API UPartModule : public UObject
 {
 	GENERATED_BODY()
 
-	void Activate();
-	void Activate(TArray<EFactions> Factions, TArray<TSubclassOf<UPart>> Nouns, TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs);
+	void Activate(float Effectivness);
+	void Activate(const TArray<EFactions>& Factions, const TArray<TSubclassOf<UPart>>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, const TArray<TSubclassOf<UBaseVoidsong>>& PlayableVoidsongs, float Effectivness);
 
 	UFUNCTION(BlueprintImplementable, DisplayName = ("Activate"))
 	void OnActivate(TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs);
