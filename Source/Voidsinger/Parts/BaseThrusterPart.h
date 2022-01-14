@@ -3,7 +3,7 @@
 //#pragma once
 //
 //#include "CoreMinimal.h"
-//#include "BasePart.h"
+//#include "Part.h"
 //#include "DrawDebugHelpers.h" //remove this once debugging is complete
 //#include "Voidsinger/Ships/ShipPhysicsComponent.h"
 //#include "BaseThrusterPart.generated.h"
@@ -12,7 +12,7 @@
 // * Comment the class -Mabel Suggestion
 // */
 //UCLASS()
-//class VOIDSINGER_API UBaseThrusterPart : public UBasePart
+//class VOIDSINGER_API UBaseThrusterPart : public UPart
 //{
 //	GENERATED_BODY()
 //	

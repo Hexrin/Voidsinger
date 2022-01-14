@@ -125,6 +125,12 @@ void APlayerShip::BeginPlay()
 
 //Comment -Mabel Suggestion
 //TMap<EResourceType, float> APlayerShip::GetTravelCost(class UStarSystemData* Target)
+//// Fill out your copyright notice in the Description page of Project Settings.
+//
+//#include "PlayerShip.h"
+//#include "Voidsinger/Parts/Part.h"
+//
+//APlayerShip::APlayerShip()
 //{
 //    TMap<EResourceType, float> Costs;
 //    

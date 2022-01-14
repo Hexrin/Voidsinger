@@ -95,7 +95,7 @@ TArray<FString> UPixelMoldEditor::GetAllMoldNames()
  * @param OverrridePriorParts - Whether or not the part you are placing should override the parts it is placed on top of if possible.
  * @return Whether the part placement was a success.
  */
-bool UPixelMoldEditor::PlacePart(TSubclassOf<UBasePart> Part, FPartTransform Transform, bool bOverrridePriorParts)
+bool UPixelMoldEditor::PlacePart(TSubclassOf<UPart> Part, FPartTransform Transform, bool bOverrridePriorParts)
 {
 	if (IsValid(Part.Get()) && Part.GetDefaultObject()->GetDefaultShape().Num() != 0)
 	{

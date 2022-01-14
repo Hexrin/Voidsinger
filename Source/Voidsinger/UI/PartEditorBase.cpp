@@ -8,11 +8,11 @@
  *
  * @return The mutable default of the part this is curently editing.
  */
-UBasePart* UPartEditorBase::GetMutableDefaultPart()
+UPart* UPartEditorBase::GetMutableDefaultPart()
 {
 	if (IsValid(PartBeingEdited))
 	{
-		return GetMutableDefault<UBasePart>(PartBeingEdited);
+		return GetMutableDefault<UPart>(PartBeingEdited);
 	}
 	return nullptr;
 }

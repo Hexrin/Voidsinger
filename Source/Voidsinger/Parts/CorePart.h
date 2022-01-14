@@ -3,14 +3,14 @@
 //#pragma once
 //
 //#include "CoreMinimal.h"
-//#include "Voidsinger/Parts/BasePart.h"
+//#include "Voidsinger/Parts/Part.h"
 //#include "CorePart.generated.h"
 //
 ///**
 // * 
 // */
 //UCLASS()
-//class VOIDSINGER_API UCorePart : public UBasePart
+//class VOIDSINGER_API UCorePart : public UPart
 //{
 //	GENERATED_BODY()
 //

@@ -2,7 +2,7 @@
 //
 //
 //#include "PartGridComponent.h"
-//#include "BasePart.h"
+//#include "Part.h"
 //#include "BaseThrusterPart.h"
 //#include "CorePart.h"
 //#include "BaseFreespacePart.h"
@@ -24,7 +24,7 @@
 //	Ship = Cast<ABaseShip>(GetOwner());
 //	GridHalfSize = FIntPoint(250);
 //	
-//	PartGrid = TGridMap<FPartData>();
+//	PartGrid = TGridMap<FPartInfo>();
 //
 //	if (!GridScale)
 //	{
@@ -77,7 +77,7 @@
 //
 ////Adds a complete part to the part grid
 ////I like how you commented the cpp but not the h -Mabel Suggestion
-//bool UPartGridComponent::AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
+//bool UPartGridComponent::AddPart(TSubclassOf<UPart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 //{
 //	//UE_LOG(LogTemp, Warning, TEXT("part type %s"), *PartType->GetFName().ToString());
 //	if (IsValid(PartType))
@@ -89,7 +89,7 @@
 //}
 //
 ////Adds a partial part to PartPrid
-//bool UPartGridComponent::AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
+//bool UPartGridComponent::AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<UPart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace)
 //{
 //	if (!IsValid(PartType))
 //	{
@@ -105,7 +105,7 @@
 //		//2. If parts split into more parts when they are cut in half, we probably wouldn't want to create a new object in this function because we would have more flexibility if 
 //		//we create the object when the part is split (in terms of like, oh here, you get half the resources I had on me or something along those lines)
 //		//In conclusion, I'm not so certain that this function should be creating a new object. -Mabel Suggestion
-//		UBasePart* Part = NewObject<UBasePart>(this, PartType);
+//		UPart* Part = NewObject<UPart>(this, PartType);
 //		Part->InitializeVariables(Location, Rotation, this, PartType, PartialPartShape);
 //
 //		//Initalize Variables
@@ -173,7 +173,7 @@
 //					Ship->AddMeshAtLocation(CurrentLoc);
 //
 //					//set PartGrid and material
-//					Ship->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartData(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
+//					Ship->SetMeshMaterialAtLocation(CurrentLoc, PartGrid.Emplace(CurrentLoc, FPartInfo(Part, 0.f, 0, Part->GetPixelMaterial())).DynamicMat);
 //
 //					//If it's commented out, delete it (unless it's useful debug stuff) -Mabel Suggestion
 //					//Cast<AShipPlayerState>(Ship->GetPlayerState())->ShipBlueprint
@@ -223,7 +223,7 @@
 //	if (PartGrid.Contains(Location))
 //	{
 //		//Intialize Variables
-//		class UBasePart* PartToRemove = PartGrid.FindRef(Location).Part;
+//		class UPart* PartToRemove = PartGrid.FindRef(Location).Part;
 //		if (!IsValid(Cast<UCorePart>(PartToRemove)))
 //		{
 //			FIntPoint PartLoc = PartToRemove->GetPartGridLocation();
@@ -256,7 +256,7 @@
 //	if (PartGrid.Contains(Location))
 //	{
 //		//Remove from grid
-//		UBasePart* DamagedPart = PartGrid.FindRef(Location).Part;
+//		UPart* DamagedPart = PartGrid.FindRef(Location).Part;
 //		//UE_LOG(LogTemp, Warning, TEXT("%s: %s -> %s >r> %s"),*DamagedPart->PartName.ToString(), *Location.ToString(), *(Location - DamagedPart->GetPartGridLocation()).ToString(), *FVector2D((Location - DamagedPart->GetPartGridLocation())).GetRotated(-1 * DamagedPart->GetRelativeRotation()).IntPoint().ToString());
 //		DamagedPart->DestroyPixel(/*FVector2D(*/(Location - DamagedPart->GetPartGridLocation()), CheckForBreaks)/*.GetRotated(-1*DamagedPart->GetRelativeRotation()).IntPoint())*/;
 //
@@ -323,7 +323,7 @@
 //					{
 //						if (PartGrid.Contains(i))
 //						{
-//							if (!PartGrid.PointsConnected(CorePixel, i, AlwaysConnect<FPartData>))
+//							if (!PartGrid.PointsConnected(CorePixel, i, AlwaysConnect<FPartInfo>))
 //							{
 //								TSet<FIntPoint> Temp;
 //								Temp.Emplace(i);
@@ -344,7 +344,7 @@
 //						//actually it might not need to be improved but i need to think about it
 //						if (PartGrid.Contains(NumbersFound[i]) && PartGrid.Contains(NumbersFound[i + 1]))
 //						{
-//							if (!PartGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
+//							if (!PartGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartInfo>))
 //							{
 //								//If they're not connected, then call FindConnectedShape to figure out what part is not connected. Anything connected to the part that is not connected will
 //								//also not be connected.
@@ -394,12 +394,12 @@
 //* DisconectShape()
 //* CreateNewShipFromShape()
 //* 
-//* Why does the function take in a TArray<FIntPoint> when it could use a TGridMap<FPartData> and BuildShip() instead and reduce the logic required.
+//* Why does the function take in a TArray<FIntPoint> when it could use a TGridMap<FPartInfo> and BuildShip() instead and reduce the logic required.
 //* - Liam Suggestion
 //*/
 //void UPartGridComponent::RemoveDisconnectedShape(TSet<FIntPoint> ConnectedShape, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius)
 //{
-//	TSet<UBasePart*> PartsRemoved;
+//	TSet<UPart*> PartsRemoved;
 //
 //	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 //	for (auto& j : ConnectedShape)
@@ -929,20 +929,20 @@
 //}
 //
 ////Comment -Mabel Suggestion
-//FPartData UPartGridComponent::GetPartDataAtGridLocation(FIntPoint Location)
+//FPartInfo UPartGridComponent::GetPartDataAtGridLocation(FIntPoint Location)
 //{
 //	return PartGrid.FindRef(Location);
 //}
 //
 ////Comment -Mabel Suggestion
-//FPartData UPartGridComponent::GetPartDataAtRelativeLocation(FVector Location)
+//FPartInfo UPartGridComponent::GetPartDataAtRelativeLocation(FVector Location)
 //{
 //	//You need to factor in the part grid scale. Maybe the center of mass too, although not sure about that one. -Mabel Suggestion
 //	return GetPartDataAtGridLocation(FVector2D(Location).RoundToVector().IntPoint());
 //}
 //
 ////Comment -Mabel Suggestion
-//FPartData UPartGridComponent::GetPartDataAtWorldLocation(FVector Location)
+//FPartInfo UPartGridComponent::GetPartDataAtWorldLocation(FVector Location)
 //{
 //	return GetPartDataAtRelativeLocation(Ship->GetActorQuat().UnrotateVector(Location - Ship->GetActorLocation()));
 //}
@@ -1006,7 +1006,7 @@
 //
 //
 ////Why is this destroy pixel not next to the other destroy pixel? Also, comment -Mabel Suggestion
-//bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart, bool CheckForBreaks, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius)
+//bool UPartGridComponent::DestroyPixel(FIntPoint Location, class UPart*& DamagedPart, bool CheckForBreaks, bool FromExplosion, FVector ExplosionLocation, float ExplosionRadius)
 //{
 //	//Check if pixel is valid
 //	if (PartGrid.Contains(Location))
@@ -1040,7 +1040,7 @@
 //void UPartGridComponent::SaveShip(FString ShipName)
 //{
 //	
-//	TArray<FPartData> Parts = PartGrid.GetValueArray();
+//	TArray<FPartInfo> Parts = PartGrid.GetValueArray();
 //
 //	
 //	
@@ -1146,7 +1146,7 @@
 //}
 //
 ////Gets the PartGrid Map
-//TGridMap<FPartData> UPartGridComponent::GetPartGrid()
+//TGridMap<FPartInfo> UPartGridComponent::GetPartGrid()
 //{
 //	return PartGrid;
 //}
@@ -1164,7 +1164,7 @@
 //}
 //
 ////Comment -Mabel Suggestion
-//void UPartGridComponent::UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePart> PartType)
+//void UPartGridComponent::UpdateMaterials(FIntPoint Location, TSubclassOf<UPart> PartType)
 //{
 //	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
 //	for (int i = -1; i < 2; i++)
@@ -1219,12 +1219,12 @@
 //	}
 //	else
 //	{
-//		return PartGrid.PointsConnected(StartPoint, EndPoint, AlwaysConnect<FPartData>);
+//		return PartGrid.PointsConnected(StartPoint, EndPoint, AlwaysConnect<FPartInfo>);
 //	}
 //}
 //
 ////Comment -Mabel Suggestion
-//TSet<FIntPoint> UPartGridComponent::FindConnectedShape(TSet<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality)
+//TSet<FIntPoint> UPartGridComponent::FindConnectedShape(TSet<FIntPoint> Shape, TGridMap<FPartInfo> ConnectedPartsMap, bool CheckFunctionality)
 //{
 //
 //	//New shape will return the entire connected shape, indcluding the starting shape
@@ -1336,7 +1336,7 @@
 //}
 //
 ////Comment -Mabel Suggestion
-//bool UPartGridComponent::IsPixelFunctional(FPartData PixelValue, FIntPoint Loc)
+//bool UPartGridComponent::IsPixelFunctional(FPartInfo PixelValue, FIntPoint Loc)
 //{
 //	return PixelValue.Part->IsPixelFunctional(Loc);
 //}

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidgrids/BasePart.h"
+#include "Voidsinger/Voidgrids/Part.h"
 #include "EditorUtilityWidget.h"
 #include "PartEditorBase.generated.h"
 
@@ -18,7 +18,7 @@ class VOIDSINGER_API UPartEditorBase : public UEditorUtilityWidget
 public:
 	//Stores the part this is currently editing
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TSubclassOf<UBasePart> PartBeingEdited;
+	TSubclassOf<UPart> PartBeingEdited;
 
 	/**
 	 * Gets the mutable default of the part this is curently editing.
@@ -26,7 +26,7 @@ public:
 	 * @return The mutable default of the part this is curently editing.
 	 */
 	UFUNCTION(BlueprintPure)
-	UBasePart* GetMutableDefaultPart();
+	UPart* GetMutableDefaultPart();
 
 	/**
 	 * Gets the shape of the part this is curently editing.

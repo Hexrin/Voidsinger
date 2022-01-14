@@ -59,7 +59,7 @@
 //	* - Liam Suggestion
 //	*/	
 //	UFUNCTION(BlueprintCallable)
-//	void ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness, float Duration);
+//	void ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UPart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness, float Duration);
 //
 //	/*
 //	* The below function should be commented. 

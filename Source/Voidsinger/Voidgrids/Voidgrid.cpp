@@ -2,7 +2,7 @@
 
 
 #include "Voidgrid.h"
-#include "BasePart.h"
+#include "Part.h"
 
 //Sets default values for this voidgrid's properties
 AVoidgrid::AVoidgrid()
@@ -62,7 +62,7 @@ void AVoidgrid::SetPixelMold(MinimalPixelMoldDataType NewPixelMold)
 
 	for (FMinimalPartData DataOfPartToCreate : DataOfPartsToCreate)
 	{
-		UBasePart* Part = UBasePart::CreatePart(this, FPartData(DataOfPartToCreate));
+		UPart* Part = UPart::CreatePart(this, FPartInfo(DataOfPartToCreate));
 		Parts.Emplace(Part);
 
 		for (GridLocationType ShapeComponent : DataOfPartToCreate.Class.GetDefaultObject()->GetDefaultShape())

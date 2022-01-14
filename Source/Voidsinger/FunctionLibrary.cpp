@@ -3,7 +3,7 @@
 //
 //#include "FunctionLibrary.h"
 //#include "DrawDebugHelpers.h" // Remove this when debugging is done
-//#include "Parts/BasePart.h"
+//#include "Parts/Part.h"
 //#include "Ships/BaseShip.h"
 //
 //
@@ -117,12 +117,12 @@
 //* - Liam Suggestion
 //*/
 //
-////TArray<UBasePart*> UFunctionLibrary::GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid)
+////TArray<UPart*> UFunctionLibrary::GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid)
 ////{
 ////
 ////	if (IsValid(PartGrid))
 ////	{
-////		TSet<UBasePart*> PartsHit;
+////		TSet<UPart*> PartsHit;
 ////
 ////		FVector RelativeLoc = UKismetMathLibrary::InverseTransformLocation(PartGrid->GetOwner()->GetActorTransform(), Location) + FVector(Cast<ABaseShip>(PartGrid->GetOwner())->PhysicsComponent->GetCenterOfMass(), 0);
 ////		FIntPoint LocalIntPoint = FVector2D(RelativeLoc.X, RelativeLoc.Y).IntPoint();
@@ -154,7 +154,7 @@
 ////	{
 ////		//Print an error message instead of crashing the game if the part grid isn't valid.
 ////		UE_LOG(LogTemp, Error, TEXT("Accessed none when trying to read the PartGrid on GetPartsHitFromWorldLocation()."));
-////		return TArray<UBasePart*>();
+////		return TArray<UPart*>();
 ////	}
 ////}
 //

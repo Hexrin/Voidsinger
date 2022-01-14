@@ -311,10 +311,139 @@ void ABaseShip::SaveEditorShip()
 {
 	//Bad name. It implies that it is storing a return value or a pass by refernce - Liam Suggestion
 //	TArray<FPartData> OutArray = PartGrid->GetPartGrid().GetValueArray();;
+//
+////Comment -Mabel Suggestion
+//void ABaseShip::SetTargetMoveDirection(FVector2D Vector)
+//{
+//	TargetMoveDirection = Vector.GetSafeNormal();
+//}
+//
+////Comment -Mabel Suggestion
+//FVector2D ABaseShip::GetTargetMoveDirection()
+//{
+//	return TargetMoveDirection;
+//}
+//
+////Comment -Mabel Suggestion
+//void ABaseShip::SetTargetMoveSpeed(float Vector)
+//{
+//	TargetMoveSpeed = abs(Vector);
+//}
+//
+////Comment -Mabel Suggestion
+//float ABaseShip::GetTargetMoveSpeed()
+//{
+//	return TargetMoveSpeed;
+//}
+//
+////Comment -Mabel Suggestion
+//void ABaseShip::SetTargetLookDirection(FVector Vector)
+//{
+//	TargetLookDirection = Vector.GetSafeNormal2D();
+//}
+//
+////Comment -Mabel Suggestion
+//const FVector ABaseShip::GetTargetLookDirection()
+//{
+//	return TargetLookDirection;
+//}
+//
+//
+////Reading this over, I feel like the mesh handling could actually for reals be a separate component. The only questionable ones
+////are the GetVerticesAroundLocation and the SetMeshRelativeLocation because the use functions on the base ship. I don't think
+////SetMeshRelativeLocation should change the location of the ship anyway though, but you would probably have to rework
+////the GetVerticesAroundLocation.
+////Comment -Mabel Suggestion
+//void ABaseShip::AddMeshAtLocation(FIntPoint Location)
+//{
+//	
+//
+//	int32 SectionIndex = 0; 
+//	
+//	if (MeshData.Contains(Location))
+//	{
+//		SectionIndex = MeshData.FindRef(Location);
+//		RemoveMeshAtLocation(Location);
+//	}
+//	else
+//	{
+//		TArray<FIntPoint> Keys = TArray<FIntPoint>();
+//		MeshData.GenerateKeyArray(Keys);
+//		SectionIndex = Keys.Num();
+//	}
+//
+//	//Magic numbers >:( at least comment them -Mabel Suggestion
+//	TArray<int32> Triangles = CreateTrianglesForSquare(0,2,4,6);
+//	Triangles += CreateTrianglesForSquare(2, 0, 3, 1);
+//	Triangles += CreateTrianglesForSquare(0, 4, 1, 5);
+//	Triangles += CreateTrianglesForSquare(4, 6, 5, 7);
+//	Triangles += CreateTrianglesForSquare(6, 2, 7, 3);
+//
+//	MeshComponent->CreateMeshSection(SectionIndex, GetVerticesAroundLocation(Location), Triangles, TArray<FVector>(), UV, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
+//	MeshComponent->SetGenerateOverlapEvents(false);
+//	MeshComponent->SetGenerateOverlapEvents(true);
+//	MeshData.Emplace(Location, SectionIndex);
+//}
+//
+////Comment -Mabel Suggestion
+//void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
+//{
+//	MeshComponent->ClearMeshSection(MeshData.FindRef(Location));
+//}
+//
+////Comment -Mabel Suggestion
+//void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
+//{
+//	MeshComponent->SetRelativeLocation(FVector(Location, 0));
+//
+//	//Why does setting a meshes location move the entire ship? That seems a bit odd. -Mabel
+//	AddActorWorldOffset(FVector(-1 * Location - PhysicsComponent->GetCenterOfMass(), 0));
+//}
+//
+////Comment -Mabel Suggestion
+//void ABaseShip::SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material)
+//{
+//	MeshComponent->SetMaterial(MeshData.FindRef(Location), Material);
+//}
+//
+////Comment -Mabel Suggestion
+//TArray<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
+//{
+//	TArray<FVector> ReturnValue = TArray<FVector>();
+//	for (int i = 0; i < 4; i++)
+//	{
+//		float AdjustmentValue1 = PartGrid->GetPartGridScale() / (i < 2 ? 2 : -2);
+//		float AdjustmentValue2 = PartGrid->GetPartGridScale() / ((i % 2 == 0) ? 2 : -2);
+//		ReturnValue.Emplace(FVector(Location, 0) + FVector(AdjustmentValue1, AdjustmentValue2, 0.1));
+//		ReturnValue.Emplace(FVector(Location, 0) + FVector(AdjustmentValue1, AdjustmentValue2, -0.1));
+//	}
+//	
+//	return ReturnValue;
+//}
+//
+////Comment -Mabel Suggestion
+//TArray<int32> ABaseShip::CreateTrianglesForSquare(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft)
+//{
+//	TArray<int32> Triangles = TArray<int32>();
+//	Triangles.Emplace(UpperRight);
+//	Triangles.Emplace(UpperLeft);
+//	Triangles.Emplace(LowerLeft);
+//
+//	Triangles.Emplace(LowerLeft);
+//	Triangles.Emplace(LowerRight);
+//	Triangles.Emplace(UpperRight);
+//	return Triangles;
+//}
+//
+////Function comments from the.h should be copied to the.cpp - Liam Suggestion
+//void ABaseShip::SaveEditorShip()
+//{
+//	//Bad name. It implies that it is storing a return value or a pass by refernce - Liam Suggestion
+//	TArray<FPartInfo> OutArray = PartGrid->GetPartGrid().GetValueArray();;
 //	
 //	TArray<FSavePartInfo> InfoToSave;
 //	//Part set unnecessary. You can use AddUnquie() instead. - Liam Suggestion
-//	TSet<UBasePart*> PartSet;
+//	TSet<UPart*> PartSet;
 //	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 //	for (auto& i : OutArray)
 //	{

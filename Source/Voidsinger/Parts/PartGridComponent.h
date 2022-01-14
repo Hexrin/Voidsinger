@@ -11,7 +11,7 @@
 ////#include "Kismet/KismetMathLibrary.h"
 ////#include "UObject/ConstructorHelpers.h"
 ////#include "Misc/Char.h"
-//#include "BasePart.h"
+//#include "Part.h"
 //#include "PartGridComponent.generated.h"
 ////
 ////class UBaseThrusterPart;
@@ -19,13 +19,13 @@
 ////
 ////Comment the struct, what's this used for? -Mabel Suggestion
 //USTRUCT(BlueprintType)
-//struct VOIDSINGER_API FPartData
+//struct VOIDSINGER_API FPartInfo
 //{
 //	GENERATED_BODY()
 //
 //	//Comment -Mabel Suggestion
 //	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-//	UBasePart* Part;
+//	UPart* Part;
 //
 //	//Comment -Mabel Suggestion
 //	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -44,13 +44,13 @@
 //public:
 //
 //	//Comment -Mabel Suggestion
-//	FPartData()
+//	FPartInfo()
 //	{
-//		FPartData(nullptr, 0, 0, nullptr);
+//		FPartInfo(nullptr, 0, 0, nullptr);
 //	}
 //
 //	//Comment -Mabel Suggestion
-//	FPartData(UBasePart* PartRef, float Temp, int32 BitwiseIndex, UMaterialInterface* Material)
+//	FPartInfo(UPart* PartRef, float Temp, int32 BitwiseIndex, UMaterialInterface* Material)
 //	{
 //		DynamicMat = UMaterialInstanceDynamic::Create(Material, Cast<UObject>(PartRef));
 //		Part = PartRef;
@@ -110,9 +110,9 @@
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintCallable)
-//	bool AddPart(TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
+//	bool AddPart(TSubclassOf<UPart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
 //	//Maybe the parameter shouldn't be called "PartialPartShape" becuase it might happen to be adding an entire part. It should probably be renamed to "PartShape" or "Shape" -Mabel Suggestion
-//	bool AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<UBasePart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
+//	bool AddPart(TSet<FIntPoint> PartialPartShape, TSubclassOf<UPart> PartType, FIntPoint Location, float Rotation, bool bAlwaysPlace = false);
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintCallable)
@@ -135,7 +135,7 @@
 //	//Destroys a pixel at a given location.
 //	//This might have too many parameters which is a sign of something spaghet but I added half of them so idk -Mabel Suggestion 
 //	UFUNCTION(BlueprintCallable)
-//	bool DestroyPixel(FIntPoint Location, class UBasePart*& DamagedPart, bool CheckForBreaks = true, bool FromExplosion = false, FVector ExplosionLocation = FVector(0, 0, 0), float ExplosionRadius = 0.0f);
+//	bool DestroyPixel(FIntPoint Location, class UPart*& DamagedPart, bool CheckForBreaks = true, bool FromExplosion = false, FVector ExplosionLocation = FVector(0, 0, 0), float ExplosionRadius = 0.0f);
 //	bool DestroyPixel(FIntPoint Location, bool CheckForBreaks = true, bool FromExplosion = false, FVector ExplosionLocation = FVector(0, 0, 0), float ExplosionRadius = 0.0f);
 //
 //	/*
@@ -224,15 +224,15 @@
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintPure)
-//	FPartData GetPartDataAtGridLocation(FIntPoint Location);
+//	FPartInfo GetPartDataAtGridLocation(FIntPoint Location);
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintPure)
-//	FPartData GetPartDataAtRelativeLocation(FVector Location);
+//	FPartInfo GetPartDataAtRelativeLocation(FVector Location);
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintPure)
-//	FPartData GetPartDataAtWorldLocation(FVector Location);
+//	FPartInfo GetPartDataAtWorldLocation(FVector Location);
 //
 //private:
 //
@@ -281,7 +281,7 @@
 //	//Comment -Mabel Suggestion
 //	//Why is this not blueprint pure but GetPartGridScale is?
 //	//UFUNCTION(BlueprintPure)
-//	TGridMap<FPartData> GetPartGrid();
+//	TGridMap<FPartInfo> GetPartGrid();
 //	
 //	//Comment -Mabel Suggestion
 //	UFUNCTION(BlueprintPure)
@@ -299,7 +299,7 @@
 //
 //	//Comment -Mabel Suggestion
 //	UFUNCTION()
-//	void UpdateMaterials(FIntPoint Location, TSubclassOf<UBasePart> PartType);
+//	void UpdateMaterials(FIntPoint Location, TSubclassOf<UPart> PartType);
 //
 //public:
 //
@@ -316,7 +316,7 @@
 //
 //	//Comment -Mabel Suggestion
 //	//It's a bit odd to have a variable named the same thing as the component. Makes it a bit confusing to say the least. -Mabel Suggestion
-//	TGridMap<FPartData> PartGrid;
+//	TGridMap<FPartInfo> PartGrid;
 //
 //	//Comment -Mabel Suggestion
 //	UPROPERTY()
@@ -370,9 +370,9 @@
 //public:
 //	//Function should be moved to TGridMap<> - Liam Suggestion
 //	//A recursive function that will check the shape it's provided with for any parts that are not connected to each other
-//	static TSet<FIntPoint> FindConnectedShape(TSet<FIntPoint> Shape, TGridMap<FPartData> ConnectedPartsMap, bool CheckFunctionality = false);
+//	static TSet<FIntPoint> FindConnectedShape(TSet<FIntPoint> Shape, TGridMap<FPartInfo> ConnectedPartsMap, bool CheckFunctionality = false);
 //
 //	//Comment -Mabel Suggestion
-//	static bool IsPixelFunctional(FPartData PixelValue, FIntPoint Loc);
+//	static bool IsPixelFunctional(FPartInfo PixelValue, FIntPoint Loc);
 //};
 //>>>>>>> Demo-Version

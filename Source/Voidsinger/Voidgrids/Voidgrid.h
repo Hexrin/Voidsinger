@@ -6,7 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "UObject/UObjectGlobals.h"
 #include "GridMap.h"
-#include "BasePart.h"
+#include "Part.h"
 #include "ProceduralMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Voidgrid.generated.h"
@@ -26,7 +26,7 @@ struct VOIDSINGER_API FGridPixelData
 	
 public:
 	//Constructs a FGridPixelData using a part.
-	FGridPixelData(UBasePart* PartOfPixel = nullptr, bool bPixelIntact = false)
+	FGridPixelData(UPart* PartOfPixel = nullptr, bool bPixelIntact = false)
 	{
 		if (PartOfPixel)
 		{
@@ -90,7 +90,7 @@ public:
 	 *
 	 * @return The part of this pixel.
 	 */
-	UBasePart* GetCurrentPart()
+	UPart* GetCurrentPart()
 	{
 		return CurrentPart;
 	}
@@ -101,7 +101,7 @@ public:
 	 * @param NewPart - The new value of part.
 	 * @return A refernce to this.
 	 */
-	FGridPixelData SetCurrentPart(UBasePart* NewPart)
+	FGridPixelData SetCurrentPart(UPart* NewPart)
 	{
 		if (Material && NewPart && NewPart->GetTexture())
 		{
@@ -116,7 +116,7 @@ public:
 	 *
 	 * @return The target part of this pixel.
 	 */
-	UBasePart* GetTargetPart()
+	UPart* GetTargetPart()
 	{
 		return TargetPart;
 	}
@@ -127,7 +127,7 @@ public:
 	 * @param NewPart - The new target part of this pixel.
 	 * @return A refernce to this.
 	 */
-	FGridPixelData SetTargetPart(UBasePart* NewPart)
+	FGridPixelData SetTargetPart(UPart* NewPart)
 	{
 		TargetPart = NewPart;
 		return *this;
@@ -140,10 +140,10 @@ public:
 
 private:
 	//Stores a pointer to the part in this pixel.
-	UBasePart* CurrentPart = UNullPart::Get();
+	UPart* CurrentPart = UNullPart::Get();
 
 	//Stores a pointer to the target part of this pixel.
-	UBasePart* TargetPart = UNullPart::Get();
+	UPart* TargetPart = UNullPart::Get();
 
 	//Store whether or not this pixel is intact.
 	bool bIntact = false;
@@ -211,11 +211,11 @@ private:
 
 	//Stores a refernce to all parts on this.
 	UPROPERTY()
-	TSet<UBasePart*> Parts;
+	TSet<UPart*> Parts;
 
 	//Stores refernces to all the parts that are not part of the mold of this.
 	UPROPERTY()
-	TSet<UBasePart*> TemporaryParts;
+	TSet<UPart*> TemporaryParts;
 
 	//Stores the Locations of all damaged and temporary part Pixels.
 	TSet<GridLocationType> MutablePixels;
