@@ -50,7 +50,7 @@ void UVoidsongComponent::BeginPlay()
 */
  void UVoidsongComponent::AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdded)
  {
-	 PlayableVoidsongs += VoidsongsAdded;
+	 PlayableVoidsongs;
  }
 
 /* /\ Playable Voidsong Management /\ *\
