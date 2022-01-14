@@ -143,14 +143,16 @@ FORCEINLINE uint32 GetTypeHash(const FPartTransform& Thing)
 #endif
 
 /**
- * The virtual repersntaion of a part.
- * Handels part statistics and functionality.
+ * The physical reprsentation of a part.
+ * Handles instanced functionality.
  */
 UCLASS(BlueprintType, Blueprintable, config=PartDefaults, defaultconfig)
 class VOIDSINGER_API UPart : public UObject
 {
 	GENERATED_BODY()
 
+	/* --------------- *\
+	\* \/ Part Data \/ */
 public:
 	/**
 	 * Creates and initilizes a new part.
@@ -159,14 +161,14 @@ public:
 	 * @param PartData - The data pased to the new part.
 	 * @return A pointer to the newly created part.
 	 */
-	static UPart* CreatePart(AVoidgrid* OwningVoidgrid, UPartData* PartData);
+	static UPart* CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData InstanceData);
 
 	/**
 	 * Gets the part data for this part.
 	 * 
 	 * @return The part data for this part.
 	 */
-	FPartInstanceData GetData();
+	FORCEINLINE UPartData* GetData() { return Data; };
 
 	/**
 	 * Gets information required to replicate but not its state.
@@ -176,9 +178,13 @@ public:
 	FMinimalPartInstanceData GetMinimalPartInstanceData();
 
 private:
+	//Stores the functionality of this part.
+	UPartData* Data;
 	
-	
-	
+	/* /\ Part Data /\ *\
+	\* --------------- */
+
+
 
 	/* ------------------------ *\
 	\* \/ Part Functionality \/ */
@@ -275,6 +281,8 @@ private:
 
 	/* /\ Part Functionality /\ *\
 	\* ------------------------ */
+
+
 
 	/* ------------------- *\
 	\* \/ Part Location \/ */

@@ -30,7 +30,7 @@ public:
 
 	//The class of the noun that this Voidsong will activate
 	UPROPERTY(EditDefaultsOnly, config, BlueprintReadOnly, meta = (Category = "Config|VoidsongData"))
-	TSubclassOf<UBasePart> Noun;
+	TSubclassOf<UPart> Noun;
 
 	/* /\ VoidsongData /\ *\
 	\* ------------------ */

@@ -62,28 +62,19 @@ GridLocationType UPartRotationFunctions::UnrotateGridLocation(GridLocationType G
  * @param PartData - The data pased to the new part.
  * @return A pointer to the newly created part.
  */
-UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData* PartData)
+UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData PartData)
 {
 	UPart* NewPart = NewObject<UPart>(OwningVoidgrid, UPart::StaticClass());
 
 	//Initialize Variables
 	NewPart->Voidgrid = OwningVoidgrid;
-	NewPart->Transform = PartData.Transform;
-	NewPart->Shape = PartData.Shape;
+	NewPart->SetData(PartData.GetData())
+	NewPart->Transform = PartData.GetTransform();
+	NewPart->Shape = PartData.GetShape();
 
 	OwningVoidgrid->OnDamaged.AddDynamic(NewPart, &UPart::PixelDamaged);
 
 	return nullptr;
-}
-
-/**
- * Gets the part data for this part.
- *
- * @return The part data for this part.
- */
-FPartInstanceData UPart::GetData()
-{
-	return FPartInstanceData(StaticClass(), GetTransform(), GetShape());
 }
 
 /**
@@ -106,7 +97,7 @@ FMinimalPartInstanceData UPart::GetMinimalPartInstanceData()
  */
 PartShapeType UPart::GetDefaultShape()
 {
-	return DefaultShape;
+	return Data.Shape;
 }
 
 /**
@@ -173,13 +164,6 @@ FPartTransform UPart::GetTransform()
 	return Transform;
 }
 
-/*Initializer Funtions*\
-\*--------------------*/
-UNullPart* UNullPart::Get()
-{
-	return Cast<UNullPart>(UNullPart::StaticClass()->GetDefaultObject());
-}
-
 
 
 ////Copy comment from .h -Mabel Suggestion
@@ -240,7 +224,7 @@ UNullPart* UNullPart::Get()
 //	bIsBeingDestroyed = true;
 //}
 //
-///*
+//
 //* Function comments from the .h should be copied to the .cpp
 //*
 //* Why are activate and blueprint activate separate functions?
@@ -652,7 +636,7 @@ UNullPart* UNullPart::Get()
 //	}
 //}
 //
-///*
+//
 //* Function comments from the .h should be copied to the .cpp
 //* 
 //* Consider coverting avalable voisongs to a stuct containg avalable Verbs, Nouns, and Factions or just Nouns and Factions

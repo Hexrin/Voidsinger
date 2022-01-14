@@ -59,10 +59,10 @@
 //	/*
 //	* Coment outdated. It is no longer a map.
 //	* 
-//	* Comment Unclear. Which UBaseParts?
+//	* Comment Unclear. Which UParts?
 //	* - Liam Suggestion
 //	*/ 
-//	//Gets a FIntPoint to FPartInstanceData map from a list of UBaseParts. FIntPoints will be the pixel locations of the UBaseParts. 
+//	//Gets a FIntPoint to FPartInstanceData map from a list of UParts. FIntPoints will be the pixel locations of the UParts. 
 //	TGridMap<FPartInstanceData> GetMapFromConnectedParts();
 //
 //	//Comment needed. What does the function do and what does it return? - Liam Suggestion
