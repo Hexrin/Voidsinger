@@ -103,9 +103,9 @@ public:
 	 */
 	FGridPixelData SetCurrentPart(UPart* NewPart)
 	{
-		if (Material && NewPart && NewPart->GetTexture())
+		if (Material && NewPart && NewPart->GetData()->Texture)
 		{
-			Material->SetTextureParameterValue(TEXT("PartTexture"), NewPart->GetTexture());
+			Material->SetTextureParameterValue(TEXT("PartTexture"), NewPart->GetData()->Texture);
 		}
 		CurrentPart = NewPart;
 		return *this;
@@ -140,10 +140,10 @@ public:
 
 private:
 	//Stores a pointer to the part in this pixel.
-	UPart* CurrentPart = UNullPart::Get();
+	UPart* CurrentPart = nullptr;
 
 	//Stores a pointer to the target part of this pixel.
-	UPart* TargetPart = UNullPart::Get();
+	UPart* TargetPart = nullptr;
 
 	//Store whether or not this pixel is intact.
 	bool bIntact = false;

@@ -151,22 +151,22 @@ public:
 //};
 //
 //USTRUCT(BlueprintType)
-//struct VOIDSINGER_API FUBasePartArray
+//struct VOIDSINGER_API FUPartArray
 //{
 //	GENERATED_BODY()
 //
 //	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-//	TArray<UPart*> UBasePartArray;
+//	TArray<UPart*> UPartArray;
 //
-//	FUBasePartArray()
+//	FUPartArray()
 //	{
-//		FUBasePartArray(TArray<UPart*>(0,0));
+//		FUPartArray(TArray<UPart*>(0,0));
 //	}
 //
 //
-//	FUBasePartArray(TArray<UPart*> Array)
+//	FUPartArray(TArray<UPart*> Array)
 //	{
-//		UBasePartArray = Array;
+//		UPartArray = Array;
 //	}
 //};
 //

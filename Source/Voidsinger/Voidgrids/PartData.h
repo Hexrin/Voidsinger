@@ -25,7 +25,7 @@ public:
 	UTexture* Texture;
 
 	//Stores the default part shape
-	UPROPERTY(Config, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 	TSet<FIntPoint> Shape;
 
 	//The percent of the default shape required to be intact for this part to be activated.

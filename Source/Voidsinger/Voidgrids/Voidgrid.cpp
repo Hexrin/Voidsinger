@@ -47,10 +47,10 @@ void AVoidgrid::SetPixelMold(MinimalPixelMoldDataType NewPixelMold)
 	//Remove Unneccesary Parts
 	for (TPair<GridLocationType, PixelType> PixelData : PixelMold.GetGridPairs())
 	{
-		FMinimalPartInstanceData PartData = FMinimalPartInstanceData(PixelData.Value.GetTargetPart()->StaticClass(), PixelData.Value.GetTargetPart()->GetTransform());
+		FMinimalPartInstanceData PartData = FMinimalPartInstanceData(PixelData.Value.GetTargetPart()->GetData(), PixelData.Value.GetTargetPart()->GetTransform());
 		if (!NewPixelMold.Contains(PartData))
 		{
-			PixelMold.Find(PixelData.Key)->SetTargetPart(UNullPart::Get());
+			PixelMold.Find(PixelData.Key)->SetTargetPart(nullptr);
 			Parts.Remove(PixelData.Value.GetCurrentPart());
 			TemporaryParts.Emplace(PixelData.Value.GetCurrentPart());
 		}
@@ -65,7 +65,7 @@ void AVoidgrid::SetPixelMold(MinimalPixelMoldDataType NewPixelMold)
 		UPart* Part = UPart::CreatePart(this, FPartInstanceData(DataOfPartToCreate));
 		Parts.Emplace(Part);
 
-		for (GridLocationType ShapeComponent : DataOfPartToCreate.Class.GetDefaultObject()->GetDefaultShape())
+		for (GridLocationType ShapeComponent : DataOfPartToCreate.Data->Shape)
 		{
 			PixelMold.Emplace(Part->GetTransform().TransformGridLocation(ShapeComponent), PixelType(Part));
 		}
@@ -107,7 +107,7 @@ void AVoidgrid::DamagePixel(GridLocationType Location)
 				TemporaryParts.Remove(PixelRef->GetCurrentPart());
 			}
 
-			if (PixelRef->GetTargetPart() == UNullPart::Get())
+			if (PixelRef->GetTargetPart() == nullptr)
 			{
 				PixelMold.Remove(Location);
 			}
