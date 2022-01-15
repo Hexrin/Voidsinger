@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "PartFunction.generated.h"
+#include "PartModule.generated.h"
 
 /**
  * This 
@@ -39,7 +39,7 @@ ENUM_CLASS_FLAGS(EVoidsongCue)
  * 
  */
 UCLASS(EditInlineNew, Blueprintable, HideDropdown)
-class VOIDSINGER_API UPartFunction : public UObject
+class VOIDSINGER_API UPartModule : public UObject
 {
 	GENERATED_BODY()
 
