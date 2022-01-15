@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "Factories/DataAssetFactory.h"
 #include "PartEditorBase.h"
 
 /**
@@ -57,12 +57,19 @@ void UPartEditorBase::RemovePixelFromPartShape(FIntPoint PixelLocation)
 }
 
 /**
- * Saves any changes made to the mutable default part.
+ * Creates a factory for making new parts.
  */
-void UPartEditorBase::SavePart()
+UFactory* UPartEditorBase::CreatePartFactory()
 {
-	if (IsValid(PartBeingEdited))
-	{
-		
-	}
+	return NewObject<UDataAssetFactory>();
+}
+
+/**
+ * Saves the part this is editing
+ * 
+ * @return Whether or not the part was succesfuly saved.
+ */
+bool UPartEditorBase::SavePart()
+{
+	return UEditorAssetLibrary::SaveLoadedAsset(PartBeingEdited, true);
 }

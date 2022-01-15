@@ -10,7 +10,7 @@ public class Voidsinger : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine", "Slate", "SlateCore", "UnrealEd", "UMG", "Blutility", "InputCore", "ProceduralMeshComponent" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "CoreUObject", "Engine", "Slate", "SlateCore", "UnrealEd", "UMG", "Blutility", "InputCore", "ProceduralMeshComponent", "EditorScriptingUtilities" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

@@ -142,6 +142,8 @@ FORCEINLINE uint32 GetTypeHash(const FPartTransform& Thing)
 }
 #endif
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPartStateChangeCue);
+
 /**
  * The physical reprsentation of a part.
  * Handles instanced functionality.
@@ -213,45 +215,29 @@ protected:
 
 	// \/ Activation Cues \/
 
-	/**
-	 * Called when this part is damaged.
-	 * 
-	 * @param DamageLocation - The location of the damage in part relative coordinates.
-	 */
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnDamaged(FIntPoint DamageLocation);
+	//Called when this part is damaged.
+	UPROPERTY(BlueprintAssignable)
+	FPartStateChangeCue OnDamaged;
 
-	/**
-	 * Called when this part is repaired.
-	 *
-	 * @param DamageLocation - The location of the repair in part relative coordinates.
-	 */
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnRepaired(FIntPoint RepairLocaiton);
+	//Called when this part is repaired.
+	UPROPERTY(BlueprintAssignable)
+	FPartStateChangeCue OnRepaired;
 
-	/**
-	 * Called when this part is damaged and becomes unfunctional.
-	 */
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnFunctionaltyLost();
+	//Called when this part is damaged and becomes unfunctional.
+	UPROPERTY(BlueprintAssignable)
+	FPartStateChangeCue OnFunctionaltyLost;
 
-	/**
-	 * Called when this part is repaired and becomes functional.
-	 */
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnFunctionaltyRestored();
+	//Called when this part is repaired and becomes functional.
+	UPROPERTY(BlueprintAssignable)
+	FPartStateChangeCue OnFunctionaltyRestored;
 
-	/**
-	 * Called when this part is damaged and compleatly destroyed.
-	 */
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnDestroyed();
+	//Called when this part is damaged and compleatly destroyed.
+	UPROPERTY(BlueprintAssignable)
+	FPartStateChangeCue OnDestroyed;
 
-	/**
-	 * Called when this part is repaired and compleatly healed.
-	 */
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnFullyRepaired();
+	//Called when this part is repaired and compleatly healed.
+	UPROPERTY(BlueprintAssignable)
+	FPartStateChangeCue OnFullyRepaired;
 
 	// /\ Activation Cues /\
 

@@ -110,17 +110,17 @@ void UPart::PixelDamaged(GridLocationType Location)
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
 	if (Shape.Remove(RelativeLocation))
 	{
-		OnDamaged(RelativeLocation);
+		OnDamaged.Broadcast();
 
 		if (bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent)
 		{
 			bFunctional = true;
-			OnFunctionaltyLost();
+			OnFunctionaltyLost.Broadcast();
 		}
 
 		if (Shape.Num() == 0)
 		{
-			OnDestroyed();
+			OnDestroyed.Broadcast();
 		}
 	}
 }
@@ -136,17 +136,17 @@ void UPart::PixelRepaired(GridLocationType Location)
 	if (GetDefaultShape().Contains(RelativeLocation))
 	{
 		Shape.Add(RelativeLocation);
-		OnRepaired(RelativeLocation);
+		OnRepaired.Broadcast();
 
 		if (!bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) >= GetData()->FunctionalityPercent)
 		{
 			bFunctional = true;
-			OnFunctionaltyRestored();
+			OnFunctionaltyRestored.Broadcast();
 		}
 
 		if (Shape.Num() == GetDefaultShape().Num())
 		{
-			OnFullyRepaired();
+			OnFullyRepaired.Broadcast();
 		}
 	}
 }
