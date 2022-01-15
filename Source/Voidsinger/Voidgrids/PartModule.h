@@ -11,6 +11,15 @@
 #include "Voidsinger/VoidsingerTypes.h"
 #include "PartModule.generated.h"
 
+
+/* -------------------------- *\
+\* \/ Forward Declarations \/ */
+
+class UPart;
+
+/* /\ Foward Declarations /\ *\
+\* ------------------------- */
+
 /* \/ ============== \/ *\
 |  \/ EActivationCue \/  |
 \* \/ ============== \/ */
@@ -103,13 +112,16 @@ public:
 
 	/**
 	 * Calls the "OnActivate" function so the part module's functionality is executed
-	 * 
-	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
 	 */
-	void Activate(float Effectiveness);
+	void Activate();
 
 	/**
 	 * Activate overload - Checks whether "OnActivate" should be called by seeing if this module statisfies the Voidsong conditions. If it does, it calls the "OnActivate" function so the part module's functionality is executed
+	 * 
+	 * @param Factions - The Factions that were activated
+	 * @param Nouns - The Nouns that were activated
+	 * @param Verbs - The Verbs that were activated
+	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
 	 */
 	void Activate(const TArray<EFactions>& Factions, const TArray<TSubclassOf<UPart>>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, const TArray<TSubclassOf<UBaseVoidsong>>& PlayableVoidsongs, float Effectiveness);
 

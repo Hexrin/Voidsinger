@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Factories/DataAssetFactory.h"
 #include "PartEditorBase.h"
+#include "Factories/DataAssetFactory.h"
 
 /**
  * Gets the shape of the part this is curently editing.

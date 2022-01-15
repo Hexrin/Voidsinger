@@ -2,6 +2,8 @@
 
 
 #include "PartModule.h"
+#include"Part.h"
+
 
 /* -------------------- *\
 \* \/ Initialization \/ */
@@ -30,14 +32,18 @@ void UPartModule::InitializeVariables(UPart* OwningPart)
  *
  * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
  */
-void UPartModule::Activate(float Effectiveness)
+void UPartModule::Activate()
 {
 	TArray<TSubclassOf<UBaseVerbVoidsong>> EmptyVerbArray;
-	OnActivate(EmptyVerbArray, Effectiveness);
+	OnActivate(EmptyVerbArray, 1);
 }
 
 /**
  * Activate overload - Checks whether "OnActivate" should be called by seeing if this module statisfies the Voidsong conditions. If it does, it calls the "OnActivate" function so the part module's functionality is executed
+ * @param Factions - The Factions that were activated
+ * @param Nouns - The Nouns that were activated
+ * @param Verbs - The Verbs that were activated
+ * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
  */
 void UPartModule::Activate(const TArray<EFactions>& Factions, const TArray<TSubclassOf<UPart>>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, const TArray<TSubclassOf<UBaseVoidsong>>& PlayableVoidsongs, float Effectiveness)
 {
@@ -58,6 +64,7 @@ void UPartModule::Activate(const TArray<EFactions>& Factions, const TArray<TSubc
 		}
 	}
 
+	Part->GetVoidgrid();
 	//bool bFactionsCheck = ((Factions.IsEmpty() && PlayableFactions.Contains(Part->GetVoidgrid())))
 	//if (Factions.IsEmpty())
 }
@@ -72,9 +79,12 @@ void UPartModule::Activate(const TArray<EFactions>& Factions, const TArray<TSubc
 
 void UPartModule::BindToDelegates()
 {
-	switch (ActivationCues)
 
-		case EActivationCue::OnDamaged:
+	//switch (ActivationCues)
+
+	//	case EActivationCue::OnDamaged:
+
+			
 
 }
 
