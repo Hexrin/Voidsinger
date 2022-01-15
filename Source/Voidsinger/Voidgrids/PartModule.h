@@ -96,8 +96,8 @@ public:
 	/**
 	 * Allows for blueprint logic when the part module is activated
 	 */
-	UFUNCTION(BlueprintImplementable, DisplayName = ("Activate"), Category = ("Activation"))
-	void OnActivate(TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs, float Effectiveness);
+	UFUNCTION(BlueprintImplementableEvent, DisplayName = "Activate", Category = "Activation")
+	void OnActivate(const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, float Effectiveness);
 
 	// \/ Activate \/
 
@@ -127,11 +127,11 @@ public:
 	void BindToDelegates();
 
 	// The events to bind Activate to
-	UPROPERTY(EditAnywhere, Category = ("DelegateBinding"))
+	UPROPERTY(EditAnywhere, Category = "DelegateBinding")
 	EActivationCue ActivationCues;
 
 	// The Voidsong events to bind Activate to
-	UPROPERTY(EditAnywhere, Category = ("DelegateBinding"))
+	UPROPERTY(EditAnywhere, Category = "DelegateBinding")
 	EVoidsongCue VoidsongCues;
 
 	/* /\ Delegate Binding /\ *\
