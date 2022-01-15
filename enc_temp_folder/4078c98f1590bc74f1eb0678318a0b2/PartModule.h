@@ -55,8 +55,8 @@ ENUM_CLASS_FLAGS(EActivationCue);
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EVoidsongCue : uint8
 {
-	OnBeat			UMETA(DisplayName = "OnBeat"),
-	ForDuration		UMETA(DisplayName="ForDuration"),
+	OnBeat			UMETA(DisplayName = "Beat"),
+	ForDuration		UMETA(DisplayName="Tick"),
 };
 ENUM_CLASS_FLAGS(EVoidsongCue)
 

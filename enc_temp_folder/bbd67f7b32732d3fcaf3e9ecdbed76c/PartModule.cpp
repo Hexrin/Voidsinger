@@ -139,10 +139,6 @@ void UPartModule::BindToDelegates()
 	{
 		Part->OnFullyRepaired.AddDynamic(this, &UPartModule::Activate);
 	}
-	if ((bool)(ActivationCues & EActivationCue::OnTick))
-	{
-
-	}
 }
 
 /* /\ Delegate Binding /\ *\
