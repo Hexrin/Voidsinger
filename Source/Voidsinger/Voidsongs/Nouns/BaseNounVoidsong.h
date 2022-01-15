@@ -14,9 +14,29 @@ class UPart;
 /* /\ Foward Declarations /\ *\
 \* ------------------------- */
 
+/* \/ ===== \/ *\
+|  \/ ENoun \/  |
+\* \/ ===== \/ */
+
 /**
- * The BaseNounVoidsong stores a part class on it. It is the base class for all Noun Voidsongs. When this type of Voidsong is performed, any other Voidsongs played will only apply to
- * the part class stored on this Voidsong (or any other Noun Voidsongs that were also played).
+ * This enum stores Noun types.
+ */
+UENUM(BlueprintType)
+enum class ENoun : uint8
+{
+	Unbound		UMETA(DisplayName = "Unbound"),
+	Laser		UMETA(DisplayName = "Laser"),
+	Cannon		UMETA(DisplayName = "Cannon"),
+	Thruster	UMETA(DisplayName = "Thruster"),
+};
+
+/* /\ ===== /\ *\
+|  /\ ENoun /\  |
+\* /\ ===== /\ */
+
+/**
+ * The BaseNounVoidsong stores a Noun type on it. It is the base class for all Noun Voidsongs. When this type of Voidsong is performed, any other Voidsongs played will only apply to
+ * module's with the noun type stored on this Voidsong (or any other Noun Voidsongs that were also played).
  */
 UCLASS(Blueprintable)
 class VOIDSINGER_API UBaseNounVoidsong : public UBaseVoidsong
@@ -29,8 +49,8 @@ public:
 	\* \/ Voidsong Data \/ */
 
 	//The class of the noun that this Voidsong will activate
-	UPROPERTY(EditDefaultsOnly, config, BlueprintReadOnly, meta = (Category = "Config|VoidsongData"))
-	TSubclassOf<UObject> Noun;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Category = "VoidsongData"))
+	ENoun Noun;
 
 	/* /\ VoidsongData /\ *\
 	\* ------------------ */

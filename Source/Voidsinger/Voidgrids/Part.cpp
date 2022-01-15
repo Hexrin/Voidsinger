@@ -115,7 +115,7 @@ void UPart::PixelDamaged(GridLocationType Location)
 		if (bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent)
 		{
 			bFunctional = true;
-			OnFunctionaltyLost.Broadcast();
+			OnFunctionalityLost.Broadcast();
 		}
 
 		if (Shape.Num() == 0)
@@ -141,7 +141,7 @@ void UPart::PixelRepaired(GridLocationType Location)
 		if (!bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) >= GetData()->FunctionalityPercent)
 		{
 			bFunctional = true;
-			OnFunctionaltyRestored.Broadcast();
+			OnFunctionalityRestored.Broadcast();
 		}
 
 		if (Shape.Num() == GetDefaultShape().Num())
@@ -652,7 +652,7 @@ FPartTransform UPart::GetTransform()
 //* Shouldn't NounClasses have the type: const TArray<TSubclassOf<UPart>>&
 //* - Liam Suggestion
 //*/
-//void UPart::OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs, float Duration)
+//void UPart::OnDelegateCalled(const TArray<TEnumAsByte<EFaction>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs, float Duration)
 //{
 //	/*for (auto& i : NounClasses)
 //	{
@@ -666,7 +666,7 @@ FPartTransform UPart::GetTransform()
 //
 //	
 //	// Variable sould be global and updated on AddNewVoidsong()	 
-//	TArray<TEnumAsByte<EFactions>> AvailableFactions;
+//	TArray<TEnumAsByte<EFaction>> AvailableFactions;
 //	TArray<TSubclassOf<UObject>> AvailableNouns;
 //
 //	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion

@@ -127,7 +127,7 @@
 //			&&
 //
 //			//If on the player then check to see if they have enough pixels and withdraw them.
-//			(Ship->GetFaction() != EFactions::Player || (IsValid(PlayerState) && PlayerState->WithdrawPixels(PartType.GetDefaultObject()->GetCost())))
+//			(Ship->GetFaction() != EFaction::Player || (IsValid(PlayerState) && PlayerState->WithdrawPixels(PartType.GetDefaultObject()->GetCost())))
 //		)
 //		{
 //

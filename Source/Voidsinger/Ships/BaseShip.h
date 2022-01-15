@@ -105,7 +105,7 @@ public:
 
 	//Gets the faction of the ship
 	UFUNCTION(BlueprintPure)
-	EFactions GetFaction();
+	EFaction GetFaction();
 
 	//Outdated disbatcher should be deleted - Liam Suggestion
 	//Event dispatcher for laser.
@@ -277,7 +277,7 @@ public:
 
 	//The faction of the ship
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EFactions Faction;
+	EFaction Faction;
 
 };
 
@@ -400,7 +400,7 @@ public:
 //	*/
 //	//Figures out what Voidsongs are played.
 //	UFUNCTION()
-//	float DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFactions>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs);
+//	float DecideVoidsongsPlayed(TArray<int> Sequence, TArray<TEnumAsByte<EFaction>>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs);
 //
 //	/*
 //	* Confusing Fucntion Name.
@@ -455,7 +455,7 @@ public:
 //
 //	//Gets the faction of the ship
 //	UFUNCTION(BlueprintPure)
-//	TEnumAsByte<EFactions> GetFaction();
+//	TEnumAsByte<EFaction> GetFaction();
 //
 //	//Outdated disbatcher should be deleted - Liam Suggestion
 //	//Event dispatcher for laser.
@@ -685,6 +685,6 @@ public:
 //
 //	//The faction of the ship
 //	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-//	TEnumAsByte<EFactions> Faction;
+//	TEnumAsByte<EFaction> Faction;
 //
 //};

@@ -23,8 +23,8 @@ class VOIDSINGER_API UBaseFactionVoidsong : public UBaseVoidsong
 public:
 
 	//The faction that this Voidsong will make all other Voidsongs apply to
-	UPROPERTY(EditDefaultsOnly, config, BlueprintReadOnly, meta = (Category = "Config|VoidsongData"))
-	EFactions Faction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Category = "VoidsongData"))
+	EFaction Faction;
 
 	/* /\ VoidsongData /\ *\
 	\* ------------------ */

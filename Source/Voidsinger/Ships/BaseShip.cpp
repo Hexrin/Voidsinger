@@ -172,7 +172,7 @@ float const ABaseShip::GetFluidAmount(EResourceType Fluid)
 //}
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-EFactions ABaseShip::GetFaction()
+EFaction ABaseShip::GetFaction()
 {
 	return Faction;
 }

@@ -200,6 +200,17 @@ TArray<int32> AVoidgrid::CreateTrianglesForPixelMeshFace(int32 UpperRight, int32
 	return Triangles;
 }
 
+/* ------------- *\
+\* \/ Faction \/ */
+
+EFaction AVoidgrid::GetFaction()
+{
+	return Faction;
+}
+
+/* /\ Faction /\ *\
+\* ------------- */
+
 /**
  * Removes the mesh segment for a pixel.
  *

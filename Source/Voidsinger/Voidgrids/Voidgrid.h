@@ -9,6 +9,7 @@
 #include "Part.h"
 #include "ProceduralMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Voidsinger/VoidsingerTypes.h"
 #include "Voidgrid.generated.h"
 
 //The type used for storing pixel data
@@ -279,4 +280,20 @@ private:
 
 	/* /\ Pixel Mesh /\ *\
 	\* ---------------- */
+
+	/* ------------- *\
+	\* \/ Faction \/ */
+
+public:
+
+	//Returns the faction of the Voidgrid
+	UFUNCTION(BlueprintCallable)
+	EFaction GetFaction();
+
+	//The faction of the Voidgrid
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EFaction Faction;
+
+	/* /\ Faction /\ *\
+	\* ------------- */
 };

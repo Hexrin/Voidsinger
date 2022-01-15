@@ -63,7 +63,7 @@ void UVoidsongComponent::BeginPlay()
  {
 	 if (!Sequence.IsEmpty() && bCanPlaySequences)
 	 {
-		 TArray<EFactions> Factions;
+		 TArray<EFaction> Factions;
 		 TArray<TSubclassOf<UBasePart>> Nouns;
 		 TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs;
 
@@ -83,7 +83,7 @@ void UVoidsongComponent::BeginPlay()
 	 }
  }
 
- float UVoidsongComponent::ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFactions>& OutFactions, TArray<TSubclassOf<UBasePart>>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs)
+ float UVoidsongComponent::ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFaction>& OutFactions, TArray<TSubclassOf<UBasePart>>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs)
  {
 	 float Duration = 0;
 
@@ -104,7 +104,7 @@ void UVoidsongComponent::BeginPlay()
 			 }
 			 else if (IsValid(Cast<UBaseNounVoidsong>(EachPlayableVoidsongDefaultObject)))
 			 {
-				 OutNouns.Emplace(Cast<UBaseNounVoidsong>(EachPlayableVoidsongDefaultObject)->Noun);
+				 //OutNouns.Emplace(Cast<UBaseNounVoidsong>(EachPlayableVoidsongDefaultObject)->Noun);
 			 }
 			 else if (IsValid(Cast<UBaseVerbVoidsong>(EachPlayableVoidsongDefaultObject)))
 			 {
@@ -157,7 +157,7 @@ void UVoidsongComponent::BeginPlay()
 //{
 //	if (!Sequence.IsEmpty() && CanActivateVoidsong)
 //	{
-//		TArray<EFactions> Factions;
+//		TArray<EFaction> Factions;
 //		TArray<TSubclassOf<UObject>> Nouns;
 //		TArray<UBaseVerbVoidsong*> Verbs;
 //
@@ -188,7 +188,7 @@ void UVoidsongComponent::BeginPlay()
 * because it would make the logic for returning duration much easier.
 * - Liam Suggestion
 */
-//float UVoidsongComponent::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<EFactions>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs)
+//float UVoidsongComponent::DecideVoidsongsPlayed(TArray<int> Sequence, TArray<EFaction>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs)
 //{
 //	/*float Duration = 0;
 //
@@ -284,7 +284,7 @@ void UVoidsongComponent::BeginPlay()
 //void UVoidsongComponent::BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses)
 //{
 //	//Varialbe name should be meaningful - Liam Suggestion
-//	TArray<EFactions> Temp;
+//	TArray<EFaction> Temp;
 //	Temp.Emplace(GetFaction());
 //	OnActivatePartsDelegate.Broadcast(Temp, NounClasses, AvailableVoidsongs);
 //}

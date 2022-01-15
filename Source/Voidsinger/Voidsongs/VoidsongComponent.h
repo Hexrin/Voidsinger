@@ -13,7 +13,7 @@
 //Old delegates from ABaseShip (put here for reference, will be deleted)
 //Delegates should be commented. What functions should they be bound to? - Liam 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*, AddedVoidsong);
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FActivatePartsDelegate, const TArray<EFactions>&, Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FActivatePartsDelegate, const TArray<EFaction>&, Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnsetVerbsDelegate);
 
 /**
@@ -82,7 +82,7 @@ protected:
 	*/
 	//Figures out what Voidsongs are played.
 	//UFUNCTION()
-		//float DecideVoidsongsPlayed(TArray<int> Sequence, TArray<EFactions>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs);
+		//float DecideVoidsongsPlayed(TArray<int> Sequence, TArray<EFaction>& Factions, TArray<TSubclassOf<UObject>>& Nouns, TArray<UBaseVerbVoidsong*>& Verbs);
 
 	/*
 	* Confusing Fucntion Name.
@@ -192,7 +192,7 @@ private:
 	/**
 	 *
 	 */
-	float ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFactions>& OutFactions, TArray<TSubclassOf<UBasePart>>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs);
+	float ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFaction>& OutFactions, TArray<TSubclassOf<UBasePart>>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs);
 
 	/**
 	 *

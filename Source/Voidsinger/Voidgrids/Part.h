@@ -210,8 +210,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE  bool IsFunctional() { return bFunctional; };
 
-protected:
-
+public:
 
 	// \/ Activation Cues \/
 
@@ -225,11 +224,11 @@ protected:
 
 	//Called when this part is damaged and becomes unfunctional.
 	UPROPERTY(BlueprintAssignable)
-	FPartStateChangeCue OnFunctionaltyLost;
+	FPartStateChangeCue OnFunctionalityLost;
 
 	//Called when this part is repaired and becomes functional.
 	UPROPERTY(BlueprintAssignable)
-	FPartStateChangeCue OnFunctionaltyRestored;
+	FPartStateChangeCue OnFunctionalityRestored;
 
 	//Called when this part is damaged and compleatly destroyed.
 	UPROPERTY(BlueprintAssignable)
@@ -658,7 +657,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartInstanceData& Thing)
 //	*/
 //	//Function called when FVoidsongDelegate is broadcasted
 //	UFUNCTION(BlueprintCallable)
-//	void OnDelegateCalled(const TArray<TEnumAsByte<EFactions>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs, float Duration);
+//	void OnDelegateCalled(const TArray<TEnumAsByte<EFaction>>& Factions, const TArray<TSubclassOf<UObject>>& NounClasses, const TArray<UBaseVoidsong*>& AvailableVoidsongs, float Duration);
 //
 //	UFUNCTION()
 //	void OnFireDelegateCalled(const TArray<TSubclassOf<UObject>>& NounClasses, float Duration);

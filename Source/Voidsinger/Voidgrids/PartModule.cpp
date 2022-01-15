@@ -3,6 +3,7 @@
 
 #include "PartModule.h"
 #include"Part.h"
+#include "Voidgrid.h"
 
 
 /* -------------------- *\
@@ -28,9 +29,7 @@ void UPartModule::InitializeVariables(UPart* OwningPart)
 // \/ Activate \/
 
 /**
- * Calls the "OnActivate" function so the part module's functionality is executed
- *
- * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
+ * Calls the "OnActivate" function with an Effectiveness of 1 so the part module's functionality is executed.
  */
 void UPartModule::Activate()
 {
@@ -39,34 +38,71 @@ void UPartModule::Activate()
 }
 
 /**
+ * Calls the "OnActivate" function so the part module's functionality is executed
+ *
+ * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
+ */
+void UPartModule::ActivateWithEffectiveness(float Effectiveness)
+{
+	TArray<TSubclassOf<UBaseVerbVoidsong>> EmptyVerbArray;
+	OnActivate(EmptyVerbArray, Effectiveness);
+}
+
+/**
  * Activate overload - Checks whether "OnActivate" should be called by seeing if this module statisfies the Voidsong conditions. If it does, it calls the "OnActivate" function so the part module's functionality is executed
+ * 
  * @param Factions - The Factions that were activated
  * @param Nouns - The Nouns that were activated
  * @param Verbs - The Verbs that were activated
  * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
  */
-void UPartModule::Activate(const TArray<EFactions>& Factions, const TArray<TSubclassOf<UPart>>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, const TArray<TSubclassOf<UBaseVoidsong>>& PlayableVoidsongs, float Effectiveness)
+void UPartModule::ActivateFromVoidsong(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, const TArray<TSubclassOf<UBaseVoidsong>>& PlayableVoidsongs, float Effectiveness)
 {
-	//((Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) && NounsCheck
-	
-	TArray<EFactions> PlayableFactions;
-	TArray <TSubclassOf<UPart>> PlayableNouns;
-
-	for (TSubclassOf<UBaseVoidsong> EachPlayableVoidsong : PlayableVoidsongs)
+	//If this module's noun is not unbound, check if it satisfies the Voidsong requirements to activate
+	if (Noun != ENoun::Unbound)
 	{
-		if (EachPlayableVoidsong->IsChildOf(UBaseFactionVoidsong::StaticClass()))
+
+		//((Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) && NounsCheck
+
+		// \/ Finds playable Factions  and Nouns from all playable Voidsongs \/
+
+		TArray<EFaction> PlayableFactions;
+		TArray<ENoun> PlayableNouns;
+
+		for (TSubclassOf<UBaseVoidsong> EachPlayableVoidsong : PlayableVoidsongs)
 		{
-			PlayableFactions.Emplace(Cast<UBaseFactionVoidsong>(EachPlayableVoidsong->GetDefaultObject())->Faction);
+			if (EachPlayableVoidsong->IsChildOf(UBaseFactionVoidsong::StaticClass()))
+			{
+				PlayableFactions.Emplace(Cast<UBaseFactionVoidsong>(EachPlayableVoidsong->GetDefaultObject())->Faction);
+			}
+			if (EachPlayableVoidsong->IsChildOf(UBaseNounVoidsong::StaticClass()))
+			{
+				PlayableNouns.Emplace(Cast<UBaseNounVoidsong>(EachPlayableVoidsong->GetDefaultObject())->Noun);
+			}
 		}
-		if (EachPlayableVoidsong->IsChildOf(UBaseNounVoidsong::StaticClass()))
+
+		// /\ Finds playable Factions and Nouns from all playable Voidsongs /\
+
+		//Checks if this module's faction (referred to as "this faction") is playable
+		bool bFactionIsPlayable = PlayableFactions.Contains(Part->GetVoidgrid()->GetFaction());
+
+		//Factions check is true if 
+		//	      |- No factions played, but this faction is playable -| or |--- This faction is one of the factions played ---|
+		bool bFactionsCheck = (Factions.IsEmpty() && bFactionIsPlayable) || Factions.Contains(Part->GetVoidgrid()->GetFaction());
+
+		//Checks is this module's noun (referred to as "this noun") is playable
+		bool bNounIsPlayable = PlayableNouns.Contains(Noun);
+
+		//Nouns check is true if
+		//	    |- No noun played, but this noun is playable -| or |- This noun is one of the nouns played -|
+		bool bNounsCheck = (Nouns.IsEmpty() && bNounIsPlayable) || Nouns.Contains(Noun);
+
+		//If this part module satisfies the conditions of the Voidsong, call OnActivate()
+		if (bFactionsCheck && bNounsCheck)
 		{
-			PlayableNouns.Emplace(Cast<UBaseNounVoidsong>(EachPlayableVoidsong->GetDefaultObject())->Noun);
+			OnActivate(Verbs, Effectiveness);
 		}
 	}
-
-	Part->GetVoidgrid();
-	//bool bFactionsCheck = ((Factions.IsEmpty() && PlayableFactions.Contains(Part->GetVoidgrid())))
-	//if (Factions.IsEmpty())
 }
 
 // /\ Activate /\
@@ -79,13 +115,30 @@ void UPartModule::Activate(const TArray<EFactions>& Factions, const TArray<TSubc
 
 void UPartModule::BindToDelegates()
 {
-
-	//switch (ActivationCues)
-
-	//	case EActivationCue::OnDamaged:
-
-			
-
+	if ((bool)(ActivationCues & EActivationCue::OnDamaged))
+	{
+		Part->OnDamaged.AddDynamic(this, &UPartModule::Activate);
+	}
+	if ((bool)(ActivationCues & EActivationCue::OnRepaired))
+	{
+		Part->OnRepaired.AddDynamic(this, &UPartModule::Activate);
+	}
+	if ((bool)(ActivationCues & EActivationCue::OnFunctionalityLost))
+	{
+		Part->OnFunctionalityLost.AddDynamic(this, &UPartModule::Activate);
+	}
+	if ((bool)(ActivationCues & EActivationCue::OnFunctionalityRestored))
+	{
+		Part->OnFunctionalityRestored.AddDynamic(this, &UPartModule::Activate);
+	}
+	if ((bool)(ActivationCues & EActivationCue::OnDestroyed))
+	{
+		Part->OnDestroyed.AddDynamic(this, &UPartModule::Activate);
+	}
+	if ((bool)(ActivationCues & EActivationCue::OnFullyRepaired))
+	{
+		Part->OnFullyRepaired.AddDynamic(this, &UPartModule::Activate);
+	}
 }
 
 /* /\ Delegate Binding /\ *\

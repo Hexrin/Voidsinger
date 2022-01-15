@@ -37,7 +37,7 @@
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//void AStarSystemGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs, float Duration)
+//void AStarSystemGameMode::Broadcast(TArray<TEnumAsByte<EFaction>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs, float Duration)
 //{
 //	//Shouldnt this be append(+=) not = - Liam Suggestion
 //	VerbsActive = Verbs;

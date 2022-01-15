@@ -36,7 +36,7 @@ enum class EResourceType : uint8
 
 //Faction types. Enemy will probably be changed but it works for now.
 UENUM(BlueprintType)
-enum class EFactions : uint8 
+enum class EFaction : uint8 
 {
 	Inanimate		UMETA(DisplayName = "Inanimate"),
 	Player			UMETA(DisplayName = "Player"),

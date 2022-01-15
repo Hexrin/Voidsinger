@@ -34,7 +34,7 @@
 //};
 //
 ////The below delagates should be commented - Liam Suggestion
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FVoidsongDelegate, const TArray<TEnumAsByte<EFactions>>& , Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs, float, Duration);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FVoidsongDelegate, const TArray<TEnumAsByte<EFaction>>& , Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs, float, Duration);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeactivateVoidsongDelegate);
 //
 //UCLASS()
@@ -72,7 +72,7 @@
 //	* - Liam Suggestion
 //	*/
 //	UFUNCTION(BlueprintCallable)
-//	void Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs, float Duration);
+//	void Broadcast(TArray<TEnumAsByte<EFaction>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs, float Duration);
 //	
 //	/*
 //	* The below function should be commented. What does the function do?
