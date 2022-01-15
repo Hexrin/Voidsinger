@@ -12,8 +12,12 @@
 				"Engine",
 				"CoreUObject",
 				"UMG",
-				"Blutility"
 			]
+		},
+		{
+			"Name": "VoidsingerEditorTools",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
 		}
 	],
 	"Plugins": [
@@ -33,6 +37,10 @@
 		{
 			"Name": "PythonScriptPlugin",
 			"Enabled": true
+		},
+		{
+			"Name": "EditConfigFiles",
+			"Enabled": false
 		}
 	]
 }

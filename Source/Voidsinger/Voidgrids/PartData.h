@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PartModule.h"
+#include "PartFunction.h"
 #include "Engine/DataAsset.h"
 #include "PartData.generated.h"
 
@@ -34,7 +34,7 @@ public:
 
 	//Stores the ways that this part can be activated.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced)
-	TArray<UPartModule*> Modules;
+	TArray<UPartFunction*> Modules;
 
 	//Stores the cost to place the part in Pixels.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

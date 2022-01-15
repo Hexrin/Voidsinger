@@ -11,5 +11,6 @@ public class VoidsingerEditorTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 
 		ExtraModuleNames.AddRange( new string[] { "Voidsinger" } );
+		ExtraModuleNames.Add("VoidsingerEditorTools");
 	}
 }
