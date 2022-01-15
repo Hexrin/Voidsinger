@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "PixelMoldEditor.h"
+#include "PixelMoldEditorBase.h"
 #include "Kismet/GameplayStatics.h"
 
 
 //Initilize the save game.
-void UPixelMoldEditor::NativeOnInitialized()
+void UPixelMoldEditorBase::NativeOnInitialized()
 {
 	MoldNamesSave = Cast<USlotNamesSave>(UGameplayStatics::LoadGameFromSlot(MoldNamesSaveSlotName, 0));
 	if (!MoldNamesSave)
@@ -17,7 +17,7 @@ void UPixelMoldEditor::NativeOnInitialized()
 /**
  * Sets the target's mold to the mold of this.
  */
-void UPixelMoldEditor::ApplyMoldToTarget()
+void UPixelMoldEditorBase::ApplyMoldToTarget()
 {
 	Target->SetPixelMold(Mold);
 }
@@ -25,7 +25,7 @@ void UPixelMoldEditor::ApplyMoldToTarget()
 /**
  * Sets the the mold of this to be the same as target's mold.
  */
-void UPixelMoldEditor::LoadMoldFromTarget()
+void UPixelMoldEditorBase::LoadMoldFromTarget()
 {
 	Mold = Target->GetMinimalMoldData();
 	OnMoldUpdated(Mold.Array(), Mold.Array(), false);
@@ -36,7 +36,7 @@ void UPixelMoldEditor::LoadMoldFromTarget()
  *
  * @param MoldName - The name of this mold and its save slot.
  */
-void UPixelMoldEditor::SaveMold(FString MoldName)
+void UPixelMoldEditorBase::SaveMold(FString MoldName)
 {
 	//Saves the mold's data
 	UPixelMoldSave* MoldSave = Cast<UPixelMoldSave>(UGameplayStatics::CreateSaveGameObject(UPixelMoldSave::StaticClass()));
@@ -54,7 +54,7 @@ void UPixelMoldEditor::SaveMold(FString MoldName)
  * @param MoldName - The name of the mold you want to load and its save slot.
  * @return Whether or not the mold was succesfuly loaded.
  */
-bool UPixelMoldEditor::LoadMold(FString MoldName)
+bool UPixelMoldEditorBase::LoadMold(FString MoldName)
 {
 	UPixelMoldSave* MoldSave = Cast<UPixelMoldSave>(UGameplayStatics::LoadGameFromSlot(MoldSaveSlotNamePrefix.Append(MoldName), 0));
 	if (MoldSave)
@@ -71,7 +71,7 @@ bool UPixelMoldEditor::LoadMold(FString MoldName)
  * @param MoldName - The name of the mold to search for.
  * @return Whether the mold of the given name exists.
  */
-bool UPixelMoldEditor::DoesMoldExist(FString MoldName)
+bool UPixelMoldEditorBase::DoesMoldExist(FString MoldName)
 {
 	return UGameplayStatics::DoesSaveGameExist(MoldSaveSlotNamePrefix.Append(MoldName), 0);
 }
@@ -82,7 +82,7 @@ bool UPixelMoldEditor::DoesMoldExist(FString MoldName)
  * @return An array of all mold names.
  */
 UFUNCTION(BlueprintPure)
-TArray<FString> UPixelMoldEditor::GetAllMoldNames()
+TArray<FString> UPixelMoldEditorBase::GetAllMoldNames()
 {
 	return MoldNamesSave->Names.Array();
 }
@@ -95,7 +95,7 @@ TArray<FString> UPixelMoldEditor::GetAllMoldNames()
  * @param OverrridePriorParts - Whether or not the part you are placing should override the parts it is placed on top of if possible.
  * @return Whether the part placement was a success.
  */
-bool UPixelMoldEditor::PlacePart(UPartData* Part, FPartTransform Transform, bool bOverrridePriorParts)
+bool UPixelMoldEditorBase::PlacePart(UPartData* Part, FPartTransform Transform, bool bOverrridePriorParts)
 {
 	if (IsValid(Part) && Part->Shape.Num() != 0)
 	{
@@ -148,7 +148,7 @@ bool UPixelMoldEditor::PlacePart(UPartData* Part, FPartTransform Transform, bool
  * @param Location - The location to remove a part from.
  * @return Wether or not a part was removed.
  */
-bool UPixelMoldEditor::RemovePart(FIntPoint Location)
+bool UPixelMoldEditorBase::RemovePart(FIntPoint Location)
 {
 	return RemovePart(Location, true);
 }
@@ -161,7 +161,7 @@ bool UPixelMoldEditor::RemovePart(FIntPoint Location)
  * @param bCallUpdateEvent - Whether or not to call OnMoldUpdated() in this function.
  * @return Wether or not a part was removed.
  */
-bool UPixelMoldEditor::RemovePart(FIntPoint Location, bool bCallUpdatedEvent)
+bool UPixelMoldEditorBase::RemovePart(FIntPoint Location, bool bCallUpdatedEvent)
 {
 	if (!PartLocations.Contains(Location))
 	{
@@ -205,7 +205,7 @@ bool UPixelMoldEditor::RemovePart(FIntPoint Location, bool bCallUpdatedEvent)
  * @param PartData - Is set to the part data at Location.
  * @return Wether or not a part exists at Location.
  */
-bool UPixelMoldEditor::GetPart(FIntPoint Location, FMinimalPartInstanceData& PartData)
+bool UPixelMoldEditorBase::GetPart(FIntPoint Location, FMinimalPartInstanceData& PartData)
 {
 	if (!PartLocations.Contains(Location))
 	{

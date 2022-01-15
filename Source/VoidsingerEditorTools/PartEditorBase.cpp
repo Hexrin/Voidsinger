@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+#if WITH_EDITOR
 
 #include "PartEditorBase.h"
 #include "Factories/DataAssetFactory.h"
@@ -73,3 +73,4 @@ bool UPartEditorBase::SavePart()
 {
 	return UEditorAssetLibrary::SaveLoadedAsset(PartBeingEdited, true);
 }
+#endif

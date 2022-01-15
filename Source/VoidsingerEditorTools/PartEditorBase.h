@@ -2,6 +2,8 @@
 
 #pragma once
 
+#if WITH_EDITOR
+
 #include "CoreMinimal.h"
 #include "Voidsinger/Voidgrids/PartData.h"
 #include "EditorAssetLibrary.h"
@@ -12,7 +14,7 @@
  * 
  */
 UCLASS()
-class VOIDSINGER_API UPartEditorBase : public UEditorUtilityWidget
+class VOIDSINGEREDITORTOOLS_API UPartEditorBase : public UEditorUtilityWidget
 {
 	GENERATED_BODY()
 
@@ -67,3 +69,4 @@ public:
 	UFUNCTION(BlueprintPure)
 	UFactory* CreatePartFactory();
 };
+#endif

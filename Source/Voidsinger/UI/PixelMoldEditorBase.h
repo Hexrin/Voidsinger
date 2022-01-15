@@ -6,13 +6,13 @@
 #include "Blueprint/UserWidget.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 #include "GameFramework/SaveGame.h"
-#include "PixelMoldEditor.generated.h"
+#include "PixelMoldEditorBase.generated.h"
 
 /**
  * A widget to editing, saveing and loading pixel molds
  */
 UCLASS()
-class VOIDSINGER_API UPixelMoldEditor : public UUserWidget
+class VOIDSINGER_API UPixelMoldEditorBase : public UUserWidget
 {
 	GENERATED_BODY()
 
