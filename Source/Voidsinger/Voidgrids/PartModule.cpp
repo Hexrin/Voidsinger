@@ -72,6 +72,10 @@ void UPartModule::Activate(const TArray<EFactions>& Factions, const TArray<TSubc
 
 void UPartModule::BindToDelegates()
 {
+	switch (ActivationCues)
+
+		case EActivationCue::OnDamaged:
+
 }
 
 /* /\ Delegate Binding /\ *\
