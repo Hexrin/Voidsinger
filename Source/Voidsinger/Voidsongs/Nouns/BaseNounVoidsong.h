@@ -18,7 +18,7 @@ class UPart;
  * The BaseNounVoidsong stores a part class on it. It is the base class for all Noun Voidsongs. When this type of Voidsong is performed, any other Voidsongs played will only apply to
  * the part class stored on this Voidsong (or any other Noun Voidsongs that were also played).
  */
-UCLASS(Abstract, Blueprintable)
+UCLASS(Blueprintable)
 class VOIDSINGER_API UBaseNounVoidsong : public UBaseVoidsong
 {
 	GENERATED_BODY()
