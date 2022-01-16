@@ -20,3 +20,7 @@ void ABaseShip::AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdde
 
 /* /\ Playable Voidsong Management /\ *\
 \* ---------------------------------- */
+
+void ABaseShip::BroadcastPlayVoidsongs(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs)
+{
+}
