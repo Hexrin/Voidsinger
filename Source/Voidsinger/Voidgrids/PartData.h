@@ -55,6 +55,9 @@ public:
 	//Stores whether or not this part can be rotated.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bRotatable{ true };
+
+	//Gets the primar asset Id for the asset mager and build UI.
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
 };
 
 /**

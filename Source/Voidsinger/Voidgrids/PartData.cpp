@@ -3,7 +3,7 @@
 
 #include "PartData.h"
 
-//FPrimaryAssetId UPartData::GetPrimaryAssetId() const
-//{
-//	return FPrimaryAssetId(FName("PartData"), GetOutermost()->GetFName());
-//}
+FPrimaryAssetId UPartData::GetPrimaryAssetId() const
+{
+	return FPrimaryAssetId(FName("PartData"), GetOutermost()->GetFName());
+}
