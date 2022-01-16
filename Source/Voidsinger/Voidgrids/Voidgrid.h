@@ -287,11 +287,11 @@ private:
 public:
 
 	/**
-	 * Returns the faction of the Voidgrid.
+	 * Gets the faction of the Voidgrid.
 	 * 
 	 * @return The faction of the Voidgrid.
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	virtual EFaction GetFaction() const;
 
 	/* /\ Faction /\ *\

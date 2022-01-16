@@ -7,7 +7,7 @@
 
 /**
  * A ship controlable by an AI.
- * Handels instancation and AI input.
+ * Handels ship type and AI input.
  */
 UCLASS()
 class VOIDSINGER_API ANPCShip : public AShip
@@ -16,8 +16,17 @@ class VOIDSINGER_API ANPCShip : public AShip
 
 
 public:
-	//Inilizes the camrea and posesses the player.
+	/**
+	 * Initilizes this using ShipTypeData.
+	 */
 	ANPCShip();
+
+	/**
+	 * Gets the faction of the Voidgrid.
+	 *
+	 * @return The faction of the Voidgrid.
+	 */
+	virtual EFaction GetFaction() const override;
 
 protected:
 	//Stores the information relating to the type of this ship.
