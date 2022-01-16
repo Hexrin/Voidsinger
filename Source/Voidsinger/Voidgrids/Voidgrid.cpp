@@ -2,7 +2,7 @@
 
 
 #include "Voidgrid.h"
-#include "Part.h"
+#include "Parts/Part.h"
 
 //Sets default values for this voidgrid's properties
 AVoidgrid::AVoidgrid()

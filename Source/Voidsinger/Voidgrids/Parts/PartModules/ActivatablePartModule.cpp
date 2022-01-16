@@ -2,7 +2,7 @@
 
 
 #include "ActivatablePartModule.h"
-#include "Voidsinger/Voidgrids/Part.h"
+#include "Voidsinger/Voidgrids/Parts/Part.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 
 /* -------------------- *\

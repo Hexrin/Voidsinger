@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Part.h"
-#include "Voidgrid.h"
+#include "Voidsinger/Voidgrids/Voidgrid.h"
 
 /**
  * Applies a given rotation to a given location.

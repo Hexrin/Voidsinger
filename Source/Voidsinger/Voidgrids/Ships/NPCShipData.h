@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
-#include "Voidsinger/Voidgrids/Part.h"
+#include "Voidsinger/Voidgrids/Parts/Part.h"
 #include "Engine/DataAsset.h"
 #include "NPCShipData.generated.h"
 

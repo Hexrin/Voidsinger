@@ -5,7 +5,7 @@
 #if WITH_EDITOR
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidgrids/PartData.h"
+#include "Voidsinger/Voidgrids/Parts/PartData.h"
 #include "EditorAssetLibrary.h"
 #include "EditorUtilityWidget.h"
 #include "PartEditorBase.generated.h"

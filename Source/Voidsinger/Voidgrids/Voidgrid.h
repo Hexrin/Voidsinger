@@ -6,7 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "UObject/UObjectGlobals.h"
 #include "GridMap.h"
-#include "Part.h"
+#include "Parts/Part.h"
 #include "ProceduralMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Voidsinger/VoidsingerTypes.h"

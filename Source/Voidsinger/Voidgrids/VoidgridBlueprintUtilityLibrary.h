@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Part.h"
+#include "Parts/Part.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "VoidgridBlueprintUtilityLibrary.generated.h"
 
