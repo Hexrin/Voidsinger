@@ -17,11 +17,11 @@ class VOIDSINGER_API ANPCShip : public AShip
 
 public:
 	//Inilizes the camrea and posesses the player.
-	APlayerShip();
+	ANPCShip();
 
 protected:
 	//Stores the information relating to the type of this ship.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ExposeOnSpawn = "true"))
 	UNPCShipData* ShipTypeData;
 
 };

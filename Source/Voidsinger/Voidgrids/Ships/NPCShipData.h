@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
-#inculde "Voidgrids/Part.h"
+#include "Voidsinger/Voidgrids/Part.h"
 #include "Engine/DataAsset.h"
 #include "NPCShipData.generated.h"
 
@@ -23,7 +23,7 @@ public:
 
 	//Stores the mold of this ship.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	MinimalPixelMoldDataType Mold;
+	TSet<FMinimalPartInstanceData> Mold;
 
 	//The faction of this ship.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
