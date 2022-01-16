@@ -1,13 +1,29 @@
 //// Fill out your copyright notice in the Description page of Project Settings.
-//
-//
-//#include "FunctionLibrary.h"
+
+
+#include "FunctionLibrary.h"
+#include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
+
 //#include "DrawDebugHelpers.h" // Remove this when debugging is done
 //#include "Parts/Part.h"
 //#include "Ships/BaseShip.h"
-//
-//
-//
+
+/**
+ * Plays Verbs Voidsongs with the given information.
+ *
+ * @param Verbs - The verbs that were played
+ * @param Instigator - The object that activated these Voidsongs
+ * @param Hit - The hit result information
+ * @param Effectiveness - The effectiveness of the activation
+ */
+void UFunctionLibrary::PlayVerbVoidsongs(const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, UObject* Instigator, FHitResult Hit, float Effectiveness)
+{
+	for (TSubclassOf<UBaseVerbVoidsong> EachVerb : Verbs)
+	{
+		Cast<UBaseVerbVoidsong>(EachVerb->GetDefaultObject())->Play(Instigator, Hit, Effectiveness);
+	}
+}
+
 //////Function comments from the .h should be copied to the .cpp. - Liam Suggestion
 ////TArray<UClass*> UFunctionLibrary::GetClasses(UClass* ParentClass)
 ////{

@@ -64,7 +64,7 @@ void UVoidsongComponent::BeginPlay()
 	 if (!Sequence.IsEmpty() && bCanPlaySequences)
 	 {
 		 TArray<EFaction> Factions;
-		 TArray<TSubclassOf<UBasePart>> Nouns;
+		 TArray<ENoun> Nouns;
 		 TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs;
 
 		 float Duration = ParseSequenceIntoVoidsongData(Sequence, Factions, Nouns, Verbs);
@@ -83,7 +83,7 @@ void UVoidsongComponent::BeginPlay()
 	 }
  }
 
- float UVoidsongComponent::ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFaction>& OutFactions, TArray<TSubclassOf<UBasePart>>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs)
+ float UVoidsongComponent::ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFaction>& OutFactions, TArray<ENoun>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs)
  {
 	 float Duration = 0;
 

@@ -192,7 +192,7 @@ private:
 	/**
 	 *
 	 */
-	float ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFaction>& OutFactions, TArray<TSubclassOf<UBasePart>>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs);
+	float ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFaction>& OutFactions, TArray<ENoun>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs);
 
 	/**
 	 *
