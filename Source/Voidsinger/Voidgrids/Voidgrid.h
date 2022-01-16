@@ -173,9 +173,9 @@ public:
 	\* \/ Pixel Mold \/ */
 
 public:
-	//Called when this is damaged
+	//Called when this is damaged.
 	FGridLocationDelegate OnDamaged;
-	//Called when this is damaged
+	//Called when this is repaired.
 	FGridLocationDelegate OnRepaired;
 
 	/**
