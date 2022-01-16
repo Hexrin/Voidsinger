@@ -16,7 +16,7 @@
  * @param Hit - The hit result information
  * @param Effectiveness - The effectiveness of the activation
  */
-void UFunctionLibrary::PlayVerbVoidsongs(const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, UObject* Instigator, FHitResult Hit, float Effectiveness)
+void UFunctionLibrary::ExecuteVerbVoidsongs(const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, UObject* Instigator, FHitResult Hit, float Effectiveness)
 {
 	for (TSubclassOf<UBaseVerbVoidsong> EachVerb : Verbs)
 	{
