@@ -2,7 +2,7 @@
 //
 //
 //#include "ShipPhysicsComponent.h"
-//#include "BaseShip.h"
+//#include "Ship.h"
 //#include "PlayerShip.h"
 //#include "Voidsinger/Parts/Part.h"
 //
@@ -11,7 +11,7 @@
 //{
 //
 //	PrimaryComponentTick.bCanEverTick = true;
-//	Ship = (ABaseShip*)GetOwner();
+//	Ship = (AShip*)GetOwner();
 //	AngularVelocity = 0;
 //	LinearVelocity = FVector2D(0, 0);
 //	LinearAcceleration = FVector2D(0, 0);
@@ -66,7 +66,7 @@
 //			//Comment scary math -Mabel
 //			if (FVector2D::DotProduct(GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) < 0)
 //			{
-//				ABaseShip* OtherShip = Cast<ABaseShip>(Result.GetActor());
+//				AShip* OtherShip = Cast<AShip>(Result.GetActor());
 //
 //				float CollisionImpulseFactor;
 //

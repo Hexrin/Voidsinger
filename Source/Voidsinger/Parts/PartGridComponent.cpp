@@ -7,7 +7,7 @@
 //#include "CorePart.h"
 //#include "BaseFreespacePart.h"
 //#include "Voidsinger/ShipPlayerState.h"
-//#include "Voidsinger/Ships/BaseShip.h"
+//#include "Voidsinger/Ships/Ship.h"
 //
 //// Sets default values for this component's properties
 //UPartGridComponent::UPartGridComponent()
@@ -21,7 +21,7 @@
 //	//Could GridBounds and GridHalfSize be done in the h file? Why is grid half size 250? that shouldn't be hard
 //	//coded -Mabel Suggestion
 //	GridBounds = FIntBoxBounds(FIntPoint(0, 0), FIntPoint(0, 0));
-//	Ship = Cast<ABaseShip>(GetOwner());
+//	Ship = Cast<AShip>(GetOwner());
 //	GridHalfSize = FIntPoint(250);
 //	
 //	PartGrid = TGridMap<FPartInstanceData>();
@@ -49,7 +49,7 @@
 //void UPartGridComponent::BeginPlay()
 //{
 //	//Why is this done in the construction script and begin play? -Mabel Suggestion
-//	Ship = Cast<ABaseShip>(GetOwner());
+//	Ship = Cast<AShip>(GetOwner());
 //	Super::BeginPlay();
 //	GridBounds = FIntBoxBounds(FIntPoint(0, 0), FIntPoint(0, 0));
 //	// ...
@@ -411,7 +411,7 @@
 //	if (!PartsRemoved.IsEmpty())
 //	{
 //
-//		ABaseShip* NewShip = GetWorld()->SpawnActor<ABaseShip>((GetOwner()->GetActorLocation(), FQuat(), FActorSpawnParameters()));
+//		AShip* NewShip = GetWorld()->SpawnActor<AShip>((GetOwner()->GetActorLocation(), FQuat(), FActorSpawnParameters()));
 //
 //		/*
 //		* Iterator should have a name that tells what it actualy is and what its iterating through.

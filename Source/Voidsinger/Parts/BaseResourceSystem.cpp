@@ -2,7 +2,7 @@
 //
 //
 //#include "Voidsinger/Parts/BaseResourceSystem.h"
-//#include "Voidsinger/Ships/BaseShip.h"
+//#include "Voidsinger/Ships/Ship.h"
 //#include "Engine/World.h"
 //#include "GameFramework/PlayerController.h"
 //
@@ -249,7 +249,7 @@
 //		//{
 //			//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
 //			//UE_LOG(LogTemp, Warning, TEXT("Merge Systems"));
-//			//Cast<ABaseShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
+//			//Cast<AShip>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))->RemoveResourceSystem(MergedSystem);
 //		//GetOwningShip()->RemoveResourceSystem(MergedSystem);
 //
 //		MergedSystem->DestroyResourceSystem();
@@ -288,7 +288,7 @@
 //void UBaseResourceSystem::DestroyResourceSystem()
 //{
 //	//UE_LOG(LogTemp, Warning, TEXT("Resource system outer %s"), *GetOuter()->GetClass()->GetDisplayNameText().ToString())
-//	//Cast<ABaseShip>(GetOuter())->RemoveResourceSystem(this);
+//	//Cast<AShip>(GetOuter())->RemoveResourceSystem(this);
 //	GetOwningShip()->RemoveResourceSystem(this);
 //	TArray<FPartInstanceData> PartDataRemoved = ResourceSystemGrid.GetValueArray();
 //	TSet<UPart*> PartsRemoved;
@@ -402,7 +402,7 @@
 //	return ResourceAmount;
 //}
 //
-//ABaseShip* UBaseResourceSystem::GetOwningShip()
+//AShip* UBaseResourceSystem::GetOwningShip()
 //{
 //	if (!IsValid(OwningShip))
 //	{

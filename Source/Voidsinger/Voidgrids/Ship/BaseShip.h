@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "Voidsinger/Voidsongs/BaseVoidsong.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
-#include "BaseShip.generated.h"
+#include "Ship.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VOIDSINGER_API ABaseShip : public AVoidgrid
+class VOIDSINGER_API AShip : public AVoidgrid
 {
 	GENERATED_BODY()
 

@@ -3,7 +3,7 @@
 //
 //#include "BaseThrusterPart.h"
 //#include "Voidsinger/Parts/BaseResourceSystem.h"
-//#include "Voidsinger/Ships/BaseShip.h"
+//#include "Voidsinger/Ships/Ship.h"
 //
 ////Copy comment from .h -Mabel Suggestion
 //UBaseThrusterPart::UBaseThrusterPart()
@@ -73,11 +73,11 @@
 //		//Why is delta time being clamped? Why 0.0666666667 specifically? no magic numbers
 //		//Isn't there a rotate function for 2d vectors?
 //		//If you don't delete the "GetShip()" function then use that instead of "GetPartGrid()->GetOwner()" -Mabel Suggestion
-////		Cast<ABaseShip>(GetPartGrid()->GetOwner())->PhysicsComponent->AddImpulse(FVector2D(ThrustForce * Throttle * FMath::Clamp(DeltaTime, 0.f, 0.0666666667f), 0).GetRotated(GetThrustRotation() + GetShip()->GetActorRotation().Yaw), FVector2D(GetShip()->GetActorQuat().RotateVector(FVector(GetThrustRelativeLocation(), 0))));
+////		Cast<AShip>(GetPartGrid()->GetOwner())->PhysicsComponent->AddImpulse(FVector2D(ThrustForce * Throttle * FMath::Clamp(DeltaTime, 0.f, 0.0666666667f), 0).GetRotated(GetThrustRotation() + GetShip()->GetActorRotation().Yaw), FVector2D(GetShip()->GetActorQuat().RotateVector(FVector(GetThrustRelativeLocation(), 0))));
 //		
 //		//Why is throttle reset to 0 every tick?
 //		Throttle = 0;
-//		Cast<ABaseShip>(GetPartGrid()->GetOwner())->PhysicsComponent->AddImpulse(FVector2D(ThrustForce * Throttle * FMath::Clamp(DeltaTime, 0.f, 0.0666666667f), 0).GetRotated(GetThrustRotation() + GetShip()->GetActorRotation().Yaw), FVector2D(GetShip()->GetActorQuat().RotateVector(FVector(GetThrustRelativeLocation(), 0))));
+//		Cast<AShip>(GetPartGrid()->GetOwner())->PhysicsComponent->AddImpulse(FVector2D(ThrustForce * Throttle * FMath::Clamp(DeltaTime, 0.f, 0.0666666667f), 0).GetRotated(GetThrustRotation() + GetShip()->GetActorRotation().Yaw), FVector2D(GetShip()->GetActorQuat().RotateVector(FVector(GetThrustRelativeLocation(), 0))));
 //
 //	}
 //

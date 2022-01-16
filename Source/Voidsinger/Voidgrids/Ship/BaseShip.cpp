@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "BaseShip.h"
+#include "Ship.h"
 
 /* ---------------------------------- *\
 \* \/ Playable Voidsong Management \/ */
@@ -10,7 +10,7 @@
  *
  * @param VoidsongsAdded - The new playable Voidsongs
  */
-void ABaseShip::AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdded)
+void AShip::AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdded)
 {
 	for (TSubclassOf<UBaseVoidsong> EachVoidsongAdded : VoidsongsAdded)
 	{
@@ -21,6 +21,6 @@ void ABaseShip::AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdde
 /* /\ Playable Voidsong Management /\ *\
 \* ---------------------------------- */
 
-void ABaseShip::PlayVoidsongs(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs)
+void AShip::PlayVoidsongs(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs)
 {
 }

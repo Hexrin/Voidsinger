@@ -6,7 +6,7 @@
 
 //#include "DrawDebugHelpers.h" // Remove this when debugging is done
 //#include "Parts/Part.h"
-//#include "Ships/BaseShip.h"
+//#include "Ships/Ship.h"
 
 /**
  * Plays Verbs Voidsongs with the given information.
@@ -66,7 +66,7 @@ void UFunctionLibrary::ExecuteVerbVoidsongs(const TArray<TSubclassOf<UBaseVerbVo
 ////	TArray <TEnumAsByte<EObjectTypeQuery>> ObjectTypeArray;
 ////	TArray<AActor*> OutActors;
 ////	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
-////	UKismetSystemLibrary::SphereOverlapActors(World, WorldLocation, ExplosionRadius, ObjectTypeArray, ABaseShip::StaticClass(),TArray<AActor*>(), OutActors);
+////	UKismetSystemLibrary::SphereOverlapActors(World, WorldLocation, ExplosionRadius, ObjectTypeArray, AShip::StaticClass(),TArray<AActor*>(), OutActors);
 ////
 ////	//Delete debug code or come up with a good way for c++ debug modes. - Liam Suggestion
 ////	//DrawDebugSphere(World, WorldLocation, ExplosionRadius, 32, FColor::Red, true);
@@ -74,9 +74,9 @@ void UFunctionLibrary::ExecuteVerbVoidsongs(const TArray<TSubclassOf<UBaseVerbVo
 ////	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 ////	for (auto& i : OutActors)
 ////	{
-////		if (IsValid(Cast<ABaseShip>(i)))
+////		if (IsValid(Cast<AShip>(i)))
 ////		{
-////			Cast<ABaseShip>(i)->PartGrid->ExplodeAtLocation(WorldLocation, ExplosionRadius);
+////			Cast<AShip>(i)->PartGrid->ExplodeAtLocation(WorldLocation, ExplosionRadius);
 ////		}
 ////	}
 ////}
@@ -140,7 +140,7 @@ void UFunctionLibrary::ExecuteVerbVoidsongs(const TArray<TSubclassOf<UBaseVerbVo
 ////	{
 ////		TSet<UPart*> PartsHit;
 ////
-////		FVector RelativeLoc = UKismetMathLibrary::InverseTransformLocation(PartGrid->GetOwner()->GetActorTransform(), Location) + FVector(Cast<ABaseShip>(PartGrid->GetOwner())->PhysicsComponent->GetCenterOfMass(), 0);
+////		FVector RelativeLoc = UKismetMathLibrary::InverseTransformLocation(PartGrid->GetOwner()->GetActorTransform(), Location) + FVector(Cast<AShip>(PartGrid->GetOwner())->PhysicsComponent->GetCenterOfMass(), 0);
 ////		FIntPoint LocalIntPoint = FVector2D(RelativeLoc.X, RelativeLoc.Y).IntPoint();
 ////		FIntPoint CheckGridLocation;
 ////

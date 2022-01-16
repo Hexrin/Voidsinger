@@ -139,7 +139,7 @@ void UVoidsongComponent::BeginPlay()
 \* ------------------------- */
 
 /* ------------------------------------------------------------------------------------- *\
-\* \/ Old Voidsong functions from ABaseShip (put here for reference, will be deleted) \/ */
+\* \/ Old Voidsong functions from AShip (put here for reference, will be deleted) \/ */
 
 //Function comments from the .h should be identical to the one in the .cpp - Liam Suggestion
 //Adds a new voidsong
@@ -174,7 +174,7 @@ void UVoidsongComponent::BeginPlay()
 //		{
 //			//Does this work with multiple simultaneous Voidsongs? I think it does but be sure to test it. - Liam Suggestion
 //			FTimerHandle DurationTimer;
-//			GetWorld()->GetTimerManager().SetTimer(DurationTimer, this, &ABaseShip::DurationDelay, Duration);
+//			GetWorld()->GetTimerManager().SetTimer(DurationTimer, this, &AShip::DurationDelay, Duration);
 //			CanActivateVoidsong = false;
 //		}
 //
@@ -289,5 +289,5 @@ void UVoidsongComponent::BeginPlay()
 //	OnActivatePartsDelegate.Broadcast(Temp, NounClasses, AvailableVoidsongs);
 //}
 
-/* /\ Old Voidsong functions from ABaseShip (put here for reference, will be deleted) /\ *\
+/* /\ Old Voidsong functions from AShip (put here for reference, will be deleted) /\ *\
 \* ------------------------------------------------------------------------------------- */

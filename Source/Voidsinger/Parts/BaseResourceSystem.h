@@ -129,7 +129,7 @@
 //	UFUNCTION()
 //	void DestroyResourceSystem();
 //
-//	ABaseShip* GetOwningShip();
+//	AShip* GetOwningShip();
 //
 //	void RemoveSection(TGridMap<FPartInstanceData> RemovedSection);
 //
@@ -157,5 +157,5 @@
 //	UPROPERTY()
 //	TEnumAsByte<EResourceType> SystemType;
 //
-//	ABaseShip* OwningShip;
+//	AShip* OwningShip;
 //};
