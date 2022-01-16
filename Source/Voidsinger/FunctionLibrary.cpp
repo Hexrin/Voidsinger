@@ -2,25 +2,25 @@
 
 
 #include "FunctionLibrary.h"
-#include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
+#include "Voidsinger/Voidsongs/Verbs/BaseVerbMotif.h"
 
 //#include "DrawDebugHelpers.h" // Remove this when debugging is done
 //#include "Parts/Part.h"
 //#include "Ships/Ship.h"
 
 /**
- * Plays Verbs Voidsongs with the given information.
+ * Plays Verbs Motifs with the given information.
  *
  * @param Verbs - The verbs that were played
- * @param Instigator - The object that activated these Voidsongs
+ * @param Instigator - The object that activated these Motifs
  * @param Hit - The hit result information
  * @param Effectiveness - The effectiveness of the activation
  */
-void UFunctionLibrary::ExecuteVerbVoidsongs(const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, UObject* Instigator, FHitResult Hit, float Effectiveness)
+void UFunctionLibrary::ExecuteVerbMotifs(const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, UObject* Instigator, FHitResult Hit, float Effectiveness)
 {
-	for (TSubclassOf<UBaseVerbVoidsong> EachVerb : Verbs)
+	for (TSubclassOf<UBaseVerbMotif> EachVerb : Verbs)
 	{
-		Cast<UBaseVerbVoidsong>(EachVerb->GetDefaultObject())->Play(Instigator, Hit, Effectiveness);
+		Cast<UBaseVerbMotif>(EachVerb->GetDefaultObject())->Play(Instigator, Hit, Effectiveness);
 	}
 }
 

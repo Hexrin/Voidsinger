@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidsongs/BaseVoidsong.h"
-#include "BaseNounVoidsong.generated.h"
+#include "Voidsinger/Voidsongs/BaseMotif.h"
+#include "BaseNounMotif.generated.h"
 
 /* -------------------------- *\
 \* \/ Forward Declarations \/ */
@@ -39,7 +39,7 @@ enum class ENoun : uint8
  * module's with the noun type stored on this Voidsong (or any other Noun Voidsongs that were also played).
  */
 UCLASS(Blueprintable)
-class VOIDSINGER_API UBaseNounVoidsong : public UBaseVoidsong
+class VOIDSINGER_API UBaseNounMotif : public UBaseMotif
 {
 	GENERATED_BODY()
 

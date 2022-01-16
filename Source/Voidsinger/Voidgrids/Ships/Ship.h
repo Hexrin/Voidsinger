@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidsongs/BaseVoidsong.h"
+#include "Voidsinger/Voidsongs/BaseMotif.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 #include "Ship.generated.h"
 
@@ -27,12 +27,12 @@ public:
 	 * @param VoidsongsAdded - The new playable Voidsongs
 	 */
 	UFUNCTION(BlueprintCallable, Category = "PlayableVoidsongManagement")
-	void AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdded);
+	void AddNewMotifs(TArray<TSubclassOf<UBaseMotif>> MotifsAdded);
 
 protected:
 
 	//Stores the Voidsongs that this component can play.
-	TSet<TSubclassOf<UBaseVoidsong>> PlayableVoidsongs;
+	TSet<TSubclassOf<UBaseMotif>> PlayableMotifs;
 
 	/* /\ Playable Voidsong Management /\ *\
 	\* ---------------------------------- */
@@ -43,7 +43,7 @@ protected:
 	/**
 	 * 
 	 */
-	void PlayVoidsongs(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs);
+	void PlayVoidsong(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs);
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */

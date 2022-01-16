@@ -7,7 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/DataAsset.h"
 #include "Voidsinger/VoidsingerTypes.h"
-#include "BaseVoidsong.generated.h"
+#include "BaseMotif.generated.h"
 
 /*
 * This class should not be able to be inscaniated as it has no values that change during runtime
@@ -24,7 +24,7 @@
  * The base Voidsong is the base class for all Voidsongs. It holds information such as the activation sequence for the Voidsong.
  */
 UCLASS(Abstract, Blueprintable, config=VoidSettings, defaultconfig)
-class VOIDSINGER_API UBaseVoidsong : public UDataAsset
+class VOIDSINGER_API UBaseMotif : public UDataAsset
 {
 	GENERATED_BODY()
 
@@ -36,7 +36,7 @@ public:
 	/**
 	 * Sets default values for this object's properties
 	 */
-	UBaseVoidsong();
+	UBaseMotif();
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */

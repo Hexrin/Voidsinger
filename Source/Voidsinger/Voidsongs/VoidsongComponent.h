@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "BaseVoidsong.h"
-#include "Factions/BaseFactionVoidsong.h"
-#include "Nouns/BaseNounVoidsong.h"
-#include "Verbs/BaseVerbVoidsong.h"
+#include "BaseMotif.h"
+#include "Factions/BaseFactionMotif.h"
+#include "Nouns/BaseNounMotif.h"
+#include "Verbs/BaseVerbMotif.h"
 #include "VoidsongComponent.generated.h"
 
 //Old delegates from AShip (put here for reference, will be deleted)
@@ -169,12 +169,12 @@ public:
 	 * @param VoidsongsAdded - The new playable Voidsongs
 	 */
 	UFUNCTION(BlueprintCallable, Category = "PlayableVoidsongManagement")
-	void AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdded);
+	void AddNewMotifs(TArray<TSubclassOf<UBaseMotif>> MotifsAdded);
 
 private:
 
 	//Stores the Voidsongs that this component can play.
-	TSet<TSubclassOf<UBaseVoidsong>> PlayableVoidsongs;
+	TSet<TSubclassOf<UBaseMotif>> PlayableMotifs;
 
 	/* /\ Playable Voidsong Management /\ *\
 	\* ---------------------------------- */
@@ -192,7 +192,7 @@ private:
 	/**
 	 *
 	 */
-	float ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFaction>& OutFactions, TArray<ENoun>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs);
+	float ParseSequenceIntoMotifData(TArray<int32> Sequence, TArray<EFaction>& OutFactions, TArray<ENoun>& OutNouns, TArray<TSubclassOf<UBaseVerbMotif>>& OutVerbs);
 
 	/**
 	 *
@@ -203,7 +203,7 @@ private:
 	bool bCanPlaySequences;
 
 	//
-	TArray<TSubclassOf<UBaseVoidsong>> ActiveVoidsongs;
+	TArray<TSubclassOf<UBaseMotif>> ActiveMotifs;
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */

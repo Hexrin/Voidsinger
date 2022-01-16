@@ -10,17 +10,17 @@
  *
  * @param VoidsongsAdded - The new playable Voidsongs
  */
-void AShip::AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdded)
+void AShip::AddNewMotifs(TArray<TSubclassOf<UBaseMotif>> MotifsAdded)
 {
-	for (TSubclassOf<UBaseVoidsong> EachVoidsongAdded : VoidsongsAdded)
+	for (TSubclassOf<UBaseMotif> EachMotifAdded : MotifsAdded)
 	{
-		PlayableVoidsongs.Emplace(EachVoidsongAdded);
+		PlayableMotifs.Emplace(EachMotifAdded);
 	}
 }
 
 /* /\ Playable Voidsong Management /\ *\
 \* ---------------------------------- */
 
-void AShip::PlayVoidsongs(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs)
+void AShip::PlayVoidsong(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs)
 {
 }

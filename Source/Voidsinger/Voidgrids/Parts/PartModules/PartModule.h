@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Voidsinger/Voidsongs/BaseVoidsong.h"
-#include "Voidsinger/Voidsongs/Factions/BaseFactionVoidsong.h"
-#include "Voidsinger/Voidsongs/Nouns/BaseNounVoidsong.h"
-#include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
+#include "Voidsinger/Voidsongs/BaseMotif.h"
+#include "Voidsinger/Voidsongs/Factions/BaseFactionMotif.h"
+#include "Voidsinger/Voidsongs/Nouns/BaseNounMotif.h"
+#include "Voidsinger/Voidsongs/Verbs/BaseVerbMotif.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "PartModule.generated.h"
 

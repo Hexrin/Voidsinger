@@ -33,8 +33,7 @@ void UActivatablePartModule::InitializeVariables(UPart* OwningPart)
  */
 void UActivatablePartModule::Activate()
 {
-	TArray<TSubclassOf<UBaseVerbVoidsong>> EmptyVerbArray;
-	OnActivate(EmptyVerbArray, 1);
+	ActivateWithEffectiveness(1);
 }
 
 /**
@@ -44,7 +43,7 @@ void UActivatablePartModule::Activate()
  */
 void UActivatablePartModule::ActivateWithEffectiveness(float Effectiveness)
 {
-	TArray<TSubclassOf<UBaseVerbVoidsong>> EmptyVerbArray;
+	TArray<TSubclassOf<UBaseVerbMotif>> EmptyVerbArray;
 	OnActivate(EmptyVerbArray, Effectiveness);
 }
 
@@ -56,7 +55,7 @@ void UActivatablePartModule::ActivateWithEffectiveness(float Effectiveness)
  * @param Verbs - The Verbs that were activated
  * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
  */
-void UActivatablePartModule::ActivateFromVoidsong(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, const TArray<TSubclassOf<UBaseVoidsong>>& PlayableVoidsongs, float Effectiveness)
+void UActivatablePartModule::ActivateFromVoidsong(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, const TArray<TSubclassOf<UBaseMotif>>& PlayableMotifs, float Effectiveness)
 {
 	//If this module's noun is not unbound, check if it satisfies the Voidsong requirements to activate
 	if (Noun != ENoun::Unbound)
@@ -69,15 +68,15 @@ void UActivatablePartModule::ActivateFromVoidsong(const TArray<EFaction>& Factio
 		TArray<EFaction> PlayableFactions;
 		TArray<ENoun> PlayableNouns;
 
-		for (TSubclassOf<UBaseVoidsong> EachPlayableVoidsong : PlayableVoidsongs)
+		for (TSubclassOf<UBaseMotif> EachPlayableVoidsong : PlayableMotifs)
 		{
-			if (EachPlayableVoidsong->IsChildOf(UBaseFactionVoidsong::StaticClass()))
+			if (EachPlayableVoidsong->IsChildOf(UBaseFactionMotif::StaticClass()))
 			{
-				PlayableFactions.Emplace(Cast<UBaseFactionVoidsong>(EachPlayableVoidsong->GetDefaultObject())->Faction);
+				PlayableFactions.Emplace(Cast<UBaseFactionMotif>(EachPlayableVoidsong->GetDefaultObject())->Faction);
 			}
-			if (EachPlayableVoidsong->IsChildOf(UBaseNounVoidsong::StaticClass()))
+			if (EachPlayableVoidsong->IsChildOf(UBaseNounMotif::StaticClass()))
 			{
-				PlayableNouns.Emplace(Cast<UBaseNounVoidsong>(EachPlayableVoidsong->GetDefaultObject())->Noun);
+				PlayableNouns.Emplace(Cast<UBaseNounMotif>(EachPlayableVoidsong->GetDefaultObject())->Noun);
 			}
 		}
 

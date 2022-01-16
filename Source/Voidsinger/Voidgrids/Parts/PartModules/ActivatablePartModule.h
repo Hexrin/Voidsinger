@@ -97,7 +97,7 @@ public:
 	 * Allows for blueprint logic when the part module is activated
 	 */
 	UFUNCTION(BlueprintImplementableEvent, DisplayName = "Activate", Category = "Activation")
-		void OnActivate(const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, float Effectiveness);
+		void OnActivate(const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, float Effectiveness);
 
 	// \/ Activate \/
 
@@ -122,11 +122,11 @@ public:
 	 * @param Verbs - The Verbs that were activated
 	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
 	 */
-	void ActivateFromVoidsong(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, const TArray<TSubclassOf<UBaseVoidsong>>& PlayableVoidsongs, float Effectiveness = 1);
+	void ActivateFromVoidsong(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, const TArray<TSubclassOf<UBaseMotif>>& PlayableMotifs, float Effectiveness);
 
 	// /\ Activate /\
 
-	//Stores what Noun Voidsong will activate this part module. If unbound, this module will not be activatable by a Voidsong.
+	//Stores what Noun Motif will activate this part module. If unbound, this module will not be activatable by a Voidsong.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation")
 	ENoun Noun;
 
