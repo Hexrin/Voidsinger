@@ -7,7 +7,7 @@
 //#include "Voidsinger/FunctionLibrary.h"
 //#include "ShipPhysicsComponent.generated.h"
 //
-//class ABaseShip;
+//class AShip;
 //
 //
 ////Comment the class? -Mabel Suggestion
@@ -91,7 +91,7 @@
 //	 
 //	//Comment -Mabel Suggestion
 //	//UPROPERTY()
-//	ABaseShip* Ship;
+//	AShip* Ship;
 //
 //public:
 //

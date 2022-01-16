@@ -4,7 +4,7 @@
 //#include "ShipMovementComponent.h"
 //#include "Voidsinger/Parts/BaseThrusterPart.h"
 //#include "ShipMovementComponent.h"
-//#include "Voidsinger/Ships/BaseShip.h"
+//#include "Voidsinger/Ships/Ship.h"
 //
 //// Sets default values for this component's properties
 //UShipMovementComponent::UShipMovementComponent()
@@ -63,7 +63,7 @@
 //		
 //	//This shouldn't be needed. You don't need to find all the Thrusters again when a new thruster is added, you can just Thrusters.Emplace(NewThruster). You just need to keep track of 
 //	//when the thruster is destroyed. -Mabel Suggestion
-//	for (auto& Part : Cast<ABaseShip>(GetOwner())->PartGrid->GetPartGrid().GetValueArray())
+//	for (auto& Part : Cast<AShip>(GetOwner())->PartGrid->GetPartGrid().GetValueArray())
 //	{
 //		UBaseThrusterPart* Thruster = Cast<UBaseThrusterPart>(Part.Part);
 //		if (Thruster)
@@ -196,7 +196,7 @@
 //	float Sum = 0;
 //	for (UBaseThrusterPart* Thruster : GetThrustersForRotation(Clockwise))
 //	{
-//		Sum += FVector2D::CrossProduct(Thruster->GetThrustRelativeLocation(), FVector2D(Thruster->GetThrustForce() * AtThrottle, 0).GetRotated(Thruster->GetThrustRotation())) / Cast<ABaseShip>(GetOwner())->PhysicsComponent->GetMomentOfInertia();
+//		Sum += FVector2D::CrossProduct(Thruster->GetThrustRelativeLocation(), FVector2D(Thruster->GetThrustForce() * AtThrottle, 0).GetRotated(Thruster->GetThrustRotation())) / Cast<AShip>(GetOwner())->PhysicsComponent->GetMomentOfInertia();
 //	}
 //	return Sum;
 //}

@@ -10,7 +10,7 @@
 #include "Verbs/BaseVerbVoidsong.h"
 #include "VoidsongComponent.generated.h"
 
-//Old delegates from ABaseShip (put here for reference, will be deleted)
+//Old delegates from AShip (put here for reference, will be deleted)
 //Delegates should be commented. What functions should they be bound to? - Liam 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*, AddedVoidsong);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FActivatePartsDelegate, const TArray<EFaction>&, Factions, const TArray<TSubclassOf<UObject>>&, NounClasses, const TArray<UBaseVoidsong*>&, AvailableVoidsongs);
@@ -56,7 +56,7 @@ protected:
 	\* -------------------- */
 
 	/* ------------------------------------------------------------------------------------- *\
-	\* \/ Old Voidsong functions from ABaseShip (put here for reference, will be deleted) \/ */
+	\* \/ Old Voidsong functions from AShip (put here for reference, will be deleted) \/ */
 
 	//Adds a new Voidsong to the AvailableVoidsongs. Will be useful for gaining a new voidsong.
 	//UFUNCTION(BlueprintCallable)
@@ -115,11 +115,11 @@ protected:
 	//UFUNCTION(BlueprintCallable)
 	//void BroadcastActivateParts(const TArray<TSubclassOf<UObject>>& NounClasses);
 		
-	/* /\ Old Voidsong functions from ABaseShip (put here for reference, will be deleted) /\ *\
+	/* /\ Old Voidsong functions from AShip (put here for reference, will be deleted) /\ *\
 	\* ------------------------------------------------------------------------------------- */
 
 	/* ------------------------------------------------------------------------------------- *\
-	\* \/ Old Voidsong variables from ABaseShip (put here for reference, will be deleted) \/ */
+	\* \/ Old Voidsong variables from AShip (put here for reference, will be deleted) \/ */
 
 	/*
 	* Delegate needs comment.
@@ -155,7 +155,7 @@ protected:
 	//UPROPERTY(BlueprintAssignable)
 	//FActivatePartsDelegate OnActivatePartsDelegate;
 
-	/* /\ Old Voidsong variables from ABaseShip (put here for reference, will be deleted) /\ *\
+	/* /\ Old Voidsong variables from AShip (put here for reference, will be deleted) /\ *\
 	\* ------------------------------------------------------------------------------------- */
 
 	/* ---------------------------------- *\

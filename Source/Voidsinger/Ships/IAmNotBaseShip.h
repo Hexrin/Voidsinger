@@ -13,12 +13,12 @@
 //#include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
 //#include "Voidsinger/Voidsongs/Factions/BaseFactionVoidsong.h"
 //#include "ProceduralMeshComponent.h"
-//#include "BaseShip.generated.h"
+//#include "Ship.generated.h"
 //
 ////class UBaseResourceSystem;
 //
 //UCLASS(Blueprintable)
-//class VOIDSINGER_API ABaseShip : public APawn
+//class VOIDSINGER_API AShip : public APawn
 //{
 //	GENERATED_BODY()
 //
@@ -28,7 +28,7 @@
 //	\*--------------*/
 //
 //	// Sets default values for this pawn's properties
-//	ABaseShip();
+//	AShip();
 //
 //protected:
 //	// Called when the game starts or when spawned
@@ -146,7 +146,7 @@
 //	*/
 //	//The class that is currently being edited. This is the class that the SaveEditorShips() will change.
 //	UPROPERTY(BlueprintReadWrite)
-//	TSubclassOf<ABaseShip> ClassCurrentlyEditing;
+//	TSubclassOf<AShip> ClassCurrentlyEditing;
 //
 //
 //	/*-Liam, you haven't commented things in a while-*\
@@ -294,7 +294,7 @@
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnsetVerbsDelegate);
 //
 //UCLASS()
-//class VOIDSINGER_API ABaseShip : public APawn
+//class VOIDSINGER_API AShip : public APawn
 //{
 //	GENERATED_BODY()
 //
@@ -304,7 +304,7 @@
 //	\*--------------*/
 //
 //	// Sets default values for this pawn's properties
-//	ABaseShip();
+//	AShip();
 //
 //protected:
 //	// Called when the game starts or when spawned
@@ -540,7 +540,7 @@
 //	*/
 //	//The class that is currently being edited. This is the class that the SaveEditorShips() will change.
 //	UPROPERTY(BlueprintReadWrite)
-//	TSubclassOf<ABaseShip> ClassCurrentlyEditing;
+//	TSubclassOf<AShip> ClassCurrentlyEditing;
 //
 //
 //	/*

@@ -62,7 +62,7 @@ void UActivatablePartModule::ActivateFromVoidsong(const TArray<EFaction>& Factio
 	if (Noun != ENoun::Unbound)
 	{
 
-		//((Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) && NounsCheck
+		//((Factions.IsEmpty() && AvailableFactions.Contains(Cast<AShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<AShip>(GetOuter()->GetOuter())->GetFaction())) && NounsCheck
 
 		// \/ Finds playable Factions  and Nouns from all playable Voidsongs \/
 

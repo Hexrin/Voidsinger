@@ -3,7 +3,7 @@
 //#pragma once
 //
 //#include "CoreMinimal.h"
-//#include "BaseShip.h"
+//#include "Ship.h"
 //#include "Voidsinger/VoidsingerTypes.h"
 //#include "Voidsinger/Voidsongs/BaseVoidsong.h"
 ////#include "Voidsinger/StarSystemData.h"
@@ -44,7 +44,7 @@
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResetVoidsongDelegate);
 //
 //UCLASS()
-//class VOIDSINGER_API APlayerShip : public ABaseShip
+//class VOIDSINGER_API APlayerShip : public AShip
 //{
 //	GENERATED_BODY()
 //	

@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-//#include "BaseShip.h"
+//#include "Ship.h"
 //#include "Voidsinger/Parts/BaseResourceSystem.h"
 //#include "Voidsinger/Parts/BaseFreespacePart.h"
 //
 //// Sets default values
-//ABaseShip::ABaseShip()
+//AShip::AShip()
 //{
 //	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 // 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -38,7 +38,7 @@
 //}
 //
 //// Called when the game starts or when spawned
-//void ABaseShip::BeginPlay()
+//void AShip::BeginPlay()
 //{
 //	Super::BeginPlay();
 //	
@@ -49,7 +49,7 @@
 //}
 //
 //// Called every frame
-//void ABaseShip::Tick(float DeltaTime)
+//void AShip::Tick(float DeltaTime)
 //{
 //	Super::Tick(DeltaTime);
 //
@@ -115,7 +115,7 @@
 //}
 //
 //// Called to bind functionality to input
-//void ABaseShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+//void AShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 //{
 //	//Did this function need to be overriden if there is nothing happening inside of it? -Mabel Suggestion
 //	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -134,7 +134,7 @@
 //*
 //* - Liam Suggestion
 //*/
-//float const ABaseShip::GetFluidCapacity(EResourceType Fluid)
+//float const AShip::GetFluidCapacity(EResourceType Fluid)
 //{
 //	return 100.0f;
 //}
@@ -151,19 +151,19 @@
 //*
 //* - Liam Suggestion
 //*/
-//float const ABaseShip::GetFluidAmount(EResourceType Fluid)
+//float const AShip::GetFluidAmount(EResourceType Fluid)
 //{
 //	return 100.0f;
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-////void ABaseShip::AddResourceSystem(UBaseResourceSystem* System)
+////void AShip::AddResourceSystem(UBaseResourceSystem* System)
 ////{
 //	//ResourceSystems.Add(System);
 ////}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-////void ABaseShip::RemoveResourceSystem(UBaseResourceSystem* System)
+////void AShip::RemoveResourceSystem(UBaseResourceSystem* System)
 ////{
 //	//if (ResourceSystems.Contains(System))
 //	//{
@@ -172,49 +172,49 @@
 ////}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
-//EFaction ABaseShip::GetFaction()
+//EFaction AShip::GetFaction()
 //{
 //	return Faction;
 //}
 //
 ////Function comments from the.h should be copied to the.cpp - Liam Suggestion
-////TArray<UBaseResourceSystem*> ABaseShip::GetResourceSystems()
+////TArray<UBaseResourceSystem*> AShip::GetResourceSystems()
 ////{
 ////	return ResourceSystems;
 ////}
 //
 ////Comment -Mabel Suggestion
-//void ABaseShip::SetTargetMoveDirection(FVector2D Vector)
+//void AShip::SetTargetMoveDirection(FVector2D Vector)
 //{
 //	TargetMoveDirection = Vector.GetSafeNormal();
 //}
 //
 ////Comment -Mabel Suggestion
-//FVector2D ABaseShip::GetTargetMoveDirection()
+//FVector2D AShip::GetTargetMoveDirection()
 //{
 //	return TargetMoveDirection;
 //}
 //
 ////Comment -Mabel Suggestion
-//void ABaseShip::SetTargetMoveSpeed(float Vector)
+//void AShip::SetTargetMoveSpeed(float Vector)
 //{
 //	TargetMoveSpeed = abs(Vector);
 //}
 //
 ////Comment -Mabel Suggestion
-//float ABaseShip::GetTargetMoveSpeed()
+//float AShip::GetTargetMoveSpeed()
 //{
 //	return TargetMoveSpeed;
 //}
 //
 ////Comment -Mabel Suggestion
-//void ABaseShip::SetTargetLookDirection(FVector Vector)
+//void AShip::SetTargetLookDirection(FVector Vector)
 //{
 //	TargetLookDirection = Vector.GetSafeNormal2D();
 //}
 //
 ////Comment -Mabel Suggestion
-//const FVector ABaseShip::GetTargetLookDirection()
+//const FVector AShip::GetTargetLookDirection()
 //{
 //	return TargetLookDirection;
 //}
@@ -225,7 +225,7 @@
 ////SetMeshRelativeLocation should change the location of the ship anyway though, but you would probably have to rework
 ////the GetVerticesAroundLocation.
 ////Comment -Mabel Suggestion
-//void ABaseShip::AddMeshAtLocation(FIntPoint Location)
+//void AShip::AddMeshAtLocation(FIntPoint Location)
 //{
 //	
 //
@@ -257,13 +257,13 @@
 //}
 //
 ////Comment -Mabel Suggestion
-//void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
+//void AShip::RemoveMeshAtLocation(FIntPoint Location)
 //{
 //	MeshComponent->ClearMeshSection(MeshData.FindRef(Location));
 //}
 //
 ////Comment -Mabel Suggestion
-//void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
+//void AShip::SetMeshRelativeLocation(FVector2D Location)
 //{
 //	MeshComponent->SetRelativeLocation(FVector(Location, 0));
 //
@@ -272,13 +272,13 @@
 //}
 //
 ////Comment -Mabel Suggestion
-//void ABaseShip::SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material)
+//void AShip::SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material)
 //{
 //	MeshComponent->SetMaterial(MeshData.FindRef(Location), Material);
 //}
 //
 ////Comment -Mabel Suggestion
-//TArray<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
+//TArray<FVector> AShip::GetVerticesAroundLocation(FVector2D Location)
 //{
 //	TArray<FVector> ReturnValue = TArray<FVector>();
 //	for (int i = 0; i < 4; i++)
@@ -293,7 +293,7 @@
 //}
 //
 ////Comment -Mabel Suggestion
-//TArray<int32> ABaseShip::CreateTrianglesForSquare(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft)
+//TArray<int32> AShip::CreateTrianglesForSquare(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft)
 //{
 //	TArray<int32> Triangles = TArray<int32>();
 //	Triangles.Emplace(UpperRight);
@@ -307,43 +307,43 @@
 //}
 
 //Function comments from the.h should be copied to the.cpp - Liam Suggestion
-//void ABaseShip::SaveEditorShip()
+//void AShip::SaveEditorShip()
 //{
 	//Bad name. It implies that it is storing a return value or a pass by refernce - Liam Suggestion
 //	TArray<FPartData> OutArray = PartGrid->GetPartGrid().GetValueArray();;
 //
 ////Comment -Mabel Suggestion
-//void ABaseShip::SetTargetMoveDirection(FVector2D Vector)
+//void AShip::SetTargetMoveDirection(FVector2D Vector)
 //{
 //	TargetMoveDirection = Vector.GetSafeNormal();
 //}
 //
 ////Comment -Mabel Suggestion
-//FVector2D ABaseShip::GetTargetMoveDirection()
+//FVector2D AShip::GetTargetMoveDirection()
 //{
 //	return TargetMoveDirection;
 //}
 //
 ////Comment -Mabel Suggestion
-//void ABaseShip::SetTargetMoveSpeed(float Vector)
+//void AShip::SetTargetMoveSpeed(float Vector)
 //{
 //	TargetMoveSpeed = abs(Vector);
 //}
 //
 ////Comment -Mabel Suggestion
-//float ABaseShip::GetTargetMoveSpeed()
+//float AShip::GetTargetMoveSpeed()
 //{
 //	return TargetMoveSpeed;
 //}
 //
 ////Comment -Mabel Suggestion
-//void ABaseShip::SetTargetLookDirection(FVector Vector)
+//void AShip::SetTargetLookDirection(FVector Vector)
 //{
 //	TargetLookDirection = Vector.GetSafeNormal2D();
 //}
 //
 ////Comment -Mabel Suggestion
-//const FVector ABaseShip::GetTargetLookDirection()
+//const FVector AShip::GetTargetLookDirection()
 //{
 //	return TargetLookDirection;
 //}
@@ -354,7 +354,7 @@
 ////SetMeshRelativeLocation should change the location of the ship anyway though, but you would probably have to rework
 ////the GetVerticesAroundLocation.
 ////Comment -Mabel Suggestion
-//void ABaseShip::AddMeshAtLocation(FIntPoint Location)
+//void AShip::AddMeshAtLocation(FIntPoint Location)
 //{
 //	
 //
@@ -386,13 +386,13 @@
 //}
 //
 ////Comment -Mabel Suggestion
-//void ABaseShip::RemoveMeshAtLocation(FIntPoint Location)
+//void AShip::RemoveMeshAtLocation(FIntPoint Location)
 //{
 //	MeshComponent->ClearMeshSection(MeshData.FindRef(Location));
 //}
 //
 ////Comment -Mabel Suggestion
-//void ABaseShip::SetMeshRelativeLocation(FVector2D Location)
+//void AShip::SetMeshRelativeLocation(FVector2D Location)
 //{
 //	MeshComponent->SetRelativeLocation(FVector(Location, 0));
 //
@@ -401,13 +401,13 @@
 //}
 //
 ////Comment -Mabel Suggestion
-//void ABaseShip::SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material)
+//void AShip::SetMeshMaterialAtLocation(FIntPoint Location, UMaterialInterface* Material)
 //{
 //	MeshComponent->SetMaterial(MeshData.FindRef(Location), Material);
 //}
 //
 ////Comment -Mabel Suggestion
-//TArray<FVector> ABaseShip::GetVerticesAroundLocation(FVector2D Location)
+//TArray<FVector> AShip::GetVerticesAroundLocation(FVector2D Location)
 //{
 //	TArray<FVector> ReturnValue = TArray<FVector>();
 //	for (int i = 0; i < 4; i++)
@@ -422,7 +422,7 @@
 //}
 //
 ////Comment -Mabel Suggestion
-//TArray<int32> ABaseShip::CreateTrianglesForSquare(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft)
+//TArray<int32> AShip::CreateTrianglesForSquare(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft)
 //{
 //	TArray<int32> Triangles = TArray<int32>();
 //	Triangles.Emplace(UpperRight);
@@ -436,7 +436,7 @@
 //}
 //
 ////Function comments from the.h should be copied to the.cpp - Liam Suggestion
-//void ABaseShip::SaveEditorShip()
+//void AShip::SaveEditorShip()
 //{
 //	//Bad name. It implies that it is storing a return value or a pass by refernce - Liam Suggestion
 //	TArray<FPartInstanceData> OutArray = PartGrid->GetPartGrid().GetValueArray();;
@@ -454,8 +454,8 @@
 //		}
 //	}
 //	//ClassCurrentlyEditing should be a parameter of SaveEditorShips(). - Liam Suggestion
-//	GetMutableDefault<ABaseShip>(ClassCurrentlyEditing)->DefaultParts.Empty();
-//	GetMutableDefault<ABaseShip>(ClassCurrentlyEditing)->DefaultParts = InfoToSave;
+//	GetMutableDefault<AShip>(ClassCurrentlyEditing)->DefaultParts.Empty();
+//	GetMutableDefault<AShip>(ClassCurrentlyEditing)->DefaultParts = InfoToSave;
 //}
 
 

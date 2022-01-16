@@ -310,9 +310,9 @@
 //	//Comment -Mabel Suggestion
 //	//GetOwner() or GetOuter() would accomplish the same thing here, so this variable may not be necessary. Also if we combine
 //	//the part grid and base ship it won't be necessary. But if we do keep for some strange reason, it should probably be named
-//	//"OwningBaseShip" or something like that, since "Ship" isn't super clear. -Mabel Suggestion
+//	//"OwningShip" or something like that, since "Ship" isn't super clear. -Mabel Suggestion
 //	UPROPERTY()
-//	ABaseShip* Ship;
+//	AShip* Ship;
 //
 //	//Comment -Mabel Suggestion
 //	//It's a bit odd to have a variable named the same thing as the component. Makes it a bit confusing to say the least. -Mabel Suggestion

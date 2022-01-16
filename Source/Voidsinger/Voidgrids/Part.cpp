@@ -185,7 +185,7 @@ FPartTransform UPart::GetTransform()
 //	{
 //		//Bind to delegates
 //		Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UPart::OnDelegateCalled);
-//		Cast<ABaseShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UPart::OnFireDelegateCalled);
+//		Cast<AShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UPart::OnFireDelegateCalled);
 //		
 //		//Initialize Resource System
 //		ConnectToSystems();
@@ -374,9 +374,9 @@ FPartTransform UPart::GetTransform()
 //
 ////Copy comment from .h -Mabel Suggestion
 //
-//ABaseShip* UPart::GetShip()
+//AShip* UPart::GetShip()
 //{
-//	return Cast<ABaseShip>(GetPartGrid()->GetOwner());
+//	return Cast<AShip>(GetPartGrid()->GetOwner());
 //}
 //
 ////Function comments from the .h should be copied to the .cpp - Liam Suggestion
@@ -595,7 +595,7 @@ FPartTransform UPart::GetTransform()
 //	//Make the new system, make sure it's the right type, and add the system to the list of systems on the player character
 //	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
 //	NewSystem->SetType(ResourceType);
-//	//Cast<ABaseShip>(Cast<UActorComponent>(GetOuter())->GetOwner())->AddResourceSystem(NewSystem);
+//	//Cast<AShip>(Cast<UActorComponent>(GetOuter())->GetOwner())->AddResourceSystem(NewSystem);
 //
 //	//Call this to add the part to the system and double check that merges don't need to happen (see AddToSystem)
 //	AddToSystem(NewSystem);
@@ -642,7 +642,7 @@ FPartTransform UPart::GetTransform()
 //* Consider coverting avalable voisongs to a stuct containg avalable Verbs, Nouns, and Factions or just Nouns and Factions
 //* 
 //* Logic for weather or not a delegate is cabale of being called should be done before it is brodcast.
-//* In otherwords AvalableVoidsongs should be handeled in UBaseShip::DecideVoidsongsPlayed()
+//* In otherwords AvalableVoidsongs should be handeled in UShip::DecideVoidsongsPlayed()
 //* 
 //* Confusing parameter names.
 //* Factions for what?
@@ -709,7 +709,7 @@ FPartTransform UPart::GetTransform()
 //	}
 //
 //	//Long chunk of logic should be commented or made legible - Liam Suggestion
-//	if (((Factions.IsEmpty() && AvailableFactions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<ABaseShip>(GetOuter()->GetOuter())->GetFaction())) && NounsCheck)
+//	if (((Factions.IsEmpty() && AvailableFactions.Contains(Cast<AShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<AShip>(GetOuter()->GetOuter())->GetFaction())) && NounsCheck)
 //	{
 //		if (this->Implements<UActivateInterface>())
 //		{

@@ -558,7 +558,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartInstanceData& Thing)
 //	//"GetOuter()", so this isn't a necessary function either -Mabel Suggestion
 //
 //	UFUNCTION(BlueprintPure)
-//	ABaseShip* GetShip();
+//	AShip* GetShip();
 //
 //	//Gets the resource systems the part is a part of
 //	UFUNCTION(BlueprintPure)
