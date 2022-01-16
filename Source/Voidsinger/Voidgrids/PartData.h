@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PartFunction.h"
+#include "PartModule.h"
 #include "Engine/DataAsset.h"
 #include "PartData.generated.h"
 
@@ -11,11 +11,13 @@
  * Stores information realating to a part type
  */
 UCLASS()
-class VOIDSINGER_API UPartData : public UDataAsset
+class VOIDSINGER_API UPartData : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 
 public:
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
+
 	//Stores the name of this part as it appears in UI.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FText DisplayName;
@@ -34,7 +36,7 @@ public:
 
 	//Stores the ways that this part can be activated.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced)
-	TArray<UPartFunction*> Modules;
+	TArray<UPartModule*> Modules;
 
 	//Stores the cost to place the part in Pixels.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

@@ -154,7 +154,7 @@ private:
 
 	//Stores a pointer to the material of this pixel.
 	UPROPERTY(EditDefaultsOnly)
-	UMaterialInstanceDynamic* Material;
+	UMaterialInstanceDynamic* Material = nullptr;
 };
 
 //Used for disbatching events requireing a grid locaiton
