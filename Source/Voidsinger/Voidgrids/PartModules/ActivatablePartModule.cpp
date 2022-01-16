@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Voidsinger/Voidgrids/ActivatablePartModule.h"
-#include "Part.h"
-#include "Voidgrid.h"
+#include "ActivatablePartModule.h"
+#include "Voidsinger/Voidgrids/Part.h"
+#include "Voidsinger/Voidgrids/Voidgrid.h"
 
 /* -------------------- *\
 \* \/ Initialization \/ */

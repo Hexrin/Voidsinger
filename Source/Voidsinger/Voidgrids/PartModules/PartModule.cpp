@@ -2,8 +2,6 @@
 
 
 #include "PartModule.h"
-#include "Part.h"
-#include "Voidgrid.h"
 
 /* -------------------- *\
 \* \/ Initialization \/ */
