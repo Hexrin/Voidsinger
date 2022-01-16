@@ -8,7 +8,8 @@
 #include "Ship.generated.h"
 
 /**
- * 
+ * A controllable Voidgrid.
+ * Can recive input and handels thrust control.
  */
 UCLASS()
 class VOIDSINGER_API AShip : public AVoidgrid

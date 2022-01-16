@@ -203,9 +203,15 @@ TArray<int32> AVoidgrid::CreateTrianglesForPixelMeshFace(int32 UpperRight, int32
 /* ------------- *\
 \* \/ Faction \/ */
 
-EFaction AVoidgrid::GetFaction()
+
+/**
+ * Returns the faction of the Voidgrid.
+ *
+ * @return The faction of the Voidgrid.
+ */
+EFaction AVoidgrid::GetFaction() const
 {
-	return Faction;
+	return EFaction::Inanimate;
 }
 
 /* /\ Faction /\ *\
