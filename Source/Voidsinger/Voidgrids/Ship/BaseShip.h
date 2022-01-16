@@ -42,7 +42,7 @@ protected:
 	/**
 	 * 
 	 */
-	void BroadcastPlayVoidsongs(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs);
+	void PlayVoidsongs(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs);
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */
