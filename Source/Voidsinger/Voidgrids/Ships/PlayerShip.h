@@ -6,17 +6,22 @@
 #include "PlayerShip.generated.h"
 
 /**
- *
+ * A ship controlable by a player.
+ * Handels movement input actions.
  */
 UCLASS()
-class VOIDSINGER_API APlayerShip : public AVoidgrid
+class VOIDSINGER_API APlayerShip : public AShip
 {
 	GENERATED_BODY()
 
 
 public:
-	//Inilizes the camrea and posesses the player.
+	/**
+	 * Inilizes the camrea and posesses the player.
+	 */
 	APlayerShip();
+
+
 
 	/* ------------ *\
 	\* \/ Camera \/ */
@@ -30,15 +35,27 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USceneComponent* CameraRoot;
 
-	//Sets the zoom percent.
+	/**
+	 * Sets the zoom percent.
+	 * 
+	 * @param Percent - The new zoom percent.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void SetCameraZoom(float Percent);
 
-	//Gets the zoom percent of the camera.
+	/**
+	 * Gets the current zoom percent.
+	 *
+	 * @return The current zoom percent.
+	 */
 	UFUNCTION(BlueprintCallable)
 	float GetCameraZoom() const;
 
-	//Updates the zoom percent by the given scaled input.
+	/**
+	 * Updates the zoom percent by the given scaled input.
+	 * 
+	 * @param AxisValue - The the input axis value that will be used to update the zoom percent.
+	 */
 	UFUNCTION()
 	void ZoomAxisInput(float AxisValue);
 

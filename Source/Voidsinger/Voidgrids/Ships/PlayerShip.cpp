@@ -1,5 +1,9 @@
 #include "PlayerShip.h"
 
+
+/**
+ * Inilizes the camrea and posesses the player.
+ */
 APlayerShip::APlayerShip()
 {	
 	//Inilize Camera
@@ -13,7 +17,11 @@ APlayerShip::APlayerShip()
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
-
+/**
+ * Sets the zoom percent.
+ *
+ * @param Percent - The new zoom percent.
+ */
 void APlayerShip::SetCameraZoom(float Percent)
 {
 	//Prevents the player from execeding min/max zoom.
@@ -21,11 +29,21 @@ void APlayerShip::SetCameraZoom(float Percent)
 	Camera->SetRelativeLocation(FVector(0, 0, (CameraMaxHeight - CameraMinHeight) * powf(CameraZoomPercent, CameraZoomPower) + CameraMinHeight));
 }
 
+/**
+ * Gets the current zoom percent.
+ *
+ * @return The current zoom percent.
+ */
 float APlayerShip::GetCameraZoom() const
 {
 	return CameraZoomPercent;
 }
 
+/**
+ * Updates the zoom percent by the given scaled input.
+ *
+ * @param AxisValue - The the input axis value that will be used to update the zoom percent.
+ */
 void APlayerShip::ZoomAxisInput(float AxisValue)
 {
 	SetCameraZoom(CameraZoomPercent + AxisValue * CameraZoomAxisScaling);
