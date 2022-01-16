@@ -11,7 +11,7 @@
  * Stores information realating to a part type
  */
 UCLASS()
-class VOIDSINGER_API UPartData : public UDataAsset
+class VOIDSINGER_API UPartData : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 

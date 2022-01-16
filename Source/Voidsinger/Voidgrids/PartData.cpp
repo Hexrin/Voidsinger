@@ -5,7 +5,5 @@
 
 FPrimaryAssetId UPartData::GetPrimaryAssetId() const
 {
-	FString Thing = GetClass()->GetName();
-	Thing.RemoveFromEnd("_C");
-	return FPrimaryAssetId(FName("PartData"), FName(Thing));
+	return FPrimaryAssetId(FName("PartData"), GetOutermost()->GetFName());
 }
