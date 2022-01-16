@@ -1,6 +1,6 @@
 #include "PlayerShip.h"
 
-void ABaseShip::SetCameraZoom(float Percent)
+void APlayerShip::SetCameraZoom(float Percent)
 {
-	CameraHeight = (CameraMaxHeight - CameraMinHeight)FMath::Power(Percent, CameraZoomPower) + CameraMinHeight;
+	//CameraHeight = (CameraMaxHeight - CameraMinHeight)FMath::Pow(Percent, CameraZoomPower) + CameraMinHeight;
 }
