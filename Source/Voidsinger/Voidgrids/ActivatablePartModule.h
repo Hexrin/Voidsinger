@@ -3,13 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "Voidsinger/Voidsongs/BaseVoidsong.h"
-#include "Voidsinger/Voidsongs/Factions/BaseFactionVoidsong.h"
-#include "Voidsinger/Voidsongs/Nouns/BaseNounVoidsong.h"
-#include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
-#include "Voidsinger/VoidsingerTypes.h"
-#include "PartModule.generated.h"
+#include "Voidsinger/Voidgrids/PartModule.h"
+#include "ActivatablePartModule.generated.h"
 
 
 /* -------------------------- *\
@@ -55,8 +50,8 @@ ENUM_CLASS_FLAGS(EActivationCue);
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EVoidsongCue : uint8
 {
-	OnBeat			UMETA(DisplayName = "Beat"),
-	ForDuration		UMETA(DisplayName="Tick"),
+	OnBeat			UMETA(DisplayName = "OnBeat"),
+	ForDuration		UMETA(DisplayName = "ForDuration"),
 };
 ENUM_CLASS_FLAGS(EVoidsongCue)
 
@@ -64,19 +59,19 @@ ENUM_CLASS_FLAGS(EVoidsongCue)
 |  /\ EVoidsongCue /\  |
 \* /\ ============ /\ */
 
-/* \/ =========== \/ *\
-|  \/ UPartModule \/  |
-\* \/ =========== \/ */
+/* \/ ====================== \/ *\
+|  \/ UActivatablePartModule \/  |
+\* \/ ====================== \/ */
 
 /**
- * A UPartModule defines functionality of a part. For example, there could be a laser module, a cannon module, an explode module, a thrust module, etc. The module's functionality is defined
- * in the "OnActivate" BlueprintImplementable function. Any given part could have multiple modules: for example, a cannon projectile might have a "projectile" module and a "explode" module.
- * The "Activate" function is bound to whatever delegates are selected in the EActivationCue enum.
+ * This subclass of UPartModule is activatable. Functionality is defined in the "OnActivate" BlueprintImplementable function. 
+ * The "Activate" function is bound to whatever delegates are selected in the EActivationCue and EVoidsongCue enums.
  */
-UCLASS(EditInlineNew, Blueprintable, HideDropdown)
-class VOIDSINGER_API UPartModule : public UObject
+UCLASS()
+class VOIDSINGER_API UActivatablePartModule : public UPartModule
 {
 	GENERATED_BODY()
+	
 
 	/* -------------------- *\
 	\* \/ Initialization \/ */
@@ -84,16 +79,11 @@ class VOIDSINGER_API UPartModule : public UObject
 public:
 
 	/**
-	 * Initializes the part module's private variables
-	 * 
+	 * Initializes the part module's protected and private variables. Overriden from PartModule to call BindToDelegates().
+	 *
 	 * @param OwningPart - The part that this module is being initialized from
 	 */
 	void InitializeVariables(UPart* OwningPart);
-
-private:
-
-	// The part that this module is on
-	UPart* Part;
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */
@@ -107,7 +97,7 @@ public:
 	 * Allows for blueprint logic when the part module is activated
 	 */
 	UFUNCTION(BlueprintImplementableEvent, DisplayName = "Activate", Category = "Activation")
-	void OnActivate(const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, float Effectiveness);
+		void OnActivate(const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, float Effectiveness);
 
 	// \/ Activate \/
 
@@ -118,7 +108,7 @@ public:
 
 	/**
 	 * Calls the "OnActivate" function so the part module's functionality is executed
-	 * 
+	 *
 	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
 	 */
 	UFUNCTION(BlueprintCallable, DisplayName = "Activate", Category = "Activation")
@@ -126,7 +116,7 @@ public:
 
 	/**
 	 * Checks whether "OnActivate" should be called by seeing if this module statisfies the Voidsong conditions. If it does, it calls the "OnActivate" function so the part module's functionality is executed
-	 * 
+	 *
 	 * @param Factions - The Factions that were activated
 	 * @param Nouns - The Nouns that were activated
 	 * @param Verbs - The Verbs that were activated
