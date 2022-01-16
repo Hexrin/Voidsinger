@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PartModule.h"
+#include "PartModules/PartModule.h"
 #include "Engine/DataAsset.h"
 #include "PartData.generated.h"
 
