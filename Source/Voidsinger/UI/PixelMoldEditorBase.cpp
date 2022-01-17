@@ -19,7 +19,10 @@ void UPixelMoldEditorBase::NativeOnInitialized()
  */
 void UPixelMoldEditorBase::ApplyMoldToTarget()
 {
-	Target->SetPixelMold(Mold);
+	if (IsValid(Target))
+	{
+		Target->SetPixelMold(Mold);
+	}
 }
 
 /**

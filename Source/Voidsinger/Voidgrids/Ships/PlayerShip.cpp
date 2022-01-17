@@ -18,6 +18,22 @@ APlayerShip::APlayerShip()
 }
 
 /**
+ * Binds movment, camera control, and voidsong input.
+ */
+void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+    InputComponent->BindAxis("Zoom", this, &APlayerShip::ZoomAxisInput);
+}
+
+/**
+ * Repairs a random pixel pixel.
+ */
+void APlayerShip::Repair()
+{
+	RepairPixel();
+}
+
+/**
  * Sets the zoom percent.
  *
  * @param Percent - The new zoom percent.
@@ -46,5 +62,5 @@ float APlayerShip::GetCameraZoom() const
  */
 void APlayerShip::ZoomAxisInput(float AxisValue)
 {
-	SetCameraZoom(CameraZoomPercent + AxisValue * CameraZoomAxisScaling);
+	SetCameraZoom(CameraZoomPercent + AxisValue * CameraZoomAxisScaling * -1);
 }

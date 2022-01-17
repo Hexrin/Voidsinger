@@ -165,6 +165,14 @@ public:
 	 */
 	static UPart* CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData InstanceData);
 
+	UPart();
+	UPart(UPart& Other);
+
+	/**
+	 * Gets the null part used to represent the lack of a part.
+	 */
+	FORCEINLINE static UPart* GetNullPart() { return GetMutableDefault<UPart>(); };
+
 	/**
 	 * Gets the part data for this part.
 	 * 
@@ -247,14 +255,16 @@ private:
 	 * 
 	 * @param Location - The location of the pixel that was damaged.
 	 */
-	void PixelDamaged(GridLocationType Location);
+	UFUNCTION()
+	void PixelDamaged(FIntPoint Location);
 
 	/**
 	 * Updates shape after a pixel of this part has beein repaired
 	 * 
 	 * @param Location - The location of the pixel that was repaired.
 	 */
-	void PixelRepaired(GridLocationType Location);
+	UFUNCTION()
+	void PixelRepaired(FIntPoint Location);
 
 	/**
 	 * Stores whether this is functional.

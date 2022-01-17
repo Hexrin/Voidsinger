@@ -50,9 +50,18 @@ void AVoidgrid::SetPixelMold(MinimalPixelMoldDataType NewPixelMold)
 		FMinimalPartInstanceData PartData = FMinimalPartInstanceData(PixelData.Value.GetTargetPart()->GetData(), PixelData.Value.GetTargetPart()->GetTransform());
 		if (!NewPixelMold.Contains(PartData))
 		{
-			PixelMold.Find(PixelData.Key)->SetTargetPart(nullptr);
-			Parts.Remove(PixelData.Value.GetCurrentPart());
-			TemporaryParts.Emplace(PixelData.Value.GetCurrentPart());
+			Parts.Remove(PixelData.Value.GetTargetPart());
+			if (PixelData.Value.GetCurrentPart() == UPart::GetNullPart())
+			{
+				PixelMold.Remove(PixelData.Key);
+				MutablePixels.Remove(PixelData.Key);
+			}
+			else
+			{
+				TemporaryParts.Add(PixelData.Value.GetCurrentPart());
+				PixelMold.Find(PixelData.Key)->SetTargetPart(UPart::GetNullPart());
+				MutablePixels.Add(PixelData.Key);
+			}
 		}
 		else
 		{
@@ -63,11 +72,14 @@ void AVoidgrid::SetPixelMold(MinimalPixelMoldDataType NewPixelMold)
 	for (FMinimalPartInstanceData DataOfPartToCreate : DataOfPartsToCreate)
 	{
 		UPart* Part = UPart::CreatePart(this, FPartInstanceData(DataOfPartToCreate));
-		Parts.Emplace(Part);
+		Parts.Add(Part);
 
 		for (GridLocationType ShapeComponent : DataOfPartToCreate.Data->Shape)
 		{
-			PixelMold.Emplace(Part->GetTransform().TransformGridLocation(ShapeComponent), PixelType(Part));
+			GridLocationType NewPixelLocation = Part->GetTransform().TransformGridLocation(ShapeComponent);
+			PixelMold.Emplace(NewPixelLocation, FGridPixelData(Part));
+
+			MutablePixels.Add(NewPixelLocation);
 		}
 	}
 }
@@ -101,21 +113,18 @@ void AVoidgrid::DamagePixel(GridLocationType Location)
 		{
 			OnDamaged.Broadcast(Location);
 
-			//Removes refernces to temporary parts
-			if (TemporaryParts.Contains(PixelRef->GetCurrentPart()) && PixelRef->GetCurrentPart()->GetShape().Num() == 0)
+			if (PixelRef->GetTargetPart() == UPart::GetNullPart())
 			{
 				TemporaryParts.Remove(PixelRef->GetCurrentPart());
-			}
-
-			if (PixelRef->GetTargetPart() == nullptr)
-			{
 				PixelMold.Remove(Location);
+				MutablePixels.Remove(Location);
 			}
 			else
 			{
 				MutablePixels.Add(Location);
 				PixelMold.Find(Location)->SetIntact(false);
 			}
+			UpdatePixelMesh(Location);
 		}
 	}
 }
@@ -129,18 +138,72 @@ void AVoidgrid::RepairPixel(GridLocationType Location)
 {
 	if (PixelMold.Contains(Location))
 	{
-		OnRepaired.Broadcast(Location);
-		MutablePixels.Remove(Location);
-		PixelMold.Find(Location)->SetIntact(true);
+		if (!PixelMold.Find(Location)->IsIntact())
+		{
+			OnRepaired.Broadcast(Location);
+			MutablePixels.Remove(Location);
+			PixelMold.Find(Location)->SetIntact(true);
+			UpdatePixelMesh(Location);
+		}
+		else
+		{
+			DamagePixel(Location);
+		}
 	}
 }
 
+/**
+ * Repairs a random pixel pixel.
+ */
+void AVoidgrid::RepairPixel()
+{
+	if (MutablePixels.Num() != 0)
+	{
+		RepairPixel(MutablePixels.Array()[FMath::RandRange(0, MutablePixels.Num() - 1)]);
+	}
+}
 
 /* /\ Pixel Mold /\ *\
 \* ---------------- */
 
 /* ---------------- *\
 \* \/ Pixel Mesh \/ */
+
+/**
+ * Updates a mesh segment for a pixel.
+ *
+ * @param Location - The location of the pixel to update the mesh of.
+ */
+void AVoidgrid::UpdatePixelMesh(GridLocationType Location)
+{
+	if (PixelMold.Contains(Location))
+	{
+		if (PixelMold.Find(Location)->IsIntact())
+		{
+			if (PixelMeshSegmentIndices.Contains(Location))
+			{
+				SetPixelMeshVisibility(Location, true);
+			}
+			else
+			{
+				AddPixelMesh(Location);
+			}
+
+			if (IsValid(PixelMold.Find(Location)->GetMaterial()))
+			{
+				PixelMeshComponent->SetMaterial(PixelMeshSegmentIndices.FindRef(Location), PixelMold.Find(Location)->GetMaterial());
+			}
+		}
+		else
+		{
+			SetPixelMeshVisibility(Location, false);
+		}
+	}
+	else
+	{
+		RemovePixelMesh(Location);
+	}
+}
 
 /**
  * Creates a mesh segment for a pixel.
@@ -150,13 +213,34 @@ void AVoidgrid::RepairPixel(GridLocationType Location)
 void AVoidgrid::AddPixelMesh(GridLocationType Location)
 {
 	//If this pixel already has a mesh set the index to that mesh
-	int32 SectionIndex = SectionIndex = PixelMeshSegmentIndices.Contains(Location) ? PixelMeshSegmentIndices.FindRef(Location) : PixelMeshSegmentIndices.Num();;
+	int32 SectionIndex = PixelMeshSegmentIndices.Contains(Location) ? PixelMeshSegmentIndices.FindRef(Location) : PixelMeshSegmentIndices.Num();
 
 	PixelMeshComponent->CreateMeshSection(SectionIndex, GetPixelVertices(Location), PixelTriangles, TArray<FVector>(), PixelUVs, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
-	PixelMeshComponent->SetMaterial(SectionIndex, PixelMold.Find(Location)->GetMaterial());
 	PixelMeshComponent->SetGenerateOverlapEvents(true);
 	
 	PixelMeshSegmentIndices.Emplace(Location, SectionIndex);
+}
+
+/**
+ * Removes the mesh segment for a pixel.
+ *
+ * @param Location - The location of the pixel to remove the mesh segment of.
+ */
+void AVoidgrid::RemovePixelMesh(GridLocationType Location)
+{
+	PixelMeshComponent->ClearMeshSection(PixelMeshSegmentIndices.FindRef(Location));
+	PixelMeshSegmentIndices.Remove(Location);
+}
+
+/**
+ * Sets the visible a mesh segment for a pixel.
+ *
+ * @param Location - The location of the pixel set the visablilty of.
+ * @param bNewVisibility - The visablity to set the pixel mesh to.
+ */
+void AVoidgrid::SetPixelMeshVisibility(GridLocationType Location, bool bNewVisibility)
+{
+	PixelMeshComponent->SetMeshSectionVisible(PixelMeshSegmentIndices.FindRef(Location), bNewVisibility);
 }
 
 /**
@@ -199,6 +283,8 @@ TArray<int32> AVoidgrid::CreateTrianglesForPixelMeshFace(int32 UpperRight, int32
 	Triangles.Emplace(UpperRight);
 	return Triangles;
 }
+/* /\ Pixel Mesh /\ *\
+\* ---------------- */
 
 /* ------------- *\
 \* \/ Faction \/ */
@@ -216,16 +302,3 @@ EFaction AVoidgrid::GetFaction() const
 
 /* /\ Faction /\ *\
 \* ------------- */
-
-/**
- * Removes the mesh segment for a pixel.
- *
- * @param Location - The location of the pixel to remove the mesh segment of.
- */
-void AVoidgrid::RemovePixelMesh(GridLocationType Location)
-{
-	PixelMeshComponent->ClearMeshSection(PixelMeshSegmentIndices.FindRef(Location));
-	PixelMeshSegmentIndices.Remove(Location);
-}
-/* /\ Pixel Mesh /\ *\
-\* ---------------- */

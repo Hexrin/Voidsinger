@@ -21,7 +21,16 @@ public:
 	 */
 	APlayerShip();
 
+	/**
+	 * Binds movment, camera control, and voidsong input.
+	 */
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	/**
+	 * Repairs a random pixel.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void Repair();
 
 	/* ------------ *\
 	\* \/ Camera \/ */

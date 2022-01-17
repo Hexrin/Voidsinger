@@ -74,7 +74,23 @@ UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData PartData)
 
 	OwningVoidgrid->OnDamaged.AddDynamic(NewPart, &UPart::PixelDamaged);
 
-	return nullptr;
+	return NewPart;
+}
+
+UPart::UPart()
+{
+	Voidgrid = nullptr;
+	Data = nullptr;
+	Transform = FPartTransform();
+	Shape = TSet<GridLocationType>();
+}
+
+UPart::UPart(UPart& Other)
+{
+	Voidgrid = Other.Voidgrid;
+	Data = Other.Data;
+	Transform = Other.Transform;
+	Shape = Other.Shape;
 }
 
 /**
@@ -105,7 +121,7 @@ PartShapeType UPart::GetDefaultShape()
  *
  * @param Location - The location of the pixel that was repaired.
  */
-void UPart::PixelDamaged(GridLocationType Location)
+void UPart::PixelDamaged(FIntPoint Location)
 {
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
 	if (Shape.Remove(RelativeLocation))
@@ -130,7 +146,7 @@ void UPart::PixelDamaged(GridLocationType Location)
  *
  * @param Location - The location of the pixel that was repaired.
  */
-void UPart::PixelRepaired(GridLocationType Location)
+void UPart::PixelRepaired(FIntPoint Location)
 {
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
 	if (GetDefaultShape().Contains(RelativeLocation))

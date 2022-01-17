@@ -59,12 +59,3 @@ public:
 	//Gets the primar asset Id for the asset mager and build UI.
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
 };
-
-/**
- * A part representing the lack of a part.
- */
-UCLASS()
-class VOIDSINGER_API UNullPart : public UPartData
-{
-	GENERATED_BODY()
-};

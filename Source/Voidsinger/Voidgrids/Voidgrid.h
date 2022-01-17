@@ -26,15 +26,40 @@ struct VOIDSINGER_API FGridPixelData
 	GENERATED_BODY()
 	
 public:
-	//Constructs a FGridPixelData using a part.
-	FGridPixelData(UPart* PartOfPixel = nullptr, bool bPixelIntact = false)
+	FGridPixelData(UPart* PartOfPixel, UPart* TargetPartOfPixel, bool bPixelIntact = false)
 	{
-		if (PartOfPixel)
+		if (!IsValid(PartOfPixel))
 		{
-			Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), PartOfPixel->GetOuter());
+			PartOfPixel = UPart::GetNullPart();
 		}
-		
-		SetTargetPart(PartOfPixel);
+
+		if (!IsValid(TargetPartOfPixel))
+		{
+			TargetPartOfPixel = UPart::GetNullPart();
+		}
+
+
+		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), TargetPartOfPixel->GetOuter());//Outer may cause memory leak. Im not sure
+
+		SetTargetPart(TargetPartOfPixel);
+		SetCurrentPart(PartOfPixel);
+		SetIntact(bPixelIntact);
+	}
+
+	//Constructs a FGridPixelData using a part.
+	FGridPixelData(UPart* TargetPartOfPixel = nullptr, bool bPixelIntact = false)
+	{
+		UPart* PartOfPixel = UPart::GetNullPart();
+
+		if (!IsValid(TargetPartOfPixel))
+		{
+			TargetPartOfPixel = UPart::GetNullPart();
+		}
+
+
+		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), TargetPartOfPixel->GetOuter());//Outer may cause memory leak. Im not sure
+
+		SetTargetPart(TargetPartOfPixel);
 		SetCurrentPart(PartOfPixel);
 		SetIntact(bPixelIntact);
 	}
@@ -56,7 +81,8 @@ public:
 	 */
 	void SetIntact(bool bNewIntact)
 	{
-		if (!bNewIntact && bIntact)
+		UE_LOG(LogTemp, Warning, TEXT("Intact to: %s"), bNewIntact ? *FString("True") : *FString("False"));
+		if (bNewIntact != bIntact)
 		{			
 			Temperature = 0;
 			SetCurrentPart(GetTargetPart());
@@ -102,14 +128,20 @@ public:
 	 * @param NewPart - The new value of part.
 	 * @return A refernce to this.
 	 */
-	FGridPixelData SetCurrentPart(UPart* NewPart)
+	void SetCurrentPart(UPart* NewPart)
 	{
-		if (Material && NewPart && NewPart->GetData()->Texture)
+		if (!IsValid(NewPart))
+		{
+			NewPart = UPart::GetNullPart();
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("Set Current part to: %s"), *NewPart->GetName());
+		if (CurrentPart != NewPart && IsValid(Material) && IsValid(NewPart) && IsValid(NewPart->GetData()) && IsValid(NewPart->GetData()->Texture))
 		{
 			Material->SetTextureParameterValue(TEXT("PartTexture"), NewPart->GetData()->Texture);
+			UE_LOG(LogTemp, Warning, TEXT("Set texture to: %s"), *NewPart->GetData()->Texture->GetName());
 		}
 		CurrentPart = NewPart;
-		return *this;
 	}
 
 	/**
@@ -119,6 +151,7 @@ public:
 	 */
 	UPart* GetTargetPart()
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Get TargetPart =: %s"), *TargetPart->GetName());
 		return TargetPart;
 	}
 
@@ -128,10 +161,15 @@ public:
 	 * @param NewPart - The new target part of this pixel.
 	 * @return A refernce to this.
 	 */
-	FGridPixelData SetTargetPart(UPart* NewPart)
+	void SetTargetPart(UPart* NewPart)
 	{
+		if (!IsValid(NewPart))
+		{
+			NewPart = UPart::GetNullPart();
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("Set TargetPart to: %s"), *NewPart->GetName());
 		TargetPart = NewPart;
-		return *this;
 	}
 
 	UMaterialInterface* GetMaterial()
@@ -139,11 +177,28 @@ public:
 		return Material;
 	}
 
+	bool operator==(const FGridPixelData& Other) const
+	{
+		return CurrentPart == Other.CurrentPart && TargetPart == Other.TargetPart && bIntact == Other.bIntact && Temperature == Other.Temperature;
+	}
+
+	FGridPixelData& operator=(const FGridPixelData& Other)
+	{
+		CurrentPart = Other.CurrentPart;
+		TargetPart = Other.TargetPart;
+		bIntact = Other.bIntact;
+		Temperature = Other.Temperature;
+		Material = Other.Material;
+		return *this;
+	}
+
 private:
 	//Stores a pointer to the part in this pixel.
+	UPROPERTY()
 	UPart* CurrentPart = nullptr;
 
 	//Stores a pointer to the target part of this pixel.
+	UPROPERTY()
 	UPart* TargetPart = nullptr;
 
 	//Store whether or not this pixel is intact.
@@ -156,6 +211,17 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	UMaterialInstanceDynamic* Material = nullptr;
 };
+
+//Hash function for FGridPixelData
+#if UE_BUILD_DEBUG
+uint32 GetTypeHash(const FGridPixelData& Thing);
+#else // optimize by inlining in shipping and development builds
+FORCEINLINE uint32 GetTypeHash(const FGridPixelData& Thing)
+{
+	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FGridPixelData));
+	return Hash;
+}
+#endif
 
 //Used for disbatching events requireing a grid locaiton
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGridLocationDelegate, FIntPoint, GridLocaction);
@@ -206,20 +272,25 @@ public:
 	 */
 	void RepairPixel(GridLocationType Location);
 
+	/**
+	 * Repairs a random pixel pixel.
+	 */
+	void RepairPixel();
+
 private:
 	//Stores the Pixel Mold of this.
 	PixelMoldType PixelMold;
 
-	//Stores a refernce to all parts on this.
+	//Stores the Locations of all damaged and temporary part Pixels.
+	TSet<GridLocationType> MutablePixels;
+
+	//Stores a referce to all permanent parts on this.
 	UPROPERTY()
 	TSet<UPart*> Parts;
 
-	//Stores refernces to all the parts that are not part of the mold of this.
+	//Stores a referce to all parts marked for removal on this.
 	UPROPERTY()
 	TSet<UPart*> TemporaryParts;
-
-	//Stores the Locations of all damaged and temporary part Pixels.
-	TSet<GridLocationType> MutablePixels;
 
 	/* /\ Pixel Mold /\ *\
 	\* ---------------- */
@@ -231,6 +302,14 @@ public:
 	//A procedural mesh component for physicaly representing all pixels on this.
 	UPROPERTY(VisibleAnywhere)
 	class UProceduralMeshComponent* PixelMeshComponent;
+
+private:
+	/**
+	 * Updates a mesh segment for a pixel.
+	 *
+	 * @param Location - The location of the pixel to update the mesh of.
+	 */
+	void UpdatePixelMesh(GridLocationType Location);
 
 	/**
 	 * Creates a mesh segment for a pixel.
@@ -246,7 +325,14 @@ public:
 	 */
 	void RemovePixelMesh(GridLocationType Location);
 
-private:
+	/**
+	 * Sets the visible a mesh segment for a pixel.
+	 *
+	 * @param Location - The location of the pixel set the visablilty of.
+	 * @param bNewVisibility - The visablity to set the pixel mesh to.
+	 */
+	void SetPixelMeshVisibility(GridLocationType Location, bool bNewVisibility);
+
 	/**
 	 * Generates the vertices of a pixel mesh
 	 * 
