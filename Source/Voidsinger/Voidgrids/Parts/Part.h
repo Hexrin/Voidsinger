@@ -380,6 +380,10 @@ struct FPartInstanceData
 		return MinimalData.Transform;
 	}
 
+	FMinimalPartInstanceData GetMinimalInstanceData()
+	{
+		return FMinimalPartInstanceData(GetData(), GetTransform());
+	}
 
 	FPartInstanceData(UPartData* PartData, FPartTransform PartTransform, PartShapeType PartShape)
 	{

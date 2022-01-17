@@ -19,7 +19,13 @@ typedef TGridMap<PixelType> PixelMoldType;
 //Stores all information required to replicate a mold
 typedef TSet<FMinimalPartInstanceData> MinimalPixelMoldDataType;
 
-//Stores data about a pixel.
+/* \/ =============== \/ *\
+|  \/ Grid Pixel Data \/  |
+\* \/ =============== \/ */
+
+/**
+ * Stores data about a pixel.
+ */
 USTRUCT()
 struct VOIDSINGER_API FGridPixelData
 {
@@ -81,8 +87,7 @@ public:
 	 */
 	void SetIntact(bool bNewIntact)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Intact to: %s"), bNewIntact ? *FString("True") : *FString("False"));
-		if (bNewIntact != bIntact)
+		if (!bNewIntact && bIntact)
 		{			
 			Temperature = 0;
 			SetCurrentPart(GetTargetPart());
@@ -135,11 +140,9 @@ public:
 			NewPart = UPart::GetNullPart();
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("Set Current part to: %s"), *NewPart->GetName());
 		if (CurrentPart != NewPart && IsValid(Material) && IsValid(NewPart) && IsValid(NewPart->GetData()) && IsValid(NewPart->GetData()->Texture))
 		{
 			Material->SetTextureParameterValue(TEXT("PartTexture"), NewPart->GetData()->Texture);
-			UE_LOG(LogTemp, Warning, TEXT("Set texture to: %s"), *NewPart->GetData()->Texture->GetName());
 		}
 		CurrentPart = NewPart;
 	}
@@ -151,7 +154,6 @@ public:
 	 */
 	UPart* GetTargetPart()
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Get TargetPart =: %s"), *TargetPart->GetName());
 		return TargetPart;
 	}
 
@@ -168,7 +170,6 @@ public:
 			NewPart = UPart::GetNullPart();
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("Set TargetPart to: %s"), *NewPart->GetName());
 		TargetPart = NewPart;
 	}
 
@@ -223,6 +224,55 @@ FORCEINLINE uint32 GetTypeHash(const FGridPixelData& Thing)
 }
 #endif
 
+/* /\ =============== /\ *\
+|  /\ Grid Pixel Data /\  |
+\* /\ =============== /\ */
+
+
+
+
+
+/* \/ ============== \/ *\
+|  \/ Voidgrid State \/  |
+\* \/ ============== \/ */
+
+/**
+ * Stores all data required to replicate a voidgrid.
+ */
+USTRUCT()
+struct VOIDSINGER_API FVoidgridState
+{
+	GENERATED_BODY()
+
+public:
+	//Stores the mold of the voidgrid
+	MinimalPixelMoldDataType Mold = MinimalPixelMoldDataType();
+
+	//Stores the state of the voidgrid's pixels.
+	TSet<FPartInstanceData> State = TSet<FPartInstanceData>();
+
+	/**
+	 * Initilizes a voidgrid state using its mold and pixel state.
+	 */
+	FVoidgridState(MinimalPixelMoldDataType VoidgridMold, TSet<FPartInstanceData> VoidgridPixelState)
+	{
+		Mold = VoidgridMold;
+		State = VoidgridPixelState;
+	}
+};
+
+/* /\ =============== /\ *\
+|  /\ Grid Pixel Data /\  |
+\* /\ =============== /\ */
+
+
+
+
+
+/* \/ ========= \/ *\
+|  \/ AVoidgrid \/  |
+\* \/ ========= \/ */
+
 //Used for disbatching events requireing a grid locaiton
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGridLocationDelegate, FIntPoint, GridLocaction);
 
@@ -245,18 +295,34 @@ public:
 	FGridLocationDelegate OnRepaired;
 
 	/**
-	 * Sets the pixel mold of the ship
+	 * Sets the pixel mold of the voidgrid
 	 * 
-	 * @param NewPixelMold - The value to assign to the pixel mold of the ship
+	 * @param NewPixelMold - The value to assign to the pixel mold of the voidgrid
 	 */
-	void SetPixelMold(MinimalPixelMoldDataType NewPixelMold);
+	UFUNCTION(BlueprintCallable)
+	void SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold);
 
 	/**
-	 * Gets the minimal part data for all parts on this void grid.
+	 * Gets the minimal part data for all parts on this voidgrid.
 	 * 
-	 * @return The minimal part data for all parts on this void grid.
+	 * @return The minimal part data for all parts on this voidgrid.
 	 */
-	MinimalPixelMoldDataType GetMinimalMoldData();
+	UFUNCTION(BlueprintPure)
+	MinimalPixelMoldDataType GetPixelMold();
+
+	/**
+	 * Sets the state of this voidgrid.
+	 *
+	 * @param NewState - The state to make this voidgrid match.
+	 */
+	void SetState(FVoidgridState NewState);
+
+	/**
+	 * Gets the state of this voidgrid.
+	 *
+	 * @return The state of this voidgrid.
+	 */
+	FVoidgridState GetState();
 
 	/**
 	 * Damages a pixel.
@@ -278,6 +344,35 @@ public:
 	void RepairPixel();
 
 private:
+	/**
+	 * Set pixel intact
+	 *
+	 * @param Location - The location of the pixel to edit.
+	 * @param bNewIntact - The new integrity of the pixel.
+	 */
+	void SetPixelIntact(GridLocationType Location, bool bNewIntact);
+
+	/**
+	 * Set pixel target
+	 *
+	 * @param Location - The location of the pixel to edit.
+	 * @param NewTarget - The new target of the pixel.
+	 */
+	void SetPixelTarget(GridLocationType Location, UPart* NewTarget);
+		
+	/**
+	 * Removes all parts from this voidgrid.
+	 * Does not call OnDamaged.
+	 */
+	void ClearVoidgrid();
+	TMap<GridLocationType, PixelType> GridPairs = PixelMold.GetGridPairs();
+	PixelMold.Empty();
+	for (TPair<GridLocationType, PixelType> Pair : GridPairs)
+	{
+		UpdatePixelMesh(Pair.Key);
+	}
+	Parts.Empty();
+	TemporaryParts.Empty();
 	//Stores the Pixel Mold of this.
 	PixelMoldType PixelMold;
 
@@ -383,3 +478,7 @@ public:
 	/* /\ Faction /\ *\
 	\* ------------- */
 };
+
+/* /\ ========= /\ *\
+|  /\ AVoidgrid /\  |
+\* /\ ========= /\ */
