@@ -51,47 +51,52 @@ void UShipPhysicsComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	if (!FMath::IsNearlyEqual(LinearVelocity.SizeSquared(), 0, MinLinearVelocity) || !FMath::IsNearlyEqual(AngularVelocity, 0, MinAngularVelocity))
 	{
-		GetOwner()->SetActorTransform(NewTransform);
-
 		////New function: Collide() -Mabel Suggestion
-		//if (UShipPhysicsComponent::SweepShip(NewTransform, Result))
-		//{
-		//	//dEBUG -Mabel Suggestion
-		//	//DrawDebugPoint(GetWorld(), Result.Location, 25, FColor::Orange, true);
-		//	FVector2D RelativeHitLocation = FVector2D(Result.Location - GetOwner()->GetActorLocation());
+		if (UShipPhysicsComponent::SweepShip(NewTransform, Result))
+		{
+			//dEBUG -Mabel Suggestion
+			//DrawDebugPoint(GetWorld(), Result.Location, 25, FColor::Purple, true);
+			//UE_LOG(LogTemp, Warning, TEXT("%s Hit %s at %s"), *GetOwner()->GetName(), *Result.GetActor()->GetName(), *Result.Location.ToString());
+			FVector2D RelativeHitLocation = FVector2D(Result.Location - GetOwner()->GetActorLocation());
 
-		//	FVector2D ImpactNormal = FVector2D(Result.Normal);
-		//	ImpactNormal.Normalize();
+			FVector2D ImpactNormal = FVector2D(Result.Normal);
+			ImpactNormal.Normalize();
 
-		//	//Comment scary math -Mabel
-		//	if (FVector2D::DotProduct(GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) < 0)
-		//	{
-		//		ABaseShip* OtherShip = Cast<ABaseShip>(Result.GetActor());
+			//Comment scary math -Mabel
+			if (FVector2D::DotProduct(GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) < 0)
+			{
+				ABaseShip* OtherShip = Cast<ABaseShip>(Result.GetActor());
 
-		//		float CollisionImpulseFactor;
+				float CollisionImpulseFactor;
 
-		//		if (IsValid(OtherShip))
-		//		{
-		//			UShipPhysicsComponent* OtherPhysicsComponent = OtherShip->PhysicsComponent;
-		//			FVector2D OtherRelativeHitLocation = FVector2D(Result.Location - OtherShip->GetActorLocation());
+				if (IsValid(OtherShip))
+				{
+					UShipPhysicsComponent* OtherPhysicsComponent = OtherShip->PhysicsComponent;
+					FVector2D OtherRelativeHitLocation = FVector2D(Result.Location - OtherShip->GetActorLocation());
 
-		//			CollisionImpulseFactor = FVector2D::DotProduct(-1 * (1 + CollisionElasticity) * GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) /
-		//				(1 / GetMass() + 1 / OtherPhysicsComponent->GetMass() + FMath::Square(FVector2D::CrossProduct(RelativeHitLocation, ImpactNormal)) / GetMomentOfInertia() + FMath::Square(FVector2D::CrossProduct(OtherRelativeHitLocation, ImpactNormal)) / OtherPhysicsComponent->GetMomentOfInertia());
+					CollisionImpulseFactor = FVector2D::DotProduct(-1 * (1 + CollisionElasticity) * GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) /
+						(1 / GetMass() + 1 / OtherPhysicsComponent->GetMass() + FMath::Square(FVector2D::CrossProduct(RelativeHitLocation, ImpactNormal)) / GetMomentOfInertia() + FMath::Square(FVector2D::CrossProduct(OtherRelativeHitLocation, ImpactNormal)) / OtherPhysicsComponent->GetMomentOfInertia());
 
-		//			//You shouldn't add an impulse to the other physics component *and* this physics component, because the other physics component will be doing the same thing.
-		//			//Only handle *this* physics component's impulse, not the other one. (or only handle the other one and not this one.) -Mabel Suggestion
-		//			OtherPhysicsComponent->AddImpulse(-1 * CollisionImpulseFactor * ImpactNormal, OtherRelativeHitLocation);
-		//		}
-		//		else
-		//		{
-		//			//You shouldn't be colliding with anything that isn't a ship, right? this might not be needed -Mabel Suggestion
-		//			CollisionImpulseFactor = FVector2D::DotProduct(-1 * (1 + CollisionElasticity) * GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) /
-		//				(1 / GetMass() + FMath::Square(FVector2D::CrossProduct(RelativeHitLocation, ImpactNormal)) / GetMomentOfInertia());
-		//		}
+					//You shouldn't add an impulse to the other physics component *and* this physics component, because the other physics component will be doing the same thing.
+					//Only handle *this* physics component's impulse, not the other one. (or only handle the other one and not this one.) -Mabel Suggestion
+					OtherPhysicsComponent->AddImpulse(-1 * CollisionImpulseFactor * ImpactNormal, OtherRelativeHitLocation);
+					//DrawDebugDirectionalArrow(GetWorld(), OtherShip->GetActorLocation() + FVector(OtherRelativeHitLocation, 0), OtherShip->GetActorLocation() + FVector(OtherRelativeHitLocation, 0) + FVector(-1 * CollisionImpulseFactor * ImpactNormal, 0), 5, FColor::Red, false, 5, 0U, 0.3f);
+					//UE_LOG(LogTemp, Warning, TEXT("%s Applyed an impules of %s at %s to %s"), *GetOwner()->GetName(), *(-1 * CollisionImpulseFactor * ImpactNormal).ToString(), *OtherRelativeHitLocation.ToString(), *Result.GetActor()->GetName());
+				}
+				else
+				{
+					//You shouldn't be colliding with anything that isn't a ship, right? this might not be needed -Mabel Suggestion
+					CollisionImpulseFactor = FVector2D::DotProduct(-1 * (1 + CollisionElasticity) * GetVelocityOfPoint(RelativeHitLocation), ImpactNormal) /
+						(1 / GetMass() + FMath::Square(FVector2D::CrossProduct(RelativeHitLocation, ImpactNormal)) / GetMomentOfInertia());
+				}
 
-		//		AddImpulse(CollisionImpulseFactor * ImpactNormal, RelativeHitLocation);				
-		//	}
-		//}
+				AddImpulse(CollisionImpulseFactor * ImpactNormal, RelativeHitLocation);
+				//DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation() + FVector(RelativeHitLocation, 0), GetOwner()->GetActorLocation() + FVector(RelativeHitLocation, 0) + FVector(CollisionImpulseFactor * ImpactNormal, 0), 5, FColor::Blue, false, 5, 0U, 0.3f);
+				//UE_LOG(LogTemp, Warning, TEXT("%s Applyed an impules of %s at %s to itself when colideing with %s"), *GetOwner()->GetName(), *(CollisionImpulseFactor * ImpactNormal).ToString(), *RelativeHitLocation.ToString(), *Result.GetActor()->GetName());
+			}
+		}
+
+		GetOwner()->SetActorTransform(NewTransform);
 	}
 	
 
@@ -175,7 +180,6 @@ void UShipPhysicsComponent::UpdateMassCalculations()
 bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult& Hit)
 {
 	//Return Values
-	Hit = FHitResult();
 	bool ReturnValue = false;
 	//Is it a return value if it isn't returned? -Mabel Suggestion
 	TArray<FHitResult> Hits = TArray<FHitResult>();
@@ -196,17 +200,16 @@ bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult
 	QueryParams.AddIgnoredActor(Ship);
 	QueryParams.bTraceComplex = false;
 
+	FCollisionObjectQueryParams ObjectQueryParams = FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody);
+
 	//More debug -Mabel Suggestion
 	//DrawDebugBox(Ship->GetWorld(), NewTransform.GetTranslation() + BoundsLocation, BoundsExtent, TraceRot, FColor::Emerald, false, 5);
 
 	//Comment this if statment -Mabel Suggestion
 	//Is this checking if there is an actor in your box that you previously defined? There is a "BoxOverlapActors" node in blueprints that I think you should find the c++ equivilent for. 
 	//Or is that what this is and I'm being dumb? -Mabel Suggestion
-	if (Ship->GetWorld()->SweepSingleByObjectType(Hit, Start.GetTranslation() + BoundsLocation, NewTransform.GetTranslation() + BoundsLocation, TraceRot, FCollisionObjectQueryParams::DefaultObjectQueryParam, FCollisionShape::MakeBox(BoundsExtent), QueryParams))
+	if (Ship->GetWorld()->SweepSingleByObjectType(Hit, Start.GetTranslation() + BoundsLocation, NewTransform.GetTranslation() + BoundsLocation, TraceRot, ObjectQueryParams, FCollisionShape::MakeBox(BoundsExtent), QueryParams))
 	{
-
-		//You've already set Hit to FHitResult() earlier. -Mabel Suggestion
-		Hit = FHitResult();
 
 		//Comment math -Mabel Suggestion
 		FQuat DeltaRot = NewTransform.GetRelativeTransform(Start).GetRotation();
@@ -223,7 +226,7 @@ bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult
 			FVector EndLoc = DeltaTranslation + (Start.GetRotation() * DeltaRot).RotateVector(FVector(FVector2D(Grid.LocationAtIndex(i)), 0)) + Ship->GetActorLocation();
 			FHitResult ThisHit = FHitResult();
 
-			if (Ship->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, TraceRot, FCollisionObjectQueryParams::AllObjects, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))
+			if (Ship->GetWorld()->SweepSingleByObjectType(ThisHit, StartLoc, EndLoc, TraceRot, ObjectQueryParams, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))
 			{
 				ReturnValue = true;
 
@@ -243,11 +246,12 @@ bool UShipPhysicsComponent::SweepShip(const FTransform& NewTransform, FHitResult
 		}
 	}
 
+	Hit = FHitResult();
 	if (ReturnValue)
 	{
 		for (FHitResult Value : Hits)
 		{
-			if (Value.Time < Hit.Time)
+			if (Hit.Time != 0 && Value.Time < Hit.Time)
 			{
 				Hit = Value;
 
