@@ -8,6 +8,7 @@
 //#include "Parts/Part.h"
 //#include "Ships/Ship.h"
 
+//Should be in VoidsongBlueprintUtilityLibrary - Liam Suggestion
 /**
  * Plays Verbs Motifs with the given information.
  *
@@ -124,7 +125,7 @@ void UFunctionLibrary::ExecuteVerbMotifs(const TArray<UBaseVerbMotif*>& Verbs, U
 //	return 0;
 //}
 //
-///*
+//
 //* Function comments from the .h should be copied to the .cpp. 
 //* 
 //* Shouldnt this be on the PartGrid as it already requries a refernce to one?

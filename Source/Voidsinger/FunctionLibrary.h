@@ -25,7 +25,8 @@ class VOIDSINGER_API UFunctionLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	
 public:
-
+	//Should be in VoidsongBlueprintUtilityLibrary - Liam Suggestion
+	//Once you move it delete this file - Liam Suggestion
 	/**
 	 * Plays Verbs Motifs with the given information.
 	 * 
