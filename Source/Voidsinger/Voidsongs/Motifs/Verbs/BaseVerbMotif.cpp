@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
+#include "BaseVerbMotif.h"
 #include "Kismet/GameplayStatics.h"
 
 /**
@@ -11,6 +11,6 @@
  * @param Hit - The hit result information
  * @param Effectiveness - The effectiveness of the activation
  */
-void UBaseVerbVoidsong::Play(UObject* Instigator, FHitResult Hit, float Effectiveness)
+void UBaseVerbMotif::Play(UObject* Instigator, FHitResult Hit, float Effectiveness)
 {
 }

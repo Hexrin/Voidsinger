@@ -1,5 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+/* !! ========== !! *\
+|  \/ Deprecated \/  |
+\* !! ========== !! */
 
 #include "Voidsinger/Voidsongs/VoidsongComponent.h"
 #include "VoidsongComponent.h"
@@ -48,9 +51,9 @@ void UVoidsongComponent::BeginPlay()
  *
  * @param VoidsongsAdded - The new playable Voidsongs
 */
- void UVoidsongComponent::AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdded)
+ void UVoidsongComponent::AddNewMotifs(TArray<TSubclassOf<UBaseMotif>> MotifsAdded)
  {
-	 PlayableVoidsongs;
+	 //PlayableVoidsongs;
  }
 
 /* /\ Playable Voidsong Management /\ *\
@@ -65,9 +68,9 @@ void UVoidsongComponent::BeginPlay()
 	 {
 		 TArray<EFaction> Factions;
 		 TArray<ENoun> Nouns;
-		 TArray<TSubclassOf<UBaseVerbVoidsong>> Verbs;
+		 TArray<TSubclassOf<UBaseVerbMotif>> Verbs;
 
-		 float Duration = ParseSequenceIntoVoidsongData(Sequence, Factions, Nouns, Verbs);
+		 float Duration = ParseSequenceIntoMotifData(Sequence, Factions, Nouns, Verbs);
 
 		 if (!Factions.IsEmpty() || !Nouns.IsEmpty() || !Verbs.IsEmpty())
 		 {
@@ -83,42 +86,42 @@ void UVoidsongComponent::BeginPlay()
 	 }
  }
 
- float UVoidsongComponent::ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFaction>& OutFactions, TArray<ENoun>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs)
+ float UVoidsongComponent::ParseSequenceIntoMotifData(TArray<int32> Sequence, TArray<EFaction>& OutFactions, TArray<ENoun>& OutNouns, TArray<TSubclassOf<UBaseVerbMotif>>& OutVerbs)
  {
 	 float Duration = 0;
 
-	 for (TSubclassOf<UBaseVoidsong> EachPlayableVoidsong : PlayableVoidsongs)
+	 for (TSubclassOf<UBaseMotif> EachPlayableMotif : PlayableMotifs)
 	 {
-		 UBaseVoidsong* EachPlayableVoidsongDefaultObject = EachPlayableVoidsong.GetDefaultObject();
+		 UBaseMotif* EachPlayableMotifDefaultObject = EachPlayableMotif.GetDefaultObject();
 		 TArray<int32> TrimmedSequence = Sequence;
-		 TrimmedSequence.SetNum(EachPlayableVoidsongDefaultObject->ActivationSequence.Num());
+		 TrimmedSequence.SetNum(EachPlayableMotifDefaultObject->ActivationSequence.Num());
 
-		 if (TrimmedSequence == EachPlayableVoidsongDefaultObject->ActivationSequence)
+		 if (TrimmedSequence == EachPlayableMotifDefaultObject->ActivationSequence)
 		 {
 
-			 Duration += EachPlayableVoidsongDefaultObject->Duration;
+			 Duration += EachPlayableMotifDefaultObject->Duration;
 
-			 if (IsValid(Cast<UBaseFactionVoidsong>(EachPlayableVoidsongDefaultObject)))
+			 if (IsValid(Cast<UBaseFactionMotif>(EachPlayableMotifDefaultObject)))
 			 {
-				 OutFactions.Emplace(Cast<UBaseFactionVoidsong>(EachPlayableVoidsongDefaultObject)->Faction);
+				 OutFactions.Emplace(Cast<UBaseFactionMotif>(EachPlayableMotifDefaultObject)->Faction);
 			 }
-			 else if (IsValid(Cast<UBaseNounVoidsong>(EachPlayableVoidsongDefaultObject)))
+			 else if (IsValid(Cast<UBaseNounMotif>(EachPlayableMotifDefaultObject)))
 			 {
 				 //OutNouns.Emplace(Cast<UBaseNounVoidsong>(EachPlayableVoidsongDefaultObject)->Noun);
 			 }
-			 else if (IsValid(Cast<UBaseVerbVoidsong>(EachPlayableVoidsongDefaultObject)))
+			 else if (IsValid(Cast<UBaseVerbMotif>(EachPlayableMotifDefaultObject)))
 			 {
-				 OutVerbs.Emplace(Cast<UBaseVerbVoidsong>(EachPlayableVoidsongDefaultObject)->GetClass());
+				 OutVerbs.Emplace(Cast<UBaseVerbMotif>(EachPlayableMotifDefaultObject)->GetClass());
 			 }
 
-			 for (int EachIndex : EachPlayableVoidsongDefaultObject->ActivationSequence)
+			 for (int EachIndex : EachPlayableMotifDefaultObject->ActivationSequence)
 			 {
 				 Sequence.RemoveAt(0);
 			 }
 
 			 if (!Sequence.IsEmpty())
 			 {
-				 Duration += ParseSequenceIntoVoidsongData(Sequence, OutFactions, OutNouns, OutVerbs);
+				 Duration += ParseSequenceIntoMotifData(Sequence, OutFactions, OutNouns, OutVerbs);
 			 }
 
 			 break;
@@ -291,3 +294,7 @@ void UVoidsongComponent::BeginPlay()
 
 /* /\ Old Voidsong functions from AShip (put here for reference, will be deleted) /\ *\
 \* ------------------------------------------------------------------------------------- */
+
+/* !! ========== !! *\
+|  /\ Deprecated /\  |
+\* !! ========== !! */

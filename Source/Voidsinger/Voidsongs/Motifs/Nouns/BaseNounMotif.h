@@ -3,15 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidsongs/BaseVoidsong.h"
-#include "BaseNounVoidsong.generated.h"
+#include "Voidsinger/Voidsongs/Motifs/BaseMotif.h"
+#include "BaseNounMotif.generated.h"
 
 /* -------------------------- *\
 \* \/ Forward Declarations \/ */
 
 class UPart;
 
-/* /\ Foward Declarations /\ *\
+/* /\ Forward Declarations /\ *\
 \* ------------------------- */
 
 /* \/ ===== \/ *\
@@ -39,19 +39,19 @@ enum class ENoun : uint8
  * module's with the noun type stored on this Voidsong (or any other Noun Voidsongs that were also played).
  */
 UCLASS(Blueprintable)
-class VOIDSINGER_API UBaseNounVoidsong : public UBaseVoidsong
+class VOIDSINGER_API UBaseNounMotif : public UBaseMotif
 {
 	GENERATED_BODY()
 
 public:
 
-	/* ------------------- *\
-	\* \/ Voidsong Data \/ */
+	/* ---------------- *\
+	\* \/ Motif Data \/ */
 
 	//The class of the noun that this Voidsong will activate
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Category = "VoidsongData"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Category = "MotifData"))
 	ENoun Noun;
 
-	/* /\ VoidsongData /\ *\
-	\* ------------------ */
+	/* /\ Motif Data /\ *\
+	\* ---------------- */
 };

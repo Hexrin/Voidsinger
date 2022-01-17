@@ -4,13 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Voidsinger/Voidsongs/BaseVoidsong.h"
-#include "Voidsinger/Voidsongs/Factions/BaseFactionVoidsong.h"
-#include "Voidsinger/Voidsongs/Nouns/BaseNounVoidsong.h"
-#include "Voidsinger/Voidsongs/Verbs/BaseVerbVoidsong.h"
-#include "Voidsinger/VoidsingerTypes.h"
 #include "PartModule.generated.h"
 
+/* -------------------------- *\
+\* \/ Forward Declarations \/ */
+
+class UPart;
+
+/* /\ Forward Declarations /\ *\
+\* ------------------------- */
 
 /**
  * A UPartModule defines functionality of a part.

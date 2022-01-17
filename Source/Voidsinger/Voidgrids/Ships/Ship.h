@@ -3,13 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidsongs/BaseVoidsong.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 #include "Ship.generated.h"
 
+/* -------------------------- *\
+\* \/ Forward Declarations \/ */
+
+class UBaseMotif;
+class UBaseFactionMotif;
+class UBaseNounMotif;
+class UBaseVerbMotif;
+
+/* /\ Forward Declarations /\ *\
+\* ------------------------- */
+
 /**
  * A controllable Voidgrid.
- * Can recive input and handels thrust control.
+ * Can receive input and handles thrust control.
  */
 UCLASS()
 class VOIDSINGER_API AShip : public AVoidgrid
@@ -27,12 +37,12 @@ public:
 	 * @param VoidsongsAdded - The new playable Voidsongs
 	 */
 	UFUNCTION(BlueprintCallable, Category = "PlayableVoidsongManagement")
-	void AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdded);
+	void AddNewMotifs(TArray<UBaseMotif*> MotifsAdded);
 
 protected:
 
 	//Stores the Voidsongs that this component can play.
-	TSet<TSubclassOf<UBaseVoidsong>> PlayableVoidsongs;
+	TSet<UBaseMotif*> PlayableMotifs;
 
 	/* /\ Playable Voidsong Management /\ *\
 	\* ---------------------------------- */
@@ -41,9 +51,14 @@ protected:
 	\* \/ Voidsong Activation \/ */
 
 	/**
+	 * Plays a Voidsong with the given Motifs
 	 * 
+	 * @param Factions - The Faction Motifs played
+	 * @param Nouns - The Noun Motifs played
+	 * @param Verbs - The Verb Motifs played
 	 */
-	void PlayVoidsongs(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs);
+	UFUNCTION(BlueprintCallable, Category = "VoidsongActivation")
+	void PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs);
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */

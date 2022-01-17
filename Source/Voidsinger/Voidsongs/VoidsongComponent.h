@@ -4,10 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "BaseVoidsong.h"
-#include "Factions/BaseFactionVoidsong.h"
-#include "Nouns/BaseNounVoidsong.h"
-#include "Verbs/BaseVerbVoidsong.h"
+#include "VoidsongData.h"
 #include "VoidsongComponent.generated.h"
 
 //Old delegates from AShip (put here for reference, will be deleted)
@@ -41,12 +38,12 @@ public:
 	 * 
 	 * @param DeltaTime - Time since the previous tick
 	 * @param TickType - The tick type
-	 * @param ThisTickFunction - I have no idea
+	 * @param ThisTickFunction - I have no idea //Find out - Liam Suggestion
 	 */
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
-
+	//What does it do - Liam Suggestion
 	/**
 	 * Called when the game starts
 	 */
@@ -162,19 +159,19 @@ protected:
 	\* \/ Playable Voidsong Management \/ */
 
 public:
-
+	//Don't use SubclassOf for data assets just use UBaseMotif* - Liam Suggestion
 	/**
 	 * Adds Voidsongs to the list of Voidsongs that this component can play.
 	 * 
 	 * @param VoidsongsAdded - The new playable Voidsongs
 	 */
 	UFUNCTION(BlueprintCallable, Category = "PlayableVoidsongManagement")
-	void AddNewVoidsongs(TArray<TSubclassOf<UBaseVoidsong>> VoidsongsAdded);
+	void AddNewMotifs(TArray<TSubclassOf<UBaseMotif>> MotifsAdded);
 
 private:
-
+	//Don't use SubclassOf for data assets just use UBaseMotif* - Liam Suggestion
 	//Stores the Voidsongs that this component can play.
-	TSet<TSubclassOf<UBaseVoidsong>> PlayableVoidsongs;
+	TSet<TSubclassOf<UBaseMotif>> PlayableMotifs;
 
 	/* /\ Playable Voidsong Management /\ *\
 	\* ---------------------------------- */
@@ -183,27 +180,47 @@ private:
 	\* \/ Voidsong Activation \/ */
 
 private:
-
+	/**
+	* Comment 
+	* Should take in an array of Motifs. Only the player ship needs to parse voidsong input not the component.
+	* - Liam Suggestion
+	*/
 	/**
 	 * 
 	 */
 	void PlaySequence(TArray<int32> Sequence);
 
 	/**
+	* Comment
+	* Only the player ship needs to parse voidsong input not the component.
+	* - Liam Suggestion
+	*/
+	/**
 	 *
 	 */
-	float ParseSequenceIntoVoidsongData(TArray<int32> Sequence, TArray<EFaction>& OutFactions, TArray<ENoun>& OutNouns, TArray<TSubclassOf<UBaseVerbVoidsong>>& OutVerbs);
+	float ParseSequenceIntoMotifData(TArray<int32> Sequence, TArray<EFaction>& OutFactions, TArray<ENoun>& OutNouns, TArray<TSubclassOf<UBaseVerbMotif>>& OutVerbs);
 
+	/**
+	* Comment
+	* Why is this needed? Shouldn't voidsongs end themselfs after ther duration is over?
+	*  - Liam Suggestion
+	*/
 	/**
 	 *
 	 */
 	void EndSequence();
 
+	//Comment - Liam Suggestion
 	//
 	bool bCanPlaySequences;
 
+	/**
+	* Comment
+	* Why is this needed? Why does the component need to know what the motifs of what it is curntly playing are?
+	*  - Liam Suggestion
+	*/
 	//
-	TArray<TSubclassOf<UBaseVoidsong>> ActiveVoidsongs;
+	TArray<TSubclassOf<UBaseMotif>> ActiveMotifs;
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */

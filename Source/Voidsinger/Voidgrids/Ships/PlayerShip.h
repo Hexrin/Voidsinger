@@ -6,8 +6,8 @@
 #include "PlayerShip.generated.h"
 
 /**
- * A ship controlable by a player.
- * Handels movement input actions.
+ * A ship controllable by a player.
+ * Handles movement input actions.
  */
 UCLASS()
 class VOIDSINGER_API APlayerShip : public AShip

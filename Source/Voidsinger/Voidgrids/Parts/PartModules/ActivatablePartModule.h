@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PartModule.h"
+#include "Voidsinger/Voidsongs/Voidsong.h"
 #include "ActivatablePartModule.generated.h"
 
 
@@ -12,7 +13,7 @@
 
 class UPart;
 
-/* /\ Foward Declarations /\ *\
+/* /\ Forward Declarations /\ *\
 \* ------------------------- */
 
 /* \/ ============== \/ *\
@@ -97,7 +98,7 @@ public:
 	 * Allows for blueprint logic when the part module is activated
 	 */
 	UFUNCTION(BlueprintImplementableEvent, DisplayName = "Activate", Category = "Activation")
-		void OnActivate(const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, float Effectiveness);
+	void OnActivate(const TArray<UBaseVerbMotif*>& Verbs, float Effectiveness);
 
 	// \/ Activate \/
 
@@ -115,18 +116,16 @@ public:
 	void ActivateWithEffectiveness(float Effectiveness);
 
 	/**
-	 * Checks whether "OnActivate" should be called by seeing if this module statisfies the Voidsong conditions. If it does, it calls the "OnActivate" function so the part module's functionality is executed
-	 *
-	 * @param Factions - The Factions that were activated
-	 * @param Nouns - The Nouns that were activated
-	 * @param Verbs - The Verbs that were activated
+	 * Calls the "OnActivate" function with the Verbs played in a Voidsong so the part module's functionality of executed
+	 * 
+	 * @param Verbs - The Verbs played in the Voidsong
 	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
 	 */
-	void ActivateFromVoidsong(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbVoidsong>>& Verbs, const TArray<TSubclassOf<UBaseVoidsong>>& PlayableVoidsongs, float Effectiveness = 1);
+	void ActivateFromVoidsong(const TArray<UBaseVerbMotif*> Verbs, float Effectiveness);
 
 	// /\ Activate /\
 
-	//Stores what Noun Voidsong will activate this part module. If unbound, this module will not be activatable by a Voidsong.
+	//Stores what Noun Motif will activate this part module. If unbound, this module will not be activatable by a Voidsong.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation")
 	ENoun Noun;
 
@@ -140,6 +139,13 @@ public:
 	 * Binds the activate function to all selected delegates
 	 */
 	void BindToDelegates();
+
+	/**
+	 * Checks whether to bind to the Voidsong given by seeing if this module statisfies the Voidsong conditions. If it does, ActivateWithEffectiveness is bound to the relavent VoidsongCues.
+	 *
+	 * @param Voidsong - The Voidsong to bind to
+	 */
+	void BindToVoidsong(UVoidsong* Voidsong);
 
 	// The events to bind Activate to
 	UPROPERTY(EditAnywhere, Category = "DelegateBinding")
