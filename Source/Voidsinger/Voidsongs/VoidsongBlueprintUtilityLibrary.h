@@ -156,4 +156,16 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 
 	/* /\ Getters /\ *\
 	\* ------------- */
+
+	/**
+	 * Plays Verbs Motifs with the given information.
+	 *
+	 * @param Verbs - The verbs that were played
+	 * @param Instigator - The object that activated these Motifs
+	 * @param Hit - The hit result information
+	 * @param Effectiveness - The effectiveness of the activation
+	 */
+	UFUNCTION(BlueprintCallable)
+	static void ExecuteVerbMotifs(const TArray<UBaseVerbMotif*>& Verbs, UObject* Instigator, FHitResult Hit, float Effectiveness);
+
 };

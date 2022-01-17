@@ -13,7 +13,11 @@
  */
 void UVoidsong::InitializeVariables(FVoidsongData Data)
 {
-	VoidsongData = Data;
+	if (!bIsInitialized)
+	{
+		VoidsongData = Data;
+		bIsInitialized = true;
+	}
 }
 
 /* /\ Initialization /\ *\
