@@ -254,7 +254,7 @@ public:
 	/**
 	 * Initilizes a voidgrid state using its mold and pixel state.
 	 */
-	FVoidgridState(MinimalPixelMoldDataType VoidgridMold, TSet<FPartInstanceData> VoidgridPixelState)
+	FVoidgridState(MinimalPixelMoldDataType VoidgridMold = MinimalPixelMoldDataType(), TSet<FPartInstanceData> VoidgridPixelState = TSet<FPartInstanceData>())
 	{
 		Mold = VoidgridMold;
 		State = VoidgridPixelState;
@@ -308,7 +308,7 @@ public:
 	 * @return The minimal part data for all parts on this voidgrid.
 	 */
 	UFUNCTION(BlueprintPure)
-	MinimalPixelMoldDataType GetPixelMold();
+	TSet<FMinimalPartInstanceData> GetPixelMold();
 
 	/**
 	 * Sets the state of this voidgrid.

@@ -121,7 +121,7 @@ void AVoidgrid::SetState(FVoidgridState NewState)
 
 	for (FPartInstanceData PartState : NewState.State)
 	{
-		UPart* Part;
+		UPart* Part = nullptr;
 		if (!NewState.Mold.Contains(PartState.GetMinimalInstanceData()))
 		{
 			Part = UPart::CreatePart(this, PartState.GetMinimalInstanceData());
