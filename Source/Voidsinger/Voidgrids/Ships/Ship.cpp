@@ -2,6 +2,8 @@
 
 #include "Ship.h"
 #include "Voidsinger/StarSystemGameMode.h"
+#include "Voidsinger/Voidsongs/VoidsongData.h"
+#include "Kismet/GameplayStatics.h"
 
 /* ---------------------------------- *\
 \* \/ Playable Voidsong Management \/ */
@@ -77,10 +79,13 @@ void AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArra
 
 	// /\ Check if Nouns is empty, if so play every playable Noun /\
 	
+	//Initialize VoidsongData
+	FVoidsongData VoidsongData = FVoidsongData(FactionsToPlay, NounsToPlay, Verbs);
+
 	//Call the globally available "PlayVoidsong" function on the Game Mode
 	if (IsValid(Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))))
 	{
-		Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->PlayVoidsong(FactionsToPlay, NounsToPlay, Verbs);
+		Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->PlayVoidsong(VoidsongData);
 	}
 }
 

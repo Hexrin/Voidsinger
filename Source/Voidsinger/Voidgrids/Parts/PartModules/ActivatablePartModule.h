@@ -115,6 +115,14 @@ public:
 	UFUNCTION(BlueprintCallable, DisplayName = "Activate", Category = "Activation")
 	void ActivateWithEffectiveness(float Effectiveness);
 
+	/**
+	 * Calls the "OnActivate" function with the Verbs played in a Voidsong so the part module's functionality of executed
+	 * 
+	 * @param Verbs - The Verbs played in the Voidsong
+	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
+	 */
+	void ActivateFromVoidsong(const TArray<UBaseVerbMotif*> Verbs, float Effectiveness);
+
 	// /\ Activate /\
 
 	//Stores what Noun Motif will activate this part module. If unbound, this module will not be activatable by a Voidsong.

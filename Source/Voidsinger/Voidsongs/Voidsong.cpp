@@ -7,38 +7,13 @@
 \* \/ Initialization \/ */
 
 /**
- * Initializes the variables of this object
+ * Initializes the variables of this Voidsong
  *
- * @param Factions - The Factions played in this Voidsong
- * @param Nouns - The Nouns played in this Voidsong
- * @param Verbs - The Verbs played in this Voidsong
+ * @param Data - The Voidsong data of this Voidsong
  */
-void UVoidsong::InitializeVariables(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs)
+void UVoidsong::InitializeVariables(FVoidsongData Data)
 {
-	// \/ Set Variables \/
-	FactionMotifs = Factions;
-	NounMotifs = Nouns;
-	VerbMotifs = Verbs;
-
-	// /\ Set Variables /\
-
-	// \/ Find Duration \/
-
-	for (UBaseFactionMotif* EveryFactionMotif : FactionMotifs)
-	{
-		Duration += EveryFactionMotif->Duration;
-	}
-	for (UBaseNounMotif* EveryNounMotif : NounMotifs)
-	{
-		Duration += EveryNounMotif->Duration;
-	}
-	for (UBaseVerbMotif* EveryVerbMotif : VerbMotifs)
-	{
-		Duration += EveryVerbMotif->Duration;
-	}
-
-	// /\ Find Duration /\
-
+	VoidsongData = Data;
 }
 
 /* /\ Initialization /\ *\
@@ -55,13 +30,13 @@ void UVoidsong::InitializeVariables(const TArray<UBaseFactionMotif*>& Factions, 
 void UVoidsong::Tick(float DeltaTime)
 {
 	//Broadcast the ForDuration delegate
-	ForDuration.Broadcast(DeltaTime);
+	ForDuration.Broadcast(VoidsongData.GetVerbMotifs(), DeltaTime);
 
 	// \/ Check if the Voidsong has played for the correct Duration, if so, Deactivate \/
 
 	TimeSincePlayed += DeltaTime;
 
-	if (TimeSincePlayed >= Duration)
+	if (TimeSincePlayed >= VoidsongData.GetDuration())
 	{
 		Deconstruct();
 	}

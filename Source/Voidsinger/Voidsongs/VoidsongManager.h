@@ -5,20 +5,12 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Voidsong.h"
-#include "Voidsinger/VoidsingerTypes.h"
-#include "BaseMotif.h"
-#include "Factions/BaseFactionMotif.h"
-#include "Nouns/BaseNounMotif.h"
-#include "Verbs/BaseVerbMotif.h"
+#include "VoidsongData.h"
 #include "VoidsongManager.generated.h"
 
 /* --------------- *\
 \* \/ Delegates \/ */
 
-/**
-* Is nesseary to divide motifs by type? If it truly is then consider making a struct for redablity and easy iteration over all motifs.
-* - Liam Suggestion
-*/
 /**
  * Broadcasts a played Voidsong
  * 
@@ -43,16 +35,14 @@ class VOIDSINGER_API UVoidsongManager : public UObject
 public:
 
 	/**
-	* Plays a Voidsong with the given Motifs
-	*
-	* @param Factions - The Faction Motifs played
-	* @param Nouns - The Noun Motifs played
-	* @param Verbs - The Verb Motifs played
-	* 
-	* @return - The Voidsong played
-	*/
+	 * Plays a Voidsong with the given Voidsong data
+	 *
+	 * @param VoidsongData - The Voidsong data played
+	 *
+	 * @return - The Voidsong played
+	 */
 	UFUNCTION(BlueprintCallable, Category = "VoisdongActivation")
-	UVoidsong* PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs);
+	UVoidsong* PlayVoidsong(FVoidsongData VoidsongData);
 
 	//Delegate called when any Voidsong is played
 	UPROPERTY(BlueprintAssignable)

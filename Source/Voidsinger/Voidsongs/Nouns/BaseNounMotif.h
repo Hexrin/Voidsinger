@@ -45,13 +45,13 @@ class VOIDSINGER_API UBaseNounMotif : public UBaseMotif
 
 public:
 
-	/* ------------------- *\
-	\* \/ Voidsong Data \/ */
+	/* ---------------- *\
+	\* \/ Motif Data \/ */
 
 	//The class of the noun that this Voidsong will activate
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Category = "VoidsongData"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Category = "MotifData"))
 	ENoun Noun;
 
-	/* /\ VoidsongData /\ *\
-	\* ------------------ */
+	/* /\ Motif Data /\ *\
+	\* ---------------- */
 };

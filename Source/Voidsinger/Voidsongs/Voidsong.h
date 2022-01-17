@@ -5,10 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Tickable.h"
-#include "Voidsinger/VoidsingerTypes.h"
-#include "Factions/BaseFactionMotif.h"
-#include "Nouns/BaseNounMotif.h"
-#include "Verbs/BaseVerbMotif.h"
+#include "VoidsongData.h"
 #include "Voidsong.generated.h"
 
 
@@ -18,9 +15,10 @@
 /**
  * Delegate for calling Voidsong Cues
  * 
+ * @param Verbs - The Verbs played in this Voidsong
  * @param Effectiveness - The effectiveness of the activation, useful when called every tick
  */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVoidsongCue, float, Effectiveness);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FVoidsongCue, const TArray<UBaseVerbMotif*>, Verbs, float, Effectiveness);
 
 /* /\ Delegates /\ *\
 \* --------------- */
@@ -40,25 +38,14 @@ public:
 
 
 	/**
-	 * Initializes the variables of this object
+	 * Initializes the variables of this Voidsong
 	 *
-	 * @param Factions - The Factions played in this Voidsong
-	 * @param Nouns - The Nouns played in this Voidsong
-	 * @param Verbs - The Verbs played in this Voidsong
+	 * @param Data - The Voidsong data of this Voidsong
 	 */
-	void InitializeVariables(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs);
+	void InitializeVariables(FVoidsongData Data);
 
-	//The length of the Voidsong
-	float Duration;
-
-	//The Faction Motifs played in this Voidsong
-	TArray<UBaseFactionMotif*> FactionMotifs;
-
-	//The Noun Motifs played in this Voidsong
-	TArray<UBaseNounMotif*> NounMotifs;
-
-	//The Verb Motifs played in this Voidsong
-	TArray<UBaseVerbMotif*> VerbMotifs;
+	//The data of this Voidsong
+	FVoidsongData VoidsongData;
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */

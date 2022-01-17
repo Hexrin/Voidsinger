@@ -5,6 +5,7 @@
 #include "Voidsinger/Voidgrids/Parts/Part.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 #include "Voidsinger/StarSystemGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 /* -------------------- *\
 \* \/ Initialization \/ */
@@ -46,6 +47,17 @@ void UActivatablePartModule::ActivateWithEffectiveness(float Effectiveness)
 {
 	TArray<UBaseVerbMotif*> EmptyVerbArray;
 	OnActivate(EmptyVerbArray, Effectiveness);
+}
+
+/**
+ * Calls the "OnActivate" function with the Verbs played in a Voidsong so the part module's functionality of executed
+ *
+ * @param Verbs - The Verbs played in the Voidsong
+ * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
+ */
+void UActivatablePartModule::ActivateFromVoidsong(const TArray<UBaseVerbMotif*> Verbs, float Effectiveness)
+{
+	OnActivate(Verbs, Effectiveness);
 }
 
 // /\ Activate /\
@@ -103,42 +115,25 @@ void UActivatablePartModule::BindToDelegates()
  */
 void UActivatablePartModule::BindToVoidsong(UVoidsong* Voidsong)
 {
-
-	// \/ Find factions and nouns played \/
-
-	TArray<EFaction> Factions;
-	TArray<ENoun> Nouns;
-
-	for (UBaseFactionMotif* EachFactionMotif : Voidsong->FactionMotifs)
-	{
-		Factions.Emplace(EachFactionMotif->Faction);
-	}
-	for (UBaseNounMotif* EachNounMotif : Voidsong->NounMotifs)
-	{
-		Nouns.Emplace(EachNounMotif->Noun);
-	}
-
-	// /\ Find factions and nouns played /\
-
 	//If this module's noun is not unbound, check if it satisfies the Voidsong requirements to activate. Also check if this should be bound to a VoidsongCue.
 	if (Noun != ENoun::Unbound && (bool)(ActivationCues & EActivationCue::OnVoidsongCue))
 	{
 		//Factions check is true if this faction is one of the factions played 
-		bool bFactionsCheck = Factions.Contains(Part->GetVoidgrid()->GetFaction());
+		bool bFactionsCheck = Voidsong->VoidsongData.GetFactions().Contains(Part->GetVoidgrid()->GetFaction());
 
 		//Nouns check is true if this noun is one of the nouns played
-		bool bNounsCheck = Nouns.Contains(Noun);
+		bool bNounsCheck = Voidsong->VoidsongData.GetNouns().Contains(Noun);
 
 		//If this part module satisfies the conditions of the Voidsong, bind the events
 		if (bFactionsCheck && bNounsCheck)
 		{
 			if ((bool)(VoidsongCues & EVoidsongCue::ForDuration))
 			{
-				Voidsong->ForDuration.AddDynamic(this, &UActivatablePartModule::ActivateWithEffectiveness);
+				Voidsong->ForDuration.AddDynamic(this, &UActivatablePartModule::ActivateFromVoidsong);
 			}
 			if ((bool)(VoidsongCues & EVoidsongCue::OnBeat))
 			{
-				Voidsong->OnBeat.AddDynamic(this, &UActivatablePartModule::ActivateWithEffectiveness);
+				Voidsong->OnBeat.AddDynamic(this, &UActivatablePartModule::ActivateFromVoidsong);
 			}
 		}
 	}
