@@ -36,7 +36,7 @@ class VOIDSINGER_API UVoidsong : public UObject, public FTickableGameObject
 
 public:
 
-
+	//This becomes unesseary if you add "friend UVoidsong* PlayVoidsong(FVoidsongData VoidsongData);" here and inilize voidsong variables in PlayVoidsong since that should (probalbly) be the only way to inilize a voidsong.
 	/**
 	 * Initializes the variables of this Voidsong
 	 *

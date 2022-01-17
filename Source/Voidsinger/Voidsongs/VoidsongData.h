@@ -44,9 +44,11 @@ private:
 
 private:
 
+	//Should be a set for O(1) .Contains - Liam Suggestion
 	//Factions played (enum)
 	TArray<EFaction> Factions = TArray<EFaction>();
 
+	//Should be a set for O(1) .Contains - Liam Suggestion
 	//Nouns played (enum)
 	TArray<ENoun> Nouns = TArray<ENoun>();
 
@@ -119,6 +121,7 @@ public:
 		Motifs.Emplace(AddedNounMotif);
 		NounMotifs.Emplace(AddedNounMotif);
 		Nouns.Emplace(AddedNounMotif->Noun);
+		//What about duration? - Liam Suggestion
 	}
 
 	/**
@@ -130,6 +133,7 @@ public:
 	{
 		Motifs.Emplace(AddedVerbMotif);
 		VerbMotifs.Emplace(AddedVerbMotif);
+		//What about duration? - Liam Suggestion
 	}
 
 	/* /\ Emplace singular Motif /\ *\
