@@ -41,9 +41,14 @@ protected:
 	\* \/ Voidsong Activation \/ */
 
 	/**
+	 * Plays a Voidsong with the given Motifs
 	 * 
+	 * @param Factions - The Faction Motifs played
+	 * @param Nouns - The Noun Motifs played
+	 * @param Verbs - The Verb Motifs played
 	 */
-	void PlayVoidsong(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs);
+	UFUNCTION(BlueprintCallable, Category = "VoidsongActivation")
+	void PlayVoidsong(const TArray<TSubclassOf<UBaseFactionMotif>>& Factions, const TArray<TSubclassOf<UBaseNounMotif>>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs);
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */

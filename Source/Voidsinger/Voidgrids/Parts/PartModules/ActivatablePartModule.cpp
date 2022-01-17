@@ -29,7 +29,7 @@ void UActivatablePartModule::InitializeVariables(UPart* OwningPart)
 // \/ Activate \/
 
 /**
- * Calls the "OnActivate" function with an Effectiveness of 1 so the part module's functionality is executed.
+ * Calls the "ActivateWithEffectiveness" function with an Effectiveness of 1 so the part module's functionality is executed.
  */
 void UActivatablePartModule::Activate()
 {
@@ -47,18 +47,64 @@ void UActivatablePartModule::ActivateWithEffectiveness(float Effectiveness)
 	OnActivate(EmptyVerbArray, Effectiveness);
 }
 
+// /\ Activate /\
+
+/* /\ Activation /\ *\
+\* ---------------- */
+
+/* ---------------------- *\
+\* \/ Delegate Binding \/ */
+
+void UActivatablePartModule::BindToDelegates()
+{
+	// \/ Bind Activate to the Activation Cues selected \/
+
+	if ((bool)(ActivationCues & EActivationCue::OnDamaged))
+	{
+		Part->OnDamaged.AddDynamic(this, &UActivatablePartModule::Activate);
+	}
+	if ((bool)(ActivationCues & EActivationCue::OnRepaired))
+	{
+		Part->OnRepaired.AddDynamic(this, &UActivatablePartModule::Activate);
+	}
+	if ((bool)(ActivationCues & EActivationCue::OnFunctionalityLost))
+	{
+		Part->OnFunctionalityLost.AddDynamic(this, &UActivatablePartModule::Activate);
+	}
+	if ((bool)(ActivationCues & EActivationCue::OnFunctionalityRestored))
+	{
+		Part->OnFunctionalityRestored.AddDynamic(this, &UActivatablePartModule::Activate);
+	}
+	if ((bool)(ActivationCues & EActivationCue::OnDestroyed))
+	{
+		Part->OnDestroyed.AddDynamic(this, &UActivatablePartModule::Activate);
+	}
+	if ((bool)(ActivationCues & EActivationCue::OnFullyRepaired))
+	{
+		Part->OnFullyRepaired.AddDynamic(this, &UActivatablePartModule::Activate);
+	}
+	if ((bool)(ActivationCues & EActivationCue::OnTick))
+	{
+		//Bind to on tick here (Delegate is not available yet)
+	}
+
+	// /\ Bind Activate to the Activation Cues selected /\
+
+}
+
 /**
- * Activate overload - Checks whether "OnActivate" should be called by seeing if this module statisfies the Voidsong conditions. If it does, it calls the "OnActivate" function so the part module's functionality is executed
+ * Checks whether to bind to the Voidsong given by seeing if this module statisfies the Voidsong conditions. If it does, ActivateWithEffectiveness is bound to the relavent VoidsongCues.
  *
+ * @param Voidsong - The Voidsong to bind to
  * @param Factions - The Factions that were activated
  * @param Nouns - The Nouns that were activated
  * @param Verbs - The Verbs that were activated
- * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
+ * @param PlayableMotifs - The Motifs playable by whatever played the Voidsong
  */
-void UActivatablePartModule::ActivateFromVoidsong(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, const TArray<TSubclassOf<UBaseMotif>>& PlayableMotifs, float Effectiveness)
+void UActivatablePartModule::BindToVoidsong(UVoidsong* Voidsong, const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, const TSet<TSubclassOf<UBaseMotif>>& PlayableMotifs)
 {
-	//If this module's noun is not unbound, check if it satisfies the Voidsong requirements to activate
-	if (Noun != ENoun::Unbound)
+	//If this module's noun is not unbound, check if it satisfies the Voidsong requirements to activate. Also check if this should be bound to a VoidsongCue.
+	if (Noun != ENoun::Unbound && (bool)(ActivationCues & EActivationCue::OnVoidsongCue))
 	{
 
 		//((Factions.IsEmpty() && AvailableFactions.Contains(Cast<AShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<AShip>(GetOuter()->GetOuter())->GetFaction())) && NounsCheck
@@ -96,51 +142,18 @@ void UActivatablePartModule::ActivateFromVoidsong(const TArray<EFaction>& Factio
 		//	    |- No noun played, but this noun is playable -| or |- This noun is one of the nouns played -|
 		bool bNounsCheck = (Nouns.IsEmpty() && bNounIsPlayable) || Nouns.Contains(Noun);
 
-		//If this part module satisfies the conditions of the Voidsong, call OnActivate()
+		//If this part module satisfies the conditions of the Voidsong, bind the events
 		if (bFactionsCheck && bNounsCheck)
 		{
-			OnActivate(Verbs, Effectiveness);
+			if ((bool)(VoidsongCues & EVoidsongCue::ForDuration))
+			{
+				Voidsong->ForDuration.AddDynamic(this, &UActivatablePartModule::ActivateWithEffectiveness);
+			}
+			if ((bool)(VoidsongCues & EVoidsongCue::OnBeat))
+			{
+				Voidsong->OnBeat.AddDynamic(this, &UActivatablePartModule::ActivateWithEffectiveness);
+			}
 		}
-	}
-}
-
-// /\ Activate /\
-
-/* /\ Activation /\ *\
-\* ---------------- */
-
-/* ---------------------- *\
-\* \/ Delegate Binding \/ */
-
-void UActivatablePartModule::BindToDelegates()
-{
-	if ((bool)(ActivationCues & EActivationCue::OnDamaged))
-	{
-		Part->OnDamaged.AddDynamic(this, &UActivatablePartModule::Activate);
-	}
-	if ((bool)(ActivationCues & EActivationCue::OnRepaired))
-	{
-		Part->OnRepaired.AddDynamic(this, &UActivatablePartModule::Activate);
-	}
-	if ((bool)(ActivationCues & EActivationCue::OnFunctionalityLost))
-	{
-		Part->OnFunctionalityLost.AddDynamic(this, &UActivatablePartModule::Activate);
-	}
-	if ((bool)(ActivationCues & EActivationCue::OnFunctionalityRestored))
-	{
-		Part->OnFunctionalityRestored.AddDynamic(this, &UActivatablePartModule::Activate);
-	}
-	if ((bool)(ActivationCues & EActivationCue::OnDestroyed))
-	{
-		Part->OnDestroyed.AddDynamic(this, &UActivatablePartModule::Activate);
-	}
-	if ((bool)(ActivationCues & EActivationCue::OnFullyRepaired))
-	{
-		Part->OnFullyRepaired.AddDynamic(this, &UActivatablePartModule::Activate);
-	}
-	if ((bool)(ActivationCues & EActivationCue::OnTick))
-	{
-
 	}
 }
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PartModule.h"
+#include "Voidsinger/Voidsongs/Voidsong.h"
 #include "ActivatablePartModule.generated.h"
 
 
@@ -114,16 +115,6 @@ public:
 	UFUNCTION(BlueprintCallable, DisplayName = "Activate", Category = "Activation")
 	void ActivateWithEffectiveness(float Effectiveness);
 
-	/**
-	 * Checks whether "OnActivate" should be called by seeing if this module statisfies the Voidsong conditions. If it does, it calls the "OnActivate" function so the part module's functionality is executed
-	 *
-	 * @param Factions - The Factions that were activated
-	 * @param Nouns - The Nouns that were activated
-	 * @param Verbs - The Verbs that were activated
-	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
-	 */
-	void ActivateFromVoidsong(const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, const TArray<TSubclassOf<UBaseMotif>>& PlayableMotifs, float Effectiveness);
-
 	// /\ Activate /\
 
 	//Stores what Noun Motif will activate this part module. If unbound, this module will not be activatable by a Voidsong.
@@ -140,6 +131,17 @@ public:
 	 * Binds the activate function to all selected delegates
 	 */
 	void BindToDelegates();
+
+	/**
+	 * Checks whether to bind to the Voidsong given by seeing if this module statisfies the Voidsong conditions. If it does, ActivateWithEffectiveness is bound to the relavent VoidsongCues.
+	 *
+	 * @param Voidsong - The Voidsong to bind to
+	 * @param Factions - The Factions that were activated
+	 * @param Nouns - The Nouns that were activated
+	 * @param Verbs - The Verbs that were activated
+	 * @param PlayableMotifs - The Motifs playable by whatever played the Voidsong
+	 */
+	void BindToVoidsong(UVoidsong* Voidsong, const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, const TSet<TSubclassOf<UBaseMotif>>& PlayableMotifs);
 
 	// The events to bind Activate to
 	UPROPERTY(EditAnywhere, Category = "DelegateBinding")
