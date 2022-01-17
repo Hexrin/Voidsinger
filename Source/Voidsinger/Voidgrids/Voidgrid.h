@@ -365,14 +365,7 @@ private:
 	 * Does not call OnDamaged.
 	 */
 	void ClearVoidgrid();
-	TMap<GridLocationType, PixelType> GridPairs = PixelMold.GetGridPairs();
-	PixelMold.Empty();
-	for (TPair<GridLocationType, PixelType> Pair : GridPairs)
-	{
-		UpdatePixelMesh(Pair.Key);
-	}
-	Parts.Empty();
-	TemporaryParts.Empty();
+
 	//Stores the Pixel Mold of this.
 	PixelMoldType PixelMold;
 
