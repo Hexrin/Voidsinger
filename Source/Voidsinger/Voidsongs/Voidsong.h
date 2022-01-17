@@ -25,9 +25,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVoidsongCue, float, Effectiveness);
 /* /\ Delegates /\ *\
 \* --------------- */
 
-//Comment - Liam Suggestion
 /**
- * Liam told me to type with my thumbs for 1 comment
+ * Class for broadcasting delegates related to a specific Voidsong played
  */
 UCLASS()
 class VOIDSINGER_API UVoidsong : public UObject, public FTickableGameObject
@@ -39,43 +38,27 @@ class VOIDSINGER_API UVoidsong : public UObject, public FTickableGameObject
 
 public:
 
-	//Why is PlayableMotifs a parameter? The voidsongs should not care what motifs a thing can play. The voidsong player should be responsable for whether or not it can play a song. - Liam Suggestion
+
 	/**
 	 * Initializes the variables of this object
 	 *
 	 * @param Factions - The Factions played in this Voidsong
 	 * @param Nouns - The Nouns played in this Voidsong
 	 * @param Verbs - The Verbs played in this Voidsong
-	 * @param AllPlayableMotifs - The motifs that are playable by whatever played the Voidsong
 	 */
-	void InitializeVariables(const TArray<TSubclassOf<UBaseFactionMotif>>& Factions, const TArray<TSubclassOf<UBaseNounMotif>>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, const TSet<TSubclassOf<UBaseMotif>>& AllPlayableMotifs);
-
-private:
-	//Why does this exist? Shouldn't this object be destroyed as soon as it is finshed playing and not exist before it starts? - Liam Suggestion
-	//Tracks whether this Voidsong is actively playing
-	bool bIsActive;
+	void InitializeVariables(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs);
 
 	//The length of the Voidsong
 	float Duration;
 
-	//Is nesseary to divide motifs by type ? If it truly is then consider making a struct for redablityand easy iteration over all motifs. - Liam Suggestion
-
-	//Don't use SubclassOf for data assets just use UBaseMotif* - Liam Suggestion
 	//The Faction Motifs played in this Voidsong
-	TArray<TSubclassOf<UBaseFactionMotif>> FactionMotifs;
+	TArray<UBaseFactionMotif*> FactionMotifs;
 
-	//Don't use SubclassOf for data assets just use UBaseMotif* - Liam Suggestion
 	//The Noun Motifs played in this Voidsong
-	TArray<TSubclassOf<UBaseNounMotif>> NounMotifs;
+	TArray<UBaseNounMotif*> NounMotifs;
 
-	//Don't use SubclassOf for data assets just use UBaseMotif* - Liam Suggestion
 	//The Verb Motifs played in this Voidsong
-	TArray<TSubclassOf<UBaseVerbMotif>> VerbMotifs;
-
-	//Don't use SubclassOf for data assets just use UBaseMotif* - Liam Suggestion
-	//Why is PlayableMotifs a parameter? The voidsongs should not care what motifs a thing can play. The voidsong player should be responsable for whether or not it can play a song. - Liam Suggestion
-	//The Motifs that are playable by whatever played the Voidsong
-	TSet<TSubclassOf<UBaseMotif>> PlayableMotifs;
+	TArray<UBaseVerbMotif*> VerbMotifs;
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */
@@ -129,15 +112,14 @@ public:
 	\* \/ Deactivation \/ */
 
 private:
-	//Why is this needed? I dont think voidsongs will ever be paused while the rest of the game isn't - Liam Suggestion
-	/**
-	 * Deactivates the Voidsong
-	 */
-	void Deactivate();
 
-	//Shouldn't this be called TimeSincePlayed then? - Liam Suggestion
+	/**
+	 * Deconstructs the Voidsong
+	 */
+	void Deconstruct();
+
 	//Time since the Voidsong was activated
-	float TimePlayed;
+	float TimeSincePlayed;
 
 	/* /\ Deactivation /\ *\
 	\* ------------------ */

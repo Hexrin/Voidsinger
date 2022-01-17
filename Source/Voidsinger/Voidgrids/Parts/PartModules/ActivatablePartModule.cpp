@@ -4,6 +4,7 @@
 #include "ActivatablePartModule.h"
 #include "Voidsinger/Voidgrids/Parts/Part.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
+#include "Voidsinger/StarSystemGameMode.h"
 
 /* -------------------- *\
 \* \/ Initialization \/ */
@@ -43,7 +44,7 @@ void UActivatablePartModule::Activate()
  */
 void UActivatablePartModule::ActivateWithEffectiveness(float Effectiveness)
 {
-	TArray<TSubclassOf<UBaseVerbMotif>> EmptyVerbArray;
+	TArray<UBaseVerbMotif*> EmptyVerbArray;
 	OnActivate(EmptyVerbArray, Effectiveness);
 }
 
@@ -57,6 +58,9 @@ void UActivatablePartModule::ActivateWithEffectiveness(float Effectiveness)
 
 void UActivatablePartModule::BindToDelegates()
 {
+	//Bind "BindToVoidsong" to Voidsong played
+	Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->OnVoidsongPlayed.AddDynamic(this, &UActivatablePartModule::BindToVoidsong);
+
 	// \/ Bind Activate to the Activation Cues selected \/
 
 	if ((bool)(ActivationCues & EActivationCue::OnDamaged))
@@ -96,51 +100,34 @@ void UActivatablePartModule::BindToDelegates()
  * Checks whether to bind to the Voidsong given by seeing if this module statisfies the Voidsong conditions. If it does, ActivateWithEffectiveness is bound to the relavent VoidsongCues.
  *
  * @param Voidsong - The Voidsong to bind to
- * @param Factions - The Factions that were activated
- * @param Nouns - The Nouns that were activated
- * @param Verbs - The Verbs that were activated
- * @param PlayableMotifs - The Motifs playable by whatever played the Voidsong
  */
-void UActivatablePartModule::BindToVoidsong(UVoidsong* Voidsong, const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, const TSet<TSubclassOf<UBaseMotif>>& PlayableMotifs)
+void UActivatablePartModule::BindToVoidsong(UVoidsong* Voidsong)
 {
+
+	// \/ Find factions and nouns played \/
+
+	TArray<EFaction> Factions;
+	TArray<ENoun> Nouns;
+
+	for (UBaseFactionMotif* EachFactionMotif : Voidsong->FactionMotifs)
+	{
+		Factions.Emplace(EachFactionMotif->Faction);
+	}
+	for (UBaseNounMotif* EachNounMotif : Voidsong->NounMotifs)
+	{
+		Nouns.Emplace(EachNounMotif->Noun);
+	}
+
+	// /\ Find factions and nouns played /\
+
 	//If this module's noun is not unbound, check if it satisfies the Voidsong requirements to activate. Also check if this should be bound to a VoidsongCue.
 	if (Noun != ENoun::Unbound && (bool)(ActivationCues & EActivationCue::OnVoidsongCue))
 	{
+		//Factions check is true if this faction is one of the factions played 
+		bool bFactionsCheck = Factions.Contains(Part->GetVoidgrid()->GetFaction());
 
-		//((Factions.IsEmpty() && AvailableFactions.Contains(Cast<AShip>(GetOuter()->GetOuter())->GetFaction())) != Factions.Contains(Cast<AShip>(GetOuter()->GetOuter())->GetFaction())) && NounsCheck
-
-		// \/ Finds playable Factions  and Nouns from all playable Voidsongs \/
-
-		TArray<EFaction> PlayableFactions;
-		TArray<ENoun> PlayableNouns;
-
-		for (TSubclassOf<UBaseMotif> EachPlayableVoidsong : PlayableMotifs)
-		{
-			if (EachPlayableVoidsong->IsChildOf(UBaseFactionMotif::StaticClass()))
-			{
-				PlayableFactions.Emplace(Cast<UBaseFactionMotif>(EachPlayableVoidsong->GetDefaultObject())->Faction);
-			}
-			if (EachPlayableVoidsong->IsChildOf(UBaseNounMotif::StaticClass()))
-			{
-				PlayableNouns.Emplace(Cast<UBaseNounMotif>(EachPlayableVoidsong->GetDefaultObject())->Noun);
-			}
-		}
-
-		// /\ Finds playable Factions and Nouns from all playable Voidsongs /\
-
-		//Checks if this module's faction (referred to as "this faction") is playable
-		bool bFactionIsPlayable = PlayableFactions.Contains(Part->GetVoidgrid()->GetFaction());
-
-		//Factions check is true if 
-		//	      |- No factions played, but this faction is playable -| or |--- This faction is one of the factions played ---|
-		bool bFactionsCheck = (Factions.IsEmpty() && bFactionIsPlayable) || Factions.Contains(Part->GetVoidgrid()->GetFaction());
-
-		//Checks is this module's noun (referred to as "this noun") is playable
-		bool bNounIsPlayable = PlayableNouns.Contains(Noun);
-
-		//Nouns check is true if
-		//	    |- No noun played, but this noun is playable -| or |- This noun is one of the nouns played -|
-		bool bNounsCheck = (Nouns.IsEmpty() && bNounIsPlayable) || Nouns.Contains(Noun);
+		//Nouns check is true if this noun is one of the nouns played
+		bool bNounsCheck = Nouns.Contains(Noun);
 
 		//If this part module satisfies the conditions of the Voidsong, bind the events
 		if (bFactionsCheck && bNounsCheck)

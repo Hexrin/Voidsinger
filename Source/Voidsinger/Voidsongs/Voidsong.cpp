@@ -12,36 +12,33 @@
  * @param Factions - The Factions played in this Voidsong
  * @param Nouns - The Nouns played in this Voidsong
  * @param Verbs - The Verbs played in this Voidsong
- * @param AllPlayableMotifs - The motifs that are playable by whatever played the Voidsong
  */
-void UVoidsong::InitializeVariables(const TArray<TSubclassOf<UBaseFactionMotif>>& Factions, const TArray<TSubclassOf<UBaseNounMotif>>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, const TSet<TSubclassOf<UBaseMotif>>& AllPlayableMotifs)
+void UVoidsong::InitializeVariables(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs)
 {
 	// \/ Set Variables \/
 	FactionMotifs = Factions;
 	NounMotifs = Nouns;
 	VerbMotifs = Verbs;
-	PlayableMotifs = AllPlayableMotifs;
 
 	// /\ Set Variables /\
 
 	// \/ Find Duration \/
 
-	for (TSubclassOf<UBaseFactionMotif> EveryFactionMotif : FactionMotifs)
+	for (UBaseFactionMotif* EveryFactionMotif : FactionMotifs)
 	{
-		Duration += EveryFactionMotif.GetDefaultObject()->Duration;
+		Duration += EveryFactionMotif->Duration;
 	}
-	for (TSubclassOf<UBaseNounMotif> EveryNounMotif : NounMotifs)
+	for (UBaseNounMotif* EveryNounMotif : NounMotifs)
 	{
-		Duration += EveryNounMotif.GetDefaultObject()->Duration;
+		Duration += EveryNounMotif->Duration;
 	}
-	for (TSubclassOf<UBaseVerbMotif> EveryVerbMotif : VerbMotifs)
+	for (UBaseVerbMotif* EveryVerbMotif : VerbMotifs)
 	{
-		Duration += EveryVerbMotif.GetDefaultObject()->Duration;
+		Duration += EveryVerbMotif->Duration;
 	}
 
 	// /\ Find Duration /\
 
-	bIsActive = true;
 }
 
 /* /\ Initialization /\ *\
@@ -57,23 +54,20 @@ void UVoidsong::InitializeVariables(const TArray<TSubclassOf<UBaseFactionMotif>>
  */
 void UVoidsong::Tick(float DeltaTime)
 {
-	if (bIsActive)
+	//Broadcast the ForDuration delegate
+	ForDuration.Broadcast(DeltaTime);
+
+	// \/ Check if the Voidsong has played for the correct Duration, if so, Deactivate \/
+
+	TimeSincePlayed += DeltaTime;
+
+	if (TimeSincePlayed >= Duration)
 	{
-		//Broadcast the ForDuration delegate
-		ForDuration.Broadcast(DeltaTime);
-
-		// \/ Check if the Voidsong has played for the correct Duration, if so, Deactivate \/
-
-		TimePlayed += DeltaTime;
-
-		if (TimePlayed >= Duration)
-		{
-			Deactivate();
-		}
-
-		// /\ Check if the Voidsong has played for the correct Duration, if so, Deactivate /\
-
+		Deconstruct();
 	}
+
+	// /\ Check if the Voidsong has played for the correct Duration, if so, Deactivate /\
+
 }
 
 /**
@@ -105,9 +99,14 @@ TStatId UVoidsong::GetStatId() const
 /**
  * Deactivates the Voidsong
  */
-void UVoidsong::Deactivate()
+void UVoidsong::Deconstruct()
 {
-	bIsActive = false;
+	//Unbind the delegates
+	ForDuration.Clear();
+	OnBeat.Clear();
+	
+	//Destroy the object
+	ConditionalBeginDestroy();
 }
 
 /* /\ Deactivation /\ *\

@@ -11,9 +11,9 @@
  *
  * @param VoidsongsAdded - The new playable Voidsongs
  */
-void AShip::AddNewMotifs(TArray<TSubclassOf<UBaseMotif>> MotifsAdded)
+void AShip::AddNewMotifs(TArray<UBaseMotif*> MotifsAdded)
 {
-	for (TSubclassOf<UBaseMotif> EachMotifAdded : MotifsAdded)
+	for (UBaseMotif* EachMotifAdded : MotifsAdded)
 	{
 		PlayableMotifs.Emplace(EachMotifAdded);
 	}
@@ -32,12 +32,55 @@ void AShip::AddNewMotifs(TArray<TSubclassOf<UBaseMotif>> MotifsAdded)
  * @param Nouns - The Noun Motifs played
  * @param Verbs - The Verb Motifs played
  */
-void AShip::PlayVoidsong(const TArray<TSubclassOf<UBaseFactionMotif>>& Factions, const TArray<TSubclassOf<UBaseNounMotif>>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs)
+void AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs)
 {
+
+	// \/ Check if Factions is empty, if so play every playable Faction \/
+
+	TArray<UBaseFactionMotif*> FactionsToPlay;
+	
+	if (!Factions.IsEmpty())
+	{
+		FactionsToPlay = Factions;
+	}
+	else
+	{
+		for (UBaseMotif* EachPlayableMotif : PlayableMotifs)
+		{
+			if (IsValid(Cast<UBaseFactionMotif>(EachPlayableMotif)))
+			{
+				FactionsToPlay.Emplace(Cast<UBaseFactionMotif>(EachPlayableMotif));
+			}
+		}
+	}
+
+	// /\ Check if Factions is empty, if so play every playable Faction /\
+
+	// \/ Check if Nouns is empty, if so play every playable Noun \/
+
+	TArray<UBaseNounMotif*> NounsToPlay;
+
+	if (!Nouns.IsEmpty())
+	{
+		NounsToPlay = Nouns;
+	}
+	else
+	{
+		for (UBaseMotif* EachPlayableMotif : PlayableMotifs)
+		{
+			if (IsValid(Cast<UBaseNounMotif>(EachPlayableMotif)))
+			{
+				NounsToPlay.Emplace(Cast<UBaseNounMotif>(EachPlayableMotif));
+			}
+		}
+	}
+
+	// /\ Check if Nouns is empty, if so play every playable Noun /\
+	
 	//Call the globally available "PlayVoidsong" function on the Game Mode
 	if (IsValid(Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))))
 	{
-		Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->PlayVoidsong(Factions, Nouns, Verbs, PlayableMotifs);
+		Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->PlayVoidsong(FactionsToPlay, NounsToPlay, Verbs);
 	}
 }
 

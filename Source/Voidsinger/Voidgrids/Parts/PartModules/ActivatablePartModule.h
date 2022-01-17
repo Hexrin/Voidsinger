@@ -98,7 +98,7 @@ public:
 	 * Allows for blueprint logic when the part module is activated
 	 */
 	UFUNCTION(BlueprintImplementableEvent, DisplayName = "Activate", Category = "Activation")
-		void OnActivate(const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, float Effectiveness);
+	void OnActivate(const TArray<UBaseVerbMotif*>& Verbs, float Effectiveness);
 
 	// \/ Activate \/
 
@@ -136,12 +136,8 @@ public:
 	 * Checks whether to bind to the Voidsong given by seeing if this module statisfies the Voidsong conditions. If it does, ActivateWithEffectiveness is bound to the relavent VoidsongCues.
 	 *
 	 * @param Voidsong - The Voidsong to bind to
-	 * @param Factions - The Factions that were activated
-	 * @param Nouns - The Nouns that were activated
-	 * @param Verbs - The Verbs that were activated
-	 * @param PlayableMotifs - The Motifs playable by whatever played the Voidsong
 	 */
-	void BindToVoidsong(UVoidsong* Voidsong, const TArray<EFaction>& Factions, const TArray<ENoun>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, const TSet<TSubclassOf<UBaseMotif>>& PlayableMotifs);
+	void BindToVoidsong(UVoidsong* Voidsong);
 
 	// The events to bind Activate to
 	UPROPERTY(EditAnywhere, Category = "DelegateBinding")

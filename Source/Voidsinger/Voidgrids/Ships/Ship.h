@@ -9,7 +9,7 @@
 
 /**
  * A controllable Voidgrid.
- * Can recive input and handels thrust control.
+ * Can receive input and handles thrust control.
  */
 UCLASS()
 class VOIDSINGER_API AShip : public AVoidgrid
@@ -27,12 +27,12 @@ public:
 	 * @param VoidsongsAdded - The new playable Voidsongs
 	 */
 	UFUNCTION(BlueprintCallable, Category = "PlayableVoidsongManagement")
-	void AddNewMotifs(TArray<TSubclassOf<UBaseMotif>> MotifsAdded);
+	void AddNewMotifs(TArray<UBaseMotif*> MotifsAdded);
 
 protected:
 
 	//Stores the Voidsongs that this component can play.
-	TSet<TSubclassOf<UBaseMotif>> PlayableMotifs;
+	TSet<UBaseMotif*> PlayableMotifs;
 
 	/* /\ Playable Voidsong Management /\ *\
 	\* ---------------------------------- */
@@ -48,7 +48,7 @@ protected:
 	 * @param Verbs - The Verb Motifs played
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VoidsongActivation")
-	void PlayVoidsong(const TArray<TSubclassOf<UBaseFactionMotif>>& Factions, const TArray<TSubclassOf<UBaseNounMotif>>& Nouns, const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs);
+	void PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs);
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */
