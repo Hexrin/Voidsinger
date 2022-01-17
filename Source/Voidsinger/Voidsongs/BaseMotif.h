@@ -20,6 +20,8 @@
 * If this is done the class should no longer derive from FTickableGameObject.
 */
 
+//Config should not be required for this class as whenever an instance of it is chaged that change is save so long as you save the asset in the content brouser
+
 /**
  * The base Voidsong is the base class for all Voidsongs. It holds information such as the activation sequence for the Voidsong.
  */

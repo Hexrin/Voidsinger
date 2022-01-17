@@ -16,6 +16,13 @@
 \* \/ Delegates \/ */
 
 /**
+* Delegate comment should not say when it is called, only the information it brodcasts.
+* Why is PlayableMotifs a parameter? The manger should not care what motifs a thing can play. The voidsong player should be responsable for whether or not it can play a song.
+* Why do th Factions, Nouns, and Verbs parameters exist? Shouldn't all that information be stored on the UVoidsong?
+* Is nesseary to divide motifs by type? If it truly is then consider making a struct for redablity and easy iteration over all motifs.
+* - Liam Suggestion
+*/
+/**
  * Delegate called when any Voidsong is played
  * 
  * @param Voidsong - The Voidsong object of this Voidsong
@@ -41,7 +48,9 @@ class VOIDSINGER_API UVoidsongManager : public UObject
 	\* \/ Voidsong Activation \/ */
 
 public:
-
+	//Why is PlayableMotifs a parameter? The manger should not care what motifs a thing can play. The voidsong player should be responsable for whether or not it can play a song.
+	//It may be a wise idea to make this return the UVoidsong* this function creates so the voidsong player can bind functions to the voidsong's delegates. For example the voidsong component could set can play voidsong to true OnVoidsongEnded.
+	// - Liam Suggestion
 	/**
 	* Plays a Voidsong with the given Motifs
 	*

@@ -20,6 +20,7 @@ class VOIDSINGER_API UBaseVerbMotif : public UBaseMotif
 
 public:
 
+	//I dont think play is the right word as its already been played if its effect is taking place. Perhapse apply effect(affect?) - Liam Suggestion
 	/**
 	 * Does the effect of the Verb using the given information.
 	 *

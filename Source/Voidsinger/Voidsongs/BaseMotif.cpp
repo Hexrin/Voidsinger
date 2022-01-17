@@ -3,6 +3,7 @@
 
 #include "BaseMotif.h"
 
+//Shouldnt be needed. - Liam Suggestion
 /**
  * Sets default values for this object's properties
  */
