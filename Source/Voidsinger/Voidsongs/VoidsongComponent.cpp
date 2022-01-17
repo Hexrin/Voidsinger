@@ -1,5 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+/* !! ========== !! *\
+|  \/ Deprecated \/  |
+\* !! ========== !! */
 
 #include "Voidsinger/Voidsongs/VoidsongComponent.h"
 #include "VoidsongComponent.h"
@@ -291,3 +294,7 @@ void UVoidsongComponent::BeginPlay()
 
 /* /\ Old Voidsong functions from AShip (put here for reference, will be deleted) /\ *\
 \* ------------------------------------------------------------------------------------- */
+
+/* !! ========== !! *\
+|  /\ Deprecated /\  |
+\* !! ========== !! */

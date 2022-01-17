@@ -3,9 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidsongs/BaseMotif.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 #include "Ship.generated.h"
+
+/* -------------------------- *\
+\* \/ Forward Declarations \/ */
+
+class UBaseMotif;
+class UBaseFactionMotif;
+class UBaseNounMotif;
+class UBaseVerbMotif;
+
+/* /\ Forward Declarations /\ *\
+\* ------------------------- */
 
 /**
  * A controllable Voidgrid.

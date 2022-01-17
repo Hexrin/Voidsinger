@@ -2,7 +2,7 @@
 
 
 #include "FunctionLibrary.h"
-#include "Voidsinger/Voidsongs/Verbs/BaseVerbMotif.h"
+#include "Voidsinger/Voidsongs/Motifs/Verbs/BaseVerbMotif.h"
 
 //#include "DrawDebugHelpers.h" // Remove this when debugging is done
 //#include "Parts/Part.h"
@@ -16,11 +16,11 @@
  * @param Hit - The hit result information
  * @param Effectiveness - The effectiveness of the activation
  */
-void UFunctionLibrary::ExecuteVerbMotifs(const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, UObject* Instigator, FHitResult Hit, float Effectiveness)
+void UFunctionLibrary::ExecuteVerbMotifs(const TArray<UBaseVerbMotif*>& Verbs, UObject* Instigator, FHitResult Hit, float Effectiveness)
 {
-	for (TSubclassOf<UBaseVerbMotif> EachVerb : Verbs)
+	for (UBaseVerbMotif* EachVerb : Verbs)
 	{
-		Cast<UBaseVerbMotif>(EachVerb->GetDefaultObject())->Play(Instigator, Hit, Effectiveness);
+		EachVerb->Play(Instigator, Hit, Effectiveness);
 	}
 }
 

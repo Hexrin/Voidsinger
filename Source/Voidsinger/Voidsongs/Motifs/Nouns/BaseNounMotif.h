@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidsongs/BaseMotif.h"
+#include "Voidsinger/Voidsongs/Motifs/BaseMotif.h"
 #include "BaseNounMotif.generated.h"
 
 /* -------------------------- *\
@@ -11,7 +11,7 @@
 
 class UPart;
 
-/* /\ Foward Declarations /\ *\
+/* /\ Forward Declarations /\ *\
 \* ------------------------- */
 
 /* \/ ===== \/ *\

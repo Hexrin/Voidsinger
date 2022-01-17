@@ -35,7 +35,7 @@ public:
 	 * @param Effectiveness - The effectiveness of the activation
 	 */
 	UFUNCTION(BlueprintCallable)
-	static void ExecuteVerbMotifs(const TArray<TSubclassOf<UBaseVerbMotif>>& Verbs, UObject* Instigator, FHitResult Hit, float Effectiveness);
+	static void ExecuteVerbMotifs(const TArray<UBaseVerbMotif*>& Verbs, UObject* Instigator, FHitResult Hit, float Effectiveness);
 
 //	////Used for the creation widget. Avoid using this at runtime, it's quite a performance hit. 
 //	//UFUNCTION(BlueprintCallable, meta = (DisplayName = "Get Child Classes", Keywords = "Get Child Classes"), Category = Class)

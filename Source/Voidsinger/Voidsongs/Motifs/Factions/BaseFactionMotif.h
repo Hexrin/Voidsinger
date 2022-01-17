@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidsongs/BaseMotif.h"
+#include "Voidsinger/Voidsongs/Motifs/BaseMotif.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "BaseFactionMotif.generated.h"
 

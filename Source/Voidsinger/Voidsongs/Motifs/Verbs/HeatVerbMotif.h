@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidsongs/Verbs/BaseVerbMotif.h"
-#include "ColdVerbMotif.generated.h"
+#include "BaseVerbMotif.h"
+#include "HeatVerbMotif.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VOIDSINGER_API UColdVerbMotif : public UBaseVerbMotif
+class VOIDSINGER_API UHeatVerbMotif : public UBaseVerbMotif
 {
 	GENERATED_BODY()
 	

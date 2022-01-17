@@ -13,7 +13,7 @@
 
 class UPart;
 
-/* /\ Foward Declarations /\ *\
+/* /\ Forward Declarations /\ *\
 \* ------------------------- */
 
 /* \/ ============== \/ *\

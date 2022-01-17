@@ -4,10 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "BaseMotif.h"
-#include "Factions/BaseFactionMotif.h"
-#include "Nouns/BaseNounMotif.h"
-#include "Verbs/BaseVerbMotif.h"
+#include "VoidsongData.h"
 #include "VoidsongComponent.generated.h"
 
 //Old delegates from AShip (put here for reference, will be deleted)

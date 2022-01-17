@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseMotif.h"
-#include "Factions/BaseFactionMotif.h"
-#include "Nouns/BaseNounMotif.h"
-#include "Verbs/BaseVerbMotif.h"
+#include "Motifs/BaseMotif.h"
+#include "Motifs/Factions/BaseFactionMotif.h"
+#include "Motifs/Nouns/BaseNounMotif.h"
+#include "Motifs/Verbs/BaseVerbMotif.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "VoidsongData.generated.h"
 
