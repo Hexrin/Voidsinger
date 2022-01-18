@@ -151,6 +151,24 @@ void AVoidgrid::SetState(FVoidgridState NewState)
 }
 
 /**
+ * Gets the state of this voidgrid.
+ *
+ * @return The state of this voidgrid.
+ */
+FVoidgridState AVoidgrid::GetState()
+{
+	TSet<FPartInstanceData> AllPartInstanceData = TSet<FPartInstanceData>();
+	TSet<FMinimalPartInstanceData> AllMinimalPartInstanceData = TSet<FMinimalPartInstanceData>();
+	for (UPart* Part : Parts)
+	{
+		AllPartInstanceData.Add(Part->GetPartInstanceData());
+		AllMinimalPartInstanceData.Add(Part->GetMinimalPartInstanceData());
+	}
+
+	return FVoidgridState(AllMinimalPartInstanceData, AllPartInstanceData);
+}
+
+/**
  * Damages a pixel.
  *
  * @param Location - The location of the pixel to damage.
