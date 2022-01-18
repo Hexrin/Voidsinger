@@ -94,6 +94,16 @@ UPart::UPart(UPart& Other)
 }
 
 /**
+ * Gets information required to replicate and its state.
+ *
+ * @return The part instance data for this part.
+ */
+FPartInstanceData UPart::GetPartInstanceData()
+{
+	return FPartInstanceData(GetMinimalPartInstanceData(), GetShape());
+}
+
+/**
  * Gets the minimnal part data for this part.
  *
  * @return The minimnal part data for this part.

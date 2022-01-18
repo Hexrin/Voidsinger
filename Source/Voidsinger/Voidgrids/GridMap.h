@@ -212,6 +212,14 @@ public:
 	}
 
 	/**
+	 * Remove all values from the grid map.
+	 */
+	void Empty()
+	{
+		return GridInfo.Empty();
+	}
+
+	/**
 	 * Gets all Location Value Pairs.
 	 *
 	 * @return An array of all Location Value Pairs.

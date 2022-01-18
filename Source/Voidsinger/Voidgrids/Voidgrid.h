@@ -19,7 +19,13 @@ typedef TGridMap<PixelType> PixelMoldType;
 //Stores all information required to replicate a mold
 typedef TSet<FMinimalPartInstanceData> MinimalPixelMoldDataType;
 
-//Stores data about a pixel.
+/* \/ =============== \/ *\
+|  \/ Grid Pixel Data \/  |
+\* \/ =============== \/ */
+
+/**
+ * Stores data about a pixel.
+ */
 USTRUCT()
 struct VOIDSINGER_API FGridPixelData
 {
@@ -81,7 +87,6 @@ public:
 	 */
 	void SetIntact(bool bNewIntact)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Intact to: %s"), bNewIntact ? *FString("True") : *FString("False"));
 		if (bNewIntact != bIntact)
 		{			
 			Temperature = 0;
@@ -135,11 +140,9 @@ public:
 			NewPart = UPart::GetNullPart();
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("Set Current part to: %s"), *NewPart->GetName());
 		if (CurrentPart != NewPart && IsValid(Material) && IsValid(NewPart) && IsValid(NewPart->GetData()) && IsValid(NewPart->GetData()->Texture))
 		{
 			Material->SetTextureParameterValue(TEXT("PartTexture"), NewPart->GetData()->Texture);
-			UE_LOG(LogTemp, Warning, TEXT("Set texture to: %s"), *NewPart->GetData()->Texture->GetName());
 		}
 		CurrentPart = NewPart;
 	}
@@ -151,7 +154,6 @@ public:
 	 */
 	UPart* GetTargetPart()
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Get TargetPart =: %s"), *TargetPart->GetName());
 		return TargetPart;
 	}
 
@@ -168,7 +170,6 @@ public:
 			NewPart = UPart::GetNullPart();
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("Set TargetPart to: %s"), *NewPart->GetName());
 		TargetPart = NewPart;
 	}
 
@@ -223,6 +224,55 @@ FORCEINLINE uint32 GetTypeHash(const FGridPixelData& Thing)
 }
 #endif
 
+/* /\ =============== /\ *\
+|  /\ Grid Pixel Data /\  |
+\* /\ =============== /\ */
+
+
+
+
+
+/* \/ ============== \/ *\
+|  \/ Voidgrid State \/  |
+\* \/ ============== \/ */
+
+/**
+ * Stores all data required to replicate a voidgrid.
+ */
+USTRUCT()
+struct VOIDSINGER_API FVoidgridState
+{
+	GENERATED_BODY()
+
+public:
+	//Stores the mold of the voidgrid
+	MinimalPixelMoldDataType Mold = MinimalPixelMoldDataType();
+
+	//Stores the state of the voidgrid's pixels.
+	TSet<FPartInstanceData> State = TSet<FPartInstanceData>();
+
+	/**
+	 * Initilizes a voidgrid state using its mold and pixel state.
+	 */
+	FVoidgridState(MinimalPixelMoldDataType VoidgridMold = MinimalPixelMoldDataType(), TSet<FPartInstanceData> VoidgridPixelState = TSet<FPartInstanceData>())
+	{
+		Mold = VoidgridMold;
+		State = VoidgridPixelState;
+	}
+};
+
+/* /\ =============== /\ *\
+|  /\ Grid Pixel Data /\  |
+\* /\ =============== /\ */
+
+
+
+
+
+/* \/ ========= \/ *\
+|  \/ AVoidgrid \/  |
+\* \/ ========= \/ */
+
 //Used for disbatching events requireing a grid locaiton
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGridLocationDelegate, FIntPoint, GridLocaction);
 
@@ -235,6 +285,70 @@ public:
 	//Sets default values for this voidgrid's properties
 	AVoidgrid();
 
+	//Used to update location and thrust control.
+	virtual void Tick(float DeltaTime) override;
+
+	/* ------------- *\
+	\* \/ Physics \/ */
+
+	/**
+	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
+	 * 
+	 * @param Impulse - The impluse to apply to this voidgrid.
+	 * @param ImpulseLocation - The location to apply the impulse at.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void AddImpulse(FVector2D Impulse, FVector2D ImpulseLocation = FVector2D::ZeroVector);
+
+	/**
+	 * Gets the instantaneous linear velocity of a point on this Voidgrid
+	 *
+	 * @param Location - The location of the point to get the velocity of.
+	 */
+	UFUNCTION(BlueprintPure)
+	FVector2D GetVelocityOfPoint(FVector2D Location);
+
+private:
+	/**
+	 * Updates the voidgrids location and rotation by its velocity. Also sweeps for collisions and computes new velocities
+	 */
+	UFUNCTION()
+	void UpdateTransform(float DeltaTime);
+
+	/**
+	 * Updates Mass, CenterOfMass, MomentOfInertia
+	 */
+	UFUNCTION()
+	void UpdateMassProperties(float DeltaMass, FVector2D MassLocation);
+
+	//Stores the linear velocity of this voidgrid.
+	UPROPERTY()
+	FVector2D LinearVelocity;
+
+	//Stores the angular velocity of this voidgrid.
+	UPROPERTY()
+	float AngularVelocity;
+
+	//Stores the mass of this voidgrid.
+	UPROPERTY()
+	float Mass{ 1 };
+
+	//Stores the mass of this voidgrid.
+	UPROPERTY()
+	FVector2D CenterOfMass{ FVector2D::ZeroVector };
+
+	//Stores the moment of inertia of this voidgrid.
+	UPROPERTY()
+	float MomentOfInertia;
+
+	//Stores the default Collision Channel used to test for collisions with other voidgrids.
+	UPROPERTY()
+	ECollisionChannel VoidgridCollsionChanel;
+	/* /\ Physics /\ *\
+	\* ------------- */
+
+
+
 	/* ---------------- *\ 
 	\* \/ Pixel Mold \/ */
 
@@ -245,18 +359,34 @@ public:
 	FGridLocationDelegate OnRepaired;
 
 	/**
-	 * Sets the pixel mold of the ship
+	 * Sets the pixel mold of the voidgrid
 	 * 
-	 * @param NewPixelMold - The value to assign to the pixel mold of the ship
+	 * @param NewPixelMold - The value to assign to the pixel mold of the voidgrid
 	 */
-	void SetPixelMold(MinimalPixelMoldDataType NewPixelMold);
+	UFUNCTION(BlueprintCallable)
+	void SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold);
 
 	/**
-	 * Gets the minimal part data for all parts on this void grid.
+	 * Gets the minimal part data for all parts on this voidgrid.
 	 * 
-	 * @return The minimal part data for all parts on this void grid.
+	 * @return The minimal part data for all parts on this voidgrid.
 	 */
-	MinimalPixelMoldDataType GetMinimalMoldData();
+	UFUNCTION(BlueprintPure)
+	TSet<FMinimalPartInstanceData> GetPixelMold();
+
+	/**
+	 * Sets the state of this voidgrid.
+	 *
+	 * @param NewState - The state to make this voidgrid match.
+	 */
+	void SetState(FVoidgridState NewState);
+
+	/**
+	 * Gets the state of this voidgrid.
+	 *
+	 * @return The state of this voidgrid.
+	 */
+	FVoidgridState GetState();
 
 	/**
 	 * Damages a pixel.
@@ -278,6 +408,28 @@ public:
 	void RepairPixel();
 
 private:
+	/**
+	 * Set pixel intact
+	 *
+	 * @param Location - The location of the pixel to edit.
+	 * @param bNewIntact - The new integrity of the pixel.
+	 */
+	void SetPixelIntact(GridLocationType Location, bool bNewIntact);
+
+	/**
+	 * Set pixel target
+	 *
+	 * @param Location - The location of the pixel to edit.
+	 * @param NewTarget - The new target of the pixel.
+	 */
+	void SetPixelTarget(GridLocationType Location, UPart* NewTarget);
+		
+	/**
+	 * Removes all parts from this voidgrid.
+	 * Does not call OnDamaged.
+	 */
+	void ClearVoidgrid();
+
 	//Stores the Pixel Mold of this.
 	PixelMoldType PixelMold;
 
@@ -383,3 +535,7 @@ public:
 	/* /\ Faction /\ *\
 	\* ------------- */
 };
+
+/* /\ ========= /\ *\
+|  /\ AVoidgrid /\  |
+\* /\ ========= /\ */

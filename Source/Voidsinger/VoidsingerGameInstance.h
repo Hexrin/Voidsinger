@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "ChildClassesFinder.h"
 #include "VoidsingerGameInstance.generated.h"
 
 /**
@@ -15,7 +14,4 @@ class VOIDSINGER_API UVoidsingerGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY(EditDefaultsOnly, Instanced, BlueprintReadOnly)
-	UChildClassesFinder* ChildClassFinder;
 };
