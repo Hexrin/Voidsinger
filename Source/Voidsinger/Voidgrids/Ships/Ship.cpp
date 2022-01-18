@@ -95,6 +95,8 @@ void AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArra
 
 /* /\ Voidsong Activation /\ *\
 \* ------------------------- */
+
+
 /* ----------------------- *\
 \* \/ Ship State Saving \/ */
 
