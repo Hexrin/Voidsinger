@@ -90,3 +90,19 @@ void UVoidsong::Deconstruct()
 
 /* /\ Deactivation /\ *\
 \* ------------------ */
+
+/* ------------- *\
+\* \/ Getters \/ */
+
+/**
+ * Returns a copy of the Voidsong data
+ *
+ * @return - Copy of VoidsongData
+ */
+FVoidsongData UVoidsong::GetVoidsongData()
+{
+	return FVoidsongData(VoidsongData.GetFactionMotifs(), VoidsongData.GetNounMotifs(), VoidsongData.GetVerbMotifs());
+}
+
+/* /\ Getters /\ *\
+\* ------------- */

@@ -114,4 +114,20 @@ private:
 
 	/* /\ Deactivation /\ *\
 	\* ------------------ */
+
+	/* ------------- *\
+	\* \/ Getters \/ */
+	
+public:
+
+	/**
+	 * Returns a copy of the Voidsong data
+	 * 
+	 * @return - Copy of VoidsongData
+	 */
+	FVoidsongData GetVoidsongData();
+
+	/* /\ Getters /\ *\
+	\* ------------- */
+
 };
