@@ -41,33 +41,43 @@ AVoidgrid::AVoidgrid()
  *
  * @param NewPixelMold - The value to assign to the pixel mold of the ship
  */
-void AVoidgrid::SetPixelMold(MinimalPixelMoldDataType NewPixelMold)
+void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 {
 	MinimalPixelMoldDataType DataOfPartsToCreate = NewPixelMold;
 	//Remove Unneccesary Parts
-	for (TPair<GridLocationType, PixelType> PixelData : PixelMold.GetGridPairs())
+	for (UPart* Part : Parts)
 	{
-		FMinimalPartInstanceData PartData = FMinimalPartInstanceData(PixelData.Value.GetTargetPart()->GetData(), PixelData.Value.GetTargetPart()->GetTransform());
-		if (!NewPixelMold.Contains(PartData))
-		{
-			Parts.Remove(PixelData.Value.GetTargetPart());
-			if (PixelData.Value.GetCurrentPart() == UPart::GetNullPart())
-			{
-				PixelMold.Remove(PixelData.Key);
-				MutablePixels.Remove(PixelData.Key);
-			}
-			else
-			{
-				TemporaryParts.Add(PixelData.Value.GetCurrentPart());
-				PixelMold.Find(PixelData.Key)->SetTargetPart(UPart::GetNullPart());
-				MutablePixels.Add(PixelData.Key);
-			}
-		}
-		else
+		FMinimalPartInstanceData PartData = Part->GetMinimalPartInstanceData();
+
+		if (NewPixelMold.Contains(PartData))
 		{
 			DataOfPartsToCreate.Remove(PartData);
 		}
+		else
+		{
+			for (GridLocationType PartPixelLocation : Part->GetTransform().TransformPartShape(Part->GetDefaultShape()))
+			{
+				SetPixelTarget(PartPixelLocation, UPart::GetNullPart());
+			}
+		}
 	}
+
+	for (UPart* Part : TemporaryParts)
+	{
+		FMinimalPartInstanceData PartData = Part->GetMinimalPartInstanceData();
+
+		if (NewPixelMold.Contains(PartData))
+		{
+			DataOfPartsToCreate.Remove(PartData);
+
+			for (GridLocationType PartPixelLocation : Part->GetTransform().TransformPartShape(Part->GetDefaultShape()))
+			{
+				SetPixelTarget(PartPixelLocation, Part);
+			}
+		}
+			
+	}
+
 
 	for (FMinimalPartInstanceData DataOfPartToCreate : DataOfPartsToCreate)
 	{
@@ -85,18 +95,77 @@ void AVoidgrid::SetPixelMold(MinimalPixelMoldDataType NewPixelMold)
 }
 
 /**
- * Gets the minimal part data for all parts on this void grid.
+ * Gets the minimal part data for all parts on this voidgrid.
  *
- * @return The minimal part data for all parts on this void grid.
+ * @return The minimal part data for all parts on this voidgrid.
  */
-MinimalPixelMoldDataType AVoidgrid::GetMinimalMoldData()
+MinimalPixelMoldDataType AVoidgrid::GetPixelMold()
 {
 	MinimalPixelMoldDataType AllPartsData = MinimalPixelMoldDataType();
-	for (TPair<GridLocationType, PixelType> PixelData : PixelMold.GetGridPairs())
+	for (UPart* Part : Parts)
 	{
-		AllPartsData.Add(PixelData.Value.GetTargetPart()->GetMinimalPartInstanceData());
+		AllPartsData.Add(Part->GetMinimalPartInstanceData());
 	}
 	return AllPartsData;
+}
+
+/**
+ * Sets the state of this voidgrid.
+ *
+ * @param NewState - The state to make this voidgrid match.
+ */
+void AVoidgrid::SetState(FVoidgridState NewState)
+{
+	ClearVoidgrid();
+	SetPixelMold(NewState.Mold);
+
+	for (FPartInstanceData PartState : NewState.State)
+	{
+		UPart* Part = nullptr;
+		if (!NewState.Mold.Contains(PartState.GetMinimalInstanceData()))
+		{
+			Part = UPart::CreatePart(this, PartState.GetMinimalInstanceData());
+			TemporaryParts.Add(Part);
+		}
+		else
+		{
+			for (GridLocationType FistShapeCompoenent : PartState.GetData()->Shape)
+			{
+				Part = PixelMold.Find(PartState.GetTransform().TransformGridLocation(FistShapeCompoenent))->GetTargetPart();
+				break;
+			}
+		}
+
+		for (GridLocationType ShapeComponent : PartState.GetShape())
+		{
+			GridLocationType ShapeCompoentLocation = PartState.GetTransform().TransformGridLocation(ShapeComponent);
+			if (!PixelMold.Contains(ShapeCompoentLocation))
+			{
+				PixelMold.Emplace(ShapeCompoentLocation, PixelType(Part, UPart::GetNullPart()));
+			}
+			SetPixelIntact(ShapeCompoentLocation, true);
+
+			UpdatePixelMesh(ShapeCompoentLocation);
+		}
+	}
+}
+
+/**
+ * Gets the state of this voidgrid.
+ *
+ * @return The state of this voidgrid.
+ */
+FVoidgridState AVoidgrid::GetState()
+{
+	TSet<FPartInstanceData> AllPartInstanceData = TSet<FPartInstanceData>();
+	TSet<FMinimalPartInstanceData> AllMinimalPartInstanceData = TSet<FMinimalPartInstanceData>();
+	for (UPart* Part : Parts)
+	{
+		AllPartInstanceData.Add(Part->GetPartInstanceData());
+		AllMinimalPartInstanceData.Add(Part->GetMinimalPartInstanceData());
+	}
+
+	return FVoidgridState(AllMinimalPartInstanceData, AllPartInstanceData);
 }
 
 /**
@@ -161,6 +230,91 @@ void AVoidgrid::RepairPixel()
 	{
 		RepairPixel(MutablePixels.Array()[FMath::RandRange(0, MutablePixels.Num() - 1)]);
 	}
+}
+
+/**
+ * Set pixel intact
+ *
+ * @param Location - The location of the pixel to edit.
+ * @param bNewIntact - The new integrity of the pixel.
+ */
+void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact)
+{
+	if (PixelMold.Contains(Location))
+	{
+		if (PixelMold.Find(Location)->IsIntact() != bNewIntact)
+		{
+			if (!bNewIntact) 
+			{
+				if (PixelMold.Find(Location)->GetTargetPart() == UPart::GetNullPart())
+				{
+					TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
+					MutablePixels.Remove(Location);
+					PixelMold.Remove(Location);
+				}
+				else
+				{
+					MutablePixels.Add(Location);
+					PixelMold.Find(Location)->SetIntact(bNewIntact);
+				}
+			}
+			else
+			{
+				PixelMold.Find(Location)->SetIntact(bNewIntact);
+			}
+			UpdatePixelMesh(Location);
+		}
+	}
+}
+
+/**
+ * Set pixel target
+ *
+ * @param Location - The location of the pixel to edit.
+ * @param NewTarget - The new target of the pixel.
+ */
+void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
+{
+	if (PixelMold.Contains(Location) && NewTarget != PixelMold.Find(Location)->GetTargetPart())
+	{
+		if (NewTarget == PixelMold.Find(Location)->GetCurrentPart())
+		{
+			MutablePixels.Remove(Location);
+			TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
+
+			if(NewTarget == UPart::GetNullPart())
+			{
+				PixelMold.Remove(Location);
+				UpdatePixelMesh(Location);
+			}
+			else
+			{
+				Parts.Add(PixelMold.Find(Location)->GetCurrentPart());
+			}
+		}
+		else
+		{
+			MutablePixels.Add(Location);
+			TemporaryParts.Add(PixelMold.Find(Location)->GetCurrentPart());
+			Parts.Remove(PixelMold.Find(Location)->GetCurrentPart());
+		}
+	}
+}
+
+/**
+ * Removes all parts from this voidgrid.
+ * Does not call OnDamaged.
+ */
+void AVoidgrid::ClearVoidgrid()
+{
+	TMap<GridLocationType, PixelType> GridPairs = PixelMold.GetGridPairs();
+	PixelMold.Empty();
+	for (TPair<GridLocationType, PixelType> Pair : GridPairs)
+	{
+		UpdatePixelMesh(Pair.Key);
+	}
+	Parts.Empty();
+	TemporaryParts.Empty();
 }
 
 /* /\ Pixel Mold /\ *\

@@ -30,7 +30,7 @@ void UPixelMoldEditorBase::ApplyMoldToTarget()
  */
 void UPixelMoldEditorBase::LoadMoldFromTarget()
 {
-	Mold = Target->GetMinimalMoldData();
+	Mold = Target->GetPixelMold();
 	OnMoldUpdated(Mold.Array(), Mold.Array(), false);
 }
 

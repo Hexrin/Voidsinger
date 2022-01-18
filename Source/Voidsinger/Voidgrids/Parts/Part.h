@@ -181,9 +181,16 @@ public:
 	FORCEINLINE UPartData* GetData() { return Data; };
 
 	/**
+	 * Gets information required to replicate and its state.
+	 *
+	 * @return The part instance data for this part.
+	 */
+	FPartInstanceData GetPartInstanceData();
+
+	/**
 	 * Gets information required to replicate but not its state.
 	 *
-	 * @return The minimnal part data for this part.
+	 * @return The minimnal instance part data for this part.
 	 */
 	FMinimalPartInstanceData GetMinimalPartInstanceData();
 
@@ -299,6 +306,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE AVoidgrid* GetVoidgrid() { return Voidgrid; };
 
+
 private:
 	//Stores the location and rotation of this.
 	UPROPERTY()
@@ -380,6 +388,15 @@ struct FPartInstanceData
 		return MinimalData.Transform;
 	}
 
+	FMinimalPartInstanceData GetMinimalInstanceData()
+	{
+		return FMinimalPartInstanceData(GetData(), GetTransform());
+	}
+
+	bool operator==(const FPartInstanceData& Other) const
+	{
+		return MinimalData == Other.MinimalData && Shape.Array() == Other.Shape.Array();
+	}
 
 	FPartInstanceData(UPartData* PartData, FPartTransform PartTransform, PartShapeType PartShape)
 	{
