@@ -87,7 +87,7 @@ public:
 	 */
 	void SetIntact(bool bNewIntact)
 	{
-		if (!bNewIntact && bIntact)
+		if (bNewIntact != bIntact)
 		{			
 			Temperature = 0;
 			SetCurrentPart(GetTargetPart());
