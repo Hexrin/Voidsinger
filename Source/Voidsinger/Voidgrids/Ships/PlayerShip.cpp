@@ -64,3 +64,60 @@ void APlayerShip::ZoomAxisInput(float AxisValue)
 {
 	SetCameraZoom(CameraZoomPercent + AxisValue * CameraZoomAxisScaling * -1);
 }
+
+/* ---------------------------- *\
+\* \/ Voidsong Input Actions \/ */
+
+/**
+ * Input action for Voidsong input 1
+ */
+void APlayerShip::Voidsong1InputAction()
+{
+	RecordVoidsongInput(1);
+}
+
+/**
+ * Input action for Voidsong input 2
+ */
+void APlayerShip::Voidsong2InputAction()
+{
+	RecordVoidsongInput(2);
+}
+
+/**
+ * Input action for Voidsong input 3
+ */
+void APlayerShip::Voidsong3InputAction()
+{
+	RecordVoidsongInput(3);
+}
+
+/**
+ * Input action for Voidsong input 4
+ */
+void APlayerShip::Voidsong4InputAction()
+{
+	RecordVoidsongInput(4);
+}
+
+/**
+ * Input action for Voidsong input 5
+ */
+void APlayerShip::Voidsong5InputAction()
+{
+	RecordVoidsongInput(1);
+}
+
+/**
+ * Input action for playing a Voidsong
+ */
+void APlayerShip::PlayVoidsongInputAction()
+{
+}
+
+void APlayerShip::RecordVoidsongInput(int32 Input)
+{
+}
+
+/* /\ Voidsong Input Actions /\ *\
+\* ---------------------------- */

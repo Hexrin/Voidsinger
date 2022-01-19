@@ -94,16 +94,56 @@ private:
 	/* /\ Camera /\ *\
 	\* ------------ */
 
-	/* ----------------------------- *\
-	\* \/ Voidsong Input Handling \/ */
-
 	/* ---------------------------- *\
 	\* \/ Voidsong Input Actions \/ */
 
+private:
 
+	/**
+	 * Input action for Voidsong input 1
+	 */
+	void Voidsong1InputAction();
 
-	/* /\ Voidsong Input Handling /\ *\
-	\* ----------------------------- */
+	/**
+	 * Input action for Voidsong input 2
+	 */
+	void Voidsong2InputAction();
+
+	/**
+	 * Input action for Voidsong input 3
+	 */
+	void Voidsong3InputAction();
+
+	/**
+	 * Input action for Voidsong input 4
+	 */
+	void Voidsong4InputAction();
+
+	/**
+	 * Input action for Voidsong input 5
+	 */
+	void Voidsong5InputAction();
+
+	/**
+	 * Input action for playing a Voidsong
+	 */
+	void PlayVoidsongInputAction();
+
+	/* /\ Voidsong Input Actions /\ *\
+	\* ---------------------------- */
+
+	/* ----------------------------- *\
+	\* \/ Voidsong Input Handling \/ */
+
+private:
+
+	/**
+	 * Records the incoming Voidsong input
+	 * 
+	 * @param Input - The input that was pressed
+	 */
+	void RecordVoidsongInput(int32 Input);
+
 
 	/* /\ Voidsong Input Handling /\ *\
 	\* ----------------------------- */
