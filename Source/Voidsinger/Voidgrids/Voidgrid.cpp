@@ -10,7 +10,7 @@ AVoidgrid::AVoidgrid()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// \/ Initialize Mesh Component \/ 
+	// \/ Initialize Mesh Component \/ /
 	PixelMeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Mesh Component"));
 	PixelMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	PixelMeshComponent->bUseComplexAsSimpleCollision = true;
@@ -32,7 +32,7 @@ AVoidgrid::AVoidgrid()
 	PixelTriangles += CreateTrianglesForPixelMeshFace(0, 4, 1, 5); //Side Face for collision
 	PixelTriangles += CreateTrianglesForPixelMeshFace(4, 6, 5, 7); //Side Face for collision
 	PixelTriangles += CreateTrianglesForPixelMeshFace(6, 2, 7, 3); //Side Face for collision
-	// /\ Initialize Mesh Component /\ 
+	// /\ Initialize Mesh Component /\ /
 
 }
 
