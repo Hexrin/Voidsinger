@@ -5,21 +5,13 @@
 #include "CoreMinimal.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 #include "GameFramework/SaveGame.h"
+#include "Voidsinger/Voidsongs/VoidsongData.h"
 #include "Ship.generated.h"
 
-/* -------------------------- *\
-\* \/ Forward Declarations \/ */
-
-class UBaseMotif;
-class UBaseFactionMotif;
-class UBaseNounMotif;
-class UBaseVerbMotif;
-
-/* /\ Forward Declarations /\ *\
-\* -------------------------- */
 /* \/ ==== \/ *\
 |  \/ Ship \/  |
 \* \/ ==== \/ */
+
 /**
  * A controllable Voidgrid.
  * Can receive input and handles thrust control.
@@ -58,9 +50,28 @@ protected:
 	 * @param Factions - The Faction Motifs played
 	 * @param Nouns - The Noun Motifs played
 	 * @param Verbs - The Verb Motifs played
+	 * 
+	 * @return - The Voidsong object that was played
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VoidsongActivation")
-	void PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs);
+	UVoidsong* PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs);
+
+	/*
+	 * Deactivates this ship's ability to play Voidsongs
+	 */
+	UFUNCTION(BlueprintCallable, Category = "VoidsongActivation")
+	void DeactivatePlayingVoidsongs();
+
+	/**
+	 * Activates this ship's ability to play Voidsongs
+	 */
+	UFUNCTION(BlueprintCallable, Category = "VoidsongActivation")
+	void ActivatePlayingVoidsongs();
+
+protected:
+
+	//Tracks whether this ship can play Voidsongs
+	bool bCanPlayVoidsongs;
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */
@@ -69,6 +80,7 @@ protected:
 	\* \/ Ship State Saving \/ */
 
 public:
+
 	/**
 	 * Saves this ships state.
 	 */
