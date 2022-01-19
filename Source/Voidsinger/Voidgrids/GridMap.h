@@ -92,7 +92,7 @@ public:
 	//Constucts a GridMap with the given Values and dimensions.
 	TGridMap(GridInfoType Values, GridLocationType GridDimensions = GridLocationType(250))
 	{
-		GridInfo = Values.Sort(LocationIDLessThan);
+		GridInfo = Values;
 		GridSize = GridDimensions;
 	}
 
