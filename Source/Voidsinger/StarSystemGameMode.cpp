@@ -11,13 +11,13 @@
  */
 AStarSystemGameMode::AStarSystemGameMode()
 {
-	// \/ old stuff \/
+	// \/ old stuff \/ 
 	
 	//LoadConfig();
 	//PlayerStateClass = AShipPlayerState::StaticClass();
 	//DefaultPawnClass = APlayerShip::StaticClass();
 
-	// /\ old stuff /\
+	// /\ old stuff /\ 
 
 	//Initialize the Voidsong Manager
 	VoidsongManager = NewObject<UVoidsongManager>(UVoidsongManager::StaticClass());

@@ -41,7 +41,7 @@ void AShip::AddNewMotifs(TArray<UBaseMotif*> MotifsAdded)
 void AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs)
 {
 
-	// \/ Check if Factions is empty, if so play every playable Faction \/
+	// \/ Check if Factions is empty, if so play every playable Faction \/ 
 
 	TArray<UBaseFactionMotif*> FactionsToPlay;
 	
@@ -60,9 +60,9 @@ void AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArra
 		}
 	}
 
-	// /\ Check if Factions is empty, if so play every playable Faction /\
+	// /\ Check if Factions is empty, if so play every playable Faction /\ 
 
-	// \/ Check if Nouns is empty, if so play every playable Noun \/
+	// \/ Check if Nouns is empty, if so play every playable Noun \/ 
 
 	TArray<UBaseNounMotif*> NounsToPlay;
 
@@ -81,7 +81,7 @@ void AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArra
 		}
 	}
 
-	// /\ Check if Nouns is empty, if so play every playable Noun /\
+	// /\ Check if Nouns is empty, if so play every playable Noun /\ 
 	
 	//Initialize VoidsongData
 	FVoidsongData VoidsongData = FVoidsongData(FactionsToPlay, NounsToPlay, Verbs);

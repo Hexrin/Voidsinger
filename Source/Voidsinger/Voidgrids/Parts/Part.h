@@ -227,7 +227,7 @@ public:
 
 public:
 
-	// \/ Activation Cues \/
+	// \/ Activation Cues \/ 
 
 	//Called when this part is damaged.
 	UPROPERTY(BlueprintAssignable)
@@ -253,7 +253,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FPartStateChangeCue OnFullyRepaired;
 
-	// /\ Activation Cues /\
+	// /\ Activation Cues /\ 
 
 private:
 

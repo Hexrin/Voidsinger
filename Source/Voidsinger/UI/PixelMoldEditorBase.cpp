@@ -143,7 +143,7 @@ bool UPixelMoldEditorBase::PlacePart(UPartData* Part, FPartTransform Transform, 
 	return false;
 }
 
-// \/ RemovePart() \/
+// \/ RemovePart() \/ 
 
 /**
  * Removes a part from the mold of this.
@@ -199,7 +199,7 @@ bool UPixelMoldEditorBase::RemovePart(FIntPoint Location, bool bCallUpdatedEvent
 	return true;
 }
 
-// /\ RemovePart() /\
+// /\ RemovePart() /\ 
 
 /**
  * Gets the part data of the part at the given location.

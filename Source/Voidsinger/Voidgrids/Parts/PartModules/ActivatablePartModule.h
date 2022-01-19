@@ -100,7 +100,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, DisplayName = "Activate", Category = "Activation")
 	void OnActivate(const TArray<UBaseVerbMotif*>& Verbs, float Effectiveness);
 
-	// \/ Activate \/
+	// \/ Activate \/ 
 
 	/**
 	 * Calls the "OnActivate" function with an Effectiveness of 1 so the part module's functionality is executed.
@@ -123,7 +123,7 @@ public:
 	 */
 	void ActivateFromVoidsong(const TArray<UBaseVerbMotif*> Verbs, float Effectiveness);
 
-	// /\ Activate /\
+	// /\ Activate /\ 
 
 	//Stores what Noun Motif will activate this part module. If unbound, this module will not be activatable by a Voidsong.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Activation")
