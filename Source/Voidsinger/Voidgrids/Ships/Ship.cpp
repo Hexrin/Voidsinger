@@ -43,7 +43,7 @@ UVoidsong* AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const
 	if (bCanPlayVoidsongs)
 	{
 
-		// \/ Check if Factions is empty, if so play every playable Faction \/ /
+	// \/ Check if Factions is empty, if so play every playable Faction \/ /
 
 		TArray<UBaseFactionMotif*> FactionsToPlay;
 
@@ -62,9 +62,10 @@ UVoidsong* AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const
 			}
 		}
 
-		// /\ Check if Factions is empty, if so play every playable Faction /\ /
 
-		// \/ Check if Nouns is empty, if so play every playable Noun \/ /
+	// /\ Check if Factions is empty, if so play every playable Faction /\ /
+
+	// \/ Check if Nouns is empty, if so play every playable Noun \/ /
 
 		TArray<UBaseNounMotif*> NounsToPlay;
 
@@ -105,7 +106,7 @@ UVoidsong* AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const
 		GetWorld()->GetTimerManager().SetTimer(DurationTimer, this, &AShip::ActivatePlayingVoidsongs, VoidsongData.GetDuration());
 
 		// /\ Make this ship unable to play Voidsongs until the duration is up /\ /
-
+	
 	}
 
 	//Return nullptr if no Voidsong is played

@@ -82,7 +82,7 @@ protected:
 	bool PlacePart(UPartData* Part, FPartTransform Transform, bool bOverrridePriorParts = false);
 
 
-	// \/ RemovePart() \/
+	// \/ RemovePart() \/ /
 
 	/**
 	 * Removes a part from the mold of this.
@@ -102,7 +102,7 @@ protected:
 	 */
 	bool RemovePart(FIntPoint Location, bool bCallUpdateEvent);
 
-	// /\ RemovePart() /\
+	// /\ RemovePart() /\ /
 
 	/**
 	 * Gets the part data of the part at the given location.

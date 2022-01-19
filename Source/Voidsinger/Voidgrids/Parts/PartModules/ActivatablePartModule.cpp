@@ -28,7 +28,7 @@ void UActivatablePartModule::InitializeVariables(UPart* OwningPart)
 /* ---------------- *\
 \* \/ Activation \/ */
 
-// \/ Activate \/
+// \/ Activate \/ /
 
 /**
  * Calls the "ActivateWithEffectiveness" function with an Effectiveness of 1 so the part module's functionality is executed.
@@ -60,7 +60,7 @@ void UActivatablePartModule::ActivateFromVoidsong(const TArray<UBaseVerbMotif*> 
 	OnActivate(Verbs, Effectiveness);
 }
 
-// /\ Activate /\
+// /\ Activate /\ /
 
 /* /\ Activation /\ *\
 \* ---------------- */
@@ -73,7 +73,7 @@ void UActivatablePartModule::BindToDelegates()
 	//Bind "BindToVoidsong" to Voidsong played
 	Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->OnVoidsongPlayed.AddDynamic(this, &UActivatablePartModule::BindToVoidsong);
 
-	// \/ Bind Activate to the Activation Cues selected \/
+	// \/ Bind Activate to the Activation Cues selected \/ /
 
 	if ((bool)(ActivationCues & EActivationCue::OnDamaged))
 	{
@@ -104,7 +104,7 @@ void UActivatablePartModule::BindToDelegates()
 		//Bind to on tick here (Delegate is not available yet)
 	}
 
-	// /\ Bind Activate to the Activation Cues selected /\
+	// /\ Bind Activate to the Activation Cues selected /\ /
 
 }
 

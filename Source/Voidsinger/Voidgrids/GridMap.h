@@ -92,7 +92,7 @@ public:
 	//Constucts a GridMap with the given Values and dimensions.
 	TGridMap(GridInfoType Values, GridLocationType GridDimensions = GridLocationType(250))
 	{
-		GridInfo = Values.Sort(LocationIDLessThan);
+		GridInfo = Values;
 		GridSize = GridDimensions;
 	}
 
@@ -132,7 +132,7 @@ public:
 	\* \/ Search \/ */
 
 public:
-	// \/ Contains \/
+	// \/ Contains \/ /
 
 	/**
 	 * Checks if there is a value at a given location.
@@ -159,8 +159,7 @@ public:
 		return GridInfo.Contains(Location) && Pred(GridInfo.Find(Location));
 	}
 
-	// /\ Contains /\
-
+	// /\ Contains /\ /
 
 	/**
 	 * Finds the value at a given location.
