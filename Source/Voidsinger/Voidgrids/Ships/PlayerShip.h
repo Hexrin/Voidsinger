@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Ship.h"
 #include "Camera/CameraComponent.h"
+#include "Components/AudioComponent.h"
 #include "PlayerShip.generated.h"
 
 /**
@@ -16,15 +17,40 @@ class VOIDSINGER_API APlayerShip : public AShip
 
 
 public:
+
+	/* ------------------ *\
+	\* \/ Initializers \/ */
+
 	/**
-	 * Inilizes the camrea and posesses the player.
+	 * Initializes the camera and posesses the player.
 	 */
 	APlayerShip();
 
 	/**
-	 * Binds movment, camera control, and voidsong input.
+	 * Binds movement, camera control, and voidsong input.
 	 */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	/**
+	 * Initializes the Voidsong Instrument
+	 */
+	virtual void BeginPlay() override;
+
+	/* /\ Initializers /\ *\
+	\* ------------------ */
+
+	/* ---------- *\
+	\* \/ Tick \/ */
+
+	/**
+	 * Tick override for checking if enough time has passed for the Voidsong sequence to be cleared
+	 * 
+	 * @param DeltaTime - The time between ticks
+	 */
+	virtual void Tick(float DeltaTime) override;
+
+	/* /\ Tick /\ *\
+	\* ---------- */
 
 	/**
 	 * Repairs a random pixel.
@@ -36,11 +62,11 @@ public:
 	\* \/ Camera \/ */
 
 public:
-	//Store a renfernce to the players camera.
+	//Store a reference to the player's camera.
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCameraComponent* Camera;
 
-	//Stores a refernce to the atacment point of the camera on the ship.
+	//Stores a reference to the attachment point of the camera on the ship.
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USceneComponent* CameraRoot;
 
@@ -144,8 +170,57 @@ private:
 	 */
 	void RecordVoidsongInput(int32 Input);
 
+	/**
+	 * Clears the current sequence of Voidsong inputs
+	 */
+	void ClearVoidsongSequence();
+
+public:
+
+	//The time the player has to wait without playing any Voidsong inputs to clear the Voidsong sequence
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta =  (ClampMin = "0"))
+	float VoidsongClearTime = 3.0;
+
+	//The asset to use as the Voidsong instrument
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TSoftObjectPtr<USoundBase> VoidsongInstrumentAsset;
+
+private:
+
+	//A reference to the Voidsong instrument
+	UAudioComponent* VoidsongInstrument;
+
+	//The sequence of Voidsong inputs that the player has played
+	TArray<int32> VoidsongSequence;
+
+	//Stores the time since the last Voidsong input was played
+	float TimeSinceLastVoidsongInput = 0;
 
 	/* /\ Voidsong Input Handling /\ *\
 	\* ----------------------------- */
 
+	/* ------------------------- *\
+	\* \/ Voidsong Activation \/ */
+
+private:
+
+	/**
+	 * Plays a Voidsong with the Motifs played in the sequence
+	 * 
+	 * @param Sequence - The sequence that was played
+	 */
+	void PlaySequence(TArray<int32> Sequence);
+
+	/**
+	 * Parses a sequence into separate Motifs
+	 * 
+	 * @param Sequence- The sequence to parse
+	 * @param OutFactions - The Faction Motifs found
+	 * @param OutNouns - The Noun Motifs found
+	 * @param OutVerbs - The Verb Motifs found
+	 */
+	void ParseSequenceIntoMotifData(TArray<int32> Sequence, TArray<UBaseFactionMotif*>& OutFactions, TArray<UBaseNounMotif*>& OutNouns, TArray<UBaseVerbMotif*>& OutVerbs);
+
+	/* /\ Voidsong Activation /\ *\
+	\* ------------------------- */
 };

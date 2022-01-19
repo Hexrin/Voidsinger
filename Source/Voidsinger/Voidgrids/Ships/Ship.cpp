@@ -2,7 +2,7 @@
 
 #include "Ship.h"
 #include "Voidsinger/StarSystemGameMode.h"
-#include "Voidsinger/Voidsongs/VoidsongData.h"
+#include "Voidsinger/Voidsongs/Voidsong.h"
 #include "Kismet/GameplayStatics.h"
 
 /* \/ ==== \/ *\
@@ -38,59 +38,95 @@ void AShip::AddNewMotifs(TArray<UBaseMotif*> MotifsAdded)
  * @param Nouns - The Noun Motifs played
  * @param Verbs - The Verb Motifs played
  */
-void AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs)
+UVoidsong* AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs)
 {
-
-	// \/ Check if Factions is empty, if so play every playable Faction \/
-
-	TArray<UBaseFactionMotif*> FactionsToPlay;
-	
-	if (!Factions.IsEmpty())
+	if (bCanPlayVoidsongs)
 	{
-		FactionsToPlay = Factions;
-	}
-	else
-	{
-		for (UBaseMotif* EachPlayableMotif : PlayableMotifs)
+
+		// \/ Check if Factions is empty, if so play every playable Faction \/ /
+
+		TArray<UBaseFactionMotif*> FactionsToPlay;
+
+		if (!Factions.IsEmpty())
 		{
-			if (IsValid(Cast<UBaseFactionMotif>(EachPlayableMotif)))
+			FactionsToPlay = Factions;
+		}
+		else
+		{
+			for (UBaseMotif* EachPlayableMotif : PlayableMotifs)
 			{
-				FactionsToPlay.Emplace(Cast<UBaseFactionMotif>(EachPlayableMotif));
+				if (IsValid(Cast<UBaseFactionMotif>(EachPlayableMotif)))
+				{
+					FactionsToPlay.Emplace(Cast<UBaseFactionMotif>(EachPlayableMotif));
+				}
 			}
 		}
-	}
 
-	// /\ Check if Factions is empty, if so play every playable Faction /\
+		// /\ Check if Factions is empty, if so play every playable Faction /\ /
 
-	// \/ Check if Nouns is empty, if so play every playable Noun \/
+		// \/ Check if Nouns is empty, if so play every playable Noun \/ /
 
-	TArray<UBaseNounMotif*> NounsToPlay;
+		TArray<UBaseNounMotif*> NounsToPlay;
 
-	if (!Nouns.IsEmpty())
-	{
-		NounsToPlay = Nouns;
-	}
-	else
-	{
-		for (UBaseMotif* EachPlayableMotif : PlayableMotifs)
+		if (!Nouns.IsEmpty())
 		{
-			if (IsValid(Cast<UBaseNounMotif>(EachPlayableMotif)))
+			NounsToPlay = Nouns;
+		}
+		else
+		{
+			for (UBaseMotif* EachPlayableMotif : PlayableMotifs)
 			{
-				NounsToPlay.Emplace(Cast<UBaseNounMotif>(EachPlayableMotif));
+				if (IsValid(Cast<UBaseNounMotif>(EachPlayableMotif)))
+				{
+					NounsToPlay.Emplace(Cast<UBaseNounMotif>(EachPlayableMotif));
+				}
 			}
 		}
+
+		// /\ Check if Nouns is empty, if so play every playable Noun /\ /
+
+		//Initialize VoidsongData
+		FVoidsongData VoidsongData = FVoidsongData(FactionsToPlay, NounsToPlay, Verbs);
+
+		//Call the globally available "PlayVoidsong" function on the Game Mode
+		if (IsValid(Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))))
+		{
+			return Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->PlayVoidsong(VoidsongData);
+		}
+		else
+		{
+			//Print an error message if unable to play due to invalid game mode or world
+			UE_LOG(LogTemp, Warning, TEXT("Failed to play Voidsong. Either the world or the game mode is null on ship %s"), *GetFName().ToString());
+		}
+		// \/ Make this ship unable to play Voidsongs until the duration is up \/ /
+
+		DeactivatePlayingVoidsongs();
+		FTimerHandle DurationTimer;
+		GetWorld()->GetTimerManager().SetTimer(DurationTimer, this, &AShip::ActivatePlayingVoidsongs, VoidsongData.GetDuration());
+
+		// /\ Make this ship unable to play Voidsongs until the duration is up /\ /
+
 	}
 
-	// /\ Check if Nouns is empty, if so play every playable Noun /\
-	
-	//Initialize VoidsongData
-	FVoidsongData VoidsongData = FVoidsongData(FactionsToPlay, NounsToPlay, Verbs);
+	//Return nullptr if no Voidsong is played
+	return nullptr;
 
-	//Call the globally available "PlayVoidsong" function on the Game Mode
-	if (IsValid(Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))))
-	{
-		Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->PlayVoidsong(VoidsongData);
-	}
+}
+
+/*
+ * Deactivates this ship's ability to play Voidsongs
+ */
+void AShip::DeactivatePlayingVoidsongs()
+{
+	bCanPlayVoidsongs = false;
+}
+
+/**
+ * Activates this ship's ability to play Voidsongs
+ */
+void AShip::ActivatePlayingVoidsongs()
+{
+	bCanPlayVoidsongs = true;
 }
 
 /* /\ Voidsong Activation /\ *\
