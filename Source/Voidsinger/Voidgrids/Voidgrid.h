@@ -285,41 +285,41 @@ public:
 	//Sets default values for this voidgrid's properties
 	AVoidgrid();
 
-	//Used to update location and thrust control.
-	virtual void Tick(float DeltaTime) override;
-
-	/* ------------- *\
-	\* \/ Physics \/ */
-
-	/**
-	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
-	 * 
-	 * @param Impulse - The impluse to apply to this voidgrid.
-	 * @param ImpulseLocation - The location to apply the impulse at.
-	 */
-	UFUNCTION(BlueprintCallable)
-	void AddImpulse(FVector2D Impulse, FVector2D ImpulseLocation = FVector2D::ZeroVector);
-
-	/**
-	 * Gets the instantaneous linear velocity of a point on this Voidgrid
-	 *
-	 * @param Location - The location of the point to get the velocity of.
-	 */
-	UFUNCTION(BlueprintPure)
-	FVector2D GetVelocityOfPoint(FVector2D Location);
-
-private:
-	/**
-	 * Updates the voidgrids location and rotation by its velocity. Also sweeps for collisions and computes new velocities
-	 */
-	UFUNCTION()
-	void UpdateTransform(float DeltaTime);
-
-	/**
-	 * Updates Mass, CenterOfMass, MomentOfInertia
-	 */
-	UFUNCTION()
-	void UpdateMassProperties(float DeltaMass, FVector2D MassLocation);
+//	//Used to update location and thrust control.
+//	virtual void Tick(float DeltaTime) override;
+//
+//	/* ------------- *\
+//	\* \/ Physics \/ */
+//
+//	/**
+//	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
+//	 * 
+//	 * @param Impulse - The impluse to apply to this voidgrid.
+//	 * @param ImpulseLocation - The location to apply the impulse at.
+//	 */
+//	UFUNCTION(BlueprintCallable)
+//	void AddImpulse(FVector2D Impulse, FVector2D ImpulseLocation = FVector2D::ZeroVector);
+//
+//	/**
+//	 * Gets the instantaneous linear velocity of a point on this Voidgrid
+//	 *
+//	 * @param Location - The location of the point to get the velocity of.
+//	 */
+//	UFUNCTION(BlueprintPure)
+//	FVector2D GetVelocityOfPoint(FVector2D Location);
+//
+//private:
+//	/**
+//	 * Updates the voidgrids location and rotation by its velocity. Also sweeps for collisions and computes new velocities
+//	 */
+//	UFUNCTION()
+//	void UpdateTransform(float DeltaTime);
+//
+//	/**
+//	 * Updates Mass, CenterOfMass, MomentOfInertia
+//	 */
+//	UFUNCTION()
+//	void UpdateMassProperties(float DeltaMass, FVector2D MassLocation);
 
 	//Stores the linear velocity of this voidgrid.
 	UPROPERTY()
@@ -343,7 +343,7 @@ private:
 
 	//Stores the default Collision Channel used to test for collisions with other voidgrids.
 	UPROPERTY()
-	ECollisionChannel VoidgridCollsionChanel;
+	TEnumAsByte<ECollisionChannel> VoidgridCollsionChanel;
 	/* /\ Physics /\ *\
 	\* ------------- */
 
