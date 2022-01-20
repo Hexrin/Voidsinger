@@ -3,3 +3,6 @@
 
 #include "HeatVerbMotif.h"
 
+void UHeatVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness)
+{
+}

@@ -3,3 +3,6 @@
 
 #include "DisperseVerbMotif.h"
 
+void UDisperseVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness)
+{
+}

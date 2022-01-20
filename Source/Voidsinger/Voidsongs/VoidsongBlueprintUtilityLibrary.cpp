@@ -183,6 +183,6 @@ void UVoidsongBlueprintUtilityLibrary::ExecuteVerbMotifs(const TArray<UBaseVerbM
 {
 	for (UBaseVerbMotif* EachVerb : Verbs)
 	{
-		EachVerb->Play(Instigator, Hit, Effectiveness);
+		EachVerb->ApplyEffect(Instigator, Hit, Effectiveness);
 	}
 }

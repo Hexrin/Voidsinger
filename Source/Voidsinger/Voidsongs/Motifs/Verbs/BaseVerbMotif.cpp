@@ -11,6 +11,6 @@
  * @param Hit - The hit result information
  * @param Effectiveness - The effectiveness of the activation
  */
-void UBaseVerbMotif::Play(UObject* Instigator, FHitResult Hit, float Effectiveness)
+void UBaseVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness)
 {
 }

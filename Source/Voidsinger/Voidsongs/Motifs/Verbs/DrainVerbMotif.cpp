@@ -3,3 +3,6 @@
 
 #include "DrainVerbMotif.h"
 
+void UDrainVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness)
+{
+}
