@@ -269,14 +269,14 @@ public:
 
 
 
-/* \/ ========= \/ *\
-|  \/ AVoidgrid \/  |
+/* \/ ======== \/ *\
+|  \/ Voidgrid \/  |
 \* \/ ========= \/ */
 
 //Used for disbatching events requireing a grid locaiton
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGridLocationDelegate, FIntPoint, GridLocaction);
 
-UCLASS()
+UCLASS(Config = "Physics")
 class VOIDSINGER_API AVoidgrid : public APawn
 {
 	GENERATED_BODY()
@@ -295,7 +295,7 @@ public:
 	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
 	 * 
 	 * @param Impulse - The impluse to apply to this voidgrid.
-	 * @param ImpulseLocation - The location to apply the impulse at.
+	 * @param ImpulseLocation - The relative location to apply the impulse at.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AddImpulse(FVector2D Impulse, FVector2D ImpulseLocation = FVector2D::ZeroVector);
@@ -316,17 +316,26 @@ private:
 	void UpdateTransform(float DeltaTime);
 
 	/**
+	 * Checks for collisions along this ships path to a new transfrom.
+	 *
+	 * @param DeltaTransform - The change in transform needed to get to the new transform.
+	 * @param Hit - The first blocking hit from this voidgrid colliding with another voidgrid.
+	 * @return Whether or not this voidgrid collided with another voidgrid.
+	 */
+	bool SweepShip(const FTransform& DeltaTransform, FHitResult& Hit);
+
+	/**
 	 * Updates Mass, CenterOfMass, MomentOfInertia
 	 */
 	UFUNCTION()
 	void UpdateMassProperties(float DeltaMass, FVector2D MassLocation);
 
-	//Stores the linear velocity of this voidgrid.
-	UPROPERTY()
+	//Stores the linear velocity of this voidgrid. Measured in GridSquares/Second.
+	UPROPERTY(VisibleInstanceOnly)
 	FVector2D LinearVelocity;
 
-	//Stores the angular velocity of this voidgrid.
-	UPROPERTY()
+	//Stores the angular velocity of this voidgrid. Mesured in Radians/Second.
+	UPROPERTY(VisibleInstanceOnly)
 	float AngularVelocity;
 
 	//Stores the mass of this voidgrid.
@@ -338,12 +347,24 @@ private:
 	FVector2D CenterOfMass{ FVector2D::ZeroVector };
 
 	//Stores the moment of inertia of this voidgrid.
-	UPROPERTY()
+	UPROPERTY(Config)
 	float MomentOfInertia;
+
+	//Stores the maximum linear velocity of this voidgrid.
+	UPROPERTY(Config)
+	float MaxLinearVelocity{ 10000000 };
+
+	//Stores the maximum linear velocity of this voidgrid.
+	UPROPERTY(Config)
+	float MaxAngularVelocity{ PI * 6 };
+
+	//Stores the percent of energy conserved when coliding
+	UPROPERTY(Config, meta=(ClampMin = "0", ClampMax = "1"))
+	float CollisionElasticity{ 1 };
 
 	//Stores the default Collision Channel used to test for collisions with other voidgrids.
 	UPROPERTY()
-	ECollisionChannel VoidgridCollsionChanel;
+	TEnumAsByte<ECollisionChannel> VoidgridCollsionChanel{ ECollisionChannel::ECC_PhysicsBody };
 	/* /\ Physics /\ *\
 	\* ------------- */
 
@@ -537,5 +558,10 @@ public:
 };
 
 /* /\ ========= /\ *\
-|  /\ AVoidgrid /\  |
+|  /\ Voidgrid /\  |
 \* /\ ========= /\ */
+
+/* \/ ========= \/ *\
+|  \/ AVoidgrid \/  |
+\* \/ ========= \/ */
+

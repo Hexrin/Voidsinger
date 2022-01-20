@@ -15,6 +15,7 @@ AVoidgrid::AVoidgrid()
 	PixelMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	PixelMeshComponent->bUseComplexAsSimpleCollision = true;
 	PixelMeshComponent->bRenderCustomDepth = true;
+	PixelMeshComponent->SetCollisionObjectType(VoidgridCollsionChanel);
 
 	PixelUVs = TArray<FVector2D>();
 	PixelUVs.Emplace(FVector2D(1, 1)); //Bottom Right
@@ -35,6 +36,167 @@ AVoidgrid::AVoidgrid()
 	// /\ Initialize Mesh Component /\
 
 }
+
+//Used to update location and thrust control.
+void AVoidgrid::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	UpdateTransform(DeltaTime);
+}
+
+/* ------------- *\
+\* \/ Physics \/ */
+
+/**
+ * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
+ *
+ * @param Impulse - The impluse to apply to this voidgrid.
+ * @param ImpulseLocation - The relative location to apply the impulse at.
+ */
+void AVoidgrid::AddImpulse(FVector2D Impulse, FVector2D ImpulseLocation)
+{
+	//Clamp new velocity within MaxLinearVelocity
+	//                            | ----- Get New Velocity ----- |
+	LinearVelocity = FMath::Clamp(LinearVelocity + Impulse / Mass, FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
+	//Clamp new velocity within MaxAngualarVelocity
+	//                             | -------------------------------- Get New Velocity -------------------------------- |
+	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(ImpulseLocation, Impulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
+}
+
+/**
+ * Gets the instantaneous linear velocity of a point on this Voidgrid in world space.
+ *
+ * @param Location - The location of the point to get the velocity of.
+ */
+FVector2D AVoidgrid::GetVelocityOfPoint(FVector2D Location)
+{
+	return LinearVelocity + FVector2D(-1, 1) * Location * AngularVelocity;
+}
+
+/**
+* Updates the voidgrids location and rotation by its velocity. Also sweeps for collisions and computes new velocities
+*/
+void AVoidgrid::UpdateTransform(float DeltaTime)
+{
+	//                                     | -------------- Get Delta Roatation -------------- | | ------------------ Get Delta Location ------------------ |
+	FTransform DeltaTransform = FTransform(FQuat(FVector(0, 0, 1), AngularVelocity * DeltaTime), FVector(LinearVelocity * DeltaTime, 0), FVector::ZeroVector);
+
+	FHitResult SweepHitResult = FHitResult();
+
+	// \/ Detect collsion and update velocity acordingly \/ //
+	if (SweepShip(DeltaTransform, SweepHitResult))
+	{
+		FVector2D RelativeHitLocation = FVector2D(SweepHitResult.Location - GetActorLocation());
+
+		FVector2D ImpactNormal = FVector2D(SweepHitResult.ImpactNormal);
+
+		//Prevent collisions from occuring between already overlaping ships. Done by checking to see if the impact direction is in a oposite direction to the normal.
+		if ((GetVelocityOfPoint(RelativeHitLocation) | ImpactNormal) < 0)
+		{
+			AVoidgrid* OtherVoidgrid = Cast<AVoidgrid>(SweepHitResult.GetActor());
+
+			float CollsionForce;
+
+			if (IsValid(OtherVoidgrid))
+			{
+				FVector2D OtherRelativeHitLocation = FVector2D(SweepHitResult.Location - OtherVoidgrid->GetActorLocation());
+
+				CollsionForce = (-1 * (1 + CollisionElasticity) * (GetVelocityOfPoint(RelativeHitLocation) | ImpactNormal)) /
+					(1 / Mass + 1 / OtherVoidgrid->Mass + FMath::Square(RelativeHitLocation ^ ImpactNormal) / MomentOfInertia + FMath::Square(OtherRelativeHitLocation ^ ImpactNormal) / OtherVoidgrid->MomentOfInertia);
+
+				OtherVoidgrid->AddImpulse(-1 * CollsionForce * ImpactNormal, OtherRelativeHitLocation);
+				//DrawDebugDirectionalArrow(GetWorld(), OtherShip->GetActorLocation() + FVector(OtherRelativeHitLocation, 0), OtherShip->GetActorLocation() + FVector(OtherRelativeHitLocation, 0) + FVector(-1 * CollisionImpulseFactor * ImpactNormal, 0), 5, FColor::Red, false, 5, 0U, 0.3f);
+				//UE_LOG(LogTemp, Warning, TEXT("%s Applyed an impules of %s at %s to %s"), *GetOwner()->GetName(), *(-1 * CollisionImpulseFactor * ImpactNormal).ToString(), *OtherRelativeHitLocation.ToString(), *Result.GetActor()->GetName());
+			}
+			else
+			{
+				CollsionForce = (-1 * (1 + CollisionElasticity) * GetVelocityOfPoint(RelativeHitLocation) | ImpactNormal) /
+					(1 / Mass) + (FMath::Square(RelativeHitLocation ^ ImpactNormal) / MomentOfInertia);
+			}
+
+			AddImpulse(CollsionForce * ImpactNormal, RelativeHitLocation);
+			//DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation() + FVector(RelativeHitLocation, 0), GetOwner()->GetActorLocation() + FVector(RelativeHitLocation, 0) + FVector(CollisionImpulseFactor * ImpactNormal, 0), 5, FColor::Blue, false, 5, 0U, 0.3f);
+			//UE_LOG(LogTemp, Warning, TEXT("%s Applyed an impules of %s at %s to itself when colideing with %s"), *GetOwner()->GetName(), *(CollisionImpulseFactor * ImpactNormal).ToString(), *RelativeHitLocation.ToString(), *Result.GetActor()->GetName());
+		}
+	}
+	// /\ Detect collsion and update velocity acordingly /\ //
+
+	AddActorWorldTransform(DeltaTransform);
+}
+
+/**
+ * Checks for collisions along this ships path to a new transfrom.
+ * 
+ * @param DeltaTransform - The change in transform needed to get to the new transform.
+ * @param Hit - The first blocking hit from this voidgrid colliding with another voidgrid.
+ * @return Whether or not this voidgrid collided with another voidgrid.
+ */
+bool AVoidgrid::SweepShip(const FTransform & DeltaTransform, FHitResult & Hit)
+{
+	//Return Values
+	bool ReturnValue = false;
+	Hit = FHitResult();
+
+	
+	FTransform StartingTransform = GetActorTransform();
+	FTransform TargetTransfrom = GetActorTransform() + DeltaTransform;
+
+	//Set up convex sweep querry
+	FVector BoundsExtent = PixelMeshComponent->Bounds.BoxExtent;
+	FVector BoundsCenterLocation = PixelMeshComponent->GetRelativeLocation();
+
+	FCollisionQueryParams QueryParams = FCollisionQueryParams().DefaultQueryParam;
+	QueryParams.AddIgnoredActor(this);
+	QueryParams.bTraceComplex = false;
+
+	FCollisionObjectQueryParams ObjectQueryParams = FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody);
+
+	//Sweeps the convex bounds of this shape to determin if a hit is possible.
+	if (GetWorld()->SweepSingleByObjectType(Hit, StartingTransform.GetTranslation() + BoundsCenterLocation, TargetTransfrom.GetTranslation() + BoundsCenterLocation, TargetTransfrom.GetRotation(), ObjectQueryParams, FCollisionShape::MakeBox(BoundsExtent), QueryParams))
+	{
+		//Iterates though all pixels and sweeps them for a collsion.
+		for (TPair<GridLocationType, PixelType> PixelData : PixelMold.GetGridPairs())
+		{
+			FVector PixelRelativeLocation = FVector(FVector2D(PixelData.Key), 0);
+			FVector PixelStartingWorldLocation = StartingTransform.TransformVector(FVector(PixelRelativeLocation));
+			FVector PixelTargetWorldLocation = TargetTransfrom.TransformVector(FVector(PixelRelativeLocation));
+			FHitResult ThisHit = FHitResult();
+
+			//Sweep the pixel's shape
+			if (GetWorld()->SweepSingleByObjectType(ThisHit, PixelStartingWorldLocation, PixelTargetWorldLocation, TargetTransfrom.GetRotation(), ObjectQueryParams, FCollisionShape::MakeBox(FVector(0.5f)), QueryParams))
+			{
+				if (Hit.bBlockingHit && Hit.Time != 0 && ThisHit.Time < Hit.Time)
+				{
+					ReturnValue = true;
+
+					Hit = ThisHit;
+				}
+			}
+		}
+	}
+
+
+	return ReturnValue;
+}
+
+/**
+* Updates Mass, CenterOfMass, MomentOfInertia
+*/
+void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
+{
+	Mass += DeltaMass;
+	CenterOfMass += DeltaMass / Mass * MassLocation;
+	MomentOfInertia += (1 / 12) + DeltaMass * (MassLocation).SizeSquared();
+}
+
+/* /\ Physics /\ *\
+\* ------------- */
+
+
+
+/* ---------------- *\
+\* \/ Pixel Mold \/ */
 
 /**
  * Sets the pixel mold of the ship
