@@ -3,20 +3,6 @@
 
 #include "TutorialEventHandler.h"
 
-/* -------------------- *\
-\* \/ Initialization \/ */
-
-/**
- * Constructor used for calling "OnConstruct"
- */
-UTutorialEventHandler::UTutorialEventHandler()
-{
-	OnConstruct();
-}
-
-/* /\ Initialization /\ *\
-\* -------------------- */
-
 /* ------------- *\
 \* \/ Getters \/ */
 

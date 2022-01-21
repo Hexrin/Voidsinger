@@ -14,27 +14,6 @@ class VOIDSINGER_API UTutorialEventHandler : public UObject
 {
 	GENERATED_BODY()
 
-	/* -------------------- *\
-	\* \/ Initialization \/ */
-
-private:
-
-	/**
-	 * Constructor used for calling "OnConstruct"
-	 */
-	UTutorialEventHandler();
-
-protected:
-
-	/**
-	 * Blueprint implementable event for implementing functionality on construct
-	 */
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnConstruct();
-
-	/* /\ Initialization /\ *\
-	\* -------------------- */
-
 	/* ------------- *\
 	\* \/ Getters \/ */
 
