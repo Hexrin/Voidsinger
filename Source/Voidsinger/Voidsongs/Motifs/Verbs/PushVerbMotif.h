@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "BaseVerbMotif.h"
-#include "AbsorbVerbMotif.generated.h"
+#include "PushVerbMotif.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VOIDSINGER_API UAbsorbVerbMotif : public UBaseVerbMotif
+class VOIDSINGER_API UPushVerbMotif : public UBaseVerbMotif
 {
 	GENERATED_BODY()
-
+	
 	virtual void ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness) override;
 };
