@@ -5,4 +5,5 @@
 
 void UColdVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness)
 {
+
 }

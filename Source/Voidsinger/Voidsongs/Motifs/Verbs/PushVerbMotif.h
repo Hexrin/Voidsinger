@@ -15,4 +15,7 @@ class VOIDSINGER_API UPushVerbMotif : public UBaseVerbMotif
 	GENERATED_BODY()
 	
 	virtual void ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness) override;
+
+	UPROPERTY(EditDefaultsOnly)
+	float PushForce;
 };
