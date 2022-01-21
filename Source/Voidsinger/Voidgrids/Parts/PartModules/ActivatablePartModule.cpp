@@ -28,11 +28,19 @@ void UActivatablePartModule::InitializeVariables(UPart* OwningPart)
 /* ---------------- *\
 \* \/ Activation \/ */
 
+/**
+ * Allows for blueprint logic when the part module is activated
+ */
+void UActivatablePartModule::OnActivate_Implementation(const TArray<UBaseVerbMotif*>& Verbs, float Effectiveness, FVector Direction)
+{
+}
+
 // \/ Activate \/ /
 
 /**
  * Calls the "ActivateWithEffectiveness" function with an Effectiveness of 1 so the part module's functionality is executed.
  */
+
 void UActivatablePartModule::Activate()
 {
 	ActivateWithEffectiveness(1);
@@ -45,8 +53,7 @@ void UActivatablePartModule::Activate()
  */
 void UActivatablePartModule::ActivateWithEffectiveness(float Effectiveness)
 {
-	TArray<UBaseVerbMotif*> EmptyVerbArray;
-	OnActivate(EmptyVerbArray, Effectiveness);
+	ActivateWithEffectivenessAndDirection(Effectiveness, FVector::ZeroVector);
 }
 
 /**
@@ -58,6 +65,18 @@ void UActivatablePartModule::ActivateWithEffectiveness(float Effectiveness)
 void UActivatablePartModule::ActivateFromVoidsong(const TArray<UBaseVerbMotif*> Verbs, float Effectiveness)
 {
 	OnActivate(Verbs, Effectiveness);
+}
+
+/**
+ * Calls the "OnActivate" function so the part module's functionality is executed
+ *
+ * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
+ * @param Direction - The direction to activate this part in.
+ */
+void UActivatablePartModule::ActivateWithEffectivenessAndDirection(float Effectiveness, FVector Direction)
+{
+	TArray<UBaseVerbMotif*> EmptyVerbArray = TArray<UBaseVerbMotif*>();
+	OnActivate(EmptyVerbArray, Effectiveness, Direction);
 }
 
 // /\ Activate /\ /
