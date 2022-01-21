@@ -57,6 +57,8 @@ void APlayerShip::BeginPlay()
  */
 void APlayerShip::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+
 
 	// \/ Check if the Voidsong sequence should be cleared \/ /
 
