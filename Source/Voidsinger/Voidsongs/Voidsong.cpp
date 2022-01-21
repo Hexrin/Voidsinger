@@ -36,7 +36,7 @@ void UVoidsong::Tick(float DeltaTime)
 	//Broadcast the ForDuration delegate
 	ForDuration.Broadcast(VoidsongData.GetVerbMotifs(), DeltaTime);
 
-	// \/ Check if the Voidsong has played for the correct Duration, if so, Deactivate \/
+	// \/ Check if the Voidsong has played for the correct Duration, if so, Deactivate \/ /
 
 	TimeSincePlayed += DeltaTime;
 
@@ -45,7 +45,7 @@ void UVoidsong::Tick(float DeltaTime)
 		Deconstruct();
 	}
 
-	// /\ Check if the Voidsong has played for the correct Duration, if so, Deactivate /\
+	// /\ Check if the Voidsong has played for the correct Duration, if so, Deactivate /\ /
 
 }
 
@@ -90,3 +90,19 @@ void UVoidsong::Deconstruct()
 
 /* /\ Deactivation /\ *\
 \* ------------------ */
+
+/* ------------- *\
+\* \/ Getters \/ */
+
+/**
+ * Returns a copy of the Voidsong data
+ *
+ * @return - Copy of VoidsongData
+ */
+FVoidsongData UVoidsong::GetVoidsongData()
+{
+	return FVoidsongData(VoidsongData.GetFactionMotifs(), VoidsongData.GetNounMotifs(), VoidsongData.GetVerbMotifs());
+}
+
+/* /\ Getters /\ *\
+\* ------------- */

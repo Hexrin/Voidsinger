@@ -28,7 +28,7 @@ void UActivatablePartModule::InitializeVariables(UPart* OwningPart)
 /* ---------------- *\
 \* \/ Activation \/ */
 
-// \/ Activate \/
+// \/ Activate \/ /
 
 /**
  * Calls the "ActivateWithEffectiveness" function with an Effectiveness of 1 so the part module's functionality is executed.
@@ -60,7 +60,7 @@ void UActivatablePartModule::ActivateFromVoidsong(const TArray<UBaseVerbMotif*> 
 	OnActivate(Verbs, Effectiveness);
 }
 
-// /\ Activate /\
+// /\ Activate /\ /
 
 /* /\ Activation /\ *\
 \* ---------------- */
@@ -73,7 +73,7 @@ void UActivatablePartModule::BindToDelegates()
 	//Bind "BindToVoidsong" to Voidsong played
 	Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->OnVoidsongPlayed.AddDynamic(this, &UActivatablePartModule::BindToVoidsong);
 
-	// \/ Bind Activate to the Activation Cues selected \/
+	// \/ Bind Activate to the Activation Cues selected \/ /
 
 	if ((bool)(ActivationCues & EActivationCue::OnDamaged))
 	{
@@ -104,7 +104,7 @@ void UActivatablePartModule::BindToDelegates()
 		//Bind to on tick here (Delegate is not available yet)
 	}
 
-	// /\ Bind Activate to the Activation Cues selected /\
+	// /\ Bind Activate to the Activation Cues selected /\ /
 
 }
 
@@ -119,10 +119,10 @@ void UActivatablePartModule::BindToVoidsong(UVoidsong* Voidsong)
 	if (Noun != ENoun::Unbound && (bool)(ActivationCues & EActivationCue::OnVoidsongCue))
 	{
 		//Factions check is true if this faction is one of the factions played 
-		bool bFactionsCheck = Voidsong->VoidsongData.GetFactions().Contains(Part->GetVoidgrid()->GetFaction());
+		bool bFactionsCheck = Voidsong->GetVoidsongData().GetFactions().Contains(Part->GetVoidgrid()->GetFaction());
 
 		//Nouns check is true if this noun is one of the nouns played
-		bool bNounsCheck = Voidsong->VoidsongData.GetNouns().Contains(Noun);
+		bool bNounsCheck = Voidsong->GetVoidsongData().GetNouns().Contains(Noun);
 
 		//If this part module satisfies the conditions of the Voidsong, bind the events
 		if (bFactionsCheck && bNounsCheck)
