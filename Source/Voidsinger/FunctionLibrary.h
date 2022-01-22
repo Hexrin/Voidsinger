@@ -7,6 +7,7 @@
 #include "VoidsingerTypes.h"
 #include "DrawDebugHelpers.h"
 #include "VoidsingerGameInstance.h"
+
 #include "FunctionLibrary.generated.h"
 
 /**
@@ -35,4 +36,11 @@ public:
 	UFUNCTION(BlueprintPure)
 	static TArray<UBasePart*> GetPartsHitFromWorldLocation(FVector Location, UPartGridComponent* PartGrid);
 
+	/**
+	 * Gets a refernce to the current level manager.
+	 * 
+	 * @return a pointer to the current level manager.
+	 */
+	UFUNCTION(BlueprintPure, Meta=(WorldContext = "WorldContextObject"))
+	static ALevelManager* GetLevelManager(UObject* WorldContextObject);
 };

@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "LevelManager.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidsinger/Voidsongs/BaseVerbVoidsong.h"
-#include "StarSystemGameMode.generated.h"
+#include "StarSystemLevelManager.generated.h"
 
 /*
  * As far as I can tell this system doesnt support multiple simultaneous Voidsongs which we were planning to implement - Liam Suggestion
@@ -25,7 +25,7 @@ class IActivateInterface
 
 public:
 	/*
-	The below function should be commented.
+	* The below function should be commented.
 	* What should the function do?
 	* How should it be overriden?
 	* - Liam Suggestion
@@ -38,15 +38,11 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FVoidsongDelegate, const TArray<TE
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeactivateVoidsongDelegate);
 
 UCLASS()
-class VOIDSINGER_API AStarSystemGameMode : public AGameModeBase
+class VOIDSINGER_API AStarSystemLevelManager : public ALevelManager
 {
 	GENERATED_BODY()
 
 public:
-	//Should be commented. What does the constuctor do? -Liam Suggestion
-	AStarSystemGameMode();
-
-
 	/*
 	* The below function should be commented.
 	* What does the function do?

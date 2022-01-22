@@ -6,6 +6,7 @@
 #include "Voidsinger/Parts/PartGridComponent.h"
 #include "BaseThrusterPart.h"
 #include "BaseResourceSystem.h"
+#include "Voidsinger/FunctionLibrary.h"
 #include "Engine/Engine.h"
 #include "Voidsinger/Ships/BaseShip.h"
 
@@ -55,7 +56,10 @@ void UBasePart::InitializeFunctionality()
 	if (!bHasFunctionalityBeenInitialized)
 	{
 		//Bind to delegates
-		Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
+		if (IsValid(Cast<AStarSystemLevelManager>(UFunctionLibrary::GetLevelManager(GetShip()))))
+		{
+			Cast<AStarSystemLevelManager>(UFunctionLibrary::GetLevelManager(GetShip()))->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
+		}
 		Cast<ABaseShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UBasePart::OnFireDelegateCalled);
 		
 		//Initialize Resource System

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "ChildClassesFinder.h"
+#include "LevelManager.h"
 #include "VoidsingerGameInstance.generated.h"
 
 /**
@@ -13,7 +14,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FExplodeDelegate, FVector, ExplosionLocation, float, ExplosionRadius);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPixelBalanceChangedDelegate, int32, ChangeAmount);
-
+//Broadcasts an event relating to loading of an asset.
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLoadingDelegate);
 UCLASS()
 class VOIDSINGER_API UVoidsingerGameInstance : public UGameInstance
 {
@@ -76,4 +78,63 @@ protected:
 	//Stores the percent of the pixel value of enemy ships gained when an enemy is defeated.
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float SalvagingEfficiency{ 0.1 };
+
+	/* /\ Pixels /\ *\
+	\* ------------ */
+
+
+
+	/* ------------------- *\
+	\* \/ Level Manager \/ */
+
+public:
+	/**
+	 * Loads a level, initilizes a level manager and calls loading delegates.
+	 * 
+	 * @param Level - The level to load.
+	 * @param LevelManagerClass - The class level manager used in this level.
+	 */
+	UFUNCTION(BlueprintCallable, Meta = (WorldContext = "WorldContextObject"))
+	void LoadLevelWithManager(const UObject* WorldContextObject, const TSoftObjectPtr<UWorld> Level, const TSubclassOf<ALevelManager> LevelManagerClass);
+
+	/**
+	 * Gets a refernce to the current level manager.
+	 *
+	 * @return a pointer to the current level manager.
+	 */
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE ALevelManager* GetLevelManager() const { return LevelManager; };
+
+private:
+	//Stores a referce to the level manger.
+	UPROPERTY()
+	ALevelManager* LevelManager;
+
+	//Stores the current streaming level.
+	TSoftObjectPtr<UWorld> CurrentLevel;
+
+	/* /\ Level Manager /\ *\
+	\* ------------------- */
+
+	/* ------------- *\
+	\* \/ Loading \/ */
+
+public:
+	//Called when loading begins.
+	UPROPERTY(BlueprintAssignable)
+	FLoadingDelegate OnBeginLoading;
+
+	//Called when a loading time is compleate.
+	UPROPERTY(BlueprintAssignable)
+	FLoadingDelegate OnEndLoading;
+
+private:
+	//Calls OnBeginLoading
+	FORCEINLINE void BeginLoading() const { OnBeginLoading.Broadcast();  };
+
+	//Calls OnEndLoading
+	FORCEINLINE void EndLoading() const { OnEndLoading.Broadcast(); };
+
+	/* /\ Loading /\ *\
+	\* ------------- */
 };

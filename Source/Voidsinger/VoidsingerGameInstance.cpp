@@ -1,7 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "Kismet/GameplayStatics.h"
 #include "VoidsingerGameInstance.h"
+
+/* ------------ *\
+\* \/ Pixels \/ */
 
 /**
 * Gets the number of pixels the player has.
@@ -58,3 +62,54 @@ bool UVoidsingerGameInstance::WithdrawPixels(int32 Amount)
 
     return false;
 }
+
+/* /\ Pixels /\ *\
+\* ------------ */
+
+
+
+/* ------------------- *\
+\* \/ Level Manager \/ */
+
+/**
+ * Loads a level, initilizes a level manager and calls loading delegates.
+ *
+ * @param Level - The level to load.
+ * @param LevelManagerClass - The class level manager used in this level.
+ */
+void UVoidsingerGameInstance::LoadLevelWithManager(const UObject* WorldContextObject, const TSoftObjectPtr<UWorld> Level, const TSubclassOf<ALevelManager> LevelManagerClass)
+{
+    if (IsValid(WorldContextObject) && IsValid(WorldContextObject->GetWorld()) && !Level.IsNull())
+    {
+        BeginLoading();
+        //Unload Old Level
+        FLatentActionInfo LatentUnloadInfo;
+        UGameplayStatics::UnloadStreamLevelBySoftObjectPtr(WorldContextObject, CurrentLevel, LatentUnloadInfo, false);
+
+        //Load New Level
+        FLatentActionInfo LatentLoadInfo = FLatentActionInfo();
+        LatentLoadInfo.CallbackTarget = this;
+        LatentLoadInfo.ExecutionFunction = "EndLoading";
+        LatentLoadInfo.Linkage = 0;
+        LatentLoadInfo.UUID = 0;
+
+        CurrentLevel = Level;
+        UGameplayStatics::LoadStreamLevelBySoftObjectPtr(WorldContextObject, Level, true, false, LatentLoadInfo);
+        
+
+        //Set Level Manager
+        if (IsValid(LevelManager))
+        {
+            LevelManager->Destroy();
+        }
+
+        if (IsValid(LevelManagerClass.Get()))
+        {
+            LevelManager = WorldContextObject->GetWorld()->SpawnActorDeferred<ALevelManager>(LevelManagerClass.Get(), FTransform::Identity);
+            UGameplayStatics::FinishSpawningActor(LevelManager, FTransform::Identity);
+        }
+    }
+}
+
+/* /\ Level Manager /\ *\
+\* ------------------- */
