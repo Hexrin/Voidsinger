@@ -3,6 +3,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Engine/LevelScriptActor.h"
+#include "LevelManager.h"
 #include "VoidsingerGameInstance.h"
 
 /* ------------ *\
@@ -78,45 +79,48 @@ bool UVoidsingerGameInstance::WithdrawPixels(int32 Amount)
  * @param Level - The level to load.
  * @param LevelManagerClass - The class level manager used in this level.
  */
-void UVoidsingerGameInstance::LoadLevelWithManager(const UObject* WorldContextObject, const TSoftObjectPtr<UWorld> Level, const TSubclassOf<ALevelManager> LevelManagerClass)
+void UVoidsingerGameInstance::LoadLevelWithManager(const TSoftObjectPtr<UWorld> Level, const TSubclassOf<ALevelManager> LevelManagerClass)
 {
-    if (IsValid(WorldContextObject) && IsValid(WorldContextObject->GetWorld()) && !Level.IsNull())
+    if (IsValid(GetWorld()) && !Level.IsNull())
     {
         BeginLoading();
         //Unload Old Level
         FLatentActionInfo LatentUnloadInfo;
-        UGameplayStatics::UnloadStreamLevelBySoftObjectPtr(WorldContextObject, CurrentLevel, LatentUnloadInfo, false);
+        UGameplayStatics::UnloadStreamLevelBySoftObjectPtr(this, CurrentLevel, LatentUnloadInfo, true);
 
         //Load New Level
         FLatentActionInfo LatentLoadInfo;
         LatentLoadInfo.CallbackTarget = this;
-        LatentLoadInfo.ExecutionFunction = FName("SetLevelManagerLevel");
+        LatentLoadInfo.ExecutionFunction = FName("ResetLevelManager");
         LatentLoadInfo.Linkage = 1;
         LatentLoadInfo.UUID = 1;
 
-        CurrentLevel = Level;
-        UGameplayStatics::LoadStreamLevelBySoftObjectPtr(WorldContextObject, Level, true, false, LatentLoadInfo);
+        UGameplayStatics::LoadStreamLevelBySoftObjectPtr(this, Level, true, true, LatentLoadInfo);
 
         //Set Level Manager
         if (IsValid(LevelManager))
         {
             LevelManager->Destroy();
         }
-
-        if (IsValid(LevelManagerClass.Get()))
-        {
-            LevelManager = WorldContextObject->GetWorld()->SpawnActorDeferred<ALevelManager>(LevelManagerClass.Get(), FTransform::Identity);
-        }
-
+        CurrentLevelManagerClass = LevelManagerClass;
     }
 }
 
-void UVoidsingerGameInstance::SetLevelManagerLevel()
-{
-    LevelManager->SetOwner(GetWorld()->GetLevel(1)->GetLevelScriptActor());
-    UGameplayStatics::FinishSpawningActor(LevelManager, FTransform::Identity);
-    EndLoading();
-}
 
+void UVoidsingerGameInstance::ResetLevelManager()
+{
+    CurrentLevel = GetWorld()->GetLevel(1);
+    if (IsValid(LevelManager))
+    {
+        LevelManager->Destroy();
+    }
+
+    if (IsValid(CurrentLevelManagerClass.Get()))
+    {
+        FActorSpawnParameters SpawnParams = FActorSpawnParameters();
+        SpawnParams.OverrideLevel = GetWorld()->GetLevel(1);
+        GetWorld()->SpawnActor<ALevelManager>(CurrentLevelManagerClass.Get(), SpawnParams);
+    }
+}
 /* /\ Level Manager /\ *\
 \* ------------------- */

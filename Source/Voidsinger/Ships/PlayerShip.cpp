@@ -22,6 +22,8 @@ APlayerShip::APlayerShip()
 
     AutoPossessPlayer = EAutoReceiveInput::Player0;
 
+    OnDamaged.AddDynamic(this, &APlayerShip::Damaged);
+
 }
 
 //Comment -Mabel Suggestion
@@ -109,12 +111,12 @@ void APlayerShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
     InputComponent->BindAxis("MoveForward");
     InputComponent->BindAxis("MoveRight");
 
-    OnDamaged.AddDynamic(this, &APlayerShip::Damaged);
 }
 
 //Comment -Mabel Suggestion
 void APlayerShip::BeginPlay()
 {
+
     Super::BeginPlay();
 
     if (!PartGrid->LoadSavedShip(CurrentShipSaveSlotName))

@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "ChildClassesFinder.h"
-#include "LevelManager.h"
 #include "VoidsingerGameInstance.generated.h"
+
+class ALevelManager;
 
 /**
  * 
@@ -94,18 +95,36 @@ public:
 	 * @param Level - The level to load.
 	 * @param LevelManagerClass - The class level manager used in this level.
 	 */
-	UFUNCTION(BlueprintCallable, Meta = (WorldContext = "WorldContextObject"))
-	void LoadLevelWithManager(const UObject* WorldContextObject, const TSoftObjectPtr<UWorld> Level, const TSubclassOf<ALevelManager> LevelManagerClass);
+	UFUNCTION(BlueprintCallable)
+	void LoadLevelWithManager(const TSoftObjectPtr<UWorld> Level, const TSubclassOf<ALevelManager> LevelManagerClass);
 
 	/**
 	 * Gets a refernce to the current level manager.
 	 *
-	 * @return a pointer to the current level manager.
+	 * @return A pointer to the current level manager.
 	 */
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE ALevelManager* GetLevelManager() const { return LevelManager; };
 
+	/**
+	 * Sets the current level manger.
+	 *
+	 * @param Manager - The new level manger.
+	 */
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetLevelManager(ALevelManager* Manager) { LevelManager = Manager; };
+
 private:
+	/**
+	 * Creates a new level manger to be the current level manager.
+	 */
+	UFUNCTION()
+	void ResetLevelManager();
+
+	//Stores the class of the current level manager.
+	UPROPERTY()
+	TSubclassOf<ALevelManager> CurrentLevelManagerClass;
+
 	//Stores a referce to the level manger.
 	UPROPERTY()
 	ALevelManager* LevelManager;
@@ -127,10 +146,6 @@ public:
 	//Called when a loading time is compleate.
 	UPROPERTY(BlueprintAssignable)
 	FLoadingDelegate OnEndLoading;
-
-	//Sets the ULevel of the level manger.
-	UFUNCTION()
-	void SetLevelManagerLevel();
 private:
 
 	//Calls OnBeginLoading

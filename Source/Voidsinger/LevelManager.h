@@ -13,5 +13,10 @@ UCLASS(Blueprintable)
 class VOIDSINGER_API ALevelManager : public AInfo
 {
 	GENERATED_BODY()
-	
+
+public:
+	/**
+	 * Sets this as the current level manager.
+	 */
+	virtual void PostActorCreated() override;
 };
