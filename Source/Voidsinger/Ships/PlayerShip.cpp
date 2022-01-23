@@ -29,7 +29,7 @@ APlayerShip::APlayerShip()
 //Comment -Mabel Suggestion
 void APlayerShip::Tick(float DeltaTime)
 {
-    if (!bBuildMode)
+    if (!(bBuildMode || GetGameTimeSinceCreation() < 1))
     {
         FVector WorldDirection = FVector();
         FVector WorldLocation = FVector();

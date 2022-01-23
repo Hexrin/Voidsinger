@@ -65,14 +65,13 @@ void UPartGridComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	//this is... lag. Instead of calling distribute heat multiple times whenever delta time is greater than the tick rate, factor delta time into
 	//the distribute heat function. There's got to be a better way to do this. I understand why you want to call distribute heat multiple times (so that the spread is correct) but the
 	//iteration through the entire part grid is very not worth. Figure out a better way. -Mabel Suggestion
-	for (int i = 0; i < TimesSinceHeatTick / HeatTickRate; TimesSinceHeatTick -= HeatTickRate)
+	
+	if ((TimesSinceHeatTick += DeltaTime) > HeatTickRate)
 	{
 		//I've found a place that iterates through the entire part grid potentially multiple times every tick... Perhaps... this is contributing massively to lag? -Mabel Suggestion
 		DistrubuteHeat();
+		TimesSinceHeatTick = 0;
 	}
-
-
-	TimesSinceHeatTick += DeltaTime;
 }
 
 //Adds a complete part to the part grid
@@ -1244,7 +1243,7 @@ TSet<FIntPoint> UPartGridComponent::FindConnectedShape(TSet<FIntPoint> Shape, TG
 
 					if (IsValid(ConnectedPartsMap.Find(FIntPoint(i.X + 1, i.Y))->Part))
 					{
-						UE_LOG(LogTemp, Warning, TEXT("the part is valid"))
+						//UE_LOG(LogTemp, Warning, TEXT("the part is valid"))
 						if (ConnectedPartsMap.Find(FIntPoint(i.X + 1, i.Y))->Part->IsPixelFunctional(FIntPoint(i.X + 1, i.Y)))
 						{
 							//Add that location to the new shape, because it is connected
@@ -1253,7 +1252,7 @@ TSet<FIntPoint> UPartGridComponent::FindConnectedShape(TSet<FIntPoint> Shape, TG
 					}
 					else
 					{
-						UE_LOG(LogTemp, Warning, TEXT("why is the part not valid? I do not have understanding"));
+						//UE_LOG(LogTemp, Warning, TEXT("why is the part not valid? I do not have understanding"));
 					}
 				}
 				else

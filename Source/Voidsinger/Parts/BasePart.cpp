@@ -362,7 +362,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc, bool bCallDamagedEvents)
 		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
 		for (auto& i : CurrentSystems)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("systems on destroy pixel %s"), *i->GetFName().ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("systems on destroy pixel %s"), *i->GetFName().ToString());
 			i->RemovePixel(RelativeLoc + GetPartGridLocation());
 		}
 	}
@@ -494,7 +494,7 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 			//Systems.Add(GetSystemByType(System->GetType()));
 			System->MergeSystems(GetSystemByType(System->GetType()));
 			Systems.Add(System);
-			UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString());
 		}
 
 		//else just add it to the list of systems on this part.
@@ -505,7 +505,7 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 			//UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 			Systems.Add(System);
 
-			UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString())
+			//UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString())
 		}
 	}
 }
