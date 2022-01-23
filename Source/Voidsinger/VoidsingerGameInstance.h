@@ -128,7 +128,11 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FLoadingDelegate OnEndLoading;
 
+	//Sets the ULevel of the level manger.
+	UFUNCTION()
+	void SetLevelManagerLevel();
 private:
+
 	//Calls OnBeginLoading
 	FORCEINLINE void BeginLoading() const { OnBeginLoading.Broadcast();  };
 

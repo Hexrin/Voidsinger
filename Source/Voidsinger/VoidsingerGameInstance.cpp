@@ -2,6 +2,7 @@
 
 
 #include "Kismet/GameplayStatics.h"
+#include "Engine/LevelScriptActor.h"
 #include "VoidsingerGameInstance.h"
 
 /* ------------ *\
@@ -87,15 +88,14 @@ void UVoidsingerGameInstance::LoadLevelWithManager(const UObject* WorldContextOb
         UGameplayStatics::UnloadStreamLevelBySoftObjectPtr(WorldContextObject, CurrentLevel, LatentUnloadInfo, false);
 
         //Load New Level
-        FLatentActionInfo LatentLoadInfo = FLatentActionInfo();
+        FLatentActionInfo LatentLoadInfo;
         LatentLoadInfo.CallbackTarget = this;
-        LatentLoadInfo.ExecutionFunction = "EndLoading";
-        LatentLoadInfo.Linkage = 0;
-        LatentLoadInfo.UUID = 0;
+        LatentLoadInfo.ExecutionFunction = FName("SetLevelManagerLevel");
+        LatentLoadInfo.Linkage = 1;
+        LatentLoadInfo.UUID = 1;
 
         CurrentLevel = Level;
         UGameplayStatics::LoadStreamLevelBySoftObjectPtr(WorldContextObject, Level, true, false, LatentLoadInfo);
-        
 
         //Set Level Manager
         if (IsValid(LevelManager))
@@ -106,9 +106,16 @@ void UVoidsingerGameInstance::LoadLevelWithManager(const UObject* WorldContextOb
         if (IsValid(LevelManagerClass.Get()))
         {
             LevelManager = WorldContextObject->GetWorld()->SpawnActorDeferred<ALevelManager>(LevelManagerClass.Get(), FTransform::Identity);
-            UGameplayStatics::FinishSpawningActor(LevelManager, FTransform::Identity);
         }
+
     }
+}
+
+void UVoidsingerGameInstance::SetLevelManagerLevel()
+{
+    LevelManager->SetOwner(GetWorld()->GetLevel(1)->GetLevelScriptActor());
+    UGameplayStatics::FinishSpawningActor(LevelManager, FTransform::Identity);
+    EndLoading();
 }
 
 /* /\ Level Manager /\ *\
