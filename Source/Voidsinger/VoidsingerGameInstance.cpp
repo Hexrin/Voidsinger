@@ -1,10 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "VoidsingerGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/LevelScriptActor.h"
 #include "LevelManager.h"
-#include "VoidsingerGameInstance.h"
 
 /* ------------ *\
 \* \/ Pixels \/ */

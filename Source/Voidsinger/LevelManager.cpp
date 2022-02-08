@@ -1,9 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "LevelManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "VoidsingerGameInstance.h"
-#include "LevelManager.h"
 
 /**
  * Sets this as the current level manager.
