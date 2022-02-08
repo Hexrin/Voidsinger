@@ -36,6 +36,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Instanced)
 	TArray<UPartModule*> Modules;
 
+	//Stores the total mass of this part.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float Mass{ 1 };
+
 	//Stores the cost to place the part in Pixels.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 Cost;

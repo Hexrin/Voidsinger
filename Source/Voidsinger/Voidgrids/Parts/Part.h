@@ -222,6 +222,18 @@ public:
 	 */
 	FORCEINLINE PartShapeType GetShape() { return Shape; };
 
+	/**
+	 * Gets the shape of this part.
+	 *
+	 * @return The shape of this part.
+	 */
+	FORCEINLINE float GetPixelMass() { return Data->Mass/GetDefaultShape().Num(); };
+
+	/**
+	 * Gets whether or not this part is functional.
+	 * 
+	 * @return Wheather or not this is functional.
+	 */
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE  bool IsFunctional() { return bFunctional; };
 

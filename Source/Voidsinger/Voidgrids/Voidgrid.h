@@ -298,7 +298,7 @@ public:
 	 * @param ImpulseLocation - The relative location to apply the impulse at.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void AddImpulse(FVector2D Impulse, FVector2D ImpulseLocation = FVector2D::ZeroVector);
+	void AddImpulse(FVector2D Impulse, FVector2D RelativeImpulseLocation = FVector2D::ZeroVector);
 
 	/**
 	 * Gets the instantaneous linear velocity of a point on this Voidgrid

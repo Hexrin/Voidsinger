@@ -2,6 +2,7 @@
 
 
 #include "Voidgrid.h"
+#include "DrawDebugHelpers.h"
 #include "Parts/Part.h"
 
 //Sets default values for this voidgrid's properties
@@ -9,6 +10,9 @@ AVoidgrid::AVoidgrid()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	//Initilize Root Component
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("CenterOfMass"));
 
 	// \/ Initialize Mesh Component \/ /
 	PixelMeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Mesh Component"));
@@ -54,14 +58,15 @@ void AVoidgrid::Tick(float DeltaTime)
  * @param Impulse - The impluse to apply to this voidgrid.
  * @param ImpulseLocation - The relative location to apply the impulse at.
  */
-void AVoidgrid::AddImpulse(FVector2D Impulse, FVector2D ImpulseLocation)
+void AVoidgrid::AddImpulse(FVector2D Impulse, FVector2D RelativeImpulseLocation)
 {
+	DrawDebugDirectionalArrow(GetWorld(), GetActorTransform().TransformVector(FVector(RelativeImpulseLocation, 1)), GetActorTransform().TransformVector(FVector(RelativeImpulseLocation, 1)) + FVector(Impulse, 0), 2, FColor::Green, true, 5, 0U, .5);
 	//Clamp new velocity within MaxLinearVelocity
 	//                            | ----- Get New Velocity ----- |
 	LinearVelocity = FMath::Clamp(LinearVelocity + Impulse / Mass, FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
 	//Clamp new velocity within MaxAngualarVelocity
 	//                             | -------------------------------- Get New Velocity -------------------------------- |
-	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(ImpulseLocation, Impulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
+	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation, Impulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
 }
 
 /**
@@ -187,6 +192,7 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 {
 	Mass += DeltaMass;
 	CenterOfMass += DeltaMass / Mass * MassLocation;
+	PixelMeshComponent->SetRelativeLocation(FVector(-1 * CenterOfMass, 0));
 	MomentOfInertia += (1 / 12) + DeltaMass * (MassLocation).SizeSquared();
 }
 
@@ -206,6 +212,7 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 {
 	MinimalPixelMoldDataType DataOfPartsToCreate = NewPixelMold;
+
 	//Remove Unneccesary Parts
 	for (UPart* Part : Parts)
 	{
@@ -224,6 +231,7 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 		}
 	}
 
+	//Re-add temprary parts if inlcuded in a new mold
 	for (UPart* Part : TemporaryParts)
 	{
 		FMinimalPartInstanceData PartData = Part->GetMinimalPartInstanceData();
@@ -240,7 +248,7 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 			
 	}
 
-
+	//Create new parts
 	for (FMinimalPartInstanceData DataOfPartToCreate : DataOfPartsToCreate)
 	{
 		UPart* Part = UPart::CreatePart(this, FPartInstanceData(DataOfPartToCreate));
@@ -339,23 +347,10 @@ void AVoidgrid::DamagePixel(GridLocationType Location)
 {
 	if (PixelMold.Contains(Location))
 	{
-		PixelType* PixelRef = PixelMold.Find(Location);
-		if (PixelRef->IsIntact())
+		if (PixelMold.Find(Location)->IsIntact())
 		{
 			OnDamaged.Broadcast(Location);
-
-			if (PixelRef->GetTargetPart() == UPart::GetNullPart())
-			{
-				TemporaryParts.Remove(PixelRef->GetCurrentPart());
-				PixelMold.Remove(Location);
-				MutablePixels.Remove(Location);
-			}
-			else
-			{
-				MutablePixels.Add(Location);
-				PixelMold.Find(Location)->SetIntact(false);
-			}
-			UpdatePixelMesh(Location);
+			SetPixelIntact(Location, false);
 		}
 	}
 }
@@ -369,16 +364,15 @@ void AVoidgrid::RepairPixel(GridLocationType Location)
 {
 	if (PixelMold.Contains(Location))
 	{
-		if (!PixelMold.Find(Location)->IsIntact())
+		PixelType* PixelRef = PixelMold.Find(Location);
+		if (!PixelRef->IsIntact())
 		{
 			OnRepaired.Broadcast(Location);
-			MutablePixels.Remove(Location);
-			PixelMold.Find(Location)->SetIntact(true);
-			UpdatePixelMesh(Location);
+			SetPixelIntact(Location, true);
 		}
-		else
+		else if(MutablePixels.Contains(Location))
 		{
-			DamagePixel(Location);
+			SetPixelIntact(Location, false);
 		}
 	}
 }
@@ -408,6 +402,7 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact)
 		{
 			if (!bNewIntact) 
 			{
+				UpdateMassProperties(-1 * PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass(), FVector2D(Location));
 				if (PixelMold.Find(Location)->GetTargetPart() == UPart::GetNullPart())
 				{
 					TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
@@ -423,6 +418,8 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact)
 			else
 			{
 				PixelMold.Find(Location)->SetIntact(bNewIntact);
+				MutablePixels.Remove(Location);
+				UpdateMassProperties(-1 * PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass(), FVector2D(Location));
 			}
 			UpdatePixelMesh(Location);
 		}
