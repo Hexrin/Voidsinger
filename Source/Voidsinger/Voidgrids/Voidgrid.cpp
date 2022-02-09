@@ -60,13 +60,13 @@ void AVoidgrid::Tick(float DeltaTime)
  */
 void AVoidgrid::AddImpulse(FVector2D Impulse, FVector2D RelativeImpulseLocation)
 {
-	DrawDebugDirectionalArrow(GetWorld(), GetActorTransform().TransformVector(FVector(RelativeImpulseLocation, 1)), GetActorTransform().TransformVector(FVector(RelativeImpulseLocation, 1)) + FVector(Impulse, 0), 2, FColor::Green, true, 5, 0U, .5);
+	DrawDebugDirectionalArrow(GetWorld(), GetActorTransform().TransformPosition(FVector(RelativeImpulseLocation, 1) + PixelMeshComponent->GetRelativeLocation()), GetActorTransform().TransformPosition(FVector(RelativeImpulseLocation, 1) + PixelMeshComponent->GetRelativeLocation()) + FVector(Impulse, 0), 2, FColor::Green, true, 5, 0U, .5);
 	//Clamp new velocity within MaxLinearVelocity
 	//                            | ----- Get New Velocity ----- |
 	LinearVelocity = FMath::Clamp(LinearVelocity + Impulse / Mass, FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
 	//Clamp new velocity within MaxAngualarVelocity
 	//                             | -------------------------------- Get New Velocity -------------------------------- |
-	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation, Impulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
+	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation + FVector2D(PixelMeshComponent->GetRelativeLocation()), Impulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
 }
 
 /**
@@ -419,7 +419,7 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact)
 			{
 				PixelMold.Find(Location)->SetIntact(bNewIntact);
 				MutablePixels.Remove(Location);
-				UpdateMassProperties(-1 * PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass(), FVector2D(Location));
+				UpdateMassProperties(PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass(), FVector2D(Location));
 			}
 			UpdatePixelMesh(Location);
 		}

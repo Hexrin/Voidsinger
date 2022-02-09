@@ -325,7 +325,10 @@ private:
 	bool SweepShip(const FTransform& DeltaTransform, FHitResult& Hit);
 
 	/**
-	 * Updates Mass, CenterOfMass, MomentOfInertia
+	 * Updates Mass, CenterOfMass, MomentOfInertia because of a change in mass.
+	 * 
+	 * @param DeltaMass - The change in mass of this.
+	 * @param MassLocation - The location of the mass that changned on this.
 	 */
 	UFUNCTION()
 	void UpdateMassProperties(float DeltaMass, FVector2D MassLocation);
