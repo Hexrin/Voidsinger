@@ -58,15 +58,17 @@ void AVoidgrid::Tick(float DeltaTime)
  * @param Impulse - The impluse to apply to this voidgrid.
  * @param ImpulseLocation - The relative location to apply the impulse at.
  */
-void AVoidgrid::AddImpulse(FVector2D Impulse, FVector2D RelativeImpulseLocation)
+void AVoidgrid::AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpulseLocation)
 {
-	DrawDebugDirectionalArrow(GetWorld(), GetActorTransform().TransformPosition(FVector(RelativeImpulseLocation, 1) + PixelMeshComponent->GetRelativeLocation()), GetActorTransform().TransformPosition(FVector(RelativeImpulseLocation, 1) + PixelMeshComponent->GetRelativeLocation()) + FVector(Impulse, 0), 2, FColor::Green, true, 5, 0U, .5);
+	DrawDebugDirectionalArrow(GetWorld(), GetActorTransform().TransformPosition(FVector(GridImpulseLocation, 1) + PixelMeshComponent->GetRelativeLocation()), GetActorTransform().TransformPosition(FVector(FVector2D(GridImpulseLocation) + RelativeImpulse * 5, 1) + PixelMeshComponent->GetRelativeLocation()), 2, FColor::Green, true, 5, 0U, .5);
+	
+	FVector2D WorldImpulse = FVector2D(GetActorRotation().RotateVector(FVector(RelativeImpulse, 0));
 	//Clamp new velocity within MaxLinearVelocity
-	//                            | ----- Get New Velocity ----- |
-	LinearVelocity = FMath::Clamp(LinearVelocity + Impulse / Mass, FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
+	//                            | -------- Get New Velocity -------- |
+	LinearVelocity = FMath::Clamp(LinearVelocity + (WorldImpulse / Mass), FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
 	//Clamp new velocity within MaxAngualarVelocity
-	//                             | -------------------------------- Get New Velocity -------------------------------- |
-	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation + FVector2D(PixelMeshComponent->GetRelativeLocation()), Impulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
+	//                             | --------------------------------------------------------------------- Get New Velocity --------------------------------------------------------------------- |
+	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(FVector2D(GridImpulseLocation) + FVector2D(PixelMeshComponent->GetRelativeLocation()), WorldImpulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
 }
 
 /**
