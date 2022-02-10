@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "PartModule.h"
 
 /* -------------------- *\
@@ -18,3 +17,23 @@ void UPartModule::InitializeVariables(UPart* OwningPart)
 
 /* /\ Initialization /\ *\
 \* -------------------- */
+
+/* ------------------- *\
+\* \/ Functionality \/ */
+
+/**
+ * Updates any internal logic based on this parts functionality.
+ */
+void UPartModule::FunctionalityRestored()
+{
+}
+
+/**
+ * Updates any internal logic based on this parts functionality.
+ */
+void UPartModule::FunctionalityLost()
+{
+}
+
+/* /\ Functionality /\ *\
+\* ------------------- */

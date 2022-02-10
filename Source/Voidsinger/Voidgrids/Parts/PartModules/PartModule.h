@@ -10,6 +10,7 @@
 \* \/ Forward Declarations \/ */
 
 class UPart;
+class AVoidgrid;
 
 /* /\ Forward Declarations /\ *\
 \* ------------------------- */
@@ -34,14 +35,29 @@ public:
 	 */
 	void InitializeVariables(UPart* OwningPart);
 
-protected:
-
-	// The part that this module is on
-	UPart* Part;
-
 	/* /\ Initialization /\ *\
 	\* -------------------- */
 
+
+	/* ------------------- *\
+	\* \/ Functionality \/ */
+
+	/**
+	 * Updates any internal logic based on this parts functionality.
+	 */
+	virtual void FunctionalityRestored();
+
+	/**
+	 * Updates any internal logic based on this parts functionality.
+	 */
+	virtual void FunctionalityLost();
+
+	/* /\ Functionality /\ *\
+	\* ------------------- */
+
+protected:
+	// The part that this module is on
+	UPart* Part;
 };
 
 /* /\ =========== /\ *\

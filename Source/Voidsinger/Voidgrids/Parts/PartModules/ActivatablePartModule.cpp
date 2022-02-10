@@ -31,7 +31,7 @@ void UActivatablePartModule::InitializeVariables(UPart* OwningPart)
 /**
  * Called when the owning part is activated and calls the functionality of this part.
  */
-void UActivatablePartModule::OnActivate_Implementation(const TArray<UBaseVerbMotif*>& Verbs, float Effectiveness, FVector2D Direction)
+void UActivatablePartModule::OnActivate_Implementation(const FPartActivationData Data)
 {
 }
 
@@ -43,7 +43,7 @@ void UActivatablePartModule::OnActivate_Implementation(const TArray<UBaseVerbMot
 
 void UActivatablePartModule::Activate()
 {
-	ActivateWithEffectiveness(1);
+	OnActivate(FPartActivationData());
 }
 
 /**
@@ -53,7 +53,7 @@ void UActivatablePartModule::Activate()
  */
 void UActivatablePartModule::ActivateWithEffectiveness(float Effectiveness)
 {
-	ActivateWithEffectivenessAndDirection(Effectiveness, FVector2D::ZeroVector);
+	OnActivate(FPartActivationData(Effectiveness));
 }
 
 /**
@@ -64,19 +64,19 @@ void UActivatablePartModule::ActivateWithEffectiveness(float Effectiveness)
  */
 void UActivatablePartModule::ActivateFromVoidsong(const TArray<UBaseVerbMotif*> Verbs, float Effectiveness)
 {
-	OnActivate(Verbs, Effectiveness);
+	OnActivate(FPartActivationData(Verbs, Effectiveness));
 }
 
 /**
  * Calls the "OnActivate" function so the part module's functionality is executed
  *
  * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
- * @param Direction - The direction to activate this part in.
+ * @param Vector - The direction to activate this part in.
+ * @param Rotation - The rotation of the effect of this voidsong.
  */
-void UActivatablePartModule::ActivateWithEffectivenessAndDirection(float Effectiveness, FVector2D Direction)
+void UActivatablePartModule::ActivateWithEffectivenessVectorAndRotation(float Effectiveness, FVector2D Vector, float Rotation)
 {
-	TArray<UBaseVerbMotif*> EmptyVerbArray = TArray<UBaseVerbMotif*>();
-	OnActivate(EmptyVerbArray, Effectiveness, Direction);
+	OnActivate(FPartActivationData(Effectiveness, Vector, Rotation));
 }
 
 // /\ Activate /\ /

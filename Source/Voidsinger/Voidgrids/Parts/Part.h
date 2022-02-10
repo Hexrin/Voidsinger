@@ -51,6 +51,24 @@ public:
 	 */
 	static GridLocationType UnrotateGridLocation(GridLocationType GridLocation, EPartRotation Rotation);
 
+	/**
+	 * Applies a given rotation to a given location.
+	 *
+	 * @param Target - The location to rotate.
+	 * @param Rotation - The rotation to apply.
+	 * @return The rotated location.
+	 */
+	static FVector2D RotateLocation(FVector2D Location, EPartRotation Rotation);
+
+	/**
+	 * Undoes a given rotation on a given location.
+	 *
+	 * @param Target - The location to rotate.
+	 * @param Rotation - The rotation to undo.
+	 * @return The unrotated location.
+	 */
+	static FVector2D UnrotateLocation(FVector2D Location, EPartRotation Rotation);
+
 	/* /\ Part Transform /\ *\
 	\* -------------------- */
 };
