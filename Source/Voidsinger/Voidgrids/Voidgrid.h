@@ -293,12 +293,19 @@ public:
 
 	/**
 	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
-	 * 
-	 * @param Impulse - The impluse to apply to this voidgrid.
-	 * @param ImpulseLocation - The relative location to apply the impulse at.
+	 *
+	 * @param RelativeImpulse - The impluse to apply to this voidgrid in relative space.
+	 * @param GridImpulseLocation - The location on the part grid to apply the impulse at.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void AddImpulse(FVector2D Impulse, FVector2D RelativeImpulseLocation = FVector2D::ZeroVector);
+	void AddImpulse(FVector2D Impulse, FVector WorldImpulseLocation);
+	/**
+	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
+	 *
+	 * @param Impulse - The impluse to apply to this voidgrid in world space.
+	 * @param WorldImpulseLocation - The location in world space to apply the impulse at.
+	 */
+	void AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpulseLocation = GridLocationType::ZeroValue);
 
 	/**
 	 * Gets the instantaneous linear velocity of a point on this Voidgrid

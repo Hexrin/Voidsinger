@@ -52,24 +52,44 @@ void AVoidgrid::Tick(float DeltaTime)
 /* ------------- *\
 \* \/ Physics \/ */
 
+// \/ Add Impulse \/ 
 /**
  * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
  *
- * @param Impulse - The impluse to apply to this voidgrid.
- * @param ImpulseLocation - The relative location to apply the impulse at.
+ * @param RelativeImpulse - The impluse to apply to this voidgrid in relative space.
+ * @param GridImpulseLocation - The location on the part grid to apply the impulse at.
  */
 void AVoidgrid::AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpulseLocation)
 {
-	DrawDebugDirectionalArrow(GetWorld(), GetActorTransform().TransformPosition(FVector(GridImpulseLocation, 1) + PixelMeshComponent->GetRelativeLocation()), GetActorTransform().TransformPosition(FVector(FVector2D(GridImpulseLocation) + RelativeImpulse * 5, 1) + PixelMeshComponent->GetRelativeLocation()), 2, FColor::Green, true, 5, 0U, .5);
-	
-	FVector2D WorldImpulse = FVector2D(GetActorRotation().RotateVector(FVector(RelativeImpulse, 0));
+	FVector2D WorldImpulse = FVector2D(GetActorRotation().RotateVector(FVector(RelativeImpulse, 0)));
 	//Clamp new velocity within MaxLinearVelocity
 	//                            | -------- Get New Velocity -------- |
 	LinearVelocity = FMath::Clamp(LinearVelocity + (WorldImpulse / Mass), FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
+
+	FVector2D RelativeImpulseLocation = FVector2D(GridImpulseLocation) + FVector2D(PixelMeshComponent->GetRelativeLocation());
 	//Clamp new velocity within MaxAngualarVelocity
 	//                             | --------------------------------------------------------------------- Get New Velocity --------------------------------------------------------------------- |
-	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(FVector2D(GridImpulseLocation) + FVector2D(PixelMeshComponent->GetRelativeLocation()), WorldImpulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
+	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation, WorldImpulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
 }
+
+/**
+ * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
+ *
+ * @param Impulse - The impluse to apply to this voidgrid in world space.
+ * @param WorldImpulseLocation - The location in world space to apply the impulse at.
+ */
+void AVoidgrid::AddImpulse(FVector2D Impulse, FVector WorldImpulseLocation)
+{
+	//Clamp new velocity within MaxLinearVelocity
+	//                            | -------- Get New Velocity -------- |
+	LinearVelocity = FMath::Clamp(LinearVelocity + (Impulse / Mass), FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
+
+	FVector2D RelativeImpulseLocation = FVector2D(GetActorTransform().InverseTransformPosition(WorldImpulseLocation));
+	//Clamp new velocity within MaxAngualarVelocity
+	//                             | --------------------------------------------------------------------- Get New Velocity --------------------------------------------------------------------- |
+	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation, Impulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
+}
+// /\ Add Impulse /\ 
 
 /**
  * Gets the instantaneous linear velocity of a point on this Voidgrid in world space.
@@ -112,7 +132,7 @@ void AVoidgrid::UpdateTransform(float DeltaTime)
 				CollsionForce = (-1 * (1 + CollisionElasticity) * (GetVelocityOfPoint(RelativeHitLocation) | ImpactNormal)) /
 					(1 / Mass + 1 / OtherVoidgrid->Mass + FMath::Square(RelativeHitLocation ^ ImpactNormal) / MomentOfInertia + FMath::Square(OtherRelativeHitLocation ^ ImpactNormal) / OtherVoidgrid->MomentOfInertia);
 
-				OtherVoidgrid->AddImpulse(-1 * CollsionForce * ImpactNormal, OtherRelativeHitLocation);
+				OtherVoidgrid->AddImpulse(-1 * CollsionForce * ImpactNormal, FVector(OtherRelativeHitLocation, 0));
 				//DrawDebugDirectionalArrow(GetWorld(), OtherShip->GetActorLocation() + FVector(OtherRelativeHitLocation, 0), OtherShip->GetActorLocation() + FVector(OtherRelativeHitLocation, 0) + FVector(-1 * CollisionImpulseFactor * ImpactNormal, 0), 5, FColor::Red, false, 5, 0U, 0.3f);
 				//UE_LOG(LogTemp, Warning, TEXT("%s Applyed an impules of %s at %s to %s"), *GetOwner()->GetName(), *(-1 * CollisionImpulseFactor * ImpactNormal).ToString(), *OtherRelativeHitLocation.ToString(), *Result.GetActor()->GetName());
 			}
@@ -122,7 +142,7 @@ void AVoidgrid::UpdateTransform(float DeltaTime)
 					(1 / Mass) + (FMath::Square(RelativeHitLocation ^ ImpactNormal) / MomentOfInertia);
 			}
 
-			AddImpulse(CollsionForce * ImpactNormal, RelativeHitLocation);
+			AddImpulse(CollsionForce * ImpactNormal, FVector(RelativeHitLocation, 0));
 			//DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation() + FVector(RelativeHitLocation, 0), GetOwner()->GetActorLocation() + FVector(RelativeHitLocation, 0) + FVector(CollisionImpulseFactor * ImpactNormal, 0), 5, FColor::Blue, false, 5, 0U, 0.3f);
 			//UE_LOG(LogTemp, Warning, TEXT("%s Applyed an impules of %s at %s to itself when colideing with %s"), *GetOwner()->GetName(), *(CollisionImpulseFactor * ImpactNormal).ToString(), *RelativeHitLocation.ToString(), *Result.GetActor()->GetName());
 		}
