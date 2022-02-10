@@ -92,15 +92,16 @@ public:
 	/* ---------------- *\
 	\* \/ Activation \/ */
 
-public:
+protected:
 
 	/**
-	 * Allows for blueprint logic when the part module is activated
+	 * Called when the owning part is activated and calls the functionality of this part.
 	 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, DisplayName = "Activate", Category = "Activation")
-	void OnActivate(const TArray<UBaseVerbMotif*>& Verbs, float Effectiveness, FVector Direction = FVector::ZeroVector);
-	virtual void OnActivate_Implementation(const TArray<UBaseVerbMotif*>& Verbs, float Effectiveness, FVector Direction = FVector::ZeroVector);
+	void OnActivate(const TArray<UBaseVerbMotif*>& Verbs, float Effectiveness, FVector2D Direction = FVector2D::ZeroVector);
+	virtual void OnActivate_Implementation(const TArray<UBaseVerbMotif*>& Verbs, float Effectiveness, FVector2D Direction = FVector2D::ZeroVector);
 
+public:
 	// \/ Activate \/ /
 
 	/**
@@ -123,7 +124,7 @@ public:
 	 * @param Direction - The direction to activate this part in.
 	 */
 	UFUNCTION(BlueprintCallable, DisplayName = "Activate", Category = "Activation")
-	void ActivateWithEffectivenessAndDirection(float Effectiveness, FVector Direction);
+	void ActivateWithEffectivenessAndDirection(float Effectiveness, FVector2D Direction);
 
 	/**
 	 * Calls the "OnActivate" function with the Verbs played in a Voidsong so the part module's functionality of executed
