@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "BaseVerbMotif.h"
-#include "FillVerbMotif.generated.h"
+#include "HotVerbMotif.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VOIDSINGER_API UFillVerbMotif : public UBaseVerbMotif
+class VOIDSINGER_API UHotVerbMotif : public UBaseVerbMotif
 {
 	GENERATED_BODY()
 	

@@ -250,7 +250,7 @@ void APlayerShip::PlaySequence(TArray<int32> Sequence)
  */
 void APlayerShip::ParseSequenceIntoMotifData(TArray<int32> Sequence, TArray<UBaseFactionMotif*>& OutFactions, TArray<UBaseNounMotif*>& OutNouns, TArray<UBaseVerbMotif*>& OutVerbs)
 {
-	for (UBaseMotif* EachPlayableMotif : PlayableMotifs)
+	for (UBaseMotif* EachPlayableMotif : PlayableMotifs.GetMotifs())
 	{
 		TArray<int32> TrimmedSequence = Sequence;
 		TrimmedSequence.SetNum(EachPlayableMotif->ActivationSequence.Num());
