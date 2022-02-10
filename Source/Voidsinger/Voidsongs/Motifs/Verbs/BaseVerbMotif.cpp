@@ -4,6 +4,9 @@
 #include "BaseVerbMotif.h"
 #include "Kismet/GameplayStatics.h"
 
+/* ------------------------- *\
+\* \/ Voidsong Activation \/ */
+
 /**
  * Does the effect of the Verb using the given information.
  *
@@ -14,3 +17,6 @@
 void UBaseVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness)
 {
 }
+
+/* /\ Voidsong Activation /\ *\
+\* ------------------------- */
