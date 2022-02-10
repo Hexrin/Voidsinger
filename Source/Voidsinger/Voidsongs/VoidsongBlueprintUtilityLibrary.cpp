@@ -7,6 +7,17 @@
 \* \/ Emplace singular Motif \/ */
 
 /**
+ * Adds a Motif of unknown type to the Voidsong
+ *
+ * @param VoidsongData - The struct to edit
+ * @param AddedMotif - The Motif added
+ */
+void UVoidsongBlueprintUtilityLibrary::EmplaceMotif(FVoidsongData VoidsongData, UBaseMotif* MotifAdded)
+{
+	VoidsongData.EmplaceMotif(MotifAdded);
+}
+
+/**
  * Adds a Faction Motif to the Voidsong
  *
  * @param VoidsongData - The struct to edit
@@ -44,6 +55,17 @@ void UVoidsongBlueprintUtilityLibrary::EmplaceVerbMotif(FVoidsongData VoidsongDa
 
 /* ----------------------------- *\
 \* \/ Emplace multiple Motifs \/ */
+
+/**
+ * Adds multiple Motifs of unknown type to the Voidsong
+ *
+ * @param VoidsongData - The struct to edit
+ * @param AddedMotifs - The Motifs added
+ */
+void UVoidsongBlueprintUtilityLibrary::EmplaceMotifs(FVoidsongData VoidsongData, TArray<UBaseMotif*> AddedMotifs)
+{
+	VoidsongData.EmplaceMotifs(AddedMotifs);
+}
 
 /**
  * Adds multiple Faction Motifs to the Voidsong
