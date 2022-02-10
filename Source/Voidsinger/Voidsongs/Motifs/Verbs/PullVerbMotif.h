@@ -7,7 +7,7 @@
 #include "PullVerbMotif.generated.h"
 
 /**
- * Pulls the ship hit with this Voidsong towards whatever activated this Voidsong
+ * Pulls the ship hit with this Motif towards whatever activated this Voidsong
  */
 UCLASS()
 class VOIDSINGER_API UPullVerbMotif : public UBaseVerbMotif
