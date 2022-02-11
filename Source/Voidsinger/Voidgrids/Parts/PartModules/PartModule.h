@@ -33,7 +33,7 @@ public:
 	 * 
 	 * @param OwningPart - The part that this module is being initialized from
 	 */
-	void InitializeVariables(UPart* OwningPart);
+	virtual void InitializeVariables(UPart* OwningPart);
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */
@@ -54,6 +54,14 @@ public:
 
 	/* /\ Functionality /\ *\
 	\* ------------------- */
+
+	/**
+	 * Gets the voidgrid this is a part of.
+	 *
+	 * @return The voidgrid this is a part of.
+	 */
+	UFUNCTION(BlueprintPure)
+	AVoidgrid* GetVoidgrid();
 
 protected:
 	// The part that this module is on

@@ -136,7 +136,7 @@ UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData PartData)
 	NewPart->Transform = PartData.GetTransform();
 	NewPart->Shape = PartData.GetShape();
 
-	OwningVoidgrid->OnDamaged.AddDynamic(NewPart, &UPart::PixelDamaged);
+	OwningVoidgrid->OnPixelRemoved.AddDynamic(NewPart, &UPart::PixelRemoved);
 
 	return NewPart;
 }
@@ -191,52 +191,52 @@ PartShapeType UPart::GetDefaultShape()
 }
 
 /**
- * Updates shape after a pixel of this part has beein repaired
+ * Updates shape after a pixel of this part has been removed
  *
- * @param Location - The location of the pixel that was repaired.
+ * @param Location - The location of the pixel that was removed.
  */
-void UPart::PixelDamaged(FIntPoint Location)
+void UPart::PixelRemoved(FIntPoint Location, bool bApplyChangeEffect)
 {
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
 	if (Shape.Remove(RelativeLocation))
 	{
-		OnDamaged.Broadcast();
+		OnDamaged.Broadcast(bApplyChangeEffect);
 
 		if (bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent)
 		{
 			bFunctional = true;
-			OnFunctionalityLost.Broadcast();
+			OnFunctionalityLost.Broadcast(bApplyChangeEffect);
 		}
 
 		if (Shape.Num() == 0)
 		{
-			OnDestroyed.Broadcast();
+			OnDestroyed.Broadcast(bApplyChangeEffect);
 		}
 	}
 }
 
 /**
- * Updates shape after a pixel of this part has beein repaired
+ * Updates shape after a pixel of this part has been added.
  *
- * @param Location - The location of the pixel that was repaired.
+ * @param Location - The location of the pixel that was added.
  */
-void UPart::PixelRepaired(FIntPoint Location)
+void UPart::PixelAdded(FIntPoint Location, bool bApplyChangeEffect)
 {
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
 	if (GetDefaultShape().Contains(RelativeLocation))
 	{
 		Shape.Add(RelativeLocation);
-		OnRepaired.Broadcast();
+		OnRepaired.Broadcast(bApplyChangeEffect);
 
 		if (!bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) >= GetData()->FunctionalityPercent)
 		{
 			bFunctional = true;
-			OnFunctionalityRestored.Broadcast();
+			OnFunctionalityRestored.Broadcast(bApplyChangeEffect);
 		}
 
 		if (Shape.Num() == GetDefaultShape().Num())
 		{
-			OnFullyRepaired.Broadcast();
+			OnFullyRepaired.Broadcast(bApplyChangeEffect);
 		}
 	}
 }

@@ -12,6 +12,8 @@
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidgrid.generated.h"
 
+class UThrusterModule;
+
 //The type used for storing pixel data
 typedef FGridPixelData PixelType;
 //The type used for storing a ships Pixel Mold
@@ -273,8 +275,10 @@ public:
 |  \/ Voidgrid \/  |
 \* \/ ========= \/ */
 
-//Used for disbatching events requireing a grid locaiton
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGridLocationDelegate, FIntPoint, GridLocaction);
+//Used for disbatching events requireing a grid locaiton.
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGridLocationDelegate, FIntPoint, GridLocaction, bool, bApplyChangeEffect);
+//Used for dispatching simple events with no data.
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGeneralDelegate);
 
 UCLASS(Config = "Physics")
 class VOIDSINGER_API AVoidgrid : public APawn
@@ -290,6 +294,8 @@ public:
 
 	/* ------------- *\
 	\* \/ Physics \/ */
+
+	FGeneralDelegate OnMassChanged;
 
 	/**
 	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
@@ -385,9 +391,9 @@ private:
 
 public:
 	//Called when this is damaged.
-	FGridLocationDelegate OnDamaged;
+	FGridLocationDelegate OnPixelRemoved;
 	//Called when this is repaired.
-	FGridLocationDelegate OnRepaired;
+	FGridLocationDelegate OnPixelAdded;
 
 	/**
 	 * Sets the pixel mold of the voidgrid
@@ -438,6 +444,8 @@ public:
 	 */
 	void RepairPixel();
 
+	UPROPERTY()
+	TSet<UThrusterModule*> ThrusterModules;
 private:
 	/**
 	 * Set pixel intact
@@ -445,7 +453,7 @@ private:
 	 * @param Location - The location of the pixel to edit.
 	 * @param bNewIntact - The new integrity of the pixel.
 	 */
-	void SetPixelIntact(GridLocationType Location, bool bNewIntact);
+	void SetPixelIntact(GridLocationType Location, bool bNewIntact, bool bApplyChangeEffect = true);
 
 	/**
 	 * Set pixel target

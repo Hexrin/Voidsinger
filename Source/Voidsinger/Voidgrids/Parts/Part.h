@@ -160,7 +160,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartTransform& Thing)
 }
 #endif
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPartStateChangeCue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPartStateChangeCue, bool, bApplyChangeEffect);
 
 /**
  * The physical reprsentation of a part.
@@ -288,20 +288,20 @@ public:
 private:
 
 	/**
-	 * Updates shape after a pixel of this part has beein damaged.
+	 * Updates shape after a pixel of this part has been removed.
 	 * 
-	 * @param Location - The location of the pixel that was damaged.
+	 * @param Location - The location of the pixel that was removed.
 	 */
 	UFUNCTION()
-	void PixelDamaged(FIntPoint Location);
+	void PixelRemoved(FIntPoint Location, bool bApplyChangeEffect);
 
 	/**
-	 * Updates shape after a pixel of this part has beein repaired
+	 * Updates shape after a pixel of this part has been added.
 	 * 
-	 * @param Location - The location of the pixel that was repaired.
+	 * @param Location - The location of the pixel that was added.
 	 */
 	UFUNCTION()
-	void PixelRepaired(FIntPoint Location);
+	void PixelAdded(FIntPoint Location, bool bApplyChangeEffect);
 
 	/**
 	 * Stores whether this is functional.

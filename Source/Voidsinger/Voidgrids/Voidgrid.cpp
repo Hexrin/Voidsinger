@@ -212,10 +212,14 @@ bool AVoidgrid::SweepShip(const FTransform & DeltaTransform, FHitResult & Hit)
 */
 void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 {
-	Mass += DeltaMass;
-	CenterOfMass += DeltaMass / Mass * MassLocation;
-	PixelMeshComponent->SetRelativeLocation(FVector(-1 * CenterOfMass, 0));
-	MomentOfInertia += (1 / 12) + DeltaMass * (MassLocation).SizeSquared();
+	if (DeltaMass != 0)
+	{
+		Mass += DeltaMass;
+		CenterOfMass += DeltaMass / Mass * MassLocation;
+		PixelMeshComponent->SetRelativeLocation(FVector(-1 * CenterOfMass, 0));
+		MomentOfInertia += (1 / 12) + DeltaMass * (MassLocation).SizeSquared();
+		OnMassChanged.Broadcast();
+	}
 }
 
 /* /\ Physics /\ *\
@@ -335,7 +339,7 @@ void AVoidgrid::SetState(FVoidgridState NewState)
 			{
 				PixelMold.Emplace(ShapeCompoentLocation, PixelType(Part, UPart::GetNullPart()));
 			}
-			SetPixelIntact(ShapeCompoentLocation, true);
+			SetPixelIntact(ShapeCompoentLocation, true, false);
 
 			UpdatePixelMesh(ShapeCompoentLocation);
 		}
@@ -367,14 +371,7 @@ FVoidgridState AVoidgrid::GetState()
  */
 void AVoidgrid::DamagePixel(GridLocationType Location)
 {
-	if (PixelMold.Contains(Location))
-	{
-		if (PixelMold.Find(Location)->IsIntact())
-		{
-			OnDamaged.Broadcast(Location);
-			SetPixelIntact(Location, false);
-		}
-	}
+	SetPixelIntact(Location, false);
 }
 
 /**
@@ -389,12 +386,11 @@ void AVoidgrid::RepairPixel(GridLocationType Location)
 		PixelType* PixelRef = PixelMold.Find(Location);
 		if (!PixelRef->IsIntact())
 		{
-			OnRepaired.Broadcast(Location);
 			SetPixelIntact(Location, true);
 		}
 		else if(MutablePixels.Contains(Location))
 		{
-			SetPixelIntact(Location, false);
+			SetPixelIntact(Location, false, false);
 		}
 	}
 }
@@ -416,7 +412,7 @@ void AVoidgrid::RepairPixel()
  * @param Location - The location of the pixel to edit.
  * @param bNewIntact - The new integrity of the pixel.
  */
-void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact)
+void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool bApplyChangeEffect)
 {
 	if (PixelMold.Contains(Location))
 	{
@@ -424,7 +420,7 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact)
 		{
 			if (!bNewIntact) 
 			{
-				UpdateMassProperties(-1 * PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass(), FVector2D(Location));
+				float OldPixelMass = PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass();
 				if (PixelMold.Find(Location)->GetTargetPart() == UPart::GetNullPart())
 				{
 					TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
@@ -436,11 +432,14 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact)
 					MutablePixels.Add(Location);
 					PixelMold.Find(Location)->SetIntact(bNewIntact);
 				}
+				OnPixelRemoved.Broadcast(Location, bApplyChangeEffect);
+				UpdateMassProperties(-1 * OldPixelMass, FVector2D(Location));
 			}
 			else
 			{
 				PixelMold.Find(Location)->SetIntact(bNewIntact);
 				MutablePixels.Remove(Location);
+				OnPixelAdded.Broadcast(Location, bApplyChangeEffect);
 				UpdateMassProperties(PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass(), FVector2D(Location));
 			}
 			UpdatePixelMesh(Location);

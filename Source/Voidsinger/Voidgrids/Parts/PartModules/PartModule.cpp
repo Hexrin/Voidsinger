@@ -2,6 +2,8 @@
 
 #include "PartModule.h"
 
+#include "Voidsinger/Voidgrids/Parts/Part.h"
+
 /* -------------------- *\
 \* \/ Initialization \/ */
 
@@ -37,3 +39,13 @@ void UPartModule::FunctionalityLost()
 
 /* /\ Functionality /\ *\
 \* ------------------- */
+
+/**
+ * Gets the voidgrid this is a part of.
+ * 
+ * @return The voidgrid this is a part of.
+ */
+AVoidgrid* UPartModule::GetVoidgrid()
+{
+	return Part->GetVoidgrid();
+}

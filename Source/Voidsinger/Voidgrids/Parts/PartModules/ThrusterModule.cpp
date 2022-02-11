@@ -44,7 +44,7 @@ void UThrusterModule::OnActivate_Implementation(const FPartActivationData Data)
  */
 void UThrusterModule::FunctionalityRestored()
 {
-	//ThrusterModules.FindOrAdd(Part->GetVoidgrid()).Add(this);
+	GetVoidgrid()->ThrusterModules.Add(this);
 }
 
 /**
@@ -52,11 +52,5 @@ void UThrusterModule::FunctionalityRestored()
  */
 void UThrusterModule::FunctionalityLost()
 {
-	//ThrusterModules.FindOrAdd(Part->GetVoidgrid()).Remove(this);
-}
-
-TMap<AVoidgrid*, TSet<UThrusterModule*>>& UThrusterModule::GetThrusterModules()
-{
-	static TMap<AVoidgrid*, TSet<UThrusterModule*>> ThrusterModules{ TMap<AVoidgrid*, TSet<UThrusterModule*>>() };
-	return ThrusterModules;
+	GetVoidgrid()->ThrusterModules.Remove(this);
 }

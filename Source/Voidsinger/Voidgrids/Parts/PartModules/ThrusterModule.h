@@ -16,6 +16,14 @@ class VOIDSINGER_API UThrusterModule : public UActivatablePartModule
 
 
 public:
+
+	/**
+	 * Initializes the part module's protected and private variables
+	 *
+	 * @param OwningPart - The part that this module is being initialized from
+	 */
+	virtual void InitializeVariables(UPart* OwningPart) override;
+
 	UFUNCTION(BlueprintPure)
 	static float TimeToLinearVelocity(AVoidgrid* Target, FVector2D Velocity);
 
@@ -27,6 +35,10 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	static float TimeToOrientation(AVoidgrid* Target, float Orientation);
+
+private:
+	UFUNCTION()
+	void UpdateThrustPredictions();
 
 protected:
 	//The force of the impulse applied by this.
@@ -67,8 +79,4 @@ protected:
 
 	/* /\ Functionality /\ *\
 	\* ------------------- */
-
-
-private:
-	static TMap<AVoidgrid*, TSet<UThrusterModule*>>& GetThrusterModules();
 };

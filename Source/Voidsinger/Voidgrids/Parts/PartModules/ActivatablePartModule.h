@@ -186,6 +186,7 @@ public:
 	/* ---------------------- *\
 	\* \/ Delegate Binding \/ */
 
+public:
 	/**
 	 * Binds the activate function to all selected delegates
 	 */
@@ -205,7 +206,6 @@ public:
 	// The Voidsong events to bind Activate to
 	UPROPERTY(EditAnywhere, Category = "DelegateBinding")
 	EVoidsongCue VoidsongCues;
-
 	/* /\ Delegate Binding /\ *\
 	\* ---------------------- */
 
