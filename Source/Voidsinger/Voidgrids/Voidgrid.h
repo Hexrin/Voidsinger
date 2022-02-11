@@ -12,7 +12,7 @@
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidgrid.generated.h"
 
-class UThrusterModule;
+class UThrusterManager;
 
 //The type used for storing pixel data
 typedef FGridPixelData PixelType;
@@ -277,6 +277,8 @@ public:
 
 //Used for disbatching events requireing a grid locaiton.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGridLocationDelegate, FIntPoint, GridLocaction, bool, bApplyChangeEffect);
+//Used for disbatching events requireing mass information.
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMassDelegate, float, Mass, FVector2D, CenterOfMass, float, MomentOfInertia);
 //Used for dispatching simple events with no data.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGeneralDelegate);
 
@@ -295,7 +297,7 @@ public:
 	/* ------------- *\
 	\* \/ Physics \/ */
 
-	FGeneralDelegate OnMassChanged;
+	FMassDelegate OnMassChanged;
 
 	/**
 	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
@@ -444,8 +446,11 @@ public:
 	 */
 	void RepairPixel();
 
-	UPROPERTY()
-	TSet<UThrusterModule*> ThrusterModules;
+	TSubclassOf<UThrusterManager> ThrusterManagerClass;
+
+	//UPROPERTY()
+	UThrusterManager* ThrusterManager;
+
 private:
 	/**
 	 * Set pixel intact
