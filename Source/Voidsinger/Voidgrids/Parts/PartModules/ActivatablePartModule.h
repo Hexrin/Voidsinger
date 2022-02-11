@@ -123,7 +123,7 @@ public:
 	 *
 	 * @param OwningPart - The part that this module is being initialized from
 	 */
-	void InitializeVariables(UPart* OwningPart);
+	virtual void InitializeVariables(UPart* OwningPart) override;
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */
@@ -146,7 +146,7 @@ public:
 	/**
 	 * Calls the "OnActivate" function with an Effectiveness of 1 so the part module's functionality is executed.
 	 */
-	void Activate();
+	void Activate(bool bApplyEffect = true);
 
 	/**
 	 * Calls the "OnActivate" function so the part module's functionality is executed

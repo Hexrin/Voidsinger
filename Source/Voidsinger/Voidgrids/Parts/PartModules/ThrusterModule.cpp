@@ -5,6 +5,16 @@
 
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 
+/**
+ * Initializes the part module's protected and private variables
+ *
+ * @param OwningPart - The part that this module is being initialized from
+ */
+void UThrusterModule::InitializeVariables(UPart* OwningPart)
+{
+	Super::InitializeVariables(OwningPart);
+}
+
 float UThrusterModule::TimeToLinearVelocity(AVoidgrid* Target, FVector2D Velocity)
 {
 	return 0;
@@ -25,6 +35,10 @@ float UThrusterModule::TimeToOrientation(AVoidgrid* Target, float Orientation)
 	return 0;
 }
 
+void UThrusterModule::UpdateThrustPredictions()
+{
+
+}
 
 /**
  * Called when the owning part is activated and calls the functionality of this part.

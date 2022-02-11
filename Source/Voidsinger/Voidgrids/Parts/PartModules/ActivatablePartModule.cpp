@@ -41,9 +41,12 @@ void UActivatablePartModule::OnActivate_Implementation(const FPartActivationData
  * Calls the "ActivateWithEffectiveness" function with an Effectiveness of 1 so the part module's functionality is executed.
  */
 
-void UActivatablePartModule::Activate()
+void UActivatablePartModule::Activate(bool bApplyEffect)
 {
-	OnActivate(FPartActivationData());
+	if (bApplyEffect)
+	{
+		OnActivate(FPartActivationData());
+	}
 }
 
 /**
