@@ -365,10 +365,34 @@ private:
 	//Stores the default Collision Channel used to test for collisions with other voidgrids.
 	UPROPERTY()
 	TEnumAsByte<ECollisionChannel> VoidgridCollsionChanel{ ECollisionChannel::ECC_PhysicsBody };
+
 	/* /\ Physics /\ *\
 	\* ------------- */
 
+	/* ----------------- *\
+	\* \/ Temperature \/ */
 
+public:
+
+	/**
+	 * Applys the temperature given at the location given on this Voidgrid
+	 * 
+	 * @param Temperature - The temperature to add
+	 * @param Location - The location to apply the temperature
+	 */
+	UFUNCTION(BlueprintCallable)
+	void ApplyTemperatureAtLocation(float Temperature, FIntPoint Location);
+
+private:
+
+	/**
+	 * Spreads the heat on the Voidgrid
+	 */
+	UFUNCTION()
+	void SpreadHeat();
+
+	/* /\ Temperature /\ *\
+	\* ----------------- */
 
 	/* ---------------- *\ 
 	\* \/ Pixel Mold \/ */

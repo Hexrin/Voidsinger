@@ -193,7 +193,32 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 /* /\ Physics /\ *\
 \* ------------- */
 
+/* ----------------- *\
+\* \/ Temperature \/ */
 
+/**
+ * Applys the temperature given at the location given on this Voidgrid
+ *
+ * @param Temperature - The temperature to add
+ * @param Location - The location to apply the temperature
+ */
+void AVoidgrid::ApplyTemperatureAtLocation(float Temperature, FIntPoint Location)
+{
+	if (PixelMold.Contains(Location))
+	{
+		PixelMold.FindRef(Location)->AddTemperature(Temperature);
+	}
+}
+
+/**
+ * Spreads the heat on the Voidgrid
+ */
+void AVoidgrid::SpreadHeat()
+{
+}
+
+/* /\ Temperature /\ *\
+\* ----------------- */
 
 /* ---------------- *\
 \* \/ Pixel Mold \/ */
@@ -618,3 +643,62 @@ EFaction AVoidgrid::GetFaction() const
 
 /* /\ Faction /\ *\
 \* ------------- */
+
+//Notes, delete later
+
+////Comment -Mabel Suggestion
+//void UPartGridComponent::DistrubuteHeat()
+//{
+//	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
+//	NewHeatMap.Reserve(PartGrid.Num());
+//
+//	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
+//	for (int j = 0; j < PartGrid.Num(); j++)
+//	{
+//		float NewHeat = 0;
+//
+//		//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
+//		for (int i = 0; i < 4; i++)
+//		{
+//			FIntPoint TargetPoint = ((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
+//
+//			if (PartGrid.Contains(TargetPoint + PartGrid.LocationAtIndex(j)))
+//			{
+//				//4 is borderline magic number. I understand why you used it but still -Mabel Suggestion
+//				NewHeat += PartGrid.FindRef(TargetPoint + PartGrid.LocationAtIndex(j)).GetTemperature() * HeatPropagationFactor / (4);
+//			}
+//		}
+//
+//		//Math is occuring that needs to be commented. Why is the pixels current temperature mutiplied by 1 - the heat propagation factor? -Mabel Suggestion
+//		NewHeat = PartGrid.ValueAtIndex(j).GetTemperature() * (1 - HeatPropagationFactor) + NewHeat;
+//
+//
+//		//Why 0.5? comment plz (also, is it.... magic number?) -Mabel Suggestion
+//		NewHeatMap.Emplace(PartGrid.LocationAtIndex(j), NewHeat > .05 ? NewHeat : 0);
+//	}
+//
+//	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
+//
+//	//You iterate through the part grid not once, but twice in this function. Big oof if I'm being honest. Honestly, it'd be better to just have heat not spread
+//	//if this is the way that we're doing it. This is so bad for large ships. 
+//	//I wonder if each part could handle it's own heat and distribute to the places around it instead of doing this on the part grid? I don't know how much it would help but 
+//	//it might help a little bit. Not sure, that might be just as laggy. -Mabel Suggestion
+//	for (int i = 0; i < PartGrid.Num(); i++)
+//	{
+//		if (NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)) > PartGrid.ValueAtIndex(i).Part->GetHeatResistance())
+//		{
+//			KeysToDestroy.Emplace(PartGrid.LocationAtIndex(i));
+//		}
+//		else
+//		{
+//			PartGrid.ValueAtIndex(i).SetTemperature(NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)));
+//		}
+//	}
+//
+//	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" 
+//	//"Val" is just as bad as i. Just saying. -Mabel Suggestion
+//	for (FIntPoint Val : KeysToDestroy)
+//	{
+//		DestroyPixel(Val);
+//	}
+//}
