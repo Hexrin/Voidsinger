@@ -206,7 +206,7 @@ void AVoidgrid::ApplyTemperatureAtLocation(float Temperature, FIntPoint Location
 {
 	if (PixelMold.Contains(Location))
 	{
-		PixelMold.FindRef(Location)->AddTemperature(Temperature);
+		PixelMold.FindRef(Location).AddTemperature(Temperature);
 	}
 }
 
@@ -215,6 +215,67 @@ void AVoidgrid::ApplyTemperatureAtLocation(float Temperature, FIntPoint Location
  */
 void AVoidgrid::SpreadHeat()
 {
+
+	// \/ Calculate the new heat map \/ /
+
+	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
+	NewHeatMap.Reserve(PixelMold.Num());
+
+	//Iterate through each point on the grid map to spread heat to each pixel
+	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
+	{
+		//Heat added to this pixel
+		float AddedHeat = 0;
+
+		// Spread heat to each point around the current location
+		for (int EachPointAroundPixel = 0; EachPointAroundPixel < 4; EachPointAroundPixel++)
+		{
+			FIntPoint TargetPoint = ((EachPointAroundPixel % 2 == 1) ? FIntPoint((EachPointAroundPixel > 1) ? 1 : -1, 0) : FIntPoint(0, (EachPointAroundPixel > 1) ? 1 : -1));
+
+			if (PixelMold.Contains(TargetPoint + EachPixel.Key))
+			{
+				//Get the temperature of the adjacent pixel
+				float OtherPixelTemperature = PixelMold.FindRef(TargetPoint + EachPixel.Key).GetTemperature();
+
+				//The heat added to this pixel from the other pixel is the other pixel's temperature multiplied by the heat propagation faction (how much heat it will spread to other pixels). It
+				//is divided by four because a pixel will spread heat to four other pixels.
+				AddedHeat += (OtherPixelTemperature * HeatPropagationFactor) / (4);
+			}
+		}
+
+		//The heat remaining when this pixel spreads heat to the surrounding pixels
+		float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - HeatPropagationFactor);
+
+		float NewHeat = RemainingHeat + AddedHeat;
+
+		//If the amount of heat is below .05, then it's negligable. 
+		NewHeatMap.Emplace(EachPixel.Key, NewHeat > .05 ? NewHeat : 0);
+
+	}
+
+	// /\ Calculate the new heat map /\ /
+
+	//The locations on the Pixel Mold to destroy
+	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
+
+	for (int EachPixel = 0; EachPixel < PixelMold.Num(); EachPixel++)
+	{
+		if (NewHeatMap.FindRef(PixelMold.LocationAtIndex(EachPixel)) > PixelMold.ValueAtIndex(EachPixel).Part->GetHeatResistance())
+		{
+			KeysToDestroy.Emplace(PixelMold.LocationAtIndex(EachPixel));
+		}
+		else
+		{
+			PixelMold.ValueAtIndex(EachPixel).SetTemperature(NewHeatMap.FindRef(PixelMOld.LocationAtIndex(i)));
+		}
+	}
+
+	////"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" 
+	////"Val" is just as bad as i. Just saying. -Mabel Suggestion
+	//for (FIntPoint EachKeyToDestroy : KeysToDestroy)
+	//{
+	//	DestroyPixel(EachKeyToDestroy);
+	//}
 }
 
 /* /\ Temperature /\ *\

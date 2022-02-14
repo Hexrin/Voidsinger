@@ -118,6 +118,16 @@ public:
 	}
 
 	/**
+	 * Gets the temperature of this pixel.
+	 * 
+	 * @return - The temperature of this pixel
+	 */
+	float GetTemperature()
+	{
+		return Temperature;
+	}
+
+	/**
 	 * Gets the part of this pixel.
 	 *
 	 * @return The part of this pixel.
@@ -390,6 +400,12 @@ private:
 	 */
 	UFUNCTION()
 	void SpreadHeat();
+
+protected:
+
+	//The percent of heat that a pixel will spread to all surrounding pixels
+	UPROPERTY(EditDefaultsOnly)
+	float HeatPropagationFactor = 0.5;
 
 	/* /\ Temperature /\ *\
 	\* ----------------- */
