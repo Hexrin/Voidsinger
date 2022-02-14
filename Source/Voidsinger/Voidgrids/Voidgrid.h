@@ -12,7 +12,10 @@
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidgrid.generated.h"
 
-class UThrusterManager;
+
+
+class UThrustManager;
+
 
 //The type used for storing pixel data
 typedef FGridPixelData PixelType;
@@ -288,6 +291,8 @@ class VOIDSINGER_API AVoidgrid : public APawn
 	GENERATED_BODY()
 
 public:
+	friend UThrustManager;
+
 	//Sets default values for this voidgrid's properties
 	AVoidgrid();
 
@@ -446,10 +451,11 @@ public:
 	 */
 	void RepairPixel();
 
-	TSubclassOf<UThrusterManager> ThrusterManagerClass;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UThrustManager> ThrustManagerClass;
 
-	//UPROPERTY()
-	UThrusterManager* ThrusterManager;
+	UPROPERTY()
+	UThrustManager* ThrustManager;
 
 private:
 	/**

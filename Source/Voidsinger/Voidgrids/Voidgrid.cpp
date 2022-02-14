@@ -2,6 +2,7 @@
 
 
 #include "Voidgrid.h"
+#include "Voidsinger/Voidgrids/Parts/PartModules/ThrustManager.h"
 #include "DrawDebugHelpers.h"
 #include "Parts/Part.h"
 
@@ -39,6 +40,11 @@ AVoidgrid::AVoidgrid()
 	PixelTriangles += CreateTrianglesForPixelMeshFace(6, 2, 7, 3); //Side Face for collision
 	// /\ Initialize Mesh Component /\ /
 
+	//Initialize Thruster Manager
+	if (IsValid(ThrustManagerClass))
+	{
+		ThrustManager = NewObject<UThrustManager>(this, ThrustManagerClass.Get());
+	}
 }
 
 //Used to update location and thrust control.
