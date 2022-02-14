@@ -296,15 +296,15 @@ void AVoidgrid::SpreadHeat()
 	//The locations on the Pixel Mold to destroy
 	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
 
-	for (int EachPixel = 0; EachPixel < PixelMold.Num(); EachPixel++)
+	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
 	{
-		if (NewHeatMap.FindRef(PixelMold.LocationAtIndex(EachPixel)) > PixelMold.ValueAtIndex(EachPixel).Part->GetHeatResistance())
+		if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetHeatResistance())
 		{
-			KeysToDestroy.Emplace(PixelMold.LocationAtIndex(EachPixel));
+			KeysToDestroy.Emplace(EachPixel.Key);
 		}
 		else
 		{
-			PixelMold.ValueAtIndex(EachPixel).SetTemperature(NewHeatMap.FindRef(PixelMOld.LocationAtIndex(i)));
+			EachPixel.Value.SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
 		}
 	}
 
