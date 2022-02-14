@@ -12,6 +12,11 @@
 #include "Voidsinger/VoidsingerTypes.h"
 #include "Voidgrid.generated.h"
 
+
+
+class UThrustManager;
+
+
 //The type used for storing pixel data
 typedef FGridPixelData PixelType;
 //The type used for storing a ships Pixel Mold
@@ -283,8 +288,12 @@ public:
 |  \/ Voidgrid \/  |
 \* \/ ========= \/ */
 
-//Used for disbatching events requireing a grid locaiton
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGridLocationDelegate, FIntPoint, GridLocaction);
+//Used for disbatching events requireing a grid locaiton.
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGridLocationDelegate, FIntPoint, GridLocaction, bool, bApplyChangeEffect);
+//Used for disbatching events requireing mass information.
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMassDelegate, float, Mass, FVector2D, CenterOfMass, float, MomentOfInertia);
+//Used for dispatching simple events with no data.
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGeneralDelegate);
 
 UCLASS(Config = "Physics")
 class VOIDSINGER_API AVoidgrid : public APawn
@@ -292,6 +301,8 @@ class VOIDSINGER_API AVoidgrid : public APawn
 	GENERATED_BODY()
 
 public:
+	friend UThrustManager;
+
 	//Sets default values for this voidgrid's properties
 	AVoidgrid();
 
@@ -301,14 +312,23 @@ public:
 	/* ------------- *\
 	\* \/ Physics \/ */
 
+	FMassDelegate OnMassChanged;
+
 	/**
 	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
-	 * 
-	 * @param Impulse - The impluse to apply to this voidgrid.
-	 * @param ImpulseLocation - The relative location to apply the impulse at.
+	 *
+	 * @param RelativeImpulse - The impluse to apply to this voidgrid in relative space.
+	 * @param GridImpulseLocation - The location on the part grid to apply the impulse at.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void AddImpulse(FVector2D Impulse, FVector2D ImpulseLocation = FVector2D::ZeroVector);
+	void AddImpulse(FVector2D Impulse, FVector WorldImpulseLocation);
+	/**
+	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
+	 *
+	 * @param Impulse - The impluse to apply to this voidgrid in world space.
+	 * @param WorldImpulseLocation - The location in world space to apply the impulse at.
+	 */
+	void AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpulseLocation = GridLocationType::ZeroValue);
 
 	/**
 	 * Gets the instantaneous linear velocity of a point on this Voidgrid
@@ -335,7 +355,10 @@ private:
 	bool SweepShip(const FTransform& DeltaTransform, FHitResult& Hit);
 
 	/**
-	 * Updates Mass, CenterOfMass, MomentOfInertia
+	 * Updates Mass, CenterOfMass, MomentOfInertia because of a change in mass.
+	 * 
+	 * @param DeltaMass - The change in mass of this.
+	 * @param MassLocation - The location of the mass that changned on this.
 	 */
 	UFUNCTION()
 	void UpdateMassProperties(float DeltaMass, FVector2D MassLocation);
@@ -415,9 +438,9 @@ protected:
 
 public:
 	//Called when this is damaged.
-	FGridLocationDelegate OnDamaged;
+	FGridLocationDelegate OnPixelRemoved;
 	//Called when this is repaired.
-	FGridLocationDelegate OnRepaired;
+	FGridLocationDelegate OnPixelAdded;
 
 	/**
 	 * Sets the pixel mold of the voidgrid
@@ -468,6 +491,12 @@ public:
 	 */
 	void RepairPixel();
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UThrustManager> ThrustManagerClass;
+
+	UPROPERTY()
+	UThrustManager* ThrustManager;
+
 private:
 	/**
 	 * Set pixel intact
@@ -475,7 +504,7 @@ private:
 	 * @param Location - The location of the pixel to edit.
 	 * @param bNewIntact - The new integrity of the pixel.
 	 */
-	void SetPixelIntact(GridLocationType Location, bool bNewIntact);
+	void SetPixelIntact(GridLocationType Location, bool bNewIntact, bool bApplyChangeEffect = true);
 
 	/**
 	 * Set pixel target

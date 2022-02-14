@@ -60,6 +60,45 @@ ENUM_CLASS_FLAGS(EVoidsongCue)
 |  /\ EVoidsongCue /\  |
 \* /\ ============ /\ */
 
+/* \/ =================== \/ *\
+|  \/ FPartActivationData \/  |
+\* \/ =================== \/ */
+
+USTRUCT(BlueprintType)
+struct FPartActivationData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<UBaseVerbMotif*> Verbs;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float Effectiveness { 1 };
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FVector2D Vector = FVector2D::ZeroVector;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float Rotation { 0 };
+
+	FPartActivationData(float ActivationEffectiveness = 1, FVector2D ActivationVector = FVector2D::ZeroVector, float ActivationRotation = 0, TArray<UBaseVerbMotif*> ActivationVerbs = TArray<UBaseVerbMotif*>())
+	{
+		Effectiveness = ActivationEffectiveness;
+		Vector = ActivationVector;
+		Rotation = ActivationRotation;
+		Verbs = ActivationVerbs;
+	}
+
+	FPartActivationData(TArray<UBaseVerbMotif*> ActivationVerbs, float ActivationEffectiveness = 1, FVector2D ActivationVector = FVector2D::ZeroVector, float ActivationRotation = 0)
+	{
+		FPartActivationData(ActivationEffectiveness, ActivationVector, ActivationRotation, ActivationVerbs);
+	}
+};
+
+/* /\ =================== /\ *\
+|  /\ FPartActivationData /\  |
+\* /\ =================== /\ */
+
 /* \/ ====================== \/ *\
 |  \/ UActivatablePartModule \/  |
 \* \/ ====================== \/ */
@@ -84,7 +123,7 @@ public:
 	 *
 	 * @param OwningPart - The part that this module is being initialized from
 	 */
-	void InitializeVariables(UPart* OwningPart);
+	virtual void InitializeVariables(UPart* OwningPart) override;
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */
@@ -92,21 +131,22 @@ public:
 	/* ---------------- *\
 	\* \/ Activation \/ */
 
-public:
+protected:
 
 	/**
-	 * Allows for blueprint logic when the part module is activated
+	 * Called when the owning part is activated and calls the functionality of this part.
 	 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, DisplayName = "Activate", Category = "Activation")
-	void OnActivate(const TArray<UBaseVerbMotif*>& Verbs, float Effectiveness, FVector Direction = FVector::ZeroVector);
-	virtual void OnActivate_Implementation(const TArray<UBaseVerbMotif*>& Verbs, float Effectiveness, FVector Direction = FVector::ZeroVector);
+	void OnActivate(const FPartActivationData Data);
+	virtual void OnActivate_Implementation(const FPartActivationData Data);
 
+public:
 	// \/ Activate \/ /
 
 	/**
 	 * Calls the "OnActivate" function with an Effectiveness of 1 so the part module's functionality is executed.
 	 */
-	void Activate();
+	void Activate(bool bApplyEffect = true);
 
 	/**
 	 * Calls the "OnActivate" function so the part module's functionality is executed
@@ -120,10 +160,11 @@ public:
 	 * Calls the "OnActivate" function so the part module's functionality is executed
 	 *
 	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
-	 * @param Direction - The direction to activate this part in.
+	 * @param Vector - The direction to activate this part in.
+	 * @param Rotation - The rotation of the effect of this voidsong.
 	 */
 	UFUNCTION(BlueprintCallable, DisplayName = "Activate", Category = "Activation")
-	void ActivateWithEffectivenessAndDirection(float Effectiveness, FVector Direction);
+	void ActivateWithEffectivenessVectorAndRotation(float Effectiveness, FVector2D Vector, float Rotation);
 
 	/**
 	 * Calls the "OnActivate" function with the Verbs played in a Voidsong so the part module's functionality of executed
@@ -145,6 +186,7 @@ public:
 	/* ---------------------- *\
 	\* \/ Delegate Binding \/ */
 
+public:
 	/**
 	 * Binds the activate function to all selected delegates
 	 */
@@ -164,7 +206,6 @@ public:
 	// The Voidsong events to bind Activate to
 	UPROPERTY(EditAnywhere, Category = "DelegateBinding")
 	EVoidsongCue VoidsongCues;
-
 	/* /\ Delegate Binding /\ *\
 	\* ---------------------- */
 

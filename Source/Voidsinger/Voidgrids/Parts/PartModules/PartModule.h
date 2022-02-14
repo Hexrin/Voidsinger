@@ -10,6 +10,7 @@
 \* \/ Forward Declarations \/ */
 
 class UPart;
+class AVoidgrid;
 
 /* /\ Forward Declarations /\ *\
 \* ------------------------- */
@@ -32,16 +33,39 @@ public:
 	 * 
 	 * @param OwningPart - The part that this module is being initialized from
 	 */
-	void InitializeVariables(UPart* OwningPart);
-
-protected:
-
-	// The part that this module is on
-	UPart* Part;
+	virtual void InitializeVariables(UPart* OwningPart);
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */
 
+
+	/* ------------------- *\
+	\* \/ Functionality \/ */
+
+	/**
+	 * Updates any internal logic based on this parts functionality.
+	 */
+	virtual void FunctionalityRestored();
+
+	/**
+	 * Updates any internal logic based on this parts functionality.
+	 */
+	virtual void FunctionalityLost();
+
+	/* /\ Functionality /\ *\
+	\* ------------------- */
+
+	/**
+	 * Gets the voidgrid this is a part of.
+	 *
+	 * @return The voidgrid this is a part of.
+	 */
+	UFUNCTION(BlueprintPure)
+	AVoidgrid* GetVoidgrid();
+
+protected:
+	// The part that this module is on
+	UPart* Part;
 };
 
 /* /\ =========== /\ *\
