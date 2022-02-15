@@ -361,7 +361,7 @@ FVector2D ABaseShip::GetTargetMoveDirection()
 //Comment -Mabel Suggestion
 void ABaseShip::SetTargetMoveSpeed(float Vector)
 {
-	TargetMoveSpeed = abs(Vector);
+	TargetMoveSpeed = Vector;
 }
 
 //Comment -Mabel Suggestion
