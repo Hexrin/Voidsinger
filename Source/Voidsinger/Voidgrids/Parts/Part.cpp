@@ -16,12 +16,16 @@ GridLocationType UPartRotationFunctions::RotateGridLocation(GridLocationType Gri
 	{
 	case EPartRotation::PR_0Degrees:
 		return GridLocation;
+
 	case EPartRotation::PR_90Degrees:
 		return FIntPoint(-GridLocation.Y, GridLocation.X);
+
 	case EPartRotation::PR_180Degrees:
 		return GridLocation * -1;
+
 	case EPartRotation::PR_270Degrees:
 		return FIntPoint(GridLocation.Y, -GridLocation.X);
+
 	default:
 		UE_LOG(LogTemp, Error, TEXT("RotateGridLocation invalid Rotation"));
 		return GridLocation;
@@ -41,15 +45,77 @@ GridLocationType UPartRotationFunctions::UnrotateGridLocation(GridLocationType G
 	{
 	case EPartRotation::PR_0Degrees:
 		return GridLocation;
+
 	case EPartRotation::PR_90Degrees:
 		return FIntPoint(GridLocation.Y, -GridLocation.X);
+
 	case EPartRotation::PR_180Degrees:
 		return GridLocation * -1;
+
 	case EPartRotation::PR_270Degrees:
 		return FIntPoint(-GridLocation.Y, GridLocation.X);
+
 	default:
 		UE_LOG(LogTemp, Error, TEXT("UnrotateGridLocation invalid Rotation"));
 		return GridLocation;
+	}
+}
+
+/**
+ * Applies a given rotation to a given location.
+ *
+ * @param Target - The location to rotate.
+ * @param Rotation - The rotation to apply.
+ * @return The rotated location.
+ */
+FVector2D UPartRotationFunctions::RotateLocation(FVector2D Location, EPartRotation Rotation)
+{
+	switch (Rotation)
+	{
+	case EPartRotation::PR_0Degrees:
+		return Location;
+
+	case EPartRotation::PR_90Degrees:
+		return FIntPoint(-Location.Y, Location.X);
+
+	case EPartRotation::PR_180Degrees:
+		return Location * -1;
+
+	case EPartRotation::PR_270Degrees:
+		return FIntPoint(Location.Y, -Location.X);
+
+	default:
+		UE_LOG(LogTemp, Error, TEXT("RotateGridLocation invalid Rotation"));
+		return Location;
+	}
+}
+
+/**
+ * Undoes a given rotation on a given location.
+ *
+ * @param Target - The location to rotate.
+ * @param Rotation - The rotation to undo.
+ * @return The unrotated location.
+ */
+FVector2D UPartRotationFunctions::UnrotateLocation(FVector2D Location, EPartRotation Rotation)
+{
+	switch (Rotation)
+	{
+	case EPartRotation::PR_0Degrees:
+		return Location;
+
+	case EPartRotation::PR_90Degrees:
+		return FIntPoint(Location.Y, -Location.X);
+
+	case EPartRotation::PR_180Degrees:
+		return Location * -1;
+
+	case EPartRotation::PR_270Degrees:
+		return FIntPoint(-Location.Y, Location.X);
+
+	default:
+		UE_LOG(LogTemp, Error, TEXT("RotateGridLocation invalid Rotation"));
+		return Location;
 	}
 }
 
@@ -70,7 +136,7 @@ UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData PartData)
 	NewPart->Transform = PartData.GetTransform();
 	NewPart->Shape = PartData.GetShape();
 
-	OwningVoidgrid->OnDamaged.AddDynamic(NewPart, &UPart::PixelDamaged);
+	OwningVoidgrid->OnPixelRemoved.AddDynamic(NewPart, &UPart::RemovePixel);
 
 	return NewPart;
 }
@@ -125,53 +191,93 @@ PartShapeType UPart::GetDefaultShape()
 }
 
 /**
- * Updates shape after a pixel of this part has beein repaired
+ * Sets whether a pixel on this part is frozen or not
  *
- * @param Location - The location of the pixel that was repaired.
+ * @param Location - The location to set frozen
+ * @param Frozen - Whether this part is frozen or not
  */
-void UPart::PixelDamaged(FIntPoint Location)
+void UPart::SetPixelFrozen(FIntPoint Location, bool Frozen)
 {
-	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
-	if (Shape.Remove(RelativeLocation))
+	FIntPoint RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
+
+	if (Frozen)
 	{
-		OnDamaged.Broadcast();
-
-		if (bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent)
-		{
-			bFunctional = true;
-			OnFunctionalityLost.Broadcast();
-		}
-
-		if (Shape.Num() == 0)
-		{
-			OnDestroyed.Broadcast();
-		}
+		FrozenPixels.Emplace(RelativeLocation);
+	}
+	else if (FrozenPixels.Contains(RelativeLocation))
+	{
+		FrozenPixels.Remove(RelativeLocation);
 	}
 }
 
 /**
- * Updates shape after a pixel of this part has beein repaired
+ * Updates shape after a pixel of this part has been removed
  *
- * @param Location - The location of the pixel that was repaired.
+ * @param Location - The location of the pixel that was removed.
  */
-void UPart::PixelRepaired(FIntPoint Location)
+void UPart::RemovePixel(FIntPoint Location, bool bApplyChangeEffect)
+{
+	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
+	if (Shape.Remove(RelativeLocation))
+	{
+
+		if (FrozenPixels.Contains(RelativeLocation))
+		{
+			FrozenPixels.Remove(RelativeLocation);
+		}
+
+		OnDamaged.Broadcast(bApplyChangeEffect);
+
+		// \/ Check functionality \/ /
+
+		//Check if there are enough pixels frozen for the part to not be functional
+		bool bFrozenNotFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) > (1 - GetData()->FunctionalityPercent);
+
+		if (bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent) && (bFrozenNotFunctionalCheck))
+		{
+			bFunctional = false;
+			OnFunctionalityLost.Broadcast(bApplyChangeEffect);
+		}
+
+		if (Shape.Num() == 0)
+		{
+			OnDestroyed.Broadcast(bApplyChangeEffect);
+		}
+
+		// /\ Check functionality /\ /
+	}
+}
+
+/**
+ * Updates shape after a pixel of this part has been added.
+ *
+ * @param Location - The location of the pixel that was added.
+ */
+void UPart::AddPixel(FIntPoint Location, bool bApplyChangeEffect)
 {
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
 	if (GetDefaultShape().Contains(RelativeLocation))
 	{
 		Shape.Add(RelativeLocation);
-		OnRepaired.Broadcast();
+		OnRepaired.Broadcast(bApplyChangeEffect);
 
-		if (!bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) >= GetData()->FunctionalityPercent)
+		// \/ Check functionality \/ /
+		
+		//Check if there are few enough pixels frozen for the part to be functional
+		bool bFrozenFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) <= (1 - GetData()->FunctionalityPercent);
+
+		if (!bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) >= GetData()->FunctionalityPercent) && (bFrozenFunctionalCheck))
 		{
 			bFunctional = true;
-			OnFunctionalityRestored.Broadcast();
+			OnFunctionalityRestored.Broadcast(bApplyChangeEffect);
 		}
 
 		if (Shape.Num() == GetDefaultShape().Num())
 		{
-			OnFullyRepaired.Broadcast();
+			OnFullyRepaired.Broadcast(bApplyChangeEffect);
 		}
+
+		// /\ Check functionality /\ /
 	}
 }
 

@@ -51,6 +51,24 @@ public:
 	 */
 	static GridLocationType UnrotateGridLocation(GridLocationType GridLocation, EPartRotation Rotation);
 
+	/**
+	 * Applies a given rotation to a given location.
+	 *
+	 * @param Target - The location to rotate.
+	 * @param Rotation - The rotation to apply.
+	 * @return The rotated location.
+	 */
+	static FVector2D RotateLocation(FVector2D Location, EPartRotation Rotation);
+
+	/**
+	 * Undoes a given rotation on a given location.
+	 *
+	 * @param Target - The location to rotate.
+	 * @param Rotation - The rotation to undo.
+	 * @return The unrotated location.
+	 */
+	static FVector2D UnrotateLocation(FVector2D Location, EPartRotation Rotation);
+
 	/* /\ Part Transform /\ *\
 	\* -------------------- */
 };
@@ -142,7 +160,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartTransform& Thing)
 }
 #endif
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPartStateChangeCue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPartStateChangeCue, bool, bApplyChangeEffect);
 
 /**
  * The physical reprsentation of a part.
@@ -222,6 +240,27 @@ public:
 	 */
 	FORCEINLINE PartShapeType GetShape() { return Shape; };
 
+	/**
+	 * Gets the shape of this part.
+	 *
+	 * @return The shape of this part.
+	 */
+	FORCEINLINE float GetPixelMass() { return Data->Mass/GetDefaultShape().Num(); };
+
+	/**
+	 * Sets whether a pixel on this part is frozen or not
+	 * 
+	 * @param Location - The location to set frozen
+	 * @param Frozen - Whether this part is frozen or not
+	 */
+	UFUNCTION()
+	void SetPixelFrozen(FIntPoint Location, bool Frozen);
+
+	/**
+	 * Gets whether or not this part is functional.
+	 * 
+	 * @return Wheather or not this is functional.
+	 */
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE  bool IsFunctional() { return bFunctional; };
 
@@ -258,28 +297,31 @@ public:
 private:
 
 	/**
-	 * Updates shape after a pixel of this part has beein damaged.
+	 * Updates shape after a pixel of this part has been removed.
 	 * 
-	 * @param Location - The location of the pixel that was damaged.
+	 * @param Location - The location of the pixel that was removed.
 	 */
 	UFUNCTION()
-	void PixelDamaged(FIntPoint Location);
+	void RemovePixel(FIntPoint Location, bool bApplyChangeEffect);
 
 	/**
-	 * Updates shape after a pixel of this part has beein repaired
+	 * Updates shape after a pixel of this part has been added.
 	 * 
-	 * @param Location - The location of the pixel that was repaired.
+	 * @param Location - The location of the pixel that was added.
 	 */
 	UFUNCTION()
-	void PixelRepaired(FIntPoint Location);
+	void AddPixel(FIntPoint Location, bool bApplyChangeEffect);
 
 	/**
 	 * Stores whether this is functional.
 	 */
 	bool bFunctional{ false };
 
-	//Stores the current shape of this part.
+	//Stores the current shape of this part
 	PartShapeType Shape;
+
+	//Stores the pixels that are frozen
+	PartShapeType FrozenPixels;
 
 	/* /\ Part Functionality /\ *\
 	\* ------------------------ */

@@ -2,6 +2,8 @@
 
 
 #include "Voidgrid.h"
+#include "Voidsinger/Voidgrids/Parts/PartModules/ThrustManager.h"
+#include "DrawDebugHelpers.h"
 #include "Parts/Part.h"
 
 //Sets default values for this voidgrid's properties
@@ -9,6 +11,9 @@ AVoidgrid::AVoidgrid()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	//Initilize Root Component
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("CenterOfMass"));
 
 	// \/ Initialize Mesh Component \/ /
 	PixelMeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Mesh Component"));
@@ -35,6 +40,11 @@ AVoidgrid::AVoidgrid()
 	PixelTriangles += CreateTrianglesForPixelMeshFace(6, 2, 7, 3); //Side Face for collision
 	// /\ Initialize Mesh Component /\ /
 
+	//Initialize Thruster Manager
+	if (IsValid(ThrustManagerClass))
+	{
+		ThrustManager = NewObject<UThrustManager>(this, ThrustManagerClass.Get());
+	}
 }
 
 //Used to update location and thrust control.
@@ -48,21 +58,44 @@ void AVoidgrid::Tick(float DeltaTime)
 /* ------------- *\
 \* \/ Physics \/ */
 
+// \/ Add Impulse \/ 
 /**
  * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
  *
- * @param Impulse - The impluse to apply to this voidgrid.
- * @param ImpulseLocation - The relative location to apply the impulse at.
+ * @param RelativeImpulse - The impluse to apply to this voidgrid in relative space.
+ * @param GridImpulseLocation - The location on the part grid to apply the impulse at.
  */
-void AVoidgrid::AddImpulse(FVector2D Impulse, FVector2D ImpulseLocation)
+void AVoidgrid::AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpulseLocation)
+{
+	FVector2D WorldImpulse = FVector2D(GetActorRotation().RotateVector(FVector(RelativeImpulse, 0)));
+	//Clamp new velocity within MaxLinearVelocity
+	//                            | -------- Get New Velocity -------- |
+	LinearVelocity = FMath::Clamp(LinearVelocity + (WorldImpulse / Mass), FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
+
+	FVector2D RelativeImpulseLocation = FVector2D(GridImpulseLocation) + FVector2D(PixelMeshComponent->GetRelativeLocation());
+	//Clamp new velocity within MaxAngualarVelocity
+	//                             | --------------------------------------------------------------------- Get New Velocity --------------------------------------------------------------------- |
+	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation, WorldImpulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
+}
+
+/**
+ * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
+ *
+ * @param Impulse - The impluse to apply to this voidgrid in world space.
+ * @param WorldImpulseLocation - The location in world space to apply the impulse at.
+ */
+void AVoidgrid::AddImpulse(FVector2D Impulse, FVector WorldImpulseLocation)
 {
 	//Clamp new velocity within MaxLinearVelocity
-	//                            | ----- Get New Velocity ----- |
-	LinearVelocity = FMath::Clamp(LinearVelocity + Impulse / Mass, FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
+	//                            | -------- Get New Velocity -------- |
+	LinearVelocity = FMath::Clamp(LinearVelocity + (Impulse / Mass), FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
+
+	FVector2D RelativeImpulseLocation = FVector2D(GetActorTransform().InverseTransformPosition(WorldImpulseLocation));
 	//Clamp new velocity within MaxAngualarVelocity
-	//                             | -------------------------------- Get New Velocity -------------------------------- |
-	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(ImpulseLocation, Impulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
+	//                             | --------------------------------------------------------------------- Get New Velocity --------------------------------------------------------------------- |
+	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation, Impulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
 }
+// /\ Add Impulse /\ 
 
 /**
  * Gets the instantaneous linear velocity of a point on this Voidgrid in world space.
@@ -105,7 +138,7 @@ void AVoidgrid::UpdateTransform(float DeltaTime)
 				CollsionForce = (-1 * (1 + CollisionElasticity) * (GetVelocityOfPoint(RelativeHitLocation) | ImpactNormal)) /
 					(1 / Mass + 1 / OtherVoidgrid->Mass + FMath::Square(RelativeHitLocation ^ ImpactNormal) / MomentOfInertia + FMath::Square(OtherRelativeHitLocation ^ ImpactNormal) / OtherVoidgrid->MomentOfInertia);
 
-				OtherVoidgrid->AddImpulse(-1 * CollsionForce * ImpactNormal, OtherRelativeHitLocation);
+				OtherVoidgrid->AddImpulse(-1 * CollsionForce * ImpactNormal, FVector(OtherRelativeHitLocation, 0));
 				//DrawDebugDirectionalArrow(GetWorld(), OtherShip->GetActorLocation() + FVector(OtherRelativeHitLocation, 0), OtherShip->GetActorLocation() + FVector(OtherRelativeHitLocation, 0) + FVector(-1 * CollisionImpulseFactor * ImpactNormal, 0), 5, FColor::Red, false, 5, 0U, 0.3f);
 				//UE_LOG(LogTemp, Warning, TEXT("%s Applyed an impules of %s at %s to %s"), *GetOwner()->GetName(), *(-1 * CollisionImpulseFactor * ImpactNormal).ToString(), *OtherRelativeHitLocation.ToString(), *Result.GetActor()->GetName());
 			}
@@ -115,7 +148,7 @@ void AVoidgrid::UpdateTransform(float DeltaTime)
 					(1 / Mass) + (FMath::Square(RelativeHitLocation ^ ImpactNormal) / MomentOfInertia);
 			}
 
-			AddImpulse(CollsionForce * ImpactNormal, RelativeHitLocation);
+			AddImpulse(CollsionForce * ImpactNormal, FVector(RelativeHitLocation, 0));
 			//DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation() + FVector(RelativeHitLocation, 0), GetOwner()->GetActorLocation() + FVector(RelativeHitLocation, 0) + FVector(CollisionImpulseFactor * ImpactNormal, 0), 5, FColor::Blue, false, 5, 0U, 0.3f);
 			//UE_LOG(LogTemp, Warning, TEXT("%s Applyed an impules of %s at %s to itself when colideing with %s"), *GetOwner()->GetName(), *(CollisionImpulseFactor * ImpactNormal).ToString(), *RelativeHitLocation.ToString(), *Result.GetActor()->GetName());
 		}
@@ -185,15 +218,117 @@ bool AVoidgrid::SweepShip(const FTransform & DeltaTransform, FHitResult & Hit)
 */
 void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 {
-	Mass += DeltaMass;
-	CenterOfMass += DeltaMass / Mass * MassLocation;
-	MomentOfInertia += (1 / 12) + DeltaMass * (MassLocation).SizeSquared();
+	if (DeltaMass != 0)
+	{
+		Mass += DeltaMass;
+		CenterOfMass += DeltaMass / Mass * MassLocation;
+		PixelMeshComponent->SetRelativeLocation(FVector(-1 * CenterOfMass, 0));
+		MomentOfInertia += (1 / 12) + DeltaMass * (MassLocation).SizeSquared();
+		OnMassChanged.Broadcast(Mass, CenterOfMass, MomentOfInertia);
+	}
 }
 
 /* /\ Physics /\ *\
 \* ------------- */
 
+/* ----------------- *\
+\* \/ Temperature \/ */
 
+/**
+ * Applys the temperature given at the location given on this Voidgrid
+ *
+ * @param Temperature - The temperature to add
+ * @param Location - The location to apply the temperature
+ */
+void AVoidgrid::ApplyTemperatureAtLocation(float Temperature, FIntPoint Location)
+{
+	if (PixelMold.Contains(Location))
+	{
+		PixelMold.FindRef(Location).AddTemperature(Temperature);
+	}
+}
+
+/**
+ * Spreads the heat on the Voidgrid
+ */
+void AVoidgrid::SpreadHeat()
+{
+
+	// \/ Calculate the new heat map \/ /
+
+	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
+	NewHeatMap.Reserve(PixelMold.Num());
+
+	//Iterate through each point on the grid map to spread heat to each pixel
+	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
+	{
+		if (EachPixel.Value.GetTemperature() != 0)
+		{
+
+			//Heat added to this pixel
+			float AddedHeat = 0;
+
+			// Spread heat to each point around the current location
+			for (int EachPointAroundPixel = 0; EachPointAroundPixel < 4; EachPointAroundPixel++)
+			{
+				FIntPoint TargetPoint = ((EachPointAroundPixel % 2 == 1) ? FIntPoint((EachPointAroundPixel > 1) ? 1 : -1, 0) : FIntPoint(0, (EachPointAroundPixel > 1) ? 1 : -1));
+
+				if (PixelMold.Contains(TargetPoint + EachPixel.Key))
+				{
+					//Get the temperature of the adjacent pixel
+					float OtherPixelTemperature = PixelMold.FindRef(TargetPoint + EachPixel.Key).GetTemperature();
+
+					//The heat added to this pixel from the other pixel is the other pixel's temperature multiplied by the heat propagation faction (how much heat it will spread to other pixels). It
+					//is divided by four because a pixel will spread heat to four other pixels.
+					AddedHeat += (OtherPixelTemperature * HeatPropagationFactor) / (4);
+				}
+			}
+
+			//The heat remaining when this pixel spreads heat to the surrounding pixels
+			float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - HeatPropagationFactor);
+
+			float NewHeat = RemainingHeat + AddedHeat;
+
+			//If the amount of heat is below .05, then it's negligable. 
+			NewHeatMap.Emplace(EachPixel.Key, NewHeat > .05 ? NewHeat : 0);
+		}
+
+	}
+
+	// /\ Calculate the new heat map /\ /
+
+	// \/ Set the temperature of each pixel and find whether it should be melted or frozen \/ /
+
+	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
+	{
+		//Melt pixel
+		if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
+		{
+			RemovePixel(EachPixel.Key);
+		}
+
+		else
+		{
+			//Freeze pixel
+			if (NewHeatMap.FindRef(EachPixel.Key) < -1 * EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
+			{
+				EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, true);
+			}
+			//Unfreeze pixel
+			else
+			{
+				EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, false);
+			}
+
+			EachPixel.Value.SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
+		}
+	}
+
+	// /\ Set the temperature of each pixel and find whether it should be melted or frozen /\ /
+}
+
+/* /\ Temperature /\ *\
+\* ----------------- */
 
 /* ---------------- *\
 \* \/ Pixel Mold \/ */
@@ -206,6 +341,7 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 {
 	MinimalPixelMoldDataType DataOfPartsToCreate = NewPixelMold;
+
 	//Remove Unneccesary Parts
 	for (UPart* Part : Parts)
 	{
@@ -224,6 +360,7 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 		}
 	}
 
+	//Re-add temprary parts if inlcuded in a new mold
 	for (UPart* Part : TemporaryParts)
 	{
 		FMinimalPartInstanceData PartData = Part->GetMinimalPartInstanceData();
@@ -240,7 +377,7 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 			
 	}
 
-
+	//Create new parts
 	for (FMinimalPartInstanceData DataOfPartToCreate : DataOfPartsToCreate)
 	{
 		UPart* Part = UPart::CreatePart(this, FPartInstanceData(DataOfPartToCreate));
@@ -305,7 +442,7 @@ void AVoidgrid::SetState(FVoidgridState NewState)
 			{
 				PixelMold.Emplace(ShapeCompoentLocation, PixelType(Part, UPart::GetNullPart()));
 			}
-			SetPixelIntact(ShapeCompoentLocation, true);
+			SetPixelIntact(ShapeCompoentLocation, true, false);
 
 			UpdatePixelMesh(ShapeCompoentLocation);
 		}
@@ -335,29 +472,9 @@ FVoidgridState AVoidgrid::GetState()
  *
  * @param Location - The location of the pixel to damage.
  */
-void AVoidgrid::DamagePixel(GridLocationType Location)
+void AVoidgrid::RemovePixel(GridLocationType Location)
 {
-	if (PixelMold.Contains(Location))
-	{
-		PixelType* PixelRef = PixelMold.Find(Location);
-		if (PixelRef->IsIntact())
-		{
-			OnDamaged.Broadcast(Location);
-
-			if (PixelRef->GetTargetPart() == UPart::GetNullPart())
-			{
-				TemporaryParts.Remove(PixelRef->GetCurrentPart());
-				PixelMold.Remove(Location);
-				MutablePixels.Remove(Location);
-			}
-			else
-			{
-				MutablePixels.Add(Location);
-				PixelMold.Find(Location)->SetIntact(false);
-			}
-			UpdatePixelMesh(Location);
-		}
-	}
+	SetPixelIntact(Location, false);
 }
 
 /**
@@ -369,16 +486,14 @@ void AVoidgrid::RepairPixel(GridLocationType Location)
 {
 	if (PixelMold.Contains(Location))
 	{
-		if (!PixelMold.Find(Location)->IsIntact())
+		PixelType* PixelRef = PixelMold.Find(Location);
+		if (!PixelRef->IsIntact())
 		{
-			OnRepaired.Broadcast(Location);
-			MutablePixels.Remove(Location);
-			PixelMold.Find(Location)->SetIntact(true);
-			UpdatePixelMesh(Location);
+			SetPixelIntact(Location, true);
 		}
-		else
+		else if(MutablePixels.Contains(Location))
 		{
-			DamagePixel(Location);
+			SetPixelIntact(Location, false, false);
 		}
 	}
 }
@@ -400,7 +515,7 @@ void AVoidgrid::RepairPixel()
  * @param Location - The location of the pixel to edit.
  * @param bNewIntact - The new integrity of the pixel.
  */
-void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact)
+void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool bApplyChangeEffect)
 {
 	if (PixelMold.Contains(Location))
 	{
@@ -408,6 +523,7 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact)
 		{
 			if (!bNewIntact) 
 			{
+				float OldPixelMass = PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass();
 				if (PixelMold.Find(Location)->GetTargetPart() == UPart::GetNullPart())
 				{
 					TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
@@ -419,10 +535,15 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact)
 					MutablePixels.Add(Location);
 					PixelMold.Find(Location)->SetIntact(bNewIntact);
 				}
+				OnPixelRemoved.Broadcast(Location, bApplyChangeEffect);
+				UpdateMassProperties(-1 * OldPixelMass, FVector2D(Location));
 			}
 			else
 			{
 				PixelMold.Find(Location)->SetIntact(bNewIntact);
+				MutablePixels.Remove(Location);
+				OnPixelAdded.Broadcast(Location, bApplyChangeEffect);
+				UpdateMassProperties(PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass(), FVector2D(Location));
 			}
 			UpdatePixelMesh(Location);
 		}
@@ -618,3 +739,62 @@ EFaction AVoidgrid::GetFaction() const
 
 /* /\ Faction /\ *\
 \* ------------- */
+
+//Notes, delete later
+
+////Comment -Mabel Suggestion
+//void UPartGridComponent::DistrubuteHeat()
+//{
+//	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
+//	NewHeatMap.Reserve(PartGrid.Num());
+//
+//	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
+//	for (int j = 0; j < PartGrid.Num(); j++)
+//	{
+//		float NewHeat = 0;
+//
+//		//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
+//		for (int i = 0; i < 4; i++)
+//		{
+//			FIntPoint TargetPoint = ((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
+//
+//			if (PartGrid.Contains(TargetPoint + PartGrid.LocationAtIndex(j)))
+//			{
+//				//4 is borderline magic number. I understand why you used it but still -Mabel Suggestion
+//				NewHeat += PartGrid.FindRef(TargetPoint + PartGrid.LocationAtIndex(j)).GetTemperature() * HeatPropagationFactor / (4);
+//			}
+//		}
+//
+//		//Math is occuring that needs to be commented. Why is the pixels current temperature mutiplied by 1 - the heat propagation factor? -Mabel Suggestion
+//		NewHeat = PartGrid.ValueAtIndex(j).GetTemperature() * (1 - HeatPropagationFactor) + NewHeat;
+//
+//
+//		//Why 0.5? comment plz (also, is it.... magic number?) -Mabel Suggestion
+//		NewHeatMap.Emplace(PartGrid.LocationAtIndex(j), NewHeat > .05 ? NewHeat : 0);
+//	}
+//
+//	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
+//
+//	//You iterate through the part grid not once, but twice in this function. Big oof if I'm being honest. Honestly, it'd be better to just have heat not spread
+//	//if this is the way that we're doing it. This is so bad for large ships. 
+//	//I wonder if each part could handle it's own heat and distribute to the places around it instead of doing this on the part grid? I don't know how much it would help but 
+//	//it might help a little bit. Not sure, that might be just as laggy. -Mabel Suggestion
+//	for (int i = 0; i < PartGrid.Num(); i++)
+//	{
+//		if (NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)) > PartGrid.ValueAtIndex(i).Part->GetHeatResistance())
+//		{
+//			KeysToDestroy.Emplace(PartGrid.LocationAtIndex(i));
+//		}
+//		else
+//		{
+//			PartGrid.ValueAtIndex(i).SetTemperature(NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)));
+//		}
+//	}
+//
+//	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" 
+//	//"Val" is just as bad as i. Just saying. -Mabel Suggestion
+//	for (FIntPoint Val : KeysToDestroy)
+//	{
+//		DestroyPixel(Val);
+//	}
+//}
