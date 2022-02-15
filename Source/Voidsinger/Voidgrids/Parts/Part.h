@@ -293,7 +293,7 @@ private:
 	 * @param Location - The location of the pixel that was removed.
 	 */
 	UFUNCTION()
-	void PixelRemoved(FIntPoint Location, bool bApplyChangeEffect);
+	void RemovePixel(FIntPoint Location, bool bApplyChangeEffect);
 
 	/**
 	 * Updates shape after a pixel of this part has been added.
@@ -301,7 +301,7 @@ private:
 	 * @param Location - The location of the pixel that was added.
 	 */
 	UFUNCTION()
-	void PixelAdded(FIntPoint Location, bool bApplyChangeEffect);
+	void AddPixel(FIntPoint Location, bool bApplyChangeEffect);
 
 	/**
 	 * Stores whether this is functional.

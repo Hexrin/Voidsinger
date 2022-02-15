@@ -136,7 +136,7 @@ UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData PartData)
 	NewPart->Transform = PartData.GetTransform();
 	NewPart->Shape = PartData.GetShape();
 
-	OwningVoidgrid->OnPixelRemoved.AddDynamic(NewPart, &UPart::PixelRemoved);
+	OwningVoidgrid->OnPixelRemoved.AddDynamic(NewPart, &UPart::RemovePixel);
 
 	return NewPart;
 }
@@ -195,7 +195,7 @@ PartShapeType UPart::GetDefaultShape()
  *
  * @param Location - The location of the pixel that was removed.
  */
-void UPart::PixelRemoved(FIntPoint Location, bool bApplyChangeEffect)
+void UPart::RemovePixel(FIntPoint Location, bool bApplyChangeEffect)
 {
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
 	if (Shape.Remove(RelativeLocation))
@@ -220,7 +220,7 @@ void UPart::PixelRemoved(FIntPoint Location, bool bApplyChangeEffect)
  *
  * @param Location - The location of the pixel that was added.
  */
-void UPart::PixelAdded(FIntPoint Location, bool bApplyChangeEffect)
+void UPart::AddPixel(FIntPoint Location, bool bApplyChangeEffect)
 {
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
 	if (GetDefaultShape().Contains(RelativeLocation))

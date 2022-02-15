@@ -473,11 +473,11 @@ public:
 	FVoidgridState GetState();
 
 	/**
-	 * Damages a pixel.
+	 * Removes a pixel.
 	 * 
 	 * @param Location - The location of the pixel to damage.
 	 */
-	void DamagePixel(GridLocationType Location);
+	void RemovePixel(GridLocationType Location);
 
 	/**
 	 * Repair a pixel.
@@ -487,7 +487,7 @@ public:
 	void RepairPixel(GridLocationType Location);
 
 	/**
-	 * Repairs a random pixel pixel.
+	 * Repairs a random pixel.
 	 */
 	void RepairPixel();
 

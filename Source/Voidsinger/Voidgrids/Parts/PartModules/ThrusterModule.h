@@ -14,7 +14,7 @@ class VOIDSINGER_API UThrusterModule : public UActivatablePartModule
 {
 	GENERATED_BODY()
 
-	friend ThrustManager;
+	friend class UThrustManager;
 public:
 
 	/**

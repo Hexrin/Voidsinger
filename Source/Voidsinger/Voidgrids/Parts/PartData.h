@@ -44,6 +44,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 Cost;
 
+	//Stores the heat resistance of this part
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float HeatResistance{ 1 };
+
 	//Stores whether or not this part is placable by the player.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bPlaceable{ true };

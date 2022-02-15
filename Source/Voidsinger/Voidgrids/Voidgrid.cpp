@@ -262,58 +262,52 @@ void AVoidgrid::SpreadHeat()
 	//Iterate through each point on the grid map to spread heat to each pixel
 	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
 	{
-		//Heat added to this pixel
-		float AddedHeat = 0;
-
-		// Spread heat to each point around the current location
-		for (int EachPointAroundPixel = 0; EachPointAroundPixel < 4; EachPointAroundPixel++)
+		if (EachPixel.Value.GetTemperature() != 0)
 		{
-			FIntPoint TargetPoint = ((EachPointAroundPixel % 2 == 1) ? FIntPoint((EachPointAroundPixel > 1) ? 1 : -1, 0) : FIntPoint(0, (EachPointAroundPixel > 1) ? 1 : -1));
 
-			if (PixelMold.Contains(TargetPoint + EachPixel.Key))
+			//Heat added to this pixel
+			float AddedHeat = 0;
+
+			// Spread heat to each point around the current location
+			for (int EachPointAroundPixel = 0; EachPointAroundPixel < 4; EachPointAroundPixel++)
 			{
-				//Get the temperature of the adjacent pixel
-				float OtherPixelTemperature = PixelMold.FindRef(TargetPoint + EachPixel.Key).GetTemperature();
+				FIntPoint TargetPoint = ((EachPointAroundPixel % 2 == 1) ? FIntPoint((EachPointAroundPixel > 1) ? 1 : -1, 0) : FIntPoint(0, (EachPointAroundPixel > 1) ? 1 : -1));
 
-				//The heat added to this pixel from the other pixel is the other pixel's temperature multiplied by the heat propagation faction (how much heat it will spread to other pixels). It
-				//is divided by four because a pixel will spread heat to four other pixels.
-				AddedHeat += (OtherPixelTemperature * HeatPropagationFactor) / (4);
+				if (PixelMold.Contains(TargetPoint + EachPixel.Key))
+				{
+					//Get the temperature of the adjacent pixel
+					float OtherPixelTemperature = PixelMold.FindRef(TargetPoint + EachPixel.Key).GetTemperature();
+
+					//The heat added to this pixel from the other pixel is the other pixel's temperature multiplied by the heat propagation faction (how much heat it will spread to other pixels). It
+					//is divided by four because a pixel will spread heat to four other pixels.
+					AddedHeat += (OtherPixelTemperature * HeatPropagationFactor) / (4);
+				}
 			}
+
+			//The heat remaining when this pixel spreads heat to the surrounding pixels
+			float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - HeatPropagationFactor);
+
+			float NewHeat = RemainingHeat + AddedHeat;
+
+			//If the amount of heat is below .05, then it's negligable. 
+			NewHeatMap.Emplace(EachPixel.Key, NewHeat > .05 ? NewHeat : 0);
 		}
-
-		//The heat remaining when this pixel spreads heat to the surrounding pixels
-		float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - HeatPropagationFactor);
-
-		float NewHeat = RemainingHeat + AddedHeat;
-
-		//If the amount of heat is below .05, then it's negligable. 
-		NewHeatMap.Emplace(EachPixel.Key, NewHeat > .05 ? NewHeat : 0);
 
 	}
 
 	// /\ Calculate the new heat map /\ /
 
-	//The locations on the Pixel Mold to destroy
-	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
-
 	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
 	{
-		if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetHeatResistance())
+		if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 		{
-			KeysToDestroy.Emplace(EachPixel.Key);
+			RemovePixel(EachPixel.Key);
 		}
 		else
 		{
 			EachPixel.Value.SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
 		}
 	}
-
-	////"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" 
-	////"Val" is just as bad as i. Just saying. -Mabel Suggestion
-	//for (FIntPoint EachKeyToDestroy : KeysToDestroy)
-	//{
-	//	DestroyPixel(EachKeyToDestroy);
-	//}
 }
 
 /* /\ Temperature /\ *\
@@ -461,7 +455,7 @@ FVoidgridState AVoidgrid::GetState()
  *
  * @param Location - The location of the pixel to damage.
  */
-void AVoidgrid::DamagePixel(GridLocationType Location)
+void AVoidgrid::RemovePixel(GridLocationType Location)
 {
 	SetPixelIntact(Location, false);
 }
