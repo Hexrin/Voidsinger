@@ -68,9 +68,10 @@ private:
 
 	UFUNCTION()
 	static FVector2D GetMaximumAccelerationInRotation(const AVoidgrid* Target, const bool bClockwise);
-	*/
+	
 	UFUNCTION()
 	void UpdateThrustPredictions(float Mass, FVector2D CenterOfMass, float MomentOfInertia);
+	*/
 
 	UPROPERTY()
 	AVoidgrid* Voidgrid = nullptr;
