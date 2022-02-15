@@ -6,6 +6,8 @@
 #include "ActivatablePartModule.h"
 #include "ThrusterModule.generated.h"
 
+class UThrustManager;
+
 /**
  * 
  */
@@ -14,7 +16,7 @@ class VOIDSINGER_API UThrusterModule : public UActivatablePartModule
 {
 	GENERATED_BODY()
 
-	friend ThrustManager;
+	friend UThrustManager;
 public:
 
 	/**

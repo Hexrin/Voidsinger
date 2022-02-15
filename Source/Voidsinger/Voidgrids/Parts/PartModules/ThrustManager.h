@@ -8,6 +8,11 @@
 
 class AVoidgrid;
 
+USTRUCT()
+struct VOIDSINGER_API FThrustSource
+{
+	GENERATED_BODY()
+};
 /**
  * 
  */
@@ -61,19 +66,22 @@ class VOIDSINGER_API UThrustManager : public UObject
 	UFUNCTION(BlueprintPure)
 	float TimeToOrientation(const float Orientation) const;
 
+	UFUNCTION()
+	void AddManagedThrustSource();
+
 private:
-	/*UFUNCTION()
-	static FVector2D GetMaximumAccelerationInDirection(const AVoidgrid* Target, const FVector2D Direction);
-	static FVector2D GetMaximumAccelerationInDirection(const AVoidgrid* Target, const float DirectionAngle);
+	UFUNCTION()
+	FVector2D GetMaximumAccelerationInDirection(const FVector2D Direction);
+	FVector2D GetMaximumAccelerationInDirection(const float DirectionAngle);
 
 	UFUNCTION()
-	static FVector2D GetMaximumAccelerationInRotation(const AVoidgrid* Target, const bool bClockwise);
-	*/
-	UFUNCTION()
-	void UpdateThrustPredictions(float Mass, FVector2D CenterOfMass, float MomentOfInertia);
+	FVector2D GetMaximumAccelerationInRotation(const bool bClockwise);
+	
+	//UFUNCTION()
+	//void UpdateThrustPredictions(float Mass, FVector2D CenterOfMass, float MomentOfInertia);
 
 	UPROPERTY()
-	AVoidgrid* Voidgrid = nullptr;
+	const AVoidgrid* Voidgrid;
 
 	/* /\ Thrust Predictions /\ *\
 	\* ------------------------ */
