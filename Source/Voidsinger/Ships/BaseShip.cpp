@@ -23,6 +23,7 @@ ABaseShip::ABaseShip()
 	MeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	MeshComponent->bUseComplexAsSimpleCollision = true;
 	MeshComponent->bRenderCustomDepth = true;
+	MeshComponent->SetCollisionObjectType(ECollisionChannel::ECC_PhysicsBody);
 
 	PhysicsComponent = CreateDefaultSubobject<UShipPhysicsComponent>(TEXT("Physics Component"));
 	PartGrid = CreateDefaultSubobject<UPartGridComponent>(TEXT("Part Grid"));
