@@ -191,6 +191,26 @@ PartShapeType UPart::GetDefaultShape()
 }
 
 /**
+ * Sets whether a pixel on this part is frozen or not
+ *
+ * @param Location - The location to set frozen
+ * @param Frozen - Whether this part is frozen or not
+ */
+void UPart::SetPixelFrozen(FIntPoint Location, bool Frozen)
+{
+	FIntPoint RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
+
+	if (Frozen)
+	{
+		FrozenPixels.Emplace(RelativeLocation);
+	}
+	else if (FrozenPixels.Contains(RelativeLocation))
+	{
+		FrozenPixels.Remove(RelativeLocation);
+	}
+}
+
+/**
  * Updates shape after a pixel of this part has been removed
  *
  * @param Location - The location of the pixel that was removed.
@@ -200,11 +220,22 @@ void UPart::RemovePixel(FIntPoint Location, bool bApplyChangeEffect)
 	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
 	if (Shape.Remove(RelativeLocation))
 	{
+
+		if (FrozenPixels.Contains(RelativeLocation))
+		{
+			FrozenPixels.Remove(RelativeLocation);
+		}
+
 		OnDamaged.Broadcast(bApplyChangeEffect);
 
-		if (bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent)
+		// \/ Check functionality \/ /
+
+		//Check if there are enough pixels frozen for the part to not be functional
+		bool bFrozenNotFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) > (1 - GetData()->FunctionalityPercent);
+
+		if (bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent) && (bFrozenNotFunctionalCheck))
 		{
-			bFunctional = true;
+			bFunctional = false;
 			OnFunctionalityLost.Broadcast(bApplyChangeEffect);
 		}
 
@@ -212,6 +243,8 @@ void UPart::RemovePixel(FIntPoint Location, bool bApplyChangeEffect)
 		{
 			OnDestroyed.Broadcast(bApplyChangeEffect);
 		}
+
+		// /\ Check functionality /\ /
 	}
 }
 
@@ -228,7 +261,12 @@ void UPart::AddPixel(FIntPoint Location, bool bApplyChangeEffect)
 		Shape.Add(RelativeLocation);
 		OnRepaired.Broadcast(bApplyChangeEffect);
 
-		if (!bFunctional && ((float)Shape.Num() / (float)GetDefaultShape().Num()) >= GetData()->FunctionalityPercent)
+		// \/ Check functionality \/ /
+		
+		//Check if there are few enough pixels frozen for the part to be functional
+		bool bFrozenFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) <= (1 - GetData()->FunctionalityPercent);
+
+		if (!bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) >= GetData()->FunctionalityPercent) && (bFrozenFunctionalCheck))
 		{
 			bFunctional = true;
 			OnFunctionalityRestored.Broadcast(bApplyChangeEffect);
@@ -238,6 +276,8 @@ void UPart::AddPixel(FIntPoint Location, bool bApplyChangeEffect)
 		{
 			OnFullyRepaired.Broadcast(bApplyChangeEffect);
 		}
+
+		// /\ Check functionality /\ /
 	}
 }
 

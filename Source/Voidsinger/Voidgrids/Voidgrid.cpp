@@ -297,17 +297,34 @@ void AVoidgrid::SpreadHeat()
 
 	// /\ Calculate the new heat map /\ /
 
+	// \/ Set the temperature of each pixel and find whether it should be melted or frozen \/ /
+
 	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
 	{
+		//Melt pixel
 		if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 		{
 			RemovePixel(EachPixel.Key);
 		}
+
 		else
 		{
+			//Freeze pixel
+			if (NewHeatMap.FindRef(EachPixel.Key) < -1 * EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
+			{
+				EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, true);
+			}
+			//Unfreeze pixel
+			else
+			{
+				EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, false);
+			}
+
 			EachPixel.Value.SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
 		}
 	}
+
+	// /\ Set the temperature of each pixel and find whether it should be melted or frozen /\ /
 }
 
 /* /\ Temperature /\ *\

@@ -248,6 +248,15 @@ public:
 	FORCEINLINE float GetPixelMass() { return Data->Mass/GetDefaultShape().Num(); };
 
 	/**
+	 * Sets whether a pixel on this part is frozen or not
+	 * 
+	 * @param Location - The location to set frozen
+	 * @param Frozen - Whether this part is frozen or not
+	 */
+	UFUNCTION()
+	void SetPixelFrozen(FIntPoint Location, bool Frozen);
+
+	/**
 	 * Gets whether or not this part is functional.
 	 * 
 	 * @return Wheather or not this is functional.
@@ -308,8 +317,11 @@ private:
 	 */
 	bool bFunctional{ false };
 
-	//Stores the current shape of this part.
+	//Stores the current shape of this part
 	PartShapeType Shape;
+
+	//Stores the pixels that are frozen
+	PartShapeType FrozenPixels;
 
 	/* /\ Part Functionality /\ *\
 	\* ------------------------ */
