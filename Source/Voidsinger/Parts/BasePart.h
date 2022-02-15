@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/StarSystemGameMode.h"
+#include "Voidsinger/StarSystemLevelManager.h"
 #include "Voidsinger/FunctionLibrary.h"
 #include "BasePart.generated.h"
 
@@ -14,6 +14,7 @@
 class UBaseResourceSystem;
 class UBaseThrusterPart;
 class UPartGridComponent;
+class UPartTooltipData;
 
 UCLASS(BlueprintType, Blueprintable)
 class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject, public IActivateInterface
@@ -26,7 +27,7 @@ class VOIDSINGER_API UBasePart : public UObject, public FTickableGameObject, pub
 	//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-//
 
 	/*Initializer Functions*\
-	\*--------------------*/
+	\*---------------------*/
 
 public:
 
@@ -312,7 +313,7 @@ public:
 	int32 GetCost();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FText PartName;
+	UPartTooltipData* Tooltip;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bIsPlacable{ true };
@@ -337,11 +338,6 @@ protected:
 	//Heat resistance of the part
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int HeatResistance;
-
-	//Strength of the part
-	//Why is this comment calling "PartIcon" strength of the part - Mabel Suggestion
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UTexture2D* PartIcon;
 
 	//What percentage of pixels that have to be part of the part in order for the part to be functional
 	//This should be used in the aforementioned "IsFunctional" function (if it already is then update the comment of "IsFunctional"

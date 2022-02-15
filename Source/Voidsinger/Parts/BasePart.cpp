@@ -6,6 +6,7 @@
 #include "Voidsinger/Parts/PartGridComponent.h"
 #include "BaseThrusterPart.h"
 #include "BaseResourceSystem.h"
+#include "Voidsinger/FunctionLibrary.h"
 #include "Engine/Engine.h"
 #include "Voidsinger/Ships/BaseShip.h"
 
@@ -55,7 +56,10 @@ void UBasePart::InitializeFunctionality()
 	if (!bHasFunctionalityBeenInitialized)
 	{
 		//Bind to delegates
-		Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
+		if (IsValid(Cast<AStarSystemLevelManager>(UFunctionLibrary::GetLevelManager(GetShip()))))
+		{
+			Cast<AStarSystemLevelManager>(UFunctionLibrary::GetLevelManager(GetShip()))->OnVoidsongDelegate.AddDynamic(this, &UBasePart::OnDelegateCalled);
+		}
 		Cast<ABaseShip>(GetOuter()->GetOuter())->OnActivatePartsDelegate.AddDynamic(this, &UBasePart::OnFireDelegateCalled);
 		
 		//Initialize Resource System
@@ -358,7 +362,7 @@ void UBasePart::DestroyPixel(FIntPoint RelativeLoc, bool bCallDamagedEvents)
 		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
 		for (auto& i : CurrentSystems)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("systems on destroy pixel %s"), *i->GetFName().ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("systems on destroy pixel %s"), *i->GetFName().ToString());
 			i->RemovePixel(RelativeLoc + GetPartGridLocation());
 		}
 	}
@@ -490,7 +494,7 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 			//Systems.Add(GetSystemByType(System->GetType()));
 			System->MergeSystems(GetSystemByType(System->GetType()));
 			Systems.Add(System);
-			UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString());
 		}
 
 		//else just add it to the list of systems on this part.
@@ -501,7 +505,7 @@ void UBasePart::AddToSystem(UBaseResourceSystem* System)
 			//UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 			Systems.Add(System);
 
-			UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString())
+			//UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString())
 		}
 	}
 }

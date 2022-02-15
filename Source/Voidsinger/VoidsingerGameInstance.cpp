@@ -1,7 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "VoidsingerGameInstance.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/LevelScriptActor.h"
+#include "LevelManager.h"
+
+/* ------------ *\
+\* \/ Pixels \/ */
 
 /**
 * Gets the number of pixels the player has.
@@ -58,3 +63,63 @@ bool UVoidsingerGameInstance::WithdrawPixels(int32 Amount)
 
     return false;
 }
+
+/* /\ Pixels /\ *\
+\* ------------ */
+
+
+
+/* ------------------- *\
+\* \/ Level Manager \/ */
+
+/**
+ * Loads a level, initilizes a level manager and calls loading delegates.
+ *
+ * @param Level - The level to load.
+ * @param LevelManagerClass - The class level manager used in this level.
+ */
+void UVoidsingerGameInstance::LoadLevelWithManager(const TSoftObjectPtr<UWorld> Level, const TSubclassOf<ALevelManager> LevelManagerClass)
+{
+    if (IsValid(GetWorld()) && !Level.IsNull())
+    {
+        BeginLoading();
+        //Unload Old Level
+        FLatentActionInfo LatentUnloadInfo;
+        UGameplayStatics::UnloadStreamLevelBySoftObjectPtr(this, CurrentLevel, LatentUnloadInfo, true);
+
+        //Load New Level
+        FLatentActionInfo LatentLoadInfo;
+        LatentLoadInfo.CallbackTarget = this;
+        LatentLoadInfo.ExecutionFunction = FName("ResetLevelManager");
+        LatentLoadInfo.Linkage = 1;
+        LatentLoadInfo.UUID = 1;
+
+        UGameplayStatics::LoadStreamLevelBySoftObjectPtr(this, Level, true, true, LatentLoadInfo);
+
+        //Set Level Manager
+        if (IsValid(LevelManager))
+        {
+            LevelManager->Destroy();
+        }
+        CurrentLevelManagerClass = LevelManagerClass;
+    }
+}
+
+
+void UVoidsingerGameInstance::ResetLevelManager()
+{
+    CurrentLevel = GetWorld()->GetLevel(1);
+    if (IsValid(LevelManager))
+    {
+        LevelManager->Destroy();
+    }
+
+    if (IsValid(CurrentLevelManagerClass.Get()))
+    {
+        FActorSpawnParameters SpawnParams = FActorSpawnParameters();
+        SpawnParams.OverrideLevel = GetWorld()->GetLevel(1);
+        GetWorld()->SpawnActor<ALevelManager>(CurrentLevelManagerClass.Get(), SpawnParams);
+    }
+}
+/* /\ Level Manager /\ *\
+\* ------------------- */
