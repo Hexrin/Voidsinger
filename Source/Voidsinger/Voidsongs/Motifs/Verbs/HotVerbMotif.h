@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "BaseVerbMotif.h"
-#include "ColdVerbMotif.generated.h"
+#include "HotVerbMotif.generated.h"
 
 /**
- * Cools down the ship hit with this Motif
+ * Heats up the ship hit with this Motif
  */
 UCLASS()
-class VOIDSINGER_API UColdVerbMotif : public UBaseVerbMotif
+class VOIDSINGER_API UHotVerbMotif : public UBaseVerbMotif
 {
 	GENERATED_BODY()
 	
@@ -18,7 +18,7 @@ class VOIDSINGER_API UColdVerbMotif : public UBaseVerbMotif
 	\* \/ Voidsong Activation \/ */
 
 	/**
-	 * Removes heat from the hit ship using the given information
+	 * Adds heat to the hit ship using the given information
 	 *
 	 * @param Instigator - The object that activated this Voidsong
 	 * @param Hit - The hit result information
@@ -27,7 +27,7 @@ class VOIDSINGER_API UColdVerbMotif : public UBaseVerbMotif
 	virtual void ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness) override;
 
 	UPROPERTY(EditDefaultsOnly)
-	float ColdToAdd;
+	float HeatToAdd;
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */

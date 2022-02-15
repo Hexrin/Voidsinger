@@ -20,7 +20,6 @@ class VOIDSINGER_API UBaseVerbMotif : public UBaseMotif
 
 public:
 
-	//I dont think play is the right word as its already been played if its effect is taking place. Perhapse apply effect(affect?) - Liam Suggestion
 	/**
 	 * Does the effect of the Verb using the given information.
 	 *
@@ -29,7 +28,7 @@ public:
 	 * @param Effectiveness - The effectiveness of the activation
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VoidsongActivation")
-	virtual void Play(UObject* Instigator, FHitResult Hit, float Effectiveness);
+	virtual void ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness);
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */

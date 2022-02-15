@@ -13,16 +13,13 @@
 \* \/ Playable Voidsong Management \/ */
 
 /**
- * Adds Voidsongs to the list of Voidsongs that this component can play.
+ * Adds Motifs to the list of Motifs that this ship can play.
  *
- * @param VoidsongsAdded - The new playable Voidsongs
+ * @param MotifsAdded - The new playable Motifs
  */
 void AShip::AddNewMotifs(TArray<UBaseMotif*> MotifsAdded)
 {
-	for (UBaseMotif* EachMotifAdded : MotifsAdded)
-	{
-		PlayableMotifs.Emplace(EachMotifAdded);
-	}
+	PlayableMotifs.EmplaceMotifs(MotifsAdded);
 }
 
 /* /\ Playable Voidsong Management /\ *\
@@ -43,23 +40,47 @@ UVoidsong* AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const
 	if (bCanPlayVoidsongs)
 	{
 
+	// \/ Check if the Motifs played are playable, and remove those that aren't \/ /
+	
+		TArray<UBaseFactionMotif*> PlayableFactionsPlayed;
+		TArray<UBaseNounMotif*> PlayableNounsPlayed;
+		TArray<UBaseVerbMotif*> PlayableVerbsPlayed;
+
+		for (UBaseFactionMotif* EachFactionPlayed : Factions)
+		{
+			if (PlayableMotifs.GetMotifs().Contains(EachFactionPlayed))
+			{
+				PlayableFactionsPlayed.Emplace(EachFactionPlayed);
+			}
+		}
+		for (UBaseNounMotif* EachNounPlayed : Nouns)
+		{
+			if (PlayableMotifs.GetMotifs().Contains(EachNounPlayed))
+			{
+				PlayableNounsPlayed.Emplace(EachNounPlayed);
+			}
+		}
+		for (UBaseVerbMotif* EachVerbPlayed : Verbs)
+		{
+			if (PlayableMotifs.GetMotifs().Contains(EachVerbPlayed))
+			{
+				PlayableVerbsPlayed.Emplace(EachVerbPlayed);
+			}
+		}
+
+	// /\ Check if the Motifs played are playable, and reove those that aren't /\ /
+	
 	// \/ Check if Factions is empty, if so play every playable Faction \/ /
 
 		TArray<UBaseFactionMotif*> FactionsToPlay;
 
-		if (!Factions.IsEmpty())
+		if (!PlayableFactionsPlayed.IsEmpty())
 		{
 			FactionsToPlay = Factions;
 		}
 		else
 		{
-			for (UBaseMotif* EachPlayableMotif : PlayableMotifs)
-			{
-				if (IsValid(Cast<UBaseFactionMotif>(EachPlayableMotif)))
-				{
-					FactionsToPlay.Emplace(Cast<UBaseFactionMotif>(EachPlayableMotif));
-				}
-			}
+			FactionsToPlay = PlayableMotifs.GetFactionMotifs();
 		}
 
 
@@ -69,25 +90,19 @@ UVoidsong* AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const
 
 		TArray<UBaseNounMotif*> NounsToPlay;
 
-		if (!Nouns.IsEmpty())
+		if (!PlayableNounsPlayed.IsEmpty())
 		{
 			NounsToPlay = Nouns;
 		}
 		else
 		{
-			for (UBaseMotif* EachPlayableMotif : PlayableMotifs)
-			{
-				if (IsValid(Cast<UBaseNounMotif>(EachPlayableMotif)))
-				{
-					NounsToPlay.Emplace(Cast<UBaseNounMotif>(EachPlayableMotif));
-				}
-			}
+			NounsToPlay = PlayableMotifs.GetNounMotifs();
 		}
 
 		// /\ Check if Nouns is empty, if so play every playable Noun /\ /
 
 		//Initialize VoidsongData
-		FVoidsongData VoidsongData = FVoidsongData(FactionsToPlay, NounsToPlay, Verbs);
+		FVoidsongData VoidsongData = FVoidsongData(FactionsToPlay, NounsToPlay, PlayableVerbsPlayed);
 
 		//Call the globally available "PlayVoidsong" function on the Game Mode
 		if (IsValid(Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))))
