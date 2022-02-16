@@ -26,17 +26,17 @@ class VOIDSINGER_API AShip : public AVoidgrid
 
 public:
 	/**
-	 * Adds Voidsongs to the list of Voidsongs that this component can play.
+	 * Adds Motifs to the list of Motifs that this ship can play.
 	 *
-	 * @param VoidsongsAdded - The new playable Voidsongs
+	 * @param MotifsAdded - The new playable Motifs
 	 */
 	UFUNCTION(BlueprintCallable, Category = "PlayableVoidsongManagement")
 	void AddNewMotifs(TArray<UBaseMotif*> MotifsAdded);
 
 protected:
 
-	//Stores the Voidsongs that this component can play.
-	TSet<UBaseMotif*> PlayableMotifs;
+	//Stores the Voidsongs that this ship can play.
+	FVoidsongData PlayableMotifs;
 
 	/* /\ Playable Voidsong Management /\ *\
 	\* ---------------------------------- */

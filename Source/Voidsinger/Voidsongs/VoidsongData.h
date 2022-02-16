@@ -99,6 +99,27 @@ public:
 	\* \/ Emplace singular Motif \/ */
 
 	/**
+	 * Adds a Motif of unknown type to the Voidsong
+	 * 
+	 * @param AddedMotif - The Motif added
+	 */
+	void EmplaceMotif(UBaseMotif* MotifAdded)
+	{
+		if (IsValid(Cast<UBaseFactionMotif>(MotifAdded)))
+		{
+			EmplaceFactionMotif(Cast<UBaseFactionMotif>(MotifAdded));
+		}
+		else if (IsValid(Cast<UBaseNounMotif>(MotifAdded)))
+		{
+			EmplaceNounMotif(Cast<UBaseNounMotif>(MotifAdded));
+		}
+		else if (IsValid(Cast<UBaseVerbMotif>(MotifAdded)))
+		{
+			EmplaceVerbMotif(Cast<UBaseVerbMotif>(MotifAdded));
+		}
+	}
+
+	/**
 	 * Adds a Faction Motif to the Voidsong
 	 * 
 	 * @param AddedFactionMotif - The Faction Motif added
@@ -141,6 +162,19 @@ public:
 
 	/* ----------------------------- *\
 	\* \/ Emplace multiple Motifs \/ */
+
+	/**
+	 * Adds multiple Motifs of unknown type to the Voidsong
+	 * 
+	 * @param AddedMotifs - The Motifs added
+	 */
+	void EmplaceMotifs(TArray<UBaseMotif*> AddedMotifs)
+	{
+		for (UBaseMotif* EachAddedMotif : AddedMotifs)
+		{
+			EmplaceMotif(EachAddedMotif);
+		}
+	}
 
 	/**
 	 * Adds multiple Faction Motifs to the Voidsong

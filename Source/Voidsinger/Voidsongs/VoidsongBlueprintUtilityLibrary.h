@@ -19,6 +19,15 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	\* \/ Emplace singular Motif \/ */
 
 	/**
+	 * Adds a Motif of unknown type to the Voidsong
+	 *
+	 * @param VoidsongData - The struct to edit
+	 * @param AddedMotif - The Motif added
+	 */
+	UFUNCTION(BlueprintCallable, Category = "VoidsongData|EmplaceSingularMotif")
+	static void EmplaceMotif(FVoidsongData VoidsongData, UBaseMotif* MotifAdded);
+
+	/**
 	 * Adds a Faction Motif to the Voidsong
 	 *
 	 * @param VoidsongData - The struct to edit
@@ -50,6 +59,15 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 
 	/* ----------------------------- *\
 	\* \/ Emplace multiple Motifs \/ */
+
+	/**
+	 * Adds multiple Motifs of unknown type to the Voidsong
+	 *
+	 * @param VoidsongData - The struct to edit
+	 * @param AddedMotifs - The Motifs added
+	 */
+	UFUNCTION(BlueprintCallable, Category = "VoidsongData|EmplaceMultipleMotifs")
+	static void EmplaceMotifs(FVoidsongData VoidsongData, TArray<UBaseMotif*> AddedMotifs);
 
 	/**
 	 * Adds multiple Faction Motifs to the Voidsong

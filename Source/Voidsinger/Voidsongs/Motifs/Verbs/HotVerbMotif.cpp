@@ -1,20 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BaseVerbMotif.h"
-#include "Kismet/GameplayStatics.h"
+#include "HotVerbMotif.h"
 
 /* ------------------------- *\
 \* \/ Voidsong Activation \/ */
 
 /**
- * Does the effect of the Verb using the given information.
+ * Adds heat to the hit ship using the given information
  *
  * @param Instigator - The object that activated this Voidsong
  * @param Hit - The hit result information
  * @param Effectiveness - The effectiveness of the activation
  */
-void UBaseVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness)
+void UHotVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness)
 {
 }
 
