@@ -16,7 +16,8 @@
  */
 void UColdVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness)
 {
-	Cast<AVoidgrid>(Hit.GetActor())->AddTemperatureAtLocation(FVector2D(Hit.Location), -1 * Effectiveness * ColdToAdd);
+	Cast<AVoidgrid>(Hit.GetActor())->AddTemperatureAtLocation(Hit.Location, -1 * Effectiveness * ColdToAdd);
+}
 
 /* /\ Voidsong Activation /\ *\
 \* ------------------------- */
