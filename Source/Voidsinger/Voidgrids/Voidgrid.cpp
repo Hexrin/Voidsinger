@@ -234,11 +234,25 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 /* ----------------- *\
 \* \/ Temperature \/ */
 
+// \/ Add temperature \/ /
+
+/**
+ * Applys the temperature given at the world location given
+ *
+ * @param Location - The world location to apply the temperature
+ * @param Temperature - The temperature to add
+ */
+void AVoidgrid::AddTemperatureAtLocation(FVector WorldLocation, float Temperature)
+{
+	FIntPoint RelativeLocation = FVector2D(WorldLocation - GetActorLocation()).IntPoint();
+	AddTemperatureAtLocation(RelativeLocation, Temperature);
+}
+
 /**
  * Applys the temperature given at the location given on this Voidgrid
  *
- * @param Temperature - The temperature to add
  * @param Location - The location to apply the temperature
+ * @param Temperature - The temperature to add
  */
 void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
 {
@@ -247,6 +261,8 @@ void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
 		PixelMold.FindRef(Location).AddTemperature(Temperature);
 	}
 }
+
+// /\ Add temperature /\ /
 
 /**
  * Spreads the heat on the Voidgrid

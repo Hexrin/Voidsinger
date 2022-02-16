@@ -407,14 +407,25 @@ private:
 
 public:
 
+	// \/ Add temperature \/ /
+
+	/**
+	 * Applys the temperature given at the world location given
+	 * 
+	 * @param Location - The world location to apply the temperature
+	 * @param Temperature - The temperature to add
+	 */
+	void AddTemperatureAtLocation(FVector WorldLocation, float Temperature);
+
 	/**
 	 * Applys the temperature given at the location given on this Voidgrid
 	 * 
-	 * @param Temperature - The temperature to add
 	 * @param Location - The location to apply the temperature
+	 * @param Temperature - The temperature to add
 	 */
-	UFUNCTION(BlueprintCallable)
 	void AddTemperatureAtLocation(FIntPoint Location, float Temperature);
+
+	// /\ Add temperature /\ /
 
 private:
 
