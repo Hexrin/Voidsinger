@@ -148,8 +148,7 @@ void AVoidgrid::UpdateTransform(float DeltaTime)
 					(1 / Mass + 1 / OtherVoidgrid->Mass + FMath::Square(RelativeHitLocation ^ ImpactNormal) / MomentOfInertia + FMath::Square(OtherRelativeHitLocation ^ ImpactNormal) / OtherVoidgrid->MomentOfInertia);
 
 				OtherVoidgrid->AddImpulse(-1 * CollsionForce * ImpactNormal, FVector(OtherRelativeHitLocation, 0));
-				//DrawDebugDirectionalArrow(GetWorld(), OtherShip->GetActorLocation() + FVector(OtherRelativeHitLocation, 0), OtherShip->GetActorLocation() + FVector(OtherRelativeHitLocation, 0) + FVector(-1 * CollisionImpulseFactor * ImpactNormal, 0), 5, FColor::Red, false, 5, 0U, 0.3f);
-				//UE_LOG(LogTemp, Warning, TEXT("%s Applyed an impules of %s at %s to %s"), *GetOwner()->GetName(), *(-1 * CollisionImpulseFactor * ImpactNormal).ToString(), *OtherRelativeHitLocation.ToString(), *Result.GetActor()->GetName());
+
 			}
 			else
 			{
@@ -254,8 +253,6 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 void AVoidgrid::AddTemperatureAtLocation(FVector WorldLocation, float Temperature)
 {
 	FIntPoint RelativeLocation = FVector2D(WorldLocation - GetActorLocation()).IntPoint();
-	// Temperature debug
-	//UE_LOG(LogTemp, Warning, TEXT("relative location %s"), *RelativeLocation.ToString());
 	AddTemperatureAtLocation(RelativeLocation, Temperature);
 }
 
@@ -269,8 +266,6 @@ void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
 {
 	if (PixelMold.Contains(Location))
 	{
-		// Temperature debug
-		//UE_LOG(LogTemp, Warning, TEXT("pixel mold does contain the location, and the temperature should be added"));
 		PixelMold.FindRef(Location).AddTemperature(Temperature);
 	}
 }
@@ -282,8 +277,6 @@ void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
  */
 void AVoidgrid::SpreadHeat()
 {
-	// Temperature debug
-	UE_LOG(LogTemp, Warning, TEXT("Spread heat is called"));
 	
 	// \/ Calculate the new heat map \/ /
 
@@ -329,10 +322,8 @@ void AVoidgrid::SpreadHeat()
 
 	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
 	{
-		if (NewHeatMap.Contains(EachPixel.Key))
+		if (NewHeatMap.Contains(EachPixel.Key) && EachPixel.Value.IsIntact())
 		{
-
-			UE_LOG(LogTemp, Warning, TEXT("pixel value"));
 			//Melt pixel
 			if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 			{
@@ -470,14 +461,14 @@ void AVoidgrid::SetState(FVoidgridState NewState)
 
 		for (GridLocationType ShapeComponent : PartState.GetShape())
 		{
-			GridLocationType ShapeCompoentLocation = PartState.GetTransform().TransformGridLocation(ShapeComponent);
-			if (!PixelMold.Contains(ShapeCompoentLocation))
+			GridLocationType ShapeComponentLocation = PartState.GetTransform().TransformGridLocation(ShapeComponent);
+			if (!PixelMold.Contains(ShapeComponentLocation))
 			{
-				PixelMold.Emplace(ShapeCompoentLocation, PixelType(Part, UPart::GetNullPart()));
+				PixelMold.Emplace(ShapeComponentLocation, PixelType(Part, UPart::GetNullPart()));
 			}
-			SetPixelIntact(ShapeCompoentLocation, true, false);
+			SetPixelIntact(ShapeComponentLocation, true, false);
 
-			UpdatePixelMesh(ShapeCompoentLocation);
+			UpdatePixelMesh(ShapeComponentLocation);
 		}
 	}
 }
