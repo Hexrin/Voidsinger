@@ -283,7 +283,7 @@ void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
 void AVoidgrid::SpreadHeat()
 {
 	// Temperature debug
-	//UE_LOG(LogTemp, Warning, TEXT("Spread heat is called"));
+	UE_LOG(LogTemp, Warning, TEXT("Spread heat is called"));
 	
 	// \/ Calculate the new heat map \/ /
 
@@ -293,36 +293,33 @@ void AVoidgrid::SpreadHeat()
 	//Iterate through each point on the grid map to spread heat to each pixel
 	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
 	{
-		if (EachPixel.Value.GetTemperature() != 0)
+		// Temperature debug
+		//Heat added to this pixel
+		float AddedHeat = 0;
+
+		// Spread heat to each point around the current location
+		for (int EachPointAroundPixel = 0; EachPointAroundPixel < 4; EachPointAroundPixel++)
 		{
+			FIntPoint TargetPoint = ((EachPointAroundPixel % 2 == 1) ? FIntPoint((EachPointAroundPixel > 1) ? 1 : -1, 0) : FIntPoint(0, (EachPointAroundPixel > 1) ? 1 : -1));
 
-			//Heat added to this pixel
-			float AddedHeat = 0;
-
-			// Spread heat to each point around the current location
-			for (int EachPointAroundPixel = 0; EachPointAroundPixel < 4; EachPointAroundPixel++)
+			if (PixelMold.Contains(TargetPoint + EachPixel.Key))
 			{
-				FIntPoint TargetPoint = ((EachPointAroundPixel % 2 == 1) ? FIntPoint((EachPointAroundPixel > 1) ? 1 : -1, 0) : FIntPoint(0, (EachPointAroundPixel > 1) ? 1 : -1));
+				//Get the temperature of the adjacent pixel
+				float OtherPixelTemperature = PixelMold.FindRef(TargetPoint + EachPixel.Key).GetTemperature();
 
-				if (PixelMold.Contains(TargetPoint + EachPixel.Key))
-				{
-					//Get the temperature of the adjacent pixel
-					float OtherPixelTemperature = PixelMold.FindRef(TargetPoint + EachPixel.Key).GetTemperature();
-
-					//The heat added to this pixel from the other pixel is the other pixel's temperature multiplied by the heat propagation faction (how much heat it will spread to other pixels). It
-					//is divided by four because a pixel will spread heat to four other pixels.
-					AddedHeat += (OtherPixelTemperature * HeatPropagationFactor) / (4);
-				}
+				//The heat added to this pixel from the other pixel is the other pixel's temperature multiplied by the heat propagation faction (how much heat it will spread to other pixels). It
+				//is divided by four because a pixel will spread heat to four other pixels.
+				AddedHeat += (OtherPixelTemperature * HeatPropagationFactor) / (4);
 			}
-
-			//The heat remaining when this pixel spreads heat to the surrounding pixels
-			float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - HeatPropagationFactor);
-
-			float NewHeat = RemainingHeat + AddedHeat;
-
-			//If the amount of heat is below .05, then it's negligable. 
-			NewHeatMap.Emplace(EachPixel.Key, NewHeat > .05 ? NewHeat : 0);
 		}
+
+		//The heat remaining when this pixel spreads heat to the surrounding pixels
+		float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - HeatPropagationFactor);
+
+		float NewHeat = RemainingHeat + AddedHeat;
+
+		//If the amount of heat is below .05, then it's negligable. 
+		NewHeatMap.Emplace(EachPixel.Key, NewHeat > .05 ? NewHeat : 0);
 
 	}
 
@@ -332,26 +329,31 @@ void AVoidgrid::SpreadHeat()
 
 	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
 	{
-		//Melt pixel
-		if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
+		if (NewHeatMap.Contains(EachPixel.Key))
 		{
-			RemovePixel(EachPixel.Key);
-		}
 
-		else
-		{
-			//Freeze pixel
-			if (NewHeatMap.FindRef(EachPixel.Key) < -1 * EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
+			UE_LOG(LogTemp, Warning, TEXT("pixel value"));
+			//Melt pixel
+			if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 			{
-				EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, true);
+				RemovePixel(EachPixel.Key);
 			}
-			//Unfreeze pixel
+
 			else
 			{
-				EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, false);
-			}
+				//Freeze pixel
+				if (NewHeatMap.FindRef(EachPixel.Key) < -1 * EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
+				{
+					EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, true);
+				}
+				//Unfreeze pixel
+				else
+				{
+					EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, false);
+				}
 
-			EachPixel.Value.SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
+				EachPixel.Value.SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
+			}
 		}
 	}
 
