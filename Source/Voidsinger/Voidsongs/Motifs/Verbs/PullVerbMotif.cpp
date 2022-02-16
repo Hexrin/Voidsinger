@@ -18,7 +18,7 @@ void UPullVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effe
 {
 	//                       |-----------------Impulse Direction-----------------|   |----Impulse Magnitude----|
 	FVector2D ImpulseVector = FVector2D((Hit.Location - Hit.TraceStart).Normalize() * Effectiveness * PullForce);
-	Cast<AVoidgrid>(Hit.GetActor())->AddImpulse(ImpulseVector, FVector2D(Hit.Location));
+	Cast<AVoidgrid>(Hit.GetActor())->AddImpulse(ImpulseVector, Hit.Location);
 }
 
 /* /\ Voidsong Activation /\ *\

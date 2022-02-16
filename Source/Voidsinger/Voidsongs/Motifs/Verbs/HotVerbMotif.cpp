@@ -2,6 +2,7 @@
 
 
 #include "HotVerbMotif.h"
+#include "Voidsinger/Voidgrids/Voidgrid.h"
 
 /* ------------------------- *\
 \* \/ Voidsong Activation \/ */
@@ -15,6 +16,7 @@
  */
 void UHotVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness)
 {
+	Cast<AVoidgrid>(Hit.GetActor())->AddTemperatureAtLocation(FVector2D(Hit.Location), Effectiveness * HeatToAdd);
 }
 
 /* /\ Voidsong Activation /\ *\

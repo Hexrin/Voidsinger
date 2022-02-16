@@ -240,7 +240,7 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
  * @param Temperature - The temperature to add
  * @param Location - The location to apply the temperature
  */
-void AVoidgrid::ApplyTemperatureAtLocation(float Temperature, FIntPoint Location)
+void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
 {
 	if (PixelMold.Contains(Location))
 	{

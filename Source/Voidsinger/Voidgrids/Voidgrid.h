@@ -414,7 +414,7 @@ public:
 	 * @param Location - The location to apply the temperature
 	 */
 	UFUNCTION(BlueprintCallable)
-	void ApplyTemperatureAtLocation(float Temperature, FIntPoint Location);
+	void AddTemperatureAtLocation(FIntPoint Location, float Temperature);
 
 private:
 
