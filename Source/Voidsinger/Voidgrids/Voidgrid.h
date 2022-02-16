@@ -415,6 +415,7 @@ public:
 	 * @param Location - The world location to apply the temperature
 	 * @param Temperature - The temperature to add
 	 */
+	UFUNCTION(BlueprintCallable)
 	void AddTemperatureAtLocation(FVector WorldLocation, float Temperature);
 
 	/**
