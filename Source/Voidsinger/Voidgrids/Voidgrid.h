@@ -440,7 +440,7 @@ protected:
 
 	//The time between heat ticks
 	UPROPERTY(EditDefaultsOnly)
-	float HeatTick = 0.25;
+	float HeatTick = 1;
 
 private:
 

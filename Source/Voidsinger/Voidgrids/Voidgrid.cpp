@@ -148,7 +148,6 @@ void AVoidgrid::UpdateTransform(float DeltaTime)
 					(1 / Mass + 1 / OtherVoidgrid->Mass + FMath::Square(RelativeHitLocation ^ ImpactNormal) / MomentOfInertia + FMath::Square(OtherRelativeHitLocation ^ ImpactNormal) / OtherVoidgrid->MomentOfInertia);
 
 				OtherVoidgrid->AddImpulse(-1 * CollsionForce * ImpactNormal, FVector(OtherRelativeHitLocation, 0));
-
 			}
 			else
 			{
@@ -253,6 +252,7 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 void AVoidgrid::AddTemperatureAtLocation(FVector WorldLocation, float Temperature)
 {
 	FIntPoint RelativeLocation = FVector2D(WorldLocation - GetActorLocation()).IntPoint();
+	UE_LOG(LogTemp, Warning, TEXT("Relative location %s"), *RelativeLocation.ToString());
 	AddTemperatureAtLocation(RelativeLocation, Temperature);
 }
 
@@ -266,7 +266,11 @@ void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
 {
 	if (PixelMold.Contains(Location))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("pixel mold does contain the location"));
+		UE_LOG(LogTemp, Warning, TEXT("Temperature added %f"), Temperature);
 		PixelMold.FindRef(Location).AddTemperature(Temperature);
+
+		UE_LOG(LogTemp, Warning, TEXT("just checking that get temperature works %f"), PixelMold.FindRef(Location).GetTemperature());
 	}
 }
 
@@ -286,7 +290,6 @@ void AVoidgrid::SpreadHeat()
 	//Iterate through each point on the grid map to spread heat to each pixel
 	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
 	{
-		// Temperature debug
 		//Heat added to this pixel
 		float AddedHeat = 0;
 
@@ -297,6 +300,8 @@ void AVoidgrid::SpreadHeat()
 
 			if (PixelMold.Contains(TargetPoint + EachPixel.Key))
 			{
+
+				UE_LOG(LogTemp, Warning, TEXT("target point %s temperature %f"), *(TargetPoint + EachPixel.Key).ToString(), PixelMold.FindRef(TargetPoint + EachPixel.Key).GetTemperature());
 				//Get the temperature of the adjacent pixel
 				float OtherPixelTemperature = PixelMold.FindRef(TargetPoint + EachPixel.Key).GetTemperature();
 
@@ -310,6 +315,8 @@ void AVoidgrid::SpreadHeat()
 		float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - HeatPropagationFactor);
 
 		float NewHeat = RemainingHeat + AddedHeat;
+
+		UE_LOG(LogTemp, Warning, TEXT("location: %s - new temperature: %f"), *EachPixel.Key.ToString(), NewHeat);
 
 		//If the amount of heat is below .05, then it's negligable. 
 		NewHeatMap.Emplace(EachPixel.Key, NewHeat > .05 ? NewHeat : 0);
@@ -327,6 +334,7 @@ void AVoidgrid::SpreadHeat()
 			//Melt pixel
 			if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("Pixel melted %s"), *EachPixel.Key.ToString());
 				RemovePixel(EachPixel.Key);
 			}
 
@@ -335,11 +343,13 @@ void AVoidgrid::SpreadHeat()
 				//Freeze pixel
 				if (NewHeatMap.FindRef(EachPixel.Key) < -1 * EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 				{
+					UE_LOG(LogTemp, Warning, TEXT("Pixel frozen %s"), *EachPixel.Key.ToString());
 					EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, true);
 				}
 				//Unfreeze pixel
 				else
 				{
+					UE_LOG(LogTemp, Warning, TEXT("pixel unfrozen %s"), *EachPixel.Key.ToString());
 					EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, false);
 				}
 
