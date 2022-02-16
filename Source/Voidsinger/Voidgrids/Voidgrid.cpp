@@ -53,6 +53,15 @@ void AVoidgrid::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateTransform(DeltaTime);
+
+	//Find how many heat ticks have passed and call SpreadHeat that number of times
+	for (int EachHeatTickPassed = 0; EachHeatTickPassed < DeltaHeatTime / HeatTick; DeltaHeatTime -= HeatTick)
+	{
+		SpreadHeat();
+	}
+
+	DeltaHeatTime += DeltaTime;
+
 }
 
 /* ------------- *\
@@ -245,6 +254,8 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 void AVoidgrid::AddTemperatureAtLocation(FVector WorldLocation, float Temperature)
 {
 	FIntPoint RelativeLocation = FVector2D(WorldLocation - GetActorLocation()).IntPoint();
+	// Temperature debug
+	//UE_LOG(LogTemp, Warning, TEXT("relative location %s"), *RelativeLocation.ToString());
 	AddTemperatureAtLocation(RelativeLocation, Temperature);
 }
 
@@ -258,6 +269,8 @@ void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
 {
 	if (PixelMold.Contains(Location))
 	{
+		// Temperature debug
+		//UE_LOG(LogTemp, Warning, TEXT("pixel mold does contain the location, and the temperature should be added"));
 		PixelMold.FindRef(Location).AddTemperature(Temperature);
 	}
 }
@@ -269,7 +282,9 @@ void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
  */
 void AVoidgrid::SpreadHeat()
 {
-
+	// Temperature debug
+	//UE_LOG(LogTemp, Warning, TEXT("Spread heat is called"));
+	
 	// \/ Calculate the new heat map \/ /
 
 	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();

@@ -438,6 +438,17 @@ private:
 
 protected:
 
+	//The time between heat ticks
+	UPROPERTY(EditDefaultsOnly)
+	float HeatTick = 0.25;
+
+private:
+
+	//The time since the last heat tick
+	float DeltaHeatTime;
+	
+protected:
+
 	//The percent of heat that a pixel will spread to all surrounding pixels
 	UPROPERTY(EditDefaultsOnly)
 	float HeatPropagationFactor = 0.5;
