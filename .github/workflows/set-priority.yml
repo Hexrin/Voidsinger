@@ -4,7 +4,7 @@ on:
     types:
       - moved
 jobs:
-  label_issues:
+  label_high_priority_issue:
     if: github.event.project_card.column_id  == '17811859'
     runs-on: ubuntu-latest
     permissions:
@@ -15,3 +15,79 @@ jobs:
         with:
           add-labels: "High Priority"
           repo-token: ${{ secrets.ACCESS_TOKEN }}
+      - name: remove low priority labels
+        uses: andymckay/labeler@5c59dabdfd4dd5bd9c6e6d255b01b9d764af4414
+        with:
+          remove-labels: "Low Priority"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: remove medium priority labels
+        uses: andymckay/labeler@5c59dabdfd4dd5bd9c6e6d255b01b9d764af4414
+        with:
+          remove-labels: "Medium Priority"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  label_medium_priority_issue:
+    if: github.event.project_card.column_id  == '17811860'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Label issues
+        uses: andymckay/labeler@e6c4322d0397f3240f0e7e30a33b5c5df2d39e90
+        with:
+          add-labels: "Medium Priority"
+          repo-token: ${{ secrets.ACCESS_TOKEN }}
+      - name: remove low priority labels
+        uses: andymckay/labeler@5c59dabdfd4dd5bd9c6e6d255b01b9d764af4414
+        with:
+          remove-labels: "Low Priority"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: remove high priority labels
+        uses: andymckay/labeler@5c59dabdfd4dd5bd9c6e6d255b01b9d764af4414
+        with:
+          remove-labels: "High Priority"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      
+  label_low_priority_issue:
+    if: github.event.project_card.column_id  == '17811861'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Label issues
+        uses: andymckay/labeler@e6c4322d0397f3240f0e7e30a33b5c5df2d39e90
+        with:
+          add-labels: "Low Priority"
+          repo-token: ${{ secrets.ACCESS_TOKEN }}
+      - name: remove medium priority labels
+        uses: andymckay/labeler@5c59dabdfd4dd5bd9c6e6d255b01b9d764af4414
+        with:
+          remove-labels: "Medium Priority"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: remove high priority labels
+        uses: andymckay/labeler@5c59dabdfd4dd5bd9c6e6d255b01b9d764af4414
+        with:
+          remove-labels: "High Priority"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          
+  remove_priority_labels:
+    if: github.event.project_card.column_id  == '17811858'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: remove low priority labels
+        uses: andymckay/labeler@5c59dabdfd4dd5bd9c6e6d255b01b9d764af4414
+        with:
+          remove-labels: "Low Priority"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: remove medium priority labels
+        uses: andymckay/labeler@5c59dabdfd4dd5bd9c6e6d255b01b9d764af4414
+        with:
+          remove-labels: "Medium Priority"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: remove high priority labels
+        uses: andymckay/labeler@5c59dabdfd4dd5bd9c6e6d255b01b9d764af4414
+        with:
+          remove-labels: "High Priority"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
