@@ -19,8 +19,6 @@ class VOIDSINGER_API UVoidsingerGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, Instanced, BlueprintReadOnly)
-	UChildClassesFinder* ChildClassFinder;
 
 	/* ------------ *\
 	\* \/ Pixels \/ */
