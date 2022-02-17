@@ -11,32 +11,33 @@ jobs:
     permissions:
       issues: write
     steps:
-      - name: Add issue to a project
+      - name: Add Issue to Project
         # You may pin to the exact commit or the version.
-        # uses: cb80/add2project@17ee971bf61d999290499ecc3b900dafcd1547cf
-        uses: cb80/add2project@v0.6.0
+        # uses: monry/actions-add-issue-to-project@3e54e1f966203c08d6f15406f7dcf6f6ef2f7dd1
+      - uses: monry/actions-add-issue-to-project@v1
         with:
-          # Project name
-          project: Art
-          # Column name
-          column: To Do
-          
-          
+          # Personal Access Token that with `repo`, `org:read` and `org:write` are granted.
+          github-token: ${{ secrets.ACCESS_TOKEN }}
+          project-owner: 'monry'
+          project-number: 1
+          issue-id: ${{ github.event.issue.node_id }}
+
   add-to-code:
     if: github.event.label.name == 'Programming'
     runs-on: ubuntu-latest
     permissions:
       issues: write
     steps:
-      - name: Assign to One Project
+      - name: Add Issue to Project
         # You may pin to the exact commit or the version.
-        # uses: srggrs/assign-one-project-github-action@65a8ddab497df42ef268001e67bbf976f8fd39e1
-        uses: srggrs/assign-one-project-github-action@1.3.1
+        # uses: monry/actions-add-issue-to-project@3e54e1f966203c08d6f15406f7dcf6f6ef2f7dd1
+      - uses: monry/actions-add-issue-to-project@v1
         with:
-          # The url of the project to be assigned to.
-          project: https://github.com/Hexrin/Voidsinger/projects/13
-          # The column name of the project, defaults to "To do" for issues and "In progress" for pull requests.
-          column_name: To do
+          # Personal Access Token that with `repo`, `org:read` and `org:write` are granted.
+          github-token: ${{ secrets.ACCESS_TOKEN }}
+          project-owner: 'monry'
+          project-number: 1
+          issue-id: ${{ github.event.issue.node_id }}
           
           
   add-to-design:
@@ -45,12 +46,13 @@ jobs:
     permissions:
       issues: write
     steps:
-      - name: Assign to One Project
+      - name: Add Issue to Project
         # You may pin to the exact commit or the version.
-        # uses: srggrs/assign-one-project-github-action@65a8ddab497df42ef268001e67bbf976f8fd39e1
-        uses: srggrs/assign-one-project-github-action@1.3.1
+        # uses: monry/actions-add-issue-to-project@3e54e1f966203c08d6f15406f7dcf6f6ef2f7dd1
+      - uses: monry/actions-add-issue-to-project@v1
         with:
-          # The url of the project to be assigned to.
-          project: https://github.com/Hexrin/Voidsinger/projects/15
-          # The column name of the project, defaults to "To do" for issues and "In progress" for pull requests.
-          column_name: To do
+          # Personal Access Token that with `repo`, `org:read` and `org:write` are granted.
+          github-token: ${{ secrets.ACCESS_TOKEN }}
+          project-owner: 'monry'
+          project-number: 1
+          issue-id: ${{ github.event.issue.node_id }}
