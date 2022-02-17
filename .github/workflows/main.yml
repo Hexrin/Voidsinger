@@ -8,51 +8,30 @@ jobs:
   add-to-art:
     if: github.event.label.name == 'Art'
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
     steps:
-      - name: Add Issue to Project
-        # You may pin to the exact commit or the version.
-        # uses: monry/actions-add-issue-to-project@3e54e1f966203c08d6f15406f7dcf6f6ef2f7dd1
-        uses: monry/actions-add-issue-to-project@v1
+      - uses: alex-page/github-project-automation-plus@5bcba1c1c091a222584d10913e5c060d32c44044
         with:
-          # Personal Access Token that with `repo`, `org:read` and `org:write` are granted.
-          github-token: ${{ secrets.ACCESS_TOKEN }}
-          project-owner: 'Hexrin'
-          project-number: 7
-          issue-id: ${{ github.event.issue.node_id }}
+          project: Art
+          column: To Do
+          repo-token: ${{ secrets.ACCESS_TOKEN }}
 
   add-to-code:
     if: github.event.label.name == 'Programming'
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
     steps:
-      - name: Add Issue to Project
-        # You may pin to the exact commit or the version.
-        # uses: monry/actions-add-issue-to-project@3e54e1f966203c08d6f15406f7dcf6f6ef2f7dd1
-        uses: monry/actions-add-issue-to-project@v1
+      - uses: alex-page/github-project-automation-plus@5bcba1c1c091a222584d10913e5c060d32c44044
         with:
-          # Personal Access Token that with `repo`, `org:read` and `org:write` are granted.
-          github-token: ${{ secrets.ACCESS_TOKEN }}
-          project-owner: 'Hexrin'
-          project-number: 13
-          issue-id: ${{ github.event.issue.node_id }}
+          project: Code
+          column: To Do
+          repo-token: ${{ secrets.ACCESS_TOKEN }}
           
           
   add-to-design:
     if: github.event.label.name == 'Design'
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
     steps:
-      - name: Add Issue to Project
-        # You may pin to the exact commit or the version.
-        # uses: monry/actions-add-issue-to-project@3e54e1f966203c08d6f15406f7dcf6f6ef2f7dd1
-        uses: monry/actions-add-issue-to-project@v1
+      - uses: alex-page/github-project-automation-plus@5bcba1c1c091a222584d10913e5c060d32c44044
         with:
-          # Personal Access Token that with `repo`, `org:read` and `org:write` are granted.
-          github-token: ${{ secrets.ACCESS_TOKEN }}
-          project-owner: 'Hexrin'
-          project-number: 15
-          issue-id: ${{ github.event.issue.node_id }}
+          project: Design
+          column: To Do
+          repo-token: ${{ secrets.ACCESS_TOKEN }}
