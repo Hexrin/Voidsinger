@@ -136,6 +136,9 @@ private:
 |  \/ Ship Save State \/  |
 \* \/ =============== \/ */
 
+/*
+ * Struct for the information that is saved on ships
+ */
 UCLASS()
 class VOIDSINGER_API UShipSaveState : public USaveGame
 {
