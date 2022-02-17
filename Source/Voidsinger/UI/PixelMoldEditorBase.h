@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Voidsinger/Voidgrids/Voidgrid.h"
+#include "Voidsinger/Voidgrids/Ships/Ship.h"
 #include "GameFramework/SaveGame.h"
 #include "PixelMoldEditorBase.generated.h"
 
@@ -22,7 +22,7 @@ public:
 protected:
 	//Stores the Voidgrid this is editing.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	AVoidgrid* Target;
+	AShip* Target;
 
 	/**
 	 * Sets the target's mold to the mold of this.
@@ -35,6 +35,12 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void LoadMoldFromTarget();
+
+	/**
+	 * Saves the current mold to the target Voidgrid
+	 */
+	UFUNCTION(BlueprintCallable)
+	void SaveMoldToTarget();
 
 	/**
 	 * Saves the mold of this to a save slot of the given name.

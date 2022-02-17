@@ -4,8 +4,12 @@
 
 #include "CoreMinimal.h"
 //#include "ShipSaveState.generated.h"
-
-/**
- * 
- */
-
+//
+///**
+// * 
+// */
+//UCLASS()
+//class VOIDSINGER_API UShipSaveState : public USaveGame
+//{
+//	GENERATED_BODY()
+//};

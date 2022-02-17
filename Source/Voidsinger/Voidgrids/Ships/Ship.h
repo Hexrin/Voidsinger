@@ -21,6 +21,16 @@ class VOIDSINGER_API AShip : public AVoidgrid
 {
 	GENERATED_BODY()
 
+	/* -------------------- *\
+	\* \/ Initialization \/ */
+
+public:
+
+	virtual void BeginPlay() override;
+
+	/* /\ Initialization /\ *\
+	\* -------------------- */
+
 	/* ---------------------------------- *\
 	\* \/ Playable Voidsong Management \/ */
 
@@ -133,11 +143,15 @@ class VOIDSINGER_API UShipSaveState : public USaveGame
 	
 public:
 	//Stores the state of Voidgrid of the ship saved by this.
+	UPROPERTY()
 	FVoidgridState VoidgridState;
 
 	//Stores the Location of the ship saved by this.
+	UPROPERTY()
 	FVector2D Location;
 };
+
+
 
 /* /\ =============== /\ *\
 |  /\ Ship Save State /\  |

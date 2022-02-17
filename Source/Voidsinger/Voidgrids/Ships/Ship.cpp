@@ -9,6 +9,18 @@
 |  \/ Ship \/  |
 \* \/ ==== \/ */
 
+/* -------------------- *\
+\* \/ Initialization \/ */
+
+void AShip::BeginPlay()
+{
+	Super::BeginPlay();
+	LoadState(true);
+}
+
+/* /\ Initialization /\ *\
+\* -------------------- */
+
 /* ---------------------------------- *\
 \* \/ Playable Voidsong Management \/ */
 
@@ -163,6 +175,7 @@ void AShip::SaveState()
 		SaveGameInstance->Location = FVector2D(GetActorLocation());
 
 		UGameplayStatics::SaveGameToSlot(SaveGameInstance, GetSaveStateSlotName(), 0);
+
 	}
 }
 
