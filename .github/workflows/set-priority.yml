@@ -5,7 +5,7 @@ on:
       - moved
 jobs:
   label_issues:
-    if: github.event.project_card.column_id  == '1'
+    if: github.event.project_card.column_id  == '17811859'
     runs-on: ubuntu-latest
     permissions:
       issues: write
