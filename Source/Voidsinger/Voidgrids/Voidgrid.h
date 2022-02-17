@@ -407,14 +407,26 @@ private:
 
 public:
 
+	// \/ Add temperature \/ /
+
+	/**
+	 * Applys the temperature given at the world location given
+	 * 
+	 * @param Location - The world location to apply the temperature
+	 * @param Temperature - The temperature to add
+	 */
+	UFUNCTION(BlueprintCallable)
+	void AddTemperatureAtLocation(FVector WorldLocation, float Temperature);
+
 	/**
 	 * Applys the temperature given at the location given on this Voidgrid
 	 * 
-	 * @param Temperature - The temperature to add
 	 * @param Location - The location to apply the temperature
+	 * @param Temperature - The temperature to add
 	 */
-	UFUNCTION(BlueprintCallable)
-	void ApplyTemperatureAtLocation(float Temperature, FIntPoint Location);
+	void AddTemperatureAtLocation(FIntPoint Location, float Temperature);
+
+	// /\ Add temperature /\ /
 
 private:
 
@@ -424,6 +436,17 @@ private:
 	UFUNCTION()
 	void SpreadHeat();
 
+protected:
+
+	//The time between heat ticks
+	UPROPERTY(EditDefaultsOnly)
+	float HeatTick = 1;
+
+private:
+
+	//The time since the last heat tick
+	float DeltaHeatTime;
+	
 protected:
 
 	//The percent of heat that a pixel will spread to all surrounding pixels

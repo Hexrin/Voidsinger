@@ -2,6 +2,7 @@
 
 
 #include "ColdVerbMotif.h"
+#include "Voidsinger/Voidgrids/Voidgrid.h"
 
 /* ------------------------- *\
 \* \/ Voidsong Activation \/ */
@@ -15,7 +16,7 @@
  */
 void UColdVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effectiveness)
 {
-
+	Cast<AVoidgrid>(Hit.GetActor())->AddTemperatureAtLocation(Hit.Location, -1 * Effectiveness * ColdToAdd);
 }
 
 /* /\ Voidsong Activation /\ *\
