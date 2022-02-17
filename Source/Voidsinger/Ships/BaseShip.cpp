@@ -210,9 +210,9 @@ void ABaseShip::PlaySequence(TArray<int> Sequence)
 
 		float Duration = DecideVoidsongsPlayed(Sequence, Factions, Nouns, Verbs);
 
-		if (!Factions.IsEmpty() || !Nouns.IsEmpty() || !Verbs.IsEmpty())
+		if (!Factions.IsEmpty() || !Nouns.IsEmpty() || !Verbs.IsEmpty() && IsValid(Cast<AStarSystemLevelManager>(UFunctionLibrary::GetLevelManager(this))))
 		{
-			Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->Broadcast(Factions, Nouns, Verbs, AvailableVoidsongs, Duration);
+			Cast<AStarSystemLevelManager>(UFunctionLibrary::GetLevelManager(this))->Broadcast(Factions, Nouns, Verbs, AvailableVoidsongs, Duration);
 		}
 
 		//Delete print string or come up with a good way for c++ debug modes - Liam Suggestion
@@ -301,7 +301,10 @@ void ABaseShip::DurationDelay()
 	//UE_LOG(LogTemp, Warning, TEXT("Can Activate again"))
 	CanActivateVoidsong = true;
 	//This system definently does not work with multiple simultanous voidsongs - Liam Suggestion
-	Cast<AStarSystemGameMode>(GetWorld()->GetAuthGameMode())->UnsetVerbs();
+	if (IsValid(Cast<AStarSystemLevelManager>(UFunctionLibrary::GetLevelManager(this))))
+	{
+		Cast<AStarSystemLevelManager>(UFunctionLibrary::GetLevelManager(this))->UnsetVerbs();
+	}
 	OnUnsetVerbsDelegate.Broadcast();
 }
 
@@ -358,7 +361,7 @@ FVector2D ABaseShip::GetTargetMoveDirection()
 //Comment -Mabel Suggestion
 void ABaseShip::SetTargetMoveSpeed(float Vector)
 {
-	TargetMoveSpeed = abs(Vector);
+	TargetMoveSpeed = Vector;
 }
 
 //Comment -Mabel Suggestion

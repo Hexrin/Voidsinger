@@ -51,7 +51,7 @@ void UBaseResourceSystem::AddPart(UBasePart* AddedPart)
 			PartData.Part = AddedPart;
 
 			ResourceSystemGrid.Emplace(PartShape + AddedPart->GetPartGridLocation(), PartData);
-			UE_LOG(LogTemp, Warning, TEXT("(emplace) From add part. This resource system %s addedd part in part data %s added part param %s Resource system grid num %i "), *GetFName().ToString(), *PartData.Part->GetFName().ToString(), *AddedPart->GetFName().ToString(), ResourceSystemGrid.Num());
+			//UE_LOG(LogTemp, Warning, TEXT("(emplace) From add part. This resource system %s addedd part in part data %s added part param %s Resource system grid num %i "), *GetFName().ToString(), *PartData.Part->GetFName().ToString(), *AddedPart->GetFName().ToString(), ResourceSystemGrid.Num());
 			//UE_LOG(LogTemp, Warning, TEXT("Added part %s"), *AddedPart->GetFName().ToString());
 			GetOwningShip();
 		}
@@ -84,14 +84,14 @@ void UBaseResourceSystem::RemovePart(UBasePart* RemovedPart)
 void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 {
 
-	UE_LOG(LogTemp, Warning, TEXT("Remove pixel called"));
+	//UE_LOG(LogTemp, Warning, TEXT("Remove pixel called"));
 	if (ResourceSystemGrid.Contains(Pixel))
 	{
 
 		ResourceSystemGrid.Remove(Pixel);
 
-		UE_LOG(LogTemp, Warning, TEXT("grid contains the pixel removed + pixel should be removed?"));
-		UE_LOG(LogTemp, Warning, TEXT("resource system grid num %i"), ResourceSystemGrid.Num());
+		//UE_LOG(LogTemp, Warning, TEXT("grid contains the pixel removed + pixel should be removed?"));
+		//UE_LOG(LogTemp, Warning, TEXT("resource system grid num %i"), ResourceSystemGrid.Num());
 
 		if (ResourceSystemGrid.Num() != 0)
 		{
@@ -154,7 +154,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 			//If NumbersFound is less than 2 then you don't need to bother checking anything since there will be no breaks in the system
 			if (NumbersFound.Num() > 1)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("numbers found num is greater than 1"));
+				//UE_LOG(LogTemp, Warning, TEXT("numbers found num is greater than 1"));
 				//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
 				//For each in NumbersFound.Num() - 1 because of how PointsConnected works
 				for (int i = 0; i < NumbersFound.Num() - 1; i++)
@@ -166,7 +166,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 						//This needs to be improved, but right now it checks if the current index is connected to the next index.
 						//actually it might not need to be improved but i need to think about it
 
-						UE_LOG(LogTemp, Warning, TEXT("resource system grid contains both locations"));
+						//UE_LOG(LogTemp, Warning, TEXT("resource system grid contains both locations"));
 						/*if (!ResourceSystemGrid.PointsConnected(NumbersFound[i], NumbersFound[i + 1], AlwaysConnect<FPartData>))
 						{
 							//Bad variable name. What is it storing? - Liam Suggestion
@@ -197,7 +197,7 @@ void UBaseResourceSystem::RemovePixel(FIntPoint Pixel)
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("resource system should be destroyed? %s"), *GetFName().ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("resource system should be destroyed? %s"), *GetFName().ToString());
 			DestroyResourceSystem();
 		}
 	}
@@ -221,13 +221,13 @@ void UBaseResourceSystem::MergeSystems(UBaseResourceSystem* MergedSystem)
 		//ConnectedParts.Append(MergedSystem->ConnectedParts);
 
 		AddResources(MergedSystem->GetResourceAmount());
-		UE_LOG(LogTemp, Warning, TEXT("Merge systems. This system %s merged system %s"), *GetFName().ToString(), *MergedSystem->GetFName().ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("Merge systems. This system %s merged system %s"), *GetFName().ToString(), *MergedSystem->GetFName().ToString());
 		for (int OtherGridIndex = 0; OtherGridIndex < MergedSystem->ResourceSystemGrid.Num(); OtherGridIndex++)
 		{
 			UBasePart* PartMergedIn = MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex).Part;
 			//UE_LOG(LogTemp, Warning, TEXT("part merged in class %s"), *PartMergedIn->GetClass()->GetDisplayNameText().ToString())
 			ResourceSystemGrid.Emplace(MergedSystem->ResourceSystemGrid.LocationAtIndex(OtherGridIndex), MergedSystem->ResourceSystemGrid.ValueAtIndex(OtherGridIndex));
-			UE_LOG(LogTemp, Warning, TEXT("(emplace) From merge systems. this resource system %s part merged in %s. Resource system grid num %i"), *GetFName().ToString(), *PartMergedIn->GetFName().ToString(), ResourceSystemGrid.Num());
+			//UE_LOG(LogTemp, Warning, TEXT("(emplace) From merge systems. this resource system %s part merged in %s. Resource system grid num %i"), *GetFName().ToString(), *PartMergedIn->GetFName().ToString(), ResourceSystemGrid.Num());
 
 			for (UBaseResourceSystem* Systems : PartMergedIn->GetSystems())
 			{

@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "StarSystemGameMode.h"
+#include "StarSystemLevelManager.h"
 #include "Ships/PlayerShip.h"
 
 /*
@@ -11,17 +11,11 @@
 */ 
 void IActivateInterface::Activate(float Duration)
 {
+
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-AStarSystemGameMode::AStarSystemGameMode()
-{
-	//LoadConfig();
-	DefaultPawnClass = APlayerShip::StaticClass();
-}
-
-//Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void AStarSystemGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness, float Duration)
+void AStarSystemLevelManager::ActivateWithEffects(AActor* ActorHit, AActor* ActorThatActivated, TArray<UBasePart*> PartsHit, FVector LocationCalledFrom, FVector WorldLocation, float Effectiveness, float Duration)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Verbiness is called"));
 	if (!VerbsActive.IsEmpty())
@@ -35,7 +29,7 @@ void AStarSystemGameMode::ActivateWithEffects(AActor* ActorHit, AActor* ActorTha
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void AStarSystemGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs, float Duration)
+void AStarSystemLevelManager::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TArray<TSubclassOf<UObject>> NounClasses, TArray<UBaseVerbVoidsong*> Verbs, TArray<UBaseVoidsong*> AvailableVoidsongs, float Duration)
 {
 	//Shouldnt this be append(+=) not = - Liam Suggestion
 	VerbsActive = Verbs;
@@ -43,7 +37,7 @@ void AStarSystemGameMode::Broadcast(TArray<TEnumAsByte<EFactions>> Factions, TAr
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-void AStarSystemGameMode::UnsetVerbs()
+void AStarSystemLevelManager::UnsetVerbs()
 {
 	//Delete print string or come up with a good way for c++ debug modes
 	//UE_LOG(LogTemp, Warning, TEXT("UnsetVerbs"));
@@ -59,13 +53,13 @@ void AStarSystemGameMode::UnsetVerbs()
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-FVoidsongDelegate AStarSystemGameMode::GetVoidsongDelegate()
+FVoidsongDelegate AStarSystemLevelManager::GetVoidsongDelegate()
 {
 	return OnVoidsongDelegate;
 }
 
 //Function comments from the .h should be copied to the .cpp - Liam Suggestion
-TArray<UBaseVerbVoidsong*> AStarSystemGameMode::GetVerbsActive()
+TArray<UBaseVerbVoidsong*> AStarSystemLevelManager::GetVerbsActive()
 {
 	return VerbsActive;
 }

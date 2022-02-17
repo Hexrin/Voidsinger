@@ -163,3 +163,12 @@ TArray<UBasePart*> UFunctionLibrary::GetPartsHitFromWorldLocation(FVector Locati
 	}
 }
 
+/**
+ * Gets a refernce to the current level manager.
+ *
+ * @return a pointer to the current level manager.
+ */
+ALevelManager* UFunctionLibrary::GetLevelManager(UObject* WorldContextObject)
+{
+	return Cast<UVoidsingerGameInstance>(UGameplayStatics::GetGameInstance(WorldContextObject))->GetLevelManager();
+}

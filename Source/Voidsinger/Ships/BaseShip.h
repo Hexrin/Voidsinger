@@ -28,7 +28,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAddVoidsongDelegate, UBaseVoidsong*
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActivatePartsDelegate, const TArray<TSubclassOf<UObject>>&, NounClasses, float, Duration);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnsetVerbsDelegate);
 
-UCLASS()
+UCLASS(Transient)
 class VOIDSINGER_API ABaseShip : public APawn
 {
 	GENERATED_BODY()
