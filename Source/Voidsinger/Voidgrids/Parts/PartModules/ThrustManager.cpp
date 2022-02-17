@@ -62,10 +62,33 @@ float UThrustManager::TimeToOrientation(const float Orientation) const
 	return 0;
 }
 
-//FVector2D UThrusterModule::GetMaximumAccelerationInDirection(const AVoidgrid* Target, const FVector2D Direction)
-//{
-//	return FVector2D::ZeroVector;
-//}
+void UThrustManager::AddManagedThrustSource(FThrustSource ThrustSource)
+{
+	(ThrustSource.Direction.X > 0 ? ForwardThrust : BackwardThrust) = abs(ThrustSource.Direction.X) * ThrustSource.Force;
+	(ThrustSource.Direction.Y > 0 ? RightThrust : LeftThrust) = abs(ThrustSource.Direction.Y) * ThrustSource.Force;
+	(ThrustSource.Location^Voidgrid->CenterOfMass)
+}
+
+void UThrustManager::RemoveManagedThrustSource(FThrustSource ThrustSource)
+{
+
+}
+
+FVector2D UThrustManager::GetMaximumAccelerationInDirection(const FVector2D Direction)
+{
+	return 0;
+}
+
+FVector2D UThrustManager::GetMaximumAccelerationInDirection(const float DirectionAngle)
+{
+	return GetMaximumAccelerationInDirection(FVector2D(FMath::Cos(DirectionAngle), FMath::Sin(DirectionAngle)));
+}
+
+FVector2D UThrustManager::GetMaximumAccelerationInRotation(const bool bClockwise)
+{
+	return 0;
+}
+
 
 /* /\ Thrust Predictions /\ *\
 \* ------------------------ */

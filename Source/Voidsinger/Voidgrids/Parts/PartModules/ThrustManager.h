@@ -8,6 +8,30 @@
 
 class AVoidgrid;
 
+USTRUCT(BlueprintType)
+struct VOIDSINGER_API FThrustSource
+{
+	GENERATED_BODY()
+
+	//The maximum inpulse force that can be applied by a thrust source.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0"))
+	float Force{ 0 };
+
+	//The direction of the impulse applyed by a thrust source.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPreserveRatio))
+	FVector2D Direction{ FVector2D(1,0) };
+
+	//The location of the impulse applyed by a thrust source.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D Location{ FIntPoint::ZeroValue };
+
+	FThrustSource(float ThrustForce = 0, FVector2D ThrustDirection = FVector2D(1, 0), FVector2D ThrustLocation = FIntPoint::ZeroValue)
+	{
+		Force = FMath::Max(ThrustForce, 0.f);
+		Direction = ThrustDirection.GetSafeNormal();
+		Location = ThrustLocation;
+	}
+};
 /**
  * 
  */
@@ -61,20 +85,45 @@ class VOIDSINGER_API UThrustManager : public UObject
 	UFUNCTION(BlueprintPure)
 	float TimeToOrientation(const float Orientation) const;
 
+	UFUNCTION()
+	void AddManagedThrustSource(FThrustSource ThrustSource);
+	UFUNCTION()
+	void RemoveManagedThrustSource(FThrustSource ThrustSource);
+
 private:
-	/*UFUNCTION()
-	static FVector2D GetMaximumAccelerationInDirection(const AVoidgrid* Target, const FVector2D Direction);
-	static FVector2D GetMaximumAccelerationInDirection(const AVoidgrid* Target, const float DirectionAngle);
+	UPROPERTY()
+	float ForwardThrust { 0 };
+
+	UPROPERTY()
+	float BackwardThrust{ 0 };
+	
+	UPROPERTY()
+	float RightThrust{ 0 };
+	
+	UPROPERTY()
+	float LeftThrust{ 0 };
+	
+	UPROPERTY()
+	float ClockwiseThrust{ 0 };
+	
+	UPROPERTY()
+	float CounterClockwiseThrust{ 0 };
+
 
 	UFUNCTION()
 	static FVector2D GetMaximumAccelerationInRotation(const AVoidgrid* Target, const bool bClockwise);
 	
 	UFUNCTION()
 	void UpdateThrustPredictions(float Mass, FVector2D CenterOfMass, float MomentOfInertia);
-	*/
+
+	FVector2D GetMaximumAccelerationInDirection(const FVector2D Direction);
+	FVector2D GetMaximumAccelerationInDirection(const float DirectionAngle);
+
+	UFUNCTION()
+	FVector2D GetMaximumAccelerationInRotation(const bool bClockwise);
 
 	UPROPERTY()
-	AVoidgrid* Voidgrid = nullptr;
+	const AVoidgrid* Voidgrid;
 
 	/* /\ Thrust Predictions /\ *\
 	\* ------------------------ */
