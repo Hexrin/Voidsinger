@@ -18,8 +18,8 @@ jobs:
         with:
           # Personal Access Token that with `repo`, `org:read` and `org:write` are granted.
           github-token: ${{ secrets.ACCESS_TOKEN }}
-          project-owner: 'monry'
-          project-number: 1
+          project-owner: 'Hexrin'
+          project-number: 7
           issue-id: ${{ github.event.issue.node_id }}
 
   add-to-code:
@@ -35,8 +35,8 @@ jobs:
         with:
           # Personal Access Token that with `repo`, `org:read` and `org:write` are granted.
           github-token: ${{ secrets.ACCESS_TOKEN }}
-          project-owner: 'monry'
-          project-number: 1
+          project-owner: 'Hexrin'
+          project-number: 13
           issue-id: ${{ github.event.issue.node_id }}
           
           
@@ -53,6 +53,6 @@ jobs:
         with:
           # Personal Access Token that with `repo`, `org:read` and `org:write` are granted.
           github-token: ${{ secrets.ACCESS_TOKEN }}
-          project-owner: 'monry'
-          project-number: 1
+          project-owner: 'Hexrin'
+          project-number: 15
           issue-id: ${{ github.event.issue.node_id }}
