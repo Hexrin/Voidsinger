@@ -1,0 +1,17 @@
+# This is a basic workflow to help you get started with Actions
+name: Add to Triage Project
+on:
+  issues:
+    types:
+      - labeled
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: alex-page/github-project-automation-plus@5bcba1c1c091a222584d10913e5c060d32c44044
+        with:
+          project: Triage
+          column: Needs Triage
+          repo-token: ${{ secrets.ACCESS_TOKEN }}
+          
+
