@@ -53,13 +53,25 @@ float UThrustManager::TimeToAngularVelocity(const float Velocity) const
 /**
  * Predicts the time it will take to reach a certain orientation given the Voidgrid's thrusters.
  *
- * @param Target - The voidgrid to predict the motion of.
- * @param Velocity - The target orientation to predict the time to reach.
+ * @param Orientation - The target orientation to predict the time to reach.
+ * @param bAccelerating - Whether or not to factor in the voidgrids acceleration capabilites into the calculations
  * @return The time it will take to reach a certain orientation. Returns -1 if it is impossible to reach the target orientation.
  */
-float UThrustManager::TimeToOrientation(const float Orientation) const
+float UThrustManager::TimeToOrientation(const float Orientation, const bool bAccelerating) const
 {
-	return 0;
+	float CounterClockwiseAngularDistance = FMath::Fmod(Orientation > 0 ? Orientation - Voidgrid->GetActorQuat().GetAngle() : 2 * PI - (Orientation - Voidgrid->GetActorQuat().GetAngle()), 2 * PI);
+	float ClockwiseAngularDistance = PI - CounterClockwiseAngularDistance;
+
+	if (bAccelerating)
+	{
+		bool bAccelerateClockwise = ClockwiseAngularDistance < CounterClockwiseAngularDistance;
+		//Uses the quadratic formula to caluclate the time to orentation if constanly acelerating
+		float HalfAccelertion = GetMaximumAccelerationInRotation(bAccelerateClockwise) / 2;
+		float AccelerationRelativeVelocity = bAccelerateClockwise ? Voidgrid->AngularVelocity * -1 : Voidgrid->AngularVelocity;
+		return (-1 * AccelerationRelativeVelocity + AccelerationRelativeVelocity) / (2 * HalfAccelertion);
+	}
+	
+	return (Voidgrid->AngularVelocity > 0 ? CounterClockwiseAngularDistance : ClockwiseAngularDistance) / Voidgrid->AngularVelocity;
 }
 
 void UThrustManager::AddManagedThrustSource(FThrustSource ThrustSource)

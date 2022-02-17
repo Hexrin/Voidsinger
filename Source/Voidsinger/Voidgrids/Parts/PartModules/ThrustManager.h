@@ -78,12 +78,12 @@ class VOIDSINGER_API UThrustManager : public UObject
 	/**
 	 * Predicts the time it will take to reach a certain orientation given the Voidgrid's thrusters.
 	 *
-	 * @param Target - The voidgrid to predict the motion of.
-	 * @param Velocity - The target orientation to predict the time to reach.
+	 * @param Orientation - The target orientation to predict the time to reach.
+	 * @param bAccelerating - Whether or not to factor in the voidgrids acceleration capabilites into the calculations
 	 * @return The time it will take to reach a certain orientation. Returns -1 if it is impossible to reach the target orientation.
 	 */
 	UFUNCTION(BlueprintPure)
-	float TimeToOrientation(const float Orientation) const;
+	float TimeToOrientation(const float Orientation, const bool bAccelerating) const;
 
 	UFUNCTION()
 	void AddManagedThrustSource(FThrustSource ThrustSource);
