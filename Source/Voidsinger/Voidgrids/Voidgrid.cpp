@@ -597,6 +597,7 @@ void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 			else
 			{
 				Parts.Add(PixelMold.Find(Location)->GetCurrentPart());
+				PixelMold.Find(Location)->SetTargetPart(NewTarget);
 			}
 		}
 		else
@@ -604,6 +605,7 @@ void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 			MutablePixels.Add(Location);
 			TemporaryParts.Add(PixelMold.Find(Location)->GetCurrentPart());
 			Parts.Remove(PixelMold.Find(Location)->GetCurrentPart());
+			PixelMold.Find(Location)->SetTargetPart(NewTarget);
 		}
 	}
 }
