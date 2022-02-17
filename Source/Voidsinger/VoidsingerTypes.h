@@ -120,6 +120,7 @@ public:
 		UpperBounds = FIntPoint(UpperX, UpperY);
 	}
 };
+
 //
 //USTRUCT(BlueprintType)
 //struct VOIDSINGER_API FIntPointArray

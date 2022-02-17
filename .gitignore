@@ -1,5 +1,5 @@
 Binaries
-DerivedDataCache
+enc_temp_folder
 Intermediate
 Saved/**/*
 !Saved/Config
@@ -15,3 +15,5 @@ Saved/**/*
 *.suo
 *.xcodeproj
 *.xcworkspace
+Build/Windows/FileOpenOrder/CookerOpenOrder.log
+Build/Windows/FileOpenOrder/EditorOpenOrder.log
