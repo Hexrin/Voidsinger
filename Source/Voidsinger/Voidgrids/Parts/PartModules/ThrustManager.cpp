@@ -64,29 +64,45 @@ float UThrustManager::TimeToOrientation(const float Orientation) const
 
 void UThrustManager::AddManagedThrustSource(FThrustSource ThrustSource)
 {
-	(ThrustSource.Direction.X > 0 ? ForwardThrust : BackwardThrust) = abs(ThrustSource.Direction.X) * ThrustSource.Force;
-	(ThrustSource.Direction.Y > 0 ? RightThrust : LeftThrust) = abs(ThrustSource.Direction.Y) * ThrustSource.Force;
-	(ThrustSource.Location ^ Voidgrid->CenterOfMass);
+	//Get linear thrust vectors
+	(ThrustSource.Direction.X > 0 ? ForwardThrust : BackwardThrust) += abs(ThrustSource.Direction.X) * ThrustSource.Force;
+	(ThrustSource.Direction.Y > 0 ? RightThrust : LeftThrust) += abs(ThrustSource.Direction.Y) * ThrustSource.Force;
+
+	//Get rotational thrust vectors
+	float RotationalEffectivness = (ThrustSource.Location - Voidgrid->CenterOfMass) ^ ThrustSource.Direction;
+	if (FMath::IsNearlyZero(RotationalEffectivness, .01f))
+	{
+		(RotationalEffectivness > 0 ? ClockwiseThrust : CounterClockwiseThrust) += abs(RotationalEffectivness) * ThrustSource.Force;
+	}
 }
 
 void UThrustManager::RemoveManagedThrustSource(FThrustSource ThrustSource)
 {
+	//Get linear thrust vectors
+	(ThrustSource.Direction.X > 0 ? ForwardThrust : BackwardThrust) -= abs(ThrustSource.Direction.X) * ThrustSource.Force;
+	(ThrustSource.Direction.Y > 0 ? RightThrust : LeftThrust) -= abs(ThrustSource.Direction.Y) * ThrustSource.Force;
 
+	//Get rotational thrust vectors
+	float RotationalEffectivness = (ThrustSource.Location - Voidgrid->CenterOfMass) ^ ThrustSource.Direction;
+	if (FMath::IsNearlyZero(RotationalEffectivness, .01f))
+	{
+		(RotationalEffectivness < 0 ? ClockwiseThrust : CounterClockwiseThrust) -= abs(RotationalEffectivness) * ThrustSource.Force;
+	}
 }
 
-FVector2D UThrustManager::GetMaximumAccelerationInDirection(const FVector2D Direction)
+FVector2D UThrustManager::GetMaximumAccelerationInDirection(const FVector2D Direction) const
 {
-	return 0;
+	return (Direction.X > 0 ? ForwardThrust : BackwardThrust) * Direction.X + (Direction.Y > 0 ? RightThrust : LeftThrust) * Direction.Y;
 }
 
-FVector2D UThrustManager::GetMaximumAccelerationInDirection(const float DirectionAngle)
+FVector2D UThrustManager::GetMaximumAccelerationInDirection(const float DirectionAngle) const
 {
 	return GetMaximumAccelerationInDirection(FVector2D(FMath::Cos(DirectionAngle), FMath::Sin(DirectionAngle)));
 }
 
-FVector2D UThrustManager::GetMaximumAccelerationInRotation(const bool bClockwise)
+float UThrustManager::GetMaximumAccelerationInRotation(const bool bClockwise) const
 {
-	return 0;
+	return bClockwise ? ClockwiseThrust : CounterClockwiseThrust;
 }
 
 

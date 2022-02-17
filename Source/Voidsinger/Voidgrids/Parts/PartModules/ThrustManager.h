@@ -110,11 +110,11 @@ private:
 	float CounterClockwiseThrust{ 0 };
 	
 	UFUNCTION()
-	FVector2D GetMaximumAccelerationInDirection(const FVector2D Direction);
-	FVector2D GetMaximumAccelerationInDirection(const float DirectionAngle);
+	FVector2D GetMaximumAccelerationInDirection(const FVector2D Direction) const;
+	FVector2D GetMaximumAccelerationInDirection(const float DirectionAngle) const;
 
 	UFUNCTION()
-	FVector2D GetMaximumAccelerationInRotation(const bool bClockwise);
+	float GetMaximumAccelerationInRotation(const bool bClockwise) const;
 
 	UPROPERTY()
 	const AVoidgrid* Voidgrid;
