@@ -459,10 +459,12 @@ struct FPartInstanceData
 	}
 private:
 	//Stores the data required to replicate this part
+	UPROPERTY()
 	FMinimalPartInstanceData MinimalData;
 
 	//Stores the shape of the part
-	PartShapeType Shape;
+	UPROPERTY()
+	TSet<FIntPoint> Shape;
 };
 
 //Hash function for FPartInstanceData
