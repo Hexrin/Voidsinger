@@ -366,7 +366,8 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 	MinimalPixelMoldDataType DataOfPartsToCreate = NewPixelMold;
 
 	//Remove Unneccesary Parts
-	for (UPart* Part : Parts)
+	TSet<UPart*> TempParts = Parts;
+	for (UPart* Part : TempParts)
 	{
 		FMinimalPartInstanceData PartData = Part->GetMinimalPartInstanceData();
 
