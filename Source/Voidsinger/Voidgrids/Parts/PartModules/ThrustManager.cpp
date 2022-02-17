@@ -66,7 +66,7 @@ void UThrustManager::AddManagedThrustSource(FThrustSource ThrustSource)
 {
 	(ThrustSource.Direction.X > 0 ? ForwardThrust : BackwardThrust) = abs(ThrustSource.Direction.X) * ThrustSource.Force;
 	(ThrustSource.Direction.Y > 0 ? RightThrust : LeftThrust) = abs(ThrustSource.Direction.Y) * ThrustSource.Force;
-	(ThrustSource.Location^Voidgrid->CenterOfMass)
+	(ThrustSource.Location ^ Voidgrid->CenterOfMass);
 }
 
 void UThrustManager::RemoveManagedThrustSource(FThrustSource ThrustSource)

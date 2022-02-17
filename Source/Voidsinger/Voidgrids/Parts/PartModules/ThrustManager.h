@@ -108,14 +108,8 @@ private:
 	
 	UPROPERTY()
 	float CounterClockwiseThrust{ 0 };
-
-
-	UFUNCTION()
-	static FVector2D GetMaximumAccelerationInRotation(const AVoidgrid* Target, const bool bClockwise);
 	
 	UFUNCTION()
-	void UpdateThrustPredictions(float Mass, FVector2D CenterOfMass, float MomentOfInertia);
-
 	FVector2D GetMaximumAccelerationInDirection(const FVector2D Direction);
 	FVector2D GetMaximumAccelerationInDirection(const float DirectionAngle);
 
