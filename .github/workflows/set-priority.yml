@@ -5,7 +5,7 @@ on:
       - moved
 jobs:
   label_issues:
-    if: github.event.column.name == 'High Priority'
+    if: github.event.project_card.name == 'High Priority'
     runs-on: ubuntu-latest
     permissions:
       issues: write
