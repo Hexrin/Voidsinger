@@ -570,6 +570,10 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
 			}
 			else
 			{
+				if (PixelMold.Find(Location)->GetTargetPart() == UPart::GetNullPart())
+				{
+					UE_LOG(LogTemp, Error, TEXT("Set Null part to intact at %s"), *Location.ToString());
+				}
 				PixelMold.Find(Location)->SetIntact(bNewIntact);
 				if (PixelMold.Find(Location)->IsTargetPart())
 				{
@@ -581,6 +585,10 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
 				UpdateMassProperties(PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass(), FVector2D(Location));
 			}
 			UpdatePixelMesh(Location);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Set intact to %i when already in that state at %s"), bNewIntact ? 1 : 0, *Location.ToString());
 		}
 	}
 }
