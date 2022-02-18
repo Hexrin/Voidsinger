@@ -261,9 +261,11 @@ struct VOIDSINGER_API FVoidgridState
 
 public:
 	//Stores the mold of the voidgrid
-	MinimalPixelMoldDataType Mold = MinimalPixelMoldDataType();
+	UPROPERTY()
+	TSet<FMinimalPartInstanceData> Mold = MinimalPixelMoldDataType();
 
 	//Stores the state of the voidgrid's pixels.
+	UPROPERTY()
 	TSet<FPartInstanceData> State = TSet<FPartInstanceData>();
 
 	/**
@@ -275,6 +277,19 @@ public:
 		State = VoidgridPixelState;
 	}
 };
+
+
+//Hash function for FVoidgridState
+#if UE_BUILD_DEBUG
+uint32 GetTypeHash(const FVoidgridState& Thing);
+#else // optimize by inlining in shipping and development builds
+FORCEINLINE uint32 GetTypeHash(const FVoidgridState& Thing)
+{
+	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FVoidgridState));
+	return Hash;
+}
+#endif
+
 
 /* /\ =============== /\ *\
 |  /\ Grid Pixel Data /\  |
@@ -288,9 +303,9 @@ public:
 |  \/ Voidgrid \/  |
 \* \/ ========= \/ */
 
-//Used for disbatching events requireing a grid locaiton.
+//Used for dispatching events requireing a grid locaiton.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGridLocationDelegate, FIntPoint, GridLocaction, bool, bApplyChangeEffect);
-//Used for disbatching events requireing mass information.
+//Used for dispatching events requireing mass information.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMassDelegate, float, Mass, FVector2D, CenterOfMass, float, MomentOfInertia);
 //Used for dispatching simple events with no data.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGeneralDelegate);
