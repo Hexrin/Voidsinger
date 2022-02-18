@@ -22,6 +22,7 @@ void UPixelMoldEditorBase::ApplyMoldToTarget()
 	if (IsValid(Target))
 	{
 		Target->SetPixelMold(Mold);
+		SaveMoldToTarget();
 	}
 }
 
@@ -32,6 +33,14 @@ void UPixelMoldEditorBase::LoadMoldFromTarget()
 {
 	Mold = Target->GetPixelMold();
 	OnMoldUpdated(Mold.Array(), Mold.Array(), false);
+}
+
+/**
+ * Saves the current mold to the target Voidgrid
+ */
+void UPixelMoldEditorBase::SaveMoldToTarget()
+{
+	Target->SaveState();
 }
 
 /**
