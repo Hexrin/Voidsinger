@@ -403,6 +403,7 @@ uint32 GetTypeHash(const FMinimalPartInstanceData& Thing);
 FORCEINLINE uint32 GetTypeHash(const FMinimalPartInstanceData& Thing)
 {
 	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FMinimalPartInstanceData));
+	UE_LOG(LogTemp, Warning, TEXT("%s, %s   Hash = %i"), *Thing.Data->GetName(), *Thing.Transform.GetGridLocation().ToString(), Hash);
 	return Hash;
 }
 #endif
