@@ -59,11 +59,11 @@ class VOIDSINGER_API UThrustManager : public UObject
 	 * Predicts the time it will take to reach a certain location given the Voidgrid's thrusters.
 	 *
 	 * @param Target - The voidgrid to predict the motion of.
-	 * @param Velocity - The target location to predict the time to reach.
+	 * @param Location - The target location to predict the time to reach.
 	 * @return The time it will take to reach a certain location. Returns -1 if it is impossible to reach the target location.
 	 */
 	UFUNCTION(BlueprintPure)
-	float TimeToLocation(const FVector2D Location) const;
+	float TimeToLocation(const FVector2D Location, const bool bAccelerating) const;
 
 	/**
 	 * Predicts the time it will take to reach a certain angular velocity given the Voidgrid's thrusters.
@@ -110,8 +110,8 @@ private:
 	float CounterClockwiseThrust{ 0 };
 	
 	UFUNCTION()
-	FVector2D GetMaximumAccelerationInDirection(const FVector2D Direction) const;
-	FVector2D GetMaximumAccelerationInDirection(const float DirectionAngle) const;
+	float GetMaximumAccelerationInDirection(const FVector2D Direction) const;
+	float GetMaximumAccelerationInDirection(const float DirectionAngle) const;
 
 	UFUNCTION()
 	float GetMaximumAccelerationInRotation(const bool bClockwise) const;

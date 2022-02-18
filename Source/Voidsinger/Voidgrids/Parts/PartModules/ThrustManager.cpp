@@ -23,19 +23,33 @@ UThrustManager::UThrustManager()
  */
 float UThrustManager::TimeToLinearVelocity(const FVector2D Velocity) const
 {
-	return 0;
+	FVector2D AccelerationDirection = ((Voidgrid->LinearVelocity) - Velocity);
+	float timetoAcceleration = ((AccelerationDirection) / (GetMaximumAccelerationInDirection(AccelerationDirection))).Size();
+	return timetoAcceleration;
 }
 
 /**
  * Predicts the time it will take to reach a certain location given the Voidgrid's thrusters.
  *
  * @param Target - The voidgrid to predict the motion of.
- * @param Velocity - The target location to predict the time to reach.
+ * @param Location - The target location to predict the time to reach.
  * @return The time it will take to reach a certain location. Returns -1 if it is impossible to reach the target location.
  */
-float UThrustManager::TimeToLocation(const FVector2D Location) const
+float UThrustManager::TimeToLocation(const FVector2D Location, const bool bAccelerating)
 {
-	return 0;
+	float totalDistance = (FVector2D (Voidgrid->GetActorLocation()) - Location).Size();
+	float timetoPoint = (totalDistance / Voidgrid->GetVelocity());
+
+	if (bAccelerating == true)
+	{
+		float timeToPointWithAcceleration = (totalDistance/ GetMaximumAccelerationInDirection(totalDistance));
+		return timeToPointWithAcceleration;
+	}
+	else
+	{
+		return timetoPoint;
+	}
+
 }
 
 /**
@@ -46,7 +60,9 @@ float UThrustManager::TimeToLocation(const FVector2D Location) const
  * @return The time it will take to reach a certain angular velocity. Returns -1 if it is impossible to reach the target velocity.
  */
 float UThrustManager::TimeToAngularVelocity(const float Velocity) const
-{
+{ 
+	FVector2D AngularDirection = ((Voidgrid->AngularVelocity) / (Velocity));
+	(AngularDirection) / (GetMaximumAccelerationInDirection(AngularDirection));
 	return 0;
 }
 
@@ -102,12 +118,12 @@ void UThrustManager::RemoveManagedThrustSource(FThrustSource ThrustSource)
 	}
 }
 
-FVector2D UThrustManager::GetMaximumAccelerationInDirection(const FVector2D Direction) const
+float UThrustManager::GetMaximumAccelerationInDirection(const FVector2D Direction) const
 {
 	return (Direction.X > 0 ? ForwardThrust : BackwardThrust) * Direction.X + (Direction.Y > 0 ? RightThrust : LeftThrust) * Direction.Y;
 }
 
-FVector2D UThrustManager::GetMaximumAccelerationInDirection(const float DirectionAngle) const
+float UThrustManager::GetMaximumAccelerationInDirection(const float DirectionAngle) const
 {
 	return GetMaximumAccelerationInDirection(FVector2D(FMath::Cos(DirectionAngle), FMath::Sin(DirectionAngle)));
 }
