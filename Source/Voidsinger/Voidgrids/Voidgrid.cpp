@@ -413,6 +413,7 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 			PixelMold.Emplace(NewPixelLocation, FGridPixelData(Part));
 
 			MutablePixels.Add(NewPixelLocation);
+			UE_LOG(LogTemp, Warning, TEXT("CreatePart Mutable add %s"), *NewPixelLocation.ToString());
 		}
 	}
 }
@@ -517,6 +518,8 @@ void AVoidgrid::RepairPixel(GridLocationType Location)
 		}
 		else if(MutablePixels.Contains(Location))
 		{
+
+			UE_LOG(LogTemp, Warning, TEXT("Repair Destory"));
 			SetPixelIntact(Location, false, false);
 		}
 	}
@@ -552,11 +555,14 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
 				{
 					TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
 					MutablePixels.Remove(Location);
+					UE_LOG(LogTemp, Warning, TEXT("SetPixelIntact null Mutable revmove %s"), *Location.ToString());
+
 					PixelMold.Remove(Location);
 				}
 				else
 				{
 					MutablePixels.Add(Location);
+					UE_LOG(LogTemp, Warning, TEXT("SetPixelIntact Mutable add %s"), *Location.ToString());
 					PixelMold.Find(Location)->SetIntact(bNewIntact);
 				}
 				OnPixelRemoved.Broadcast(Location, bApplyChangeEffect);
@@ -565,7 +571,12 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
 			else
 			{
 				PixelMold.Find(Location)->SetIntact(bNewIntact);
-				MutablePixels.Remove(Location);
+				if (PixelMold.Find(Location)->IsTargetPart())
+				{
+					MutablePixels.Remove(Location);
+					UE_LOG(LogTemp, Warning, TEXT("SetPixelIntact true Mutable revmove %s"), *Location.ToString());
+				}
+
 				OnPixelAdded.Broadcast(Location, bApplyChangeEffect);
 				UpdateMassProperties(PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass(), FVector2D(Location));
 			}
@@ -586,7 +597,12 @@ void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 	{
 		if (NewTarget == PixelMold.Find(Location)->GetCurrentPart())
 		{
-			MutablePixels.Remove(Location);
+			if (PixelMold.Find(Location)->IsIntact())
+			{
+				MutablePixels.Remove(Location);
+				UE_LOG(LogTemp, Warning, TEXT("SetPixelTarget Mutable revmove %s"), *Location.ToString());
+			}
+
 			TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
 
 			if(NewTarget == UPart::GetNullPart())
@@ -603,6 +619,7 @@ void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 		else
 		{
 			MutablePixels.Add(Location);
+			UE_LOG(LogTemp, Warning, TEXT("SetPixelTarget Mutable add %s"), *Location.ToString());
 			TemporaryParts.Add(PixelMold.Find(Location)->GetCurrentPart());
 			Parts.Remove(PixelMold.Find(Location)->GetCurrentPart());
 			PixelMold.Find(Location)->SetTargetPart(NewTarget);
@@ -675,13 +692,14 @@ void AVoidgrid::UpdatePixelMesh(GridLocationType Location)
  */
 void AVoidgrid::AddPixelMesh(GridLocationType Location)
 {
-	//If this pixel already has a mesh set the index to that mesh
-	int32 SectionIndex = PixelMeshSegmentIndices.Contains(Location) ? PixelMeshSegmentIndices.FindRef(Location) : PixelMeshSegmentIndices.Num();
+	//If this pixel already has a mesh set the index to that 
+	int32 SectionIndex = PixelMeshSegmentIndices.Contains(Location) ? PixelMeshSegmentIndices.FindRef(Location) : MeshSectionCounter;
 
 	PixelMeshComponent->CreateMeshSection(SectionIndex, GetPixelVertices(Location), PixelTriangles, TArray<FVector>(), PixelUVs, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
 	PixelMeshComponent->SetGenerateOverlapEvents(true);
 	
 	PixelMeshSegmentIndices.Emplace(Location, SectionIndex);
+	MeshSectionCounter++;
 }
 
 /**

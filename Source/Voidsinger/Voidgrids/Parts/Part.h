@@ -245,7 +245,7 @@ public:
 	 *
 	 * @return The shape of this part.
 	 */
-	FORCEINLINE float GetPixelMass() { return Data->Mass/GetDefaultShape().Num(); };
+	FORCEINLINE float GetPixelMass() { return IsValid(Data) ? Data->Mass/GetDefaultShape().Num() : 0; };
 
 	/**
 	 * Sets whether a pixel on this part is frozen or not

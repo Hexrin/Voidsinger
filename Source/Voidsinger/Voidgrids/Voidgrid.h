@@ -58,7 +58,7 @@ public:
 	}
 
 	//Constructs a FGridPixelData using a part.
-	FGridPixelData(UPart* TargetPartOfPixel = nullptr, bool bPixelIntact = false)
+	FGridPixelData(UPart* TargetPartOfPixel, bool bPixelIntact = false)
 	{
 		UPart* PartOfPixel = UPart::GetNullPart();
 
@@ -72,6 +72,16 @@ public:
 
 		SetTargetPart(TargetPartOfPixel);
 		SetCurrentPart(PartOfPixel);
+		SetIntact(bPixelIntact);
+	}
+
+	//Constructs a FGridPixelData using a part.
+	FGridPixelData(bool bPixelIntact = false)
+	{
+		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), UPart::GetNullPart());//Outer may cause memory leak. Im not sure
+		
+		SetTargetPart(UPart::GetNullPart());
+		SetCurrentPart(UPart::GetNullPart());
 		SetIntact(bPixelIntact);
 	}
 
@@ -130,6 +140,14 @@ public:
 	float GetTemperature()
 	{
 		return Temperature;
+	}
+
+	/**
+	 * Gets whether or not this is curently the target part.
+	 */
+	bool IsTargetPart()
+	{
+		return bIntact && CurrentPart == TargetPart;
 	}
 
 	/**
@@ -643,6 +661,10 @@ private:
 	//Stores the default triangles of a single pixel mesh
 	UPROPERTY()
 	TArray<int32> PixelTriangles;
+
+	//Stores number of mesh sections that have been created.
+	UPROPERTY()
+	int32 MeshSectionCounter { 0 };
 
 	/* /\ Pixel Mesh /\ *\
 	\* ---------------- */

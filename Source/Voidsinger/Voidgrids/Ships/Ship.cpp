@@ -15,7 +15,7 @@
 void AShip::BeginPlay()
 {
 	Super::BeginPlay();
-	LoadState(true);
+	//LoadState(true);
 }
 
 /* /\ Initialization /\ *\
