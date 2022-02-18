@@ -371,12 +371,19 @@ void AVoidgrid::SpreadHeat()
  */
 void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 {
-	MinimalPixelMoldDataType DataOfPartsToCreate = NewPixelMold;
+
+
+	
+	TSet<FMinimalPartInstanceData> DataOfPartsToCreate = NewPixelMold;
 
 	//Remove Unneccesary Parts
 	TSet<UPart*> TempParts = Parts;
 	for (UPart* Part : TempParts)
 	{
+		for (FMinimalPartInstanceData EachDataInNewPixelMold : NewPixelMold)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("new pixel mold transform %s, this part transform %s, is equal with this part minimal data %i, is equal with this part data %i"), *EachDataInNewPixelMold.Transform.GetGridLocation().ToString(), *Part->GetTransform().GetGridLocation().ToString(), Part->GetMinimalPartInstanceData() == EachDataInNewPixelMold.Data, Part->GetData() == EachDataInNewPixelMold.Data);
+		}
 		FMinimalPartInstanceData PartData = Part->GetMinimalPartInstanceData();
 
 		if (NewPixelMold.Contains(PartData))

@@ -146,6 +146,7 @@ bool UPixelMoldEditorBase::PlacePart(UPartData* Part, FPartTransform Transform, 
 		{
 			PartLocations.Emplace(Transform.TransformGridLocation(ShapeComponent), PartBeingAdded);
 		}
+
 		OnMoldUpdated(Mold.Array(), TArray<FMinimalPartInstanceData>(&PartBeingAdded, 1), false);
 		return true;
 	}
