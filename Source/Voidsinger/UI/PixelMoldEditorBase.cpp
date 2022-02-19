@@ -183,13 +183,12 @@ bool UPixelMoldEditorBase::RemovePart(FIntPoint Location, bool bCallUpdatedEvent
 
 
 	FMinimalPartInstanceData PartToRemove = PartLocations.FindRef(Location);
-	if (Mold.Contains(PartToRemove))
+	if (ensureMsgf(Mold.Contains(PartToRemove), TEXT("--- Removing of %s, %s, %i Faild ---\n\t\tSet hashing failed. Cause: unkown"), *PartToRemove.Data->GetFName().ToString(), *(PartToRemove.Transform.GetGridLocation().ToString()), (int32)PartToRemove.Transform.Rotation))
 	{
 		Mold.Remove(PartToRemove);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("--- Removing of %s, %s, %i Faild ---\n\t\tSet hashing failed. Cause: unkown"), *PartToRemove.Data->GetFName().ToString(), *(PartToRemove.Transform.GetGridLocation().ToString()), (int32)PartToRemove.Transform.Rotation);
 		Mold.Compact();
 		Mold.Remove(PartToRemove);
 	}

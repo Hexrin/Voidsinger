@@ -388,7 +388,7 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 			}
 			for (FMinimalPartInstanceData Data : NewPixelMold)
 			{
-				ensureMsgf(!(PartData == Data), TEXT("Hash function incorect"));
+				ensureMsgf(!(PartData == Data), TEXT("Hash function incorect %i != %i"), GetTypeHash(PartData), GetTypeHash(Data));
 			}
 		}
 	}
