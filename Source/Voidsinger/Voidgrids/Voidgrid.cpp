@@ -365,14 +365,11 @@ void AVoidgrid::SpreadHeat()
  */
 void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 {
-
-
-	
 	TSet<FMinimalPartInstanceData> DataOfPartsToCreate = NewPixelMold;
 
 	//Remove Unneccesary Parts
-	TSet<UPart*> TempParts = Parts;
-	for (UPart* Part : TempParts)
+	TSet<UPart*> PartsCopy = Parts;
+	for (UPart* Part : PartsCopy)
 	{
 		FMinimalPartInstanceData PartData = Part->GetMinimalPartInstanceData();
 
@@ -390,7 +387,8 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 	}
 
 	//Re-add temprary parts if inlcuded in a new mold
-	for (UPart* Part : TemporaryParts)
+	TSet<UPart*> TemporaryPartsCopy = TemporaryParts;
+	for (UPart* Part : TemporaryPartsCopy)
 	{
 		FMinimalPartInstanceData PartData = Part->GetMinimalPartInstanceData();
 
@@ -487,15 +485,24 @@ void AVoidgrid::SetState(FVoidgridState NewState)
  */
 FVoidgridState AVoidgrid::GetState()
 {
-	TSet<FPartInstanceData> AllPartInstanceData = TSet<FPartInstanceData>();
-	TSet<FMinimalPartInstanceData> AllMinimalPartInstanceData = TSet<FMinimalPartInstanceData>();
+	TSet<FPartInstanceData> State = TSet<FPartInstanceData>();
+	TSet<FMinimalPartInstanceData> Mold = TSet<FMinimalPartInstanceData>();
 	for (UPart* Part : Parts)
 	{
-		AllPartInstanceData.Add(Part->GetPartInstanceData());
-		AllMinimalPartInstanceData.Add(Part->GetMinimalPartInstanceData());
+		Mold.Add(Part->GetMinimalPartInstanceData());
+		if (Part->GetPartInstanceData().GetShape().Num() > 0)
+		{
+			State.Add(Part->GetPartInstanceData());
+		}
 	}
 
-	return FVoidgridState(AllMinimalPartInstanceData, AllPartInstanceData);
+	for (UPart* Part : TemporaryParts)
+	{
+		State.Add(Part->GetPartInstanceData());
+	}
+	
+
+	return FVoidgridState(Mold, State);
 }
 
 /**

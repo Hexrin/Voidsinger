@@ -175,7 +175,6 @@ void AShip::SaveState()
 		SaveGameInstance->Location = FVector2D(GetActorLocation());
 
 		UGameplayStatics::SaveGameToSlot(SaveGameInstance, GetSaveStateSlotName(), 0);
-
 	}
 }
 
