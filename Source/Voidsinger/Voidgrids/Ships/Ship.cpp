@@ -197,6 +197,11 @@ void AShip::LoadState(bool bLoadMold)
 	}
 }
 
+void AShip::BlueprintLoadState(bool bLoadMold)
+{
+	LoadState(bLoadMold);
+}
+
 /**
  * Gets the save slot name used to save this ship
  */

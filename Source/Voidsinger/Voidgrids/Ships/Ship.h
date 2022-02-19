@@ -102,6 +102,10 @@ public:
 	 */
 	void LoadState(bool bLoadMold = false);
 
+	//temp blueprint function for testing
+	UFUNCTION(BlueprintCallable)
+	void BlueprintLoadState(bool bLoadMold);
+
 protected:
 	/**
 	 * Gets the save slot name used to save this ship
