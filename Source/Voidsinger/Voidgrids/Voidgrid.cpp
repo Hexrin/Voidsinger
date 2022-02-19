@@ -58,12 +58,6 @@ void AVoidgrid::Tick(float DeltaTime)
 	for (int EachHeatTickPassed = 0; EachHeatTickPassed < DeltaHeatTime / HeatTick; DeltaHeatTime -= HeatTick)
 	{
 		SpreadHeat();
-		//UE_LOG(LogTemp, Warning, TEXT("------ \\/ Mutable Pixels \\/ -----"));
-		for (FIntPoint Pixel : MutablePixels)
-		{
-			//UE_LOG(LogTemp, Warning, TEXT("%s"), *Pixel.ToString());
-		}
-		//UE_LOG(LogTemp, Warning, TEXT("------ /\\ Mutable Pixels /\\ -----\n"));
 	}
 	
 
@@ -380,10 +374,6 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 	TSet<UPart*> TempParts = Parts;
 	for (UPart* Part : TempParts)
 	{
-		for (FMinimalPartInstanceData EachDataInNewPixelMold : NewPixelMold)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("new pixel mold transform %s, this part transform %s, is equal with this part minimal data %i, is equal with this part data %i"), *EachDataInNewPixelMold.Transform.GetGridLocation().ToString(), *Part->GetTransform().GetGridLocation().ToString(), Part->GetMinimalPartInstanceData() == EachDataInNewPixelMold.Data, Part->GetData() == EachDataInNewPixelMold.Data);
-		}
 		FMinimalPartInstanceData PartData = Part->GetMinimalPartInstanceData();
 
 		if (NewPixelMold.Contains(PartData))
@@ -394,8 +384,11 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 		{
 			for (GridLocationType PartPixelLocation : Part->GetTransform().TransformPartShape(Part->GetDefaultShape()))
 			{
-				UE_LOG(LogTemp, Error, TEXT("Set target to null at %s"), *PartPixelLocation.ToString());
 				SetPixelTarget(PartPixelLocation, UPart::GetNullPart());
+			}
+			for (FMinimalPartInstanceData Data : NewPixelMold)
+			{
+				ensureMsgf(!(PartData == Data), TEXT("Hash function incorect"));
 			}
 		}
 	}
@@ -411,7 +404,6 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 
 			for (GridLocationType PartPixelLocation : Part->GetTransform().TransformPartShape(Part->GetDefaultShape()))
 			{
-				UE_LOG(LogTemp, Error, TEXT("Set target to current at %s"), *PartPixelLocation.ToString());
 				SetPixelTarget(PartPixelLocation, Part);
 			}
 		}
@@ -429,7 +421,6 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 			GridLocationType NewPixelLocation = Part->GetTransform().TransformGridLocation(ShapeComponent);
 			PixelMold.Emplace(NewPixelLocation, FGridPixelData(Part));
 
-			UE_LOG(LogTemp, Error, TEXT("Mutable new at %s"), *NewPixelLocation.ToString());
 			MutablePixels.Add(NewPixelLocation);
 		}
 	}
@@ -535,8 +526,6 @@ void AVoidgrid::RepairPixel(GridLocationType Location)
 		}
 		else if(MutablePixels.Contains(Location))
 		{
-
-			//UE_LOG(LogTemp, Warning, TEXT("Repair Destory"));
 			SetPixelIntact(Location, false, false);
 		}
 	}
@@ -572,14 +561,12 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
 				{
 					TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
 					MutablePixels.Remove(Location);
-					//UE_LOG(LogTemp, Warning, TEXT("SetPixelIntact null Mutable revmove %s"), *Location.ToString());
 
 					PixelMold.Remove(Location);
 				}
 				else
 				{
 					MutablePixels.Add(Location);
-					//UE_LOG(LogTemp, Warning, TEXT("SetPixelIntact Mutable add %s"), *Location.ToString());
 					PixelMold.Find(Location)->SetIntact(bNewIntact);
 				}
 				OnPixelRemoved.Broadcast(Location, bApplyChangeEffect);
@@ -595,7 +582,6 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
 				if (PixelMold.Find(Location)->IsTargetPart())
 				{
 					MutablePixels.Remove(Location);
-					//UE_LOG(LogTemp, Warning, TEXT("SetPixelIntact true Mutable revmove %s"), *Location.ToString());
 				}
 
 				OnPixelAdded.Broadcast(Location, bApplyChangeEffect);
@@ -625,7 +611,6 @@ void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 			if (PixelMold.Find(Location)->IsIntact())
 			{
 				MutablePixels.Remove(Location);
-				//UE_LOG(LogTemp, Warning, TEXT("SetPixelTarget Mutable revmove %s"), *Location.ToString());
 			}
 
 			TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
@@ -644,7 +629,6 @@ void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 		else
 		{
 			MutablePixels.Add(Location);
-			//UE_LOG(LogTemp, Warning, TEXT("SetPixelTarget Mutable add %s"), *Location.ToString());
 			TemporaryParts.Add(PixelMold.Find(Location)->GetCurrentPart());
 			Parts.Remove(PixelMold.Find(Location)->GetCurrentPart());
 			PixelMold.Find(Location)->SetTargetPart(NewTarget);

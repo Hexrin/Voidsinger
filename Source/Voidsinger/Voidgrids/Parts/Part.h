@@ -81,15 +81,17 @@ struct VOIDSINGER_API FPartTransform
 {
 	GENERATED_BODY()
 
+public:
+	//Stores the rotation of the part.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPartRotation Rotation;
+
 protected:
 	//Stores the Location in IntPoint form for accessablity in blueprints.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FIntPoint Location;
 
 public:
-	//Stores the rotation of the part.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EPartRotation Rotation;
 
 	//Gets the location of the part.
 	GridLocationType GetGridLocation() const
@@ -370,13 +372,14 @@ struct FMinimalPartInstanceData
 	GENERATED_BODY()
 
 public:
+	//Stores the location and rotation of the part
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	FPartTransform Transform;
+
 	//Stores the class of the part
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	UPartData* Data;
 
-	//Stores the location and rotation of the part
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-	FPartTransform Transform;
 
 	FMinimalPartInstanceData(UPartData* PartData = nullptr, FPartTransform PartTransform = FPartTransform())
 	{
@@ -402,8 +405,7 @@ uint32 GetTypeHash(const FMinimalPartInstanceData& Thing);
 #else // optimize by inlining in shipping and development builds
 FORCEINLINE uint32 GetTypeHash(const FMinimalPartInstanceData& Thing)
 {
-	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FMinimalPartInstanceData));
-	UE_LOG(LogTemp, Warning, TEXT("Data name = %s, Data FName = %s, Data display name = %s, Data detailed info = %s, Data texture = %s, Data shape num = %i,  Data functionality percent = %f, Transform = %s, Hash = %i"), *Thing.Data->GetName(), *Thing.Data->GetFName().ToString(), *Thing.Data->DisplayName.ToString(), *Thing.Data->GetDetailedInfo(), *Thing.Data->Texture->GetName(), Thing.Data->Shape.Num(), Thing.Data->FunctionalityPercent, *Thing.Transform.GetGridLocation().ToString(), Hash);
+	uint32 Hash = FCrc::TypeCrc32(&Thing);
 	return Hash;
 }
 #endif
