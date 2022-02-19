@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "PartData.h"
+#include "Internationalization/TextLocalizationResource.h"
 #include "Part.generated.h"
 
 class AVoidgrid;
@@ -86,7 +87,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPartRotation Rotation;
 
-protected:
+//protected:
 	//Stores the Location in IntPoint form for accessablity in blueprints.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FIntPoint Location;
@@ -145,6 +146,14 @@ public:
 		return NewShape;
 	}
 
+	FString ToString() const
+	{
+		FString Return = Location.ToString();
+		Return.AppendInt((uint8)(Rotation));
+		//Return->
+		return Return;
+	}
+
 	bool operator==(const FPartTransform& Other) const
 	{
 		return Location == Other.Location && Rotation == Other.Rotation;
@@ -157,8 +166,7 @@ uint32 GetTypeHash(const FPartTransform& Thing);
 #else // optimize by inlining in shipping and development builds
 FORCEINLINE uint32 GetTypeHash(const FPartTransform& Thing)
 {
-	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FPartTransform));
-	return Hash;
+	return FTextLocalizationResource::HashString(Thing.ToString());
 }
 #endif
 
@@ -397,6 +405,11 @@ public:
 	{
 		return Data == Other.Data && Transform == Other.Transform;
 	}
+
+	FString ToString() const
+	{
+		return Transform.ToString() + Data->GetName();
+	}
 };
 
 //Hash function for FMinimalPartInstanceData
@@ -405,8 +418,7 @@ uint32 GetTypeHash(const FMinimalPartInstanceData& Thing);
 #else // optimize by inlining in shipping and development builds
 FORCEINLINE uint32 GetTypeHash(const FMinimalPartInstanceData& Thing)
 {
-	uint32 Hash = FCrc::TypeCrc32(&Thing);
-	return Hash;
+	return FTextLocalizationResource::HashString(Thing.ToString());
 }
 #endif
 
@@ -460,6 +472,7 @@ struct FPartInstanceData
 		MinimalData = FMinimalPartInstanceData(Part->GetData(), Part->GetTransform());
 		Shape = Part->GetShape();
 	}
+
 private:
 	//Stores the data required to replicate this part
 	UPROPERTY()
