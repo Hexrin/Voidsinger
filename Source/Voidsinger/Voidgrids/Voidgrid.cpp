@@ -455,7 +455,7 @@ void AVoidgrid::SetState(FVoidgridState NewState)
 			UPart* CurrentPart = UPart::CreatePart(this, PartState.GetMinimalInstanceData());
 			TemporaryParts.Add(CurrentPart);
 
-			for (GridLocationType ShapeComponentLocation : PartState.GetData()->Shape)
+			for (GridLocationType ShapeComponentLocation : PartState.GetShape())
 			{
 				GridLocationType NewPixelLocation = CurrentPart->GetTransform().TransformGridLocation(ShapeComponentLocation);
 				if (!PixelMold.Contains(NewPixelLocation))
@@ -473,7 +473,7 @@ void AVoidgrid::SetState(FVoidgridState NewState)
 		}
 		else
 		{
-			for (GridLocationType ShapeComponentLocation : PartState.GetData()->Shape)
+			for (GridLocationType ShapeComponentLocation : PartState.GetShape())
 			{
 				SetPixelIntact(PartState.GetTransform().TransformGridLocation(ShapeComponentLocation), true, false);
 			}
@@ -567,7 +567,11 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
 				float OldPixelMass = PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass();
 				if (PixelMold.Find(Location)->GetTargetPart() == UPart::GetNullPart())
 				{
-					TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
+					if (PixelMold.Find(Location)->GetCurrentPart()->GetShape().Num() <= 1)
+					{
+						TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
+					}
+
 					MutablePixels.Remove(Location);
 
 					PixelMold.Remove(Location);
