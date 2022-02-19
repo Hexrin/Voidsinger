@@ -15,7 +15,7 @@
 void AShip::BeginPlay()
 {
 	Super::BeginPlay();
-	LoadState(true);
+	LoadState();
 }
 
 /* /\ Initialization /\ *\
@@ -181,24 +181,12 @@ void AShip::SaveState()
 /**
  * Loads this ships state.
  */
-void AShip::LoadState(bool bLoadMold)
+void AShip::LoadState()
 {
 	if (UShipSaveState* SaveGameInstance = Cast<UShipSaveState>(UGameplayStatics::LoadGameFromSlot(GetSaveStateSlotName(), 0)))
 	{
-		if (bLoadMold)
-		{
-			SetState(SaveGameInstance->VoidgridState);
-		}
-		else
-		{
-			SetState(FVoidgridState(GetPixelMold(), SaveGameInstance->VoidgridState.State));
-		}
+		SetState(SaveGameInstance->VoidgridState);
 	}
-}
-
-void AShip::BlueprintLoadState(bool bLoadMold)
-{
-	LoadState(bLoadMold);
 }
 
 /**

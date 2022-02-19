@@ -100,11 +100,9 @@ public:
 	/**
 	 * Loads this ships state.
 	 */
-	void LoadState(bool bLoadMold = false);
-
-	//temp blueprint function for testing
 	UFUNCTION(BlueprintCallable)
-	void BlueprintLoadState(bool bLoadMold);
+	void LoadState();
+
 
 protected:
 	/**

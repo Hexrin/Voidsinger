@@ -60,12 +60,11 @@ public:
 	//Constructs a FGridPixelData using a part.
 	FGridPixelData(UPart* TargetPartOfPixel, bool bPixelIntact = false)
 	{
-		UPart* PartOfPixel = UPart::GetNullPart();
-
 		if (!IsValid(TargetPartOfPixel))
 		{
 			TargetPartOfPixel = UPart::GetNullPart();
 		}
+		UPart* PartOfPixel = TargetPartOfPixel;
 
 
 		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), TargetPartOfPixel->GetOuter());//Outer may cause memory leak. Im not sure
@@ -105,7 +104,10 @@ public:
 		if (bNewIntact != bIntact)
 		{			
 			Temperature = 0;
-			SetCurrentPart(GetTargetPart());
+			if (!bNewIntact)
+			{
+				SetCurrentPart(GetTargetPart());
+			}
 		}
 
 		bIntact = bNewIntact;

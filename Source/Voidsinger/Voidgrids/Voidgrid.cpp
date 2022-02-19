@@ -407,15 +407,18 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 	//Create new parts
 	for (FMinimalPartInstanceData DataOfPartToCreate : DataOfPartsToCreate)
 	{
-		UPart* Part = UPart::CreatePart(this, FPartInstanceData(DataOfPartToCreate));
-		Parts.Add(Part);
-
-		for (GridLocationType ShapeComponent : DataOfPartToCreate.Data->Shape)
+		if (IsValid(DataOfPartToCreate.Data))
 		{
-			GridLocationType NewPixelLocation = Part->GetTransform().TransformGridLocation(ShapeComponent);
-			PixelMold.Emplace(NewPixelLocation, FGridPixelData(Part));
+			UPart* Part = UPart::CreatePart(this, FPartInstanceData(DataOfPartToCreate));
+			Parts.Add(Part);
 
-			MutablePixels.Add(NewPixelLocation);
+			for (GridLocationType ShapeComponent : DataOfPartToCreate.Data->Shape)
+			{
+				GridLocationType NewPixelLocation = Part->GetTransform().TransformGridLocation(ShapeComponent);
+				PixelMold.Emplace(NewPixelLocation, FGridPixelData(Part));
+
+				MutablePixels.Add(NewPixelLocation);
+			}
 		}
 	}
 }
@@ -579,10 +582,11 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
 			}
 			else
 			{
-				if (PixelMold.Find(Location)->GetTargetPart() == UPart::GetNullPart())
+				if (PixelMold.Find(Location)->GetCurrentPart() == UPart::GetNullPart())
 				{
 					UE_LOG(LogTemp, Error, TEXT("Set Null part to intact at %s"), *Location.ToString());
 				}
+
 				PixelMold.Find(Location)->SetIntact(bNewIntact);
 				if (PixelMold.Find(Location)->IsTargetPart())
 				{
