@@ -46,12 +46,6 @@ protected:
 	void LoadMoldFromTarget();
 
 	/**
-	 * Saves the current mold to the target Voidgrid
-	 */
-	UFUNCTION(BlueprintCallable)
-	void SaveMoldToTarget();
-
-	/**
 	 * Saves the mold of this to a save slot of the given name.
 	 * 
 	 * @param MoldName - The name of this mold and its save slot.
