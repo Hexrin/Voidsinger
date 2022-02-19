@@ -473,6 +473,18 @@ struct FPartInstanceData
 		Shape = Part->GetShape();
 	}
 
+	FString ToString() const
+	{
+		FString ShapeString;
+
+		for (FIntPoint EachIntPoint : Shape)
+		{
+			ShapeString.Append(EachIntPoint.ToString());
+		}
+
+		return MinimalData.ToString() + ShapeString;
+	}
+
 private:
 	//Stores the data required to replicate this part
 	UPROPERTY()
@@ -489,8 +501,7 @@ uint32 GetTypeHash(const FPartInstanceData& Thing);
 #else // optimize by inlining in shipping and development builds
 FORCEINLINE uint32 GetTypeHash(const FPartInstanceData& Thing)
 {
-	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FPartInstanceData));
-	return Hash;
+	return FTextLocalizationResource::HashString(Thing.ToString());
 }
 #endif
 
