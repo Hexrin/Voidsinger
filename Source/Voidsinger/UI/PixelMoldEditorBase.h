@@ -31,6 +31,15 @@ protected:
 	void ApplyMoldToTarget();
 
 	/**
+	 * Sets the mold this is editing.
+	 * 
+	 * @param NewMold - The new mold to edit.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void SetMold(TArray<FMinimalPartInstanceData> NewMold);
+	void SetMold(MinimalPixelMoldDataType NewMold);
+
+	/**
 	 * Sets the the mold of this to be the same as target's mold.
 	 */
 	UFUNCTION(BlueprintCallable)

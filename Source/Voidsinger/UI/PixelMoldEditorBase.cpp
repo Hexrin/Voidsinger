@@ -27,11 +27,33 @@ void UPixelMoldEditorBase::ApplyMoldToTarget()
 }
 
 /**
+ * Sets the mold this is editing.
+ *
+ * @param NewMold - The new mold to edit.
+ */
+void UPixelMoldEditorBase::SetMold(TArray<FMinimalPartInstanceData> NewMold)
+{
+	SetMold(TSet<FMinimalPartInstanceData>(NewMold));
+}
+void UPixelMoldEditorBase::SetMold(MinimalPixelMoldDataType NewMold)
+{
+	PartLocations.Empty();
+	for (FMinimalPartInstanceData PartData : Mold)
+	{
+		for (GridLocationType PartLocation : PartData.Data->Shape)
+		{
+			PartLocations.Emplace(PartData.Transform.TransformGridLocation(PartLocation), PartData);
+		}
+	}
+}
+
+/**
  * Sets the the mold of this to be the same as target's mold.
  */
 void UPixelMoldEditorBase::LoadMoldFromTarget()
 {
-	Mold = Target->GetPixelMold();
+	SetMold(Target->GetPixelMold());
+
 	OnMoldUpdated(Mold.Array(), Mold.Array(), false);
 }
 
@@ -71,7 +93,7 @@ bool UPixelMoldEditorBase::LoadMold(FString MoldName)
 	UPixelMoldSave* MoldSave = Cast<UPixelMoldSave>(UGameplayStatics::LoadGameFromSlot(MoldSaveSlotNamePrefix.Append(MoldName), 0));
 	if (MoldSave)
 	{
-		MoldSave->Data = Mold;
+		SetMold(MoldSave->Data);
 		return true;
 	}
 	return false;
