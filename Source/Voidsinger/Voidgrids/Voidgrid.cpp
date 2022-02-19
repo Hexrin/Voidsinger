@@ -449,31 +449,33 @@ void AVoidgrid::SetState(FVoidgridState NewState)
 
 	for (FPartInstanceData PartState : NewState.State)
 	{
-		UPart* Part = nullptr;
 		if (!NewState.Mold.Contains(PartState.GetMinimalInstanceData()))
 		{
-			Part = UPart::CreatePart(this, PartState.GetMinimalInstanceData());
-			TemporaryParts.Add(Part);
+			UPart* CurrentPart = UPart::CreatePart(this, PartState.GetMinimalInstanceData());
+			TemporaryParts.Add(CurrentPart);
+
+			for (GridLocationType ShapeComponentLocation : PartState.GetData()->Shape)
+			{
+				GridLocationType NewPixelLocation = CurrentPart->GetTransform().TransformGridLocation(ShapeComponentLocation);
+				if (!PixelMold.Contains(NewPixelLocation))
+				{
+					PixelMold.Emplace(NewPixelLocation, FGridPixelData(CurrentPart, UPart::GetNullPart()));
+				}
+				else
+				{
+					PixelMold.Find(NewPixelLocation)->SetCurrentPart(CurrentPart);
+				}
+
+				MutablePixels.Add(NewPixelLocation);
+				SetPixelIntact(NewPixelLocation, true, false);
+			}
 		}
 		else
 		{
-			for (GridLocationType FistShapeCompoenent : PartState.GetData()->Shape)
+			for (GridLocationType ShapeComponentLocation : PartState.GetData()->Shape)
 			{
-				Part = PixelMold.Find(PartState.GetTransform().TransformGridLocation(FistShapeCompoenent))->GetTargetPart();
-				break;
+				SetPixelIntact(PartState.GetTransform().TransformGridLocation(ShapeComponentLocation), true, false);
 			}
-		}
-
-		for (GridLocationType ShapeComponent : PartState.GetShape())
-		{
-			GridLocationType ShapeComponentLocation = PartState.GetTransform().TransformGridLocation(ShapeComponent);
-			if (!PixelMold.Contains(ShapeComponentLocation))
-			{
-				PixelMold.Emplace(ShapeComponentLocation, PixelType(Part, UPart::GetNullPart()));
-			}
-			SetPixelIntact(ShapeComponentLocation, true, false);
-
-			UpdatePixelMesh(ShapeComponentLocation);
 		}
 	}
 }
