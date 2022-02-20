@@ -48,10 +48,6 @@ public:
 		{
 			TargetPartOfPixel = UPart::GetNullPart();
 		}
-
-
-		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), TargetPartOfPixel->GetOuter(), FName(TEXT("Pixel_Mat")));//Outer may cause memory leak. Im not sure
-
 		SetTargetPart(TargetPartOfPixel);
 		SetCurrentPart(PartOfPixel);
 		SetIntact(bPixelIntact);
@@ -66,9 +62,6 @@ public:
 		}
 		UPart* PartOfPixel = TargetPartOfPixel;
 
-
-		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), TargetPartOfPixel->GetOuter(), FName(TEXT("Pixel_Mat")));//Outer may cause memory leak. Im not sure
-
 		SetTargetPart(TargetPartOfPixel);
 		SetCurrentPart(PartOfPixel);
 		SetIntact(bPixelIntact);
@@ -77,8 +70,6 @@ public:
 	//Constructs a FGridPixelData using a part.
 	FGridPixelData(bool bPixelIntact = false)
 	{
-		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), UPart::GetNullPart(), FName(TEXT("Pixel_Mat")));//Outer may cause memory leak. Im not sure
-		
 		SetTargetPart(UPart::GetNullPart());
 		SetCurrentPart(UPart::GetNullPart());
 		SetIntact(bPixelIntact);
@@ -104,10 +95,11 @@ public:
 		if (bNewIntact != bIntact)
 		{			
 			Temperature = 0;
-			if (!bNewIntact)
-			{
-				SetCurrentPart(GetTargetPart());
-			}
+		}
+
+		if (!bNewIntact && GetTargetPart() != UPart::GetNullPart())
+		{
+			SetCurrentPart(GetTargetPart());
 		}
 
 		bIntact = bNewIntact;
@@ -175,8 +167,12 @@ public:
 			NewPart = UPart::GetNullPart();
 		}
 
-		if (CurrentPart != NewPart && IsValid(Material) && IsValid(NewPart) && IsValid(NewPart->GetData()) && IsValid(NewPart->GetData()->Texture))
+		if (NewPart != UPart::GetNullPart() && CurrentPart != NewPart && IsValid(NewPart) && IsValid(NewPart->GetData()) && IsValid(NewPart->GetData()->Texture))
 		{
+			if (!Material->IsValidLowLevel())
+			{
+				Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), NewPart->GetOuter(), FName(TEXT("Pixel_Mat")));
+			}
 			Material->SetTextureParameterValue(TEXT("PartTexture"), NewPart->GetData()->Texture);
 		}
 		CurrentPart = NewPart;
