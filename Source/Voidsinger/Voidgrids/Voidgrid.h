@@ -50,7 +50,7 @@ public:
 		}
 
 
-		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), TargetPartOfPixel->GetOuter());//Outer may cause memory leak. Im not sure
+		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), TargetPartOfPixel->GetOuter(), FName(TEXT("Pixel_Mat")));//Outer may cause memory leak. Im not sure
 
 		SetTargetPart(TargetPartOfPixel);
 		SetCurrentPart(PartOfPixel);
@@ -67,7 +67,7 @@ public:
 		UPart* PartOfPixel = TargetPartOfPixel;
 
 
-		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), TargetPartOfPixel->GetOuter());//Outer may cause memory leak. Im not sure
+		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), TargetPartOfPixel->GetOuter(), FName(TEXT("Pixel_Mat")));//Outer may cause memory leak. Im not sure
 
 		SetTargetPart(TargetPartOfPixel);
 		SetCurrentPart(PartOfPixel);
@@ -77,7 +77,7 @@ public:
 	//Constructs a FGridPixelData using a part.
 	FGridPixelData(bool bPixelIntact = false)
 	{
-		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), UPart::GetNullPart());//Outer may cause memory leak. Im not sure
+		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), UPart::GetNullPart(), FName(TEXT("Pixel_Mat")));//Outer may cause memory leak. Im not sure
 		
 		SetTargetPart(UPart::GetNullPart());
 		SetCurrentPart(UPart::GetNullPart());
@@ -324,7 +324,7 @@ FORCEINLINE uint32 GetTypeHash(const FVoidgridState& Thing)
 \* \/ ========= \/ */
 
 //Used for dispatching events requireing a grid locaiton.
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGridLocationDelegate, FIntPoint, GridLocaction, bool, bApplyChangeEffect);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FGridLocationDelegate, FIntPoint, GridLocaction, bool, bApplyChangeEffect, UPart*, Part);
 //Used for dispatching events requireing mass information.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMassDelegate, float, Mass, FVector2D, CenterOfMass, float, MomentOfInertia);
 //Used for dispatching simple events with no data.
@@ -579,7 +579,10 @@ private:
 	void ClearVoidgrid();
 
 	//Stores the Pixel Mold of this.
-	PixelMoldType PixelMold;
+	PixelMoldType LocationsToPixelState;
+
+	//Stores the target parts and shape of this.
+	TSet<FMinimalPartInstanceData> TargetParts;
 
 	//Stores the Locations of all damaged and temporary part Pixels.
 	TSet<GridLocationType> MutablePixels;

@@ -149,7 +149,7 @@ private:
 };
 
 /**
- * A save game class for storing a PixelMold
+ * A save game class for storing a LocationsToPixelState
  */
 UCLASS()
 class VOIDSINGER_API UPixelMoldSave : public USaveGame

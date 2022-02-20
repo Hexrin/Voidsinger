@@ -216,36 +216,39 @@ void UPart::SetPixelFrozen(FIntPoint Location, bool Frozen)
  *
  * @param Location - The location of the pixel that was removed.
  */
-void UPart::RemovePixel(FIntPoint Location, bool bApplyChangeEffect)
+void UPart::RemovePixel(FIntPoint Location, bool bApplyChangeEffect, UPart* Part)
 {
-	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
-	if (Shape.Remove(RelativeLocation))
+	if (Part == this)
 	{
-
-		if (FrozenPixels.Contains(RelativeLocation))
+		GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
+		if (Shape.Remove(RelativeLocation))
 		{
-			FrozenPixels.Remove(RelativeLocation);
+
+			if (FrozenPixels.Contains(RelativeLocation))
+			{
+				FrozenPixels.Remove(RelativeLocation);
+			}
+
+			OnDamaged.Broadcast(bApplyChangeEffect);
+
+			// \/ Check functionality \/ /
+
+			//Check if there are enough pixels frozen for the part to not be functional
+			bool bFrozenNotFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) > (1 - GetData()->FunctionalityPercent);
+
+			if (bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent) && (bFrozenNotFunctionalCheck))
+			{
+				bFunctional = false;
+				OnFunctionalityLost.Broadcast(bApplyChangeEffect);
+			}
+
+			if (Shape.Num() == 0)
+			{
+				OnDestroyed.Broadcast(bApplyChangeEffect);
+			}
+
+			// /\ Check functionality /\ /
 		}
-
-		OnDamaged.Broadcast(bApplyChangeEffect);
-
-		// \/ Check functionality \/ /
-
-		//Check if there are enough pixels frozen for the part to not be functional
-		bool bFrozenNotFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) > (1 - GetData()->FunctionalityPercent);
-
-		if (bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent) && (bFrozenNotFunctionalCheck))
-		{
-			bFunctional = false;
-			OnFunctionalityLost.Broadcast(bApplyChangeEffect);
-		}
-
-		if (Shape.Num() == 0)
-		{
-			OnDestroyed.Broadcast(bApplyChangeEffect);
-		}
-
-		// /\ Check functionality /\ /
 	}
 }
 
@@ -254,31 +257,34 @@ void UPart::RemovePixel(FIntPoint Location, bool bApplyChangeEffect)
  *
  * @param Location - The location of the pixel that was added.
  */
-void UPart::AddPixel(FIntPoint Location, bool bApplyChangeEffect)
+void UPart::AddPixel(FIntPoint Location, bool bApplyChangeEffect, UPart* Part)
 {
-	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
-	if (GetDefaultShape().Contains(RelativeLocation))
+	if (Part == this)
 	{
-		Shape.Add(RelativeLocation);
-		OnRepaired.Broadcast(bApplyChangeEffect);
-
-		// \/ Check functionality \/ /
-		
-		//Check if there are few enough pixels frozen for the part to be functional
-		bool bFrozenFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) <= (1 - GetData()->FunctionalityPercent);
-
-		if (!bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) >= GetData()->FunctionalityPercent) && (bFrozenFunctionalCheck))
+		GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
+		if (GetDefaultShape().Contains(RelativeLocation))
 		{
-			bFunctional = true;
-			OnFunctionalityRestored.Broadcast(bApplyChangeEffect);
-		}
+			Shape.Add(RelativeLocation);
+			OnRepaired.Broadcast(bApplyChangeEffect);
 
-		if (Shape.Num() == GetDefaultShape().Num())
-		{
-			OnFullyRepaired.Broadcast(bApplyChangeEffect);
-		}
+			// \/ Check functionality \/ /
 
-		// /\ Check functionality /\ /
+			//Check if there are few enough pixels frozen for the part to be functional
+			bool bFrozenFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) <= (1 - GetData()->FunctionalityPercent);
+
+			if (!bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) >= GetData()->FunctionalityPercent) && (bFrozenFunctionalCheck))
+			{
+				bFunctional = true;
+				OnFunctionalityRestored.Broadcast(bApplyChangeEffect);
+			}
+
+			if (Shape.Num() == GetDefaultShape().Num())
+			{
+				OnFullyRepaired.Broadcast(bApplyChangeEffect);
+			}
+
+			// /\ Check functionality /\ /
+		}
 	}
 }
 
