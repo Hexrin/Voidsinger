@@ -36,6 +36,8 @@ void UPixelMoldEditorBase::SetMold(TArray<FMinimalPartInstanceData> NewMold)
 }
 void UPixelMoldEditorBase::SetMold(MinimalPixelMoldDataType NewMold)
 {
+	Mold = NewMold;
+
 	PartLocations.Empty();
 	for (FMinimalPartInstanceData PartData : Mold)
 	{
