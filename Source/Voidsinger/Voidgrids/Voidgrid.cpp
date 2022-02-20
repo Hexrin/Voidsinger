@@ -435,16 +435,7 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 
 			for (GridLocationType ShapeComponent : DataOfPartToCreate.Data->Shape)
 			{
-				GridLocationType NewPixelLocation = Part->GetTransform().TransformGridLocation(ShapeComponent);
-				if (LocationsToPixelState.Contains(NewPixelLocation))
-				{
-					SetPixelTarget(NewPixelLocation, Part);
-				}
-				else
-				{
-					LocationsToPixelState.Emplace(NewPixelLocation, FGridPixelData(Part));
-					MutablePixels.Add(NewPixelLocation);
-				}
+				SetPixelTarget(Part->GetTransform().TransformGridLocation(ShapeComponent), Part);
 			}
 		}
 	}
@@ -652,35 +643,47 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
  */
 void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 {
-	if (LocationsToPixelState.Contains(Location) && NewTarget != LocationsToPixelState.Find(Location)->GetTargetPart())
+	if (LocationsToPixelState.Contains(Location))
 	{
-		if (NewTarget == LocationsToPixelState.Find(Location)->GetCurrentPart())
+		if (NewTarget != LocationsToPixelState.Find(Location)->GetTargetPart())
 		{
-			if (LocationsToPixelState.Find(Location)->IsIntact())
+			if (NewTarget == LocationsToPixelState.Find(Location)->GetCurrentPart())
 			{
-				MutablePixels.Remove(Location);
-			}
+				if (LocationsToPixelState.Find(Location)->IsIntact())
+				{
+					MutablePixels.Remove(Location);
+				}
+				else
+				{
+					MutablePixels.Add(Location);
+				}
 
-			TemporaryParts.Remove(LocationsToPixelState.Find(Location)->GetCurrentPart());
+				TemporaryParts.Remove(LocationsToPixelState.Find(Location)->GetCurrentPart());
 
-			if(NewTarget == UPart::GetNullPart())
-			{
-				LocationsToPixelState.Remove(Location);
-				UpdatePixelMesh(Location);
+				if (NewTarget == UPart::GetNullPart())
+				{
+					LocationsToPixelState.Remove(Location);
+					UpdatePixelMesh(Location);
+				}
+				else
+				{
+					Parts.Add(LocationsToPixelState.Find(Location)->GetCurrentPart());
+					LocationsToPixelState.Find(Location)->SetTargetPart(NewTarget);
+				}
 			}
 			else
 			{
-				Parts.Add(LocationsToPixelState.Find(Location)->GetCurrentPart());
+				MutablePixels.Add(Location);
+				TemporaryParts.Add(LocationsToPixelState.Find(Location)->GetCurrentPart());
+				Parts.Remove(LocationsToPixelState.Find(Location)->GetCurrentPart());
 				LocationsToPixelState.Find(Location)->SetTargetPart(NewTarget);
 			}
 		}
-		else
-		{
-			MutablePixels.Add(Location);
-			TemporaryParts.Add(LocationsToPixelState.Find(Location)->GetCurrentPart());
-			Parts.Remove(LocationsToPixelState.Find(Location)->GetCurrentPart());
-			LocationsToPixelState.Find(Location)->SetTargetPart(NewTarget);
-		}
+	}
+	else if (NewTarget  != UPart::GetNullPart())
+	{
+		LocationsToPixelState.Emplace(Location, FGridPixelData(NewTarget));
+		MutablePixels.Add(Location);
 	}
 }
 
