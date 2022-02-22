@@ -58,7 +58,30 @@ void AVoidgrid::Tick(float DeltaTime)
 	for (int EachHeatTickPassed = 0; EachHeatTickPassed < DeltaHeatTime / HeatTick; DeltaHeatTime -= HeatTick)
 	{
 		SpreadHeat();
+
+		UE_LOG(LogTemp, Warning, TEXT("------ \\/ Mutable Pixels \\/ -----"));
+		for (FIntPoint Pixel : MutablePixels)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *Pixel.ToString());
+		}
+		UE_LOG(LogTemp, Warning, TEXT("------ /\\ Mutable Pixels /\\ -----\n"));
+
+		UE_LOG(LogTemp, Warning, TEXT("------ \\/ Parts \\/ -----"));
+		for (UPart* Part : Parts)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *Part->GetName());
+		}
+		UE_LOG(LogTemp, Warning, TEXT("------ /\\ Parts /\\ -----\n"));
+
+		UE_LOG(LogTemp, Warning, TEXT("------ \\/ Temp Parts \\/ -----"));
+		for (UPart* Part : TemporaryParts)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *Part->GetName());
+		}
+		UE_LOG(LogTemp, Warning, TEXT("------ /\\ Temp Parts /\\ -----\n"));
 	}
+	
+
 
 	DeltaHeatTime += DeltaTime;
 
@@ -157,7 +180,7 @@ void AVoidgrid::UpdateTransform(float DeltaTime)
 
 			AddImpulse(CollsionForce * ImpactNormal, FVector(RelativeHitLocation, 0));
 			//DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation() + FVector(RelativeHitLocation, 0), GetOwner()->GetActorLocation() + FVector(RelativeHitLocation, 0) + FVector(CollisionImpulseFactor * ImpactNormal, 0), 5, FColor::Blue, false, 5, 0U, 0.3f);
-			//UE_LOG(LogTemp, Warning, TEXT("%s Applyed an impules of %s at %s to itself when colideing with %s"), *GetOwner()->GetName(), *(CollisionImpulseFactor * ImpactNormal).ToString(), *RelativeHitLocation.ToString(), *Result.GetActor()->GetName());
+			////UE_LOG(LogTemp, Warning, TEXT("%s Applyed an impules of %s at %s to itself when colideing with %s"), *GetOwner()->GetName(), *(CollisionImpulseFactor * ImpactNormal).ToString(), *RelativeHitLocation.ToString(), *Result.GetActor()->GetName());
 		}
 	}
 	// /\ Detect collsion and update velocity acordingly /\ //
@@ -196,7 +219,7 @@ bool AVoidgrid::SweepShip(const FTransform & DeltaTransform, FHitResult & Hit)
 	if (GetWorld()->SweepSingleByObjectType(Hit, StartingTransform.GetTranslation() + BoundsCenterLocation, TargetTransfrom.GetTranslation() + BoundsCenterLocation, TargetTransfrom.GetRotation(), ObjectQueryParams, FCollisionShape::MakeBox(BoundsExtent), QueryParams))
 	{
 		//Iterates though all pixels and sweeps them for a collsion.
-		for (TPair<GridLocationType, PixelType> PixelData : PixelMold.GetGridPairs())
+		for (TPair<GridLocationType, PixelType> PixelData : LocationsToPixelState.GetGridPairs())
 		{
 			FVector PixelRelativeLocation = FVector(FVector2D(PixelData.Key), 0);
 			FVector PixelStartingWorldLocation = StartingTransform.TransformVector(FVector(PixelRelativeLocation));
@@ -263,9 +286,9 @@ void AVoidgrid::AddTemperatureAtLocation(FVector WorldLocation, float Temperatur
  */
 void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
 {
-	if (PixelMold.Contains(Location))
+	if (LocationsToPixelState.Contains(Location))
 	{
-		PixelMold.Find(Location)->AddTemperature(Temperature);
+		LocationsToPixelState.Find(Location)->AddTemperature(Temperature);
 	}
 }
 
@@ -280,10 +303,10 @@ void AVoidgrid::SpreadHeat()
 	// \/ Calculate the new heat map \/ /
 
 	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
-	NewHeatMap.Reserve(PixelMold.Num());
+	NewHeatMap.Reserve(LocationsToPixelState.Num());
 
 	//Iterate through each point on the grid map to spread heat to each pixel
-	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
+	for (TPair<FIntPoint, PixelType> EachPixel : LocationsToPixelState.GetGridPairs())
 	{
 		//Heat added to this pixel
 		float AddedHeat = 0;
@@ -293,11 +316,11 @@ void AVoidgrid::SpreadHeat()
 		{
 			FIntPoint TargetPoint = ((EachPointAroundPixel % 2 == 1) ? FIntPoint((EachPointAroundPixel > 1) ? 1 : -1, 0) : FIntPoint(0, (EachPointAroundPixel > 1) ? 1 : -1));
 
-			if (PixelMold.Contains(TargetPoint + EachPixel.Key))
+			if (LocationsToPixelState.Contains(TargetPoint + EachPixel.Key))
 			{
 
 				//Get the temperature of the adjacent pixel
-				float OtherPixelTemperature = PixelMold.Find(TargetPoint + EachPixel.Key)->GetTemperature();
+				float OtherPixelTemperature = LocationsToPixelState.Find(TargetPoint + EachPixel.Key)->GetTemperature();
 
 				//The heat added to this pixel from the other pixel is the other pixel's temperature multiplied by the heat propagation faction (how much heat it will spread to other pixels). It
 				//is divided by four because a pixel will spread heat to four other pixels.
@@ -319,7 +342,7 @@ void AVoidgrid::SpreadHeat()
 
 	// \/ Set the temperature of each pixel and find whether it should be melted or frozen \/ /
 
-	for (TPair<FIntPoint, PixelType> EachPixel : PixelMold.GetGridPairs())
+	for (TPair<FIntPoint, PixelType> EachPixel : LocationsToPixelState.GetGridPairs())
 	{
 		if (NewHeatMap.Contains(EachPixel.Key) && EachPixel.Value.IsIntact())
 		{
@@ -363,11 +386,12 @@ void AVoidgrid::SpreadHeat()
  */
 void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 {
-	MinimalPixelMoldDataType DataOfPartsToCreate = NewPixelMold;
+	TargetParts = NewPixelMold;
+	TSet<FMinimalPartInstanceData> DataOfPartsToCreate = NewPixelMold;
 
 	//Remove Unneccesary Parts
-	TSet<UPart*> TempParts = Parts;
-	for (UPart* Part : TempParts)
+	TSet<UPart*> PartsCopy = Parts;
+	for (UPart* Part : PartsCopy)
 	{
 		FMinimalPartInstanceData PartData = Part->GetMinimalPartInstanceData();
 
@@ -385,7 +409,8 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 	}
 
 	//Re-add temprary parts if inlcuded in a new mold
-	for (UPart* Part : TemporaryParts)
+	TSet<UPart*> TemporaryPartsCopy = TemporaryParts;
+	for (UPart* Part : TemporaryPartsCopy)
 	{
 		FMinimalPartInstanceData PartData = Part->GetMinimalPartInstanceData();
 
@@ -397,22 +422,21 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 			{
 				SetPixelTarget(PartPixelLocation, Part);
 			}
-		}
-			
+		}			
 	}
 
 	//Create new parts
 	for (FMinimalPartInstanceData DataOfPartToCreate : DataOfPartsToCreate)
 	{
-		UPart* Part = UPart::CreatePart(this, FPartInstanceData(DataOfPartToCreate));
-		Parts.Add(Part);
-
-		for (GridLocationType ShapeComponent : DataOfPartToCreate.Data->Shape)
+		if (IsValid(DataOfPartToCreate.Data))
 		{
-			GridLocationType NewPixelLocation = Part->GetTransform().TransformGridLocation(ShapeComponent);
-			PixelMold.Emplace(NewPixelLocation, FGridPixelData(Part));
+			UPart* Part = UPart::CreatePart(this, FPartInstanceData(DataOfPartToCreate));
+			Parts.Add(Part);
 
-			MutablePixels.Add(NewPixelLocation);
+			for (GridLocationType ShapeComponent : DataOfPartToCreate.Data->Shape)
+			{
+				SetPixelTarget(Part->GetTransform().TransformGridLocation(ShapeComponent), Part);
+			}
 		}
 	}
 }
@@ -444,31 +468,36 @@ void AVoidgrid::SetState(FVoidgridState NewState)
 
 	for (FPartInstanceData PartState : NewState.State)
 	{
-		UPart* Part = nullptr;
 		if (!NewState.Mold.Contains(PartState.GetMinimalInstanceData()))
 		{
-			Part = UPart::CreatePart(this, PartState.GetMinimalInstanceData());
-			TemporaryParts.Add(Part);
+			if (!PartState.GetShape().IsEmpty())
+			{
+				UPart* CurrentPart = UPart::CreatePart(this, PartState.GetMinimalInstanceData());
+				TemporaryParts.Add(CurrentPart);
+
+				for (GridLocationType ShapeComponentLocation : PartState.GetShape())
+				{
+					GridLocationType NewPixelLocation = CurrentPart->GetTransform().TransformGridLocation(ShapeComponentLocation);
+					if (!LocationsToPixelState.Contains(NewPixelLocation))
+					{
+						LocationsToPixelState.Emplace(NewPixelLocation, FGridPixelData(CurrentPart, UPart::GetNullPart()));
+					}
+					else
+					{
+						LocationsToPixelState.Find(NewPixelLocation)->SetCurrentPart(CurrentPart);
+					}
+
+					MutablePixels.Add(NewPixelLocation);
+					SetPixelIntact(NewPixelLocation, true, false);
+				}
+			}
 		}
 		else
 		{
-			for (GridLocationType FistShapeCompoenent : PartState.GetData()->Shape)
+			for (GridLocationType ShapeComponentLocation : PartState.GetShape())
 			{
-				Part = PixelMold.Find(PartState.GetTransform().TransformGridLocation(FistShapeCompoenent))->GetTargetPart();
-				break;
+				SetPixelIntact(PartState.GetTransform().TransformGridLocation(ShapeComponentLocation), true, false);
 			}
-		}
-
-		for (GridLocationType ShapeComponent : PartState.GetShape())
-		{
-			GridLocationType ShapeComponentLocation = PartState.GetTransform().TransformGridLocation(ShapeComponent);
-			if (!PixelMold.Contains(ShapeComponentLocation))
-			{
-				PixelMold.Emplace(ShapeComponentLocation, PixelType(Part, UPart::GetNullPart()));
-			}
-			SetPixelIntact(ShapeComponentLocation, true, false);
-
-			UpdatePixelMesh(ShapeComponentLocation);
 		}
 	}
 }
@@ -480,15 +509,27 @@ void AVoidgrid::SetState(FVoidgridState NewState)
  */
 FVoidgridState AVoidgrid::GetState()
 {
-	TSet<FPartInstanceData> AllPartInstanceData = TSet<FPartInstanceData>();
-	TSet<FMinimalPartInstanceData> AllMinimalPartInstanceData = TSet<FMinimalPartInstanceData>();
+	TSet<FPartInstanceData> State = TSet<FPartInstanceData>();
+	TSet<FMinimalPartInstanceData> Mold = TargetParts;
 	for (UPart* Part : Parts)
 	{
-		AllPartInstanceData.Add(Part->GetPartInstanceData());
-		AllMinimalPartInstanceData.Add(Part->GetMinimalPartInstanceData());
+		Mold.Add(Part->GetMinimalPartInstanceData());
+		if (Part->GetPartInstanceData().GetShape().Num() > 0)
+		{
+			State.Add(Part->GetPartInstanceData());
+		}
 	}
 
-	return FVoidgridState(AllMinimalPartInstanceData, AllPartInstanceData);
+	for (UPart* Part : TemporaryParts)
+	{
+		if (Part->GetPartInstanceData().GetShape().Num() > 0)
+		{
+			State.Add(Part->GetPartInstanceData());
+		}
+	}
+	
+
+	return FVoidgridState(Mold, State);
 }
 
 /**
@@ -508,9 +549,9 @@ void AVoidgrid::RemovePixel(GridLocationType Location)
  */
 void AVoidgrid::RepairPixel(GridLocationType Location)
 {
-	if (PixelMold.Contains(Location))
+	if (LocationsToPixelState.Contains(Location))
 	{
-		PixelType* PixelRef = PixelMold.Find(Location);
+		PixelType* PixelRef = LocationsToPixelState.Find(Location);
 		if (!PixelRef->IsIntact())
 		{
 			SetPixelIntact(Location, true);
@@ -541,35 +582,55 @@ void AVoidgrid::RepairPixel()
  */
 void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool bApplyChangeEffect)
 {
-	if (PixelMold.Contains(Location))
+	if (LocationsToPixelState.Contains(Location))
 	{
-		if (PixelMold.Find(Location)->IsIntact() != bNewIntact)
+		if (LocationsToPixelState.Find(Location)->IsIntact() != bNewIntact)
 		{
 			if (!bNewIntact) 
 			{
-				float OldPixelMass = PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass();
-				if (PixelMold.Find(Location)->GetTargetPart() == UPart::GetNullPart())
+				UPart* OldPart = LocationsToPixelState.Find(Location)->GetCurrentPart();
+				float OldPixelMass = OldPart->GetPixelMass();
+				if (LocationsToPixelState.Find(Location)->GetTargetPart() == UPart::GetNullPart())
 				{
-					TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
 					MutablePixels.Remove(Location);
-					PixelMold.Remove(Location);
+
+					LocationsToPixelState.Remove(Location);
 				}
 				else
 				{
 					MutablePixels.Add(Location);
-					PixelMold.Find(Location)->SetIntact(bNewIntact);
+					LocationsToPixelState.Find(Location)->SetIntact(bNewIntact);
 				}
-				OnPixelRemoved.Broadcast(Location, bApplyChangeEffect);
+
 				UpdateMassProperties(-1 * OldPixelMass, FVector2D(Location));
+				OnPixelRemoved.Broadcast(Location, bApplyChangeEffect, OldPart);
+
+				if (OldPart->GetShape().Num() <= 1)
+				{
+					TemporaryParts.Remove(OldPart);
+				}
 			}
 			else
 			{
-				PixelMold.Find(Location)->SetIntact(bNewIntact);
-				MutablePixels.Remove(Location);
-				OnPixelAdded.Broadcast(Location, bApplyChangeEffect);
-				UpdateMassProperties(PixelMold.Find(Location)->GetCurrentPart()->GetPixelMass(), FVector2D(Location));
+				if (LocationsToPixelState.Find(Location)->GetCurrentPart() == UPart::GetNullPart())
+				{
+					UE_LOG(LogTemp, Error, TEXT("Set Null part to intact at %s"), *Location.ToString());
+				}
+
+				LocationsToPixelState.Find(Location)->SetIntact(bNewIntact);
+				if (LocationsToPixelState.Find(Location)->IsTargetPart())
+				{
+					MutablePixels.Remove(Location);
+				}
+
+				OnPixelAdded.Broadcast(Location, bApplyChangeEffect, LocationsToPixelState.Find(Location)->GetCurrentPart());
+				UpdateMassProperties(LocationsToPixelState.Find(Location)->GetCurrentPart()->GetPixelMass(), FVector2D(Location));
 			}
 			UpdatePixelMesh(Location);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Set intact to %i when already in that state at %s"), bNewIntact ? 1 : 0, *Location.ToString());
 		}
 	}
 }
@@ -582,29 +643,55 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
  */
 void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 {
-	if (PixelMold.Contains(Location) && NewTarget != PixelMold.Find(Location)->GetTargetPart())
+	if (LocationsToPixelState.Contains(Location))
 	{
-		if (NewTarget == PixelMold.Find(Location)->GetCurrentPart())
+		//Set target part if target part has changed
+		if (NewTarget != LocationsToPixelState.Find(Location)->GetTargetPart())
 		{
-			MutablePixels.Remove(Location);
-			TemporaryParts.Remove(PixelMold.Find(Location)->GetCurrentPart());
-
-			if(NewTarget == UPart::GetNullPart())
+			//Unmark pixel as temporary  if pixel is already the target part.
+			if (NewTarget == LocationsToPixelState.Find(Location)->GetCurrentPart() && NewTarget != UPart::GetNullPart())
 			{
-				PixelMold.Remove(Location);
-				UpdatePixelMesh(Location);
+				if (LocationsToPixelState.Find(Location)->IsIntact())
+				{
+					MutablePixels.Remove(Location);
+				}
+				else
+				{
+					MutablePixels.Add(Location);
+				}
+
+				Parts.Add(LocationsToPixelState.Find(Location)->GetCurrentPart());
+				TemporaryParts.Remove(LocationsToPixelState.Find(Location)->GetCurrentPart());
+
+				LocationsToPixelState.Find(Location)->SetTargetPart(NewTarget);
 			}
+			//Mark pixel as temporary if pixel needs to change to become the new part.
+			else if(NewTarget != UPart::GetNullPart() || LocationsToPixelState.Find(Location)->IsIntact())
+			{
+				MutablePixels.Add(Location);
+				TemporaryParts.Add(LocationsToPixelState.Find(Location)->GetCurrentPart());
+				Parts.Remove(LocationsToPixelState.Find(Location)->GetCurrentPart());
+				LocationsToPixelState.Find(Location)->SetTargetPart(NewTarget);
+			}
+			//Edge case for removeing uneeded NullPart pixels
 			else
 			{
-				Parts.Add(PixelMold.Find(Location)->GetCurrentPart());
+				if (LocationsToPixelState.Find(Location)->GetCurrentPart()->GetShape().IsEmpty())
+				{
+					TemporaryParts.Remove(LocationsToPixelState.Find(Location)->GetCurrentPart());
+				}
+
+				MutablePixels.Remove(Location);
+				Parts.Remove(LocationsToPixelState.Find(Location)->GetCurrentPart());
+				LocationsToPixelState.Remove(Location);
 			}
 		}
-		else
-		{
-			MutablePixels.Add(Location);
-			TemporaryParts.Add(PixelMold.Find(Location)->GetCurrentPart());
-			Parts.Remove(PixelMold.Find(Location)->GetCurrentPart());
-		}
+	}
+	//Create new pixel data if pixel does not exist.
+	else if (NewTarget != UPart::GetNullPart())
+	{
+		LocationsToPixelState.Emplace(Location, FGridPixelData(NewTarget));
+		MutablePixels.Add(Location);
 	}
 }
 
@@ -614,14 +701,11 @@ void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
  */
 void AVoidgrid::ClearVoidgrid()
 {
-	TMap<GridLocationType, PixelType> GridPairs = PixelMold.GetGridPairs();
-	PixelMold.Empty();
+	TMap<GridLocationType, PixelType> GridPairs = LocationsToPixelState.GetGridPairs();
 	for (TPair<GridLocationType, PixelType> Pair : GridPairs)
 	{
-		UpdatePixelMesh(Pair.Key);
+		SetPixelIntact(Pair.Key, false, false);
 	}
-	Parts.Empty();
-	TemporaryParts.Empty();
 }
 
 /* /\ Pixel Mold /\ *\
@@ -637,9 +721,9 @@ void AVoidgrid::ClearVoidgrid()
  */
 void AVoidgrid::UpdatePixelMesh(GridLocationType Location)
 {
-	if (PixelMold.Contains(Location))
+	if (LocationsToPixelState.Contains(Location))
 	{
-		if (PixelMold.Find(Location)->IsIntact())
+		if (LocationsToPixelState.Find(Location)->IsIntact())
 		{
 			if (PixelMeshSegmentIndices.Contains(Location))
 			{
@@ -650,9 +734,9 @@ void AVoidgrid::UpdatePixelMesh(GridLocationType Location)
 				AddPixelMesh(Location);
 			}
 
-			if (IsValid(PixelMold.Find(Location)->GetMaterial()))
+			if ((LocationsToPixelState.Find(Location)->GetMaterial()->IsValidLowLevel()))
 			{
-				PixelMeshComponent->SetMaterial(PixelMeshSegmentIndices.FindRef(Location), PixelMold.Find(Location)->GetMaterial());
+				PixelMeshComponent->SetMaterial(PixelMeshSegmentIndices.FindRef(Location), LocationsToPixelState.Find(Location)->GetMaterial());
 			}
 		}
 		else
@@ -673,13 +757,14 @@ void AVoidgrid::UpdatePixelMesh(GridLocationType Location)
  */
 void AVoidgrid::AddPixelMesh(GridLocationType Location)
 {
-	//If this pixel already has a mesh set the index to that mesh
-	int32 SectionIndex = PixelMeshSegmentIndices.Contains(Location) ? PixelMeshSegmentIndices.FindRef(Location) : PixelMeshSegmentIndices.Num();
+	//If this pixel already has a mesh set the index to that 
+	int32 SectionIndex = PixelMeshSegmentIndices.Contains(Location) ? PixelMeshSegmentIndices.FindRef(Location) : MeshSectionCounter;
 
 	PixelMeshComponent->CreateMeshSection(SectionIndex, GetPixelVertices(Location), PixelTriangles, TArray<FVector>(), PixelUVs, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
 	PixelMeshComponent->SetGenerateOverlapEvents(true);
 	
 	PixelMeshSegmentIndices.Emplace(Location, SectionIndex);
+	MeshSectionCounter++;
 }
 
 /**
