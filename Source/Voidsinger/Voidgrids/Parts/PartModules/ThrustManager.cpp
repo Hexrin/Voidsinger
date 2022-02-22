@@ -37,21 +37,18 @@ float UThrustManager::TimeToLinearVelocity(const FVector2D Velocity) const
  */
 float UThrustManager::TimeToLocation(const FVector2D Location, const bool bAccelerating)
 {
-	float totalDistance = (FVector2D (Voidgrid->GetActorLocation()) - Location).Size();
-	float timetoPoint = (totalDistance / Voidgrid->GetVelocity());
-
-	if (bAccelerating == true)
+	float c = (Voidgrid->GetActorLocation().Size() - (Location).Size());
+	float b = (Voidgrid->GetVelocity().Size());
+	float a = (GetMaximumAccelerationInDirection(FVector2D(Voidgrid->GetActorLocation()) - (Location)));
+	
+	if (Voidgrid->GetVelocity().Normalize() /= (FVector2D(Voidgrid->GetActorLocation()) - (Location)).Normalize
 	{
-		float timeToPointWithAcceleration = (totalDistance/ GetMaximumAccelerationInDirection(totalDistance));
-		return timeToPointWithAcceleration;
-	}
-	else
-	{
-		return timetoPoint;
-	}
 
+	}
+	float timeToLocation = (((-1 * b) + (sqrt((b * b) - (4 * a * c)))) / (2 * a));
+	return timeToLocation;
+	
 }
-
 /**
  * Predicts the time it will take to reach a certain angular velocity given the Voidgrid's thrusters.
  *
@@ -61,9 +58,9 @@ float UThrustManager::TimeToLocation(const FVector2D Location, const bool bAccel
  */
 float UThrustManager::TimeToAngularVelocity(const float Velocity) const
 { 
-	FVector2D AngularDirection = ((Voidgrid->AngularVelocity) / (Velocity));
-	(AngularDirection) / (GetMaximumAccelerationInDirection(AngularDirection));
-	return 0;
+	FVector2D AngularDirection = ((Voidgrid->AngularVelocity) - (Velocity));
+	float timetoVelocity = ((AngularDirection) / (GetMaximumAccelerationInDirection(AngularDirection))).Size();
+	return timetoVelocity;
 }
 
 /**
