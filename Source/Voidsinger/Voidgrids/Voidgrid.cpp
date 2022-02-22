@@ -666,7 +666,7 @@ void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 				LocationsToPixelState.Find(Location)->SetTargetPart(NewTarget);
 			}
 			//Mark pixel as temporary if pixel needs to change to become the new part.
-			else if(NewTarget != UPart::GetNullPart() && LocationsToPixelState.Find(Location)->IsIntact())
+			else if(NewTarget != UPart::GetNullPart() || LocationsToPixelState.Find(Location)->IsIntact())
 			{
 				MutablePixels.Add(Location);
 				TemporaryParts.Add(LocationsToPixelState.Find(Location)->GetCurrentPart());
@@ -680,11 +680,8 @@ void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 				{
 					TemporaryParts.Remove(LocationsToPixelState.Find(Location)->GetCurrentPart());
 				}
-				else
-				{
-					TemporaryParts.Add(LocationsToPixelState.Find(Location)->GetCurrentPart());
-					MutablePixels.Add(Location);
-				}
+
+				MutablePixels.Remove(Location);
 				Parts.Remove(LocationsToPixelState.Find(Location)->GetCurrentPart());
 				LocationsToPixelState.Remove(Location);
 			}
