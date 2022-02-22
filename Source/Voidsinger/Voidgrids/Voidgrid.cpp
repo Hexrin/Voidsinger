@@ -764,6 +764,62 @@ EFaction AVoidgrid::GetFaction() const
 /* /\ Faction /\ *\
 \* ------------- */
 
+/* ------------------------- *\
+\* \/ Resource Management \/ */
+
+/*
+ * Adds resources to the Voidgrid
+ *
+ * @param AddedResources - The resources added and how much of each is added
+ */
+void AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
+{
+	for (TPair<EResourceType, float> EachAddedResource : AddedResources)
+	{
+		if (EachAddedResource.Value < 0)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Attempted to add a negative amount of resource. Use 'UseResources' instead."));
+		}
+		else
+		{
+			if (Resources.Contains(EachAddedResource.Key))
+			{
+				//Emplace will override the previous key value pair.
+				Resources.Emplace(EachAddedResource.Key, Resources.FindRef(EachAddedResource.Key) + EachAddedResource.Value);
+			}
+			else
+			{
+				Resources.Emplace(EachAddedResource.Key, EachAddedResource.Value);
+			}
+		}
+	}
+}
+
+const bool AVoidgrid::UseResources(TMap<EResourceType, float> UsedResources)
+{
+
+	// \/ Check if all resources can be used \/ /
+	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
+	{
+		if (!Resources.Contains(EachUsedResource.Key) | Resources.FindRef(EachUsedResource.Key) < EachUsedResource.Value)
+		{
+			//Return if not all resources can be used.
+			return;
+		}
+	}
+	// /\ Check if all resources can be used /\ /
+
+	// \/ Use the resources \/ /
+	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
+	{
+		Resources.Emplace(EachUsedResource.Key, Resources.FindRef(EachUsedResource.Key) - EachUsedResource.Value);
+	}
+	// /\ Use the resources /\ /
+}
+
+/* /\ Resource Management /\ *\
+\* ------------------------- */
+
 //Notes, delete later
 
 ////Comment -Mabel Suggestion

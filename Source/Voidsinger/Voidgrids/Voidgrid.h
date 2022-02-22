@@ -10,6 +10,7 @@
 #include "ProceduralMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "ResourceType.h"
 #include "Voidgrid.generated.h"
 
 
@@ -662,6 +663,38 @@ public:
 
 	/* /\ Faction /\ *\
 	\* ------------- */
+
+	/* ------------------------- *\
+	\* \/ Resource Management \/ */
+
+public:
+
+	/*
+	 * Adds resources to the Voidgrid
+	 * 
+	 * @param AddedResources - The resources added and how much of each is added
+	 */
+	UFUNCTION(BlueprintCallable)
+	void AddResources(TMap<EResourceType, float> AddedResources);
+
+	/*
+	 * Uses resources on the Voidgrid. Will not use up resources if not all the resources can be used.
+	 * 
+	 * @param UsedResources - The resources used and how much of each is used
+	 * 
+	 * @return - Whether the resources were successfully used or not
+	 */
+	UFUNCTION(BlueprintCallable)
+	const bool UseResources(TMap<EResourceType, float> UsedResources);
+
+private:
+
+	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
+	UPROPERTY()
+	TMap<EResourceType, float> Resources;
+
+	/* /\ Resource Management /\ *\
+	\* ------------------------- */
 };
 
 /* /\ ========= /\ *\
