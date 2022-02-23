@@ -8,7 +8,7 @@
 
 UThrustManager::UThrustManager()
 {
-	Voidgrid = Cast<AVoidgrid>(GetOuter());
+	//Voidgrid = Cast<AVoidgrid>(GetOuter());
 }
 
 /* ------------------------ *\
@@ -64,8 +64,8 @@ float UThrustManager::TimeToLocation(const FVector2D Location, const bool bAccel
 float UThrustManager::TimeToAngularVelocity(const float Velocity) const
 { 
 	FVector2D AngularDirection = ((Voidgrid->AngularVelocity) - (Velocity));
-	float timetoVelocity = ((AngularDirection) / (GetMaximumAccelerationInDirection(AngularDirection))).Size();
-	return timetoVelocity;
+	return ((AngularDirection) / (GetMaximumAccelerationInDirection(AngularDirection))).Size();
+
 }
 
 /**

@@ -40,6 +40,11 @@ AVoidgrid::AVoidgrid()
 	PixelTriangles += CreateTrianglesForPixelMeshFace(6, 2, 7, 3); //Side Face for collision
 	// /\ Initialize Mesh Component /\ /
 
+
+}
+void AVoidgrid::BeginPlay()
+{
+	Super::BeginPlay();
 	//Initialize Thruster Manager
 	if (IsValid(ThrustManagerClass))
 	{

@@ -323,7 +323,7 @@ public:
 
 	//Used to update location and thrust control.
 	virtual void Tick(float DeltaTime) override;
-
+	virtual void BeginPlay() override;
 	/* ------------- *\
 	\* \/ Physics \/ */
 
