@@ -100,7 +100,9 @@ public:
 	/**
 	 * Loads this ships state.
 	 */
-	void LoadState(bool bLoadMold = false);
+	UFUNCTION(BlueprintCallable)
+	void LoadState();
+
 
 protected:
 	/**

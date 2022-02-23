@@ -137,6 +137,7 @@ UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData PartData)
 	NewPart->Shape = PartData.GetShape();
 
 	OwningVoidgrid->OnPixelRemoved.AddDynamic(NewPart, &UPart::RemovePixel);
+	OwningVoidgrid->OnPixelAdded.AddDynamic(NewPart, &UPart::AddPixel);
 
 	return NewPart;
 }
@@ -215,36 +216,39 @@ void UPart::SetPixelFrozen(FIntPoint Location, bool Frozen)
  *
  * @param Location - The location of the pixel that was removed.
  */
-void UPart::RemovePixel(FIntPoint Location, bool bApplyChangeEffect)
+void UPart::RemovePixel(FIntPoint Location, bool bApplyChangeEffect, UPart* Part)
 {
-	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
-	if (Shape.Remove(RelativeLocation))
+	if (Part == this)
 	{
-
-		if (FrozenPixels.Contains(RelativeLocation))
+		GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
+		if (Shape.Remove(RelativeLocation))
 		{
-			FrozenPixels.Remove(RelativeLocation);
+
+			if (FrozenPixels.Contains(RelativeLocation))
+			{
+				FrozenPixels.Remove(RelativeLocation);
+			}
+
+			OnDamaged.Broadcast(bApplyChangeEffect);
+
+			// \/ Check functionality \/ /
+
+			//Check if there are enough pixels frozen for the part to not be functional
+			bool bFrozenNotFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) > (1 - GetData()->FunctionalityPercent);
+
+			if (bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent) && (bFrozenNotFunctionalCheck))
+			{
+				bFunctional = false;
+				OnFunctionalityLost.Broadcast(bApplyChangeEffect);
+			}
+
+			if (Shape.Num() == 0)
+			{
+				OnDestroyed.Broadcast(bApplyChangeEffect);
+			}
+
+			// /\ Check functionality /\ /
 		}
-
-		OnDamaged.Broadcast(bApplyChangeEffect);
-
-		// \/ Check functionality \/ /
-
-		//Check if there are enough pixels frozen for the part to not be functional
-		bool bFrozenNotFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) > (1 - GetData()->FunctionalityPercent);
-
-		if (bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent) && (bFrozenNotFunctionalCheck))
-		{
-			bFunctional = false;
-			OnFunctionalityLost.Broadcast(bApplyChangeEffect);
-		}
-
-		if (Shape.Num() == 0)
-		{
-			OnDestroyed.Broadcast(bApplyChangeEffect);
-		}
-
-		// /\ Check functionality /\ /
 	}
 }
 
@@ -253,31 +257,34 @@ void UPart::RemovePixel(FIntPoint Location, bool bApplyChangeEffect)
  *
  * @param Location - The location of the pixel that was added.
  */
-void UPart::AddPixel(FIntPoint Location, bool bApplyChangeEffect)
+void UPart::AddPixel(FIntPoint Location, bool bApplyChangeEffect, UPart* Part)
 {
-	GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
-	if (GetDefaultShape().Contains(RelativeLocation))
+	if (Part == this)
 	{
-		Shape.Add(RelativeLocation);
-		OnRepaired.Broadcast(bApplyChangeEffect);
-
-		// \/ Check functionality \/ /
-		
-		//Check if there are few enough pixels frozen for the part to be functional
-		bool bFrozenFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) <= (1 - GetData()->FunctionalityPercent);
-
-		if (!bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) >= GetData()->FunctionalityPercent) && (bFrozenFunctionalCheck))
+		GridLocationType RelativeLocation = GetTransform().InverseTransformGridLocation(Location);
+		if (GetDefaultShape().Contains(RelativeLocation))
 		{
-			bFunctional = true;
-			OnFunctionalityRestored.Broadcast(bApplyChangeEffect);
-		}
+			Shape.Add(RelativeLocation);
+			OnRepaired.Broadcast(bApplyChangeEffect);
 
-		if (Shape.Num() == GetDefaultShape().Num())
-		{
-			OnFullyRepaired.Broadcast(bApplyChangeEffect);
-		}
+			// \/ Check functionality \/ /
 
-		// /\ Check functionality /\ /
+			//Check if there are few enough pixels frozen for the part to be functional
+			bool bFrozenFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) <= (1 - GetData()->FunctionalityPercent);
+
+			if (!bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) >= GetData()->FunctionalityPercent) && (bFrozenFunctionalCheck))
+			{
+				bFunctional = true;
+				OnFunctionalityRestored.Broadcast(bApplyChangeEffect);
+			}
+
+			if (Shape.Num() == GetDefaultShape().Num())
+			{
+				OnFullyRepaired.Broadcast(bApplyChangeEffect);
+			}
+
+			// /\ Check functionality /\ /
+		}
 	}
 }
 
@@ -492,7 +499,7 @@ FPartTransform UPart::GetTransform()
 ////Copy comment from .h -Mabel Suggestion
 //float UPart::GetMass()
 //{
-//	//UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i"), TotalPartMass / GetDesiredShape().Num(), GetDesiredShape().Num());
+//	////UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i"), TotalPartMass / GetDesiredShape().Num(), GetDesiredShape().Num());
 //	return TotalPartMass / GetDesiredShape().Num();
 //}
 //
@@ -523,7 +530,7 @@ FPartTransform UPart::GetTransform()
 //	for (auto& i : GetSystems())
 //	{
 //		//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
-//		//UE_LOG(LogTemp, Warning, TEXT("All systems types get system by type thing %s"), *EnumPtr->GetDisplayNameTextByValue(i->GetType().GetValue()).ToString());
+//		////UE_LOG(LogTemp, Warning, TEXT("All systems types get system by type thing %s"), *EnumPtr->GetDisplayNameTextByValue(i->GetType().GetValue()).ToString());
 //		if (IsValid(i) && i->GetType() == Type)
 //		{
 //			FoundResourceSystem = i;
@@ -623,7 +630,7 @@ FPartTransform UPart::GetTransform()
 //		//Don't auto, also name iterator better (I yell at myself) -Mabel Suggestion (-Liam suggestion so I see this and don't forget)
 //		for (auto& i : CurrentSystems)
 //		{
-//			UE_LOG(LogTemp, Warning, TEXT("systems on destroy pixel %s"), *i->GetFName().ToString());
+//			//UE_LOG(LogTemp, Warning, TEXT("systems on destroy pixel %s"), *i->GetFName().ToString());
 //			i->RemovePixel(RelativeLoc + GetPartGridLocation());
 //		}
 //	}
@@ -676,17 +683,17 @@ FPartTransform UPart::GetTransform()
 //			{
 //				for (FIntPoint EachConnectionPoint : PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetResourceTypes().Find(i.Key)->GetIntPointArray())
 //				{
-//					//UE_LOG(LogTemp, Warning, TEXT("this part location %s"), *GetPartGridLocation().ToString());
-//					//UE_LOG(LogTemp, Warning, TEXT("Other part location %s"), *PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetPartGridLocation().ToString());
-//					//UE_LOG(LogTemp, Warning, TEXT("connection point relative to other part %s"), *EachConnectionPoint.ToString());
+//					////UE_LOG(LogTemp, Warning, TEXT("this part location %s"), *GetPartGridLocation().ToString());
+//					////UE_LOG(LogTemp, Warning, TEXT("Other part location %s"), *PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetPartGridLocation().ToString());
+//					////UE_LOG(LogTemp, Warning, TEXT("connection point relative to other part %s"), *EachConnectionPoint.ToString());
 //
 //					FIntPoint ConnectionPointRelativeToPartGrid = FVector2D(EachConnectionPoint).GetRotated(PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetRelativeRotation()).IntPoint() + PartGridComponent->GetPartGrid().Find(RelativePartGridLocation)->Part->GetPartGridLocation();
 //					
-//					//UE_LOG(LogTemp, Warning, TEXT("Connection point relative to part grid %s"), *ConnectionPointRelativeToPartGrid.ToString());
+//					////UE_LOG(LogTemp, Warning, TEXT("Connection point relative to part grid %s"), *ConnectionPointRelativeToPartGrid.ToString());
 //
 //					FIntPoint ConnectionPointRelativeToThisPart = FVector2D(ConnectionPointRelativeToPartGrid - GetPartGridLocation()).GetRotated(-GetRelativeRotation()).IntPoint();
 //
-//					//UE_LOG(LogTemp, Warning, TEXT("Connection point relative to this part %s"), *ConnectionPointRelativeToThisPart.ToString());
+//					////UE_LOG(LogTemp, Warning, TEXT("Connection point relative to this part %s"), *ConnectionPointRelativeToThisPart.ToString());
 //
 //					if (GetDesiredShape().Contains(ConnectionPointRelativeToThisPart))
 //					{
@@ -720,7 +727,7 @@ FPartTransform UPart::GetTransform()
 //void UPart::CreateNewSystem(TEnumAsByte<EResourceType> ResourceType)
 //{
 //	//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
-//	//UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameTextByValue(ResourceType.GetValue()).ToString());
+//	////UE_LOG(LogTemp, Warning, TEXT("Create new system type %s"), *EnumPtr->GetDisplayNameTextByValue(ResourceType.GetValue()).ToString());
 //
 //	//Make the new system, make sure it's the right type, and add the system to the list of systems on the player character
 //	UBaseResourceSystem* NewSystem = (NewObject<UBaseResourceSystem>());
@@ -735,7 +742,7 @@ FPartTransform UPart::GetTransform()
 //void UPart::AddToSystem(UBaseResourceSystem* System)
 //{
 //	//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
-//	//UE_LOG(LogTemp, Warning, TEXT("Add to system type %s"), *EnumPtr->GetDisplayNameTextByValue(System->GetType().GetValue()).ToString());
+//	////UE_LOG(LogTemp, Warning, TEXT("Add to system type %s"), *EnumPtr->GetDisplayNameTextByValue(System->GetType().GetValue()).ToString());
 //
 //	if (!Systems.Contains(System))
 //	{
@@ -745,23 +752,23 @@ FPartTransform UPart::GetTransform()
 //		//If there is already a system of this resource type on this part, then merge System with that system
 //		if ((IsValid(GetSystemByType(System->GetType()))) && (GetSystemByType(System->GetType()) != System))
 //		{
-//			//UE_LOG(LogTemp, Warning, TEXT("Merge systems called"));
+//			////UE_LOG(LogTemp, Warning, TEXT("Merge systems called"));
 //			//GetSystemByType(System->GetType())->MergeSystems(System);
 //			//Systems.Add(GetSystemByType(System->GetType()));
 //			System->MergeSystems(GetSystemByType(System->GetType()));
 //			Systems.Add(System);
-//			UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString());
+//			//UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString());
 //		}
 //
 //		//else just add it to the list of systems on this part.
 //		else
 //		{
 //			System->AddPart(this);
-//			//UE_LOG(LogTemp, Warning, TEXT("Merge systems not called"));
-//			//UE_LOG(LogTemp, Warning, TEXT("------------------------"));
+//			////UE_LOG(LogTemp, Warning, TEXT("Merge systems not called"));
+//			////UE_LOG(LogTemp, Warning, TEXT("------------------------"));
 //			Systems.Add(System);
 //
-//			UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString())
+//			//UE_LOG(LogTemp, Warning, TEXT("(not emplace) part added to system %s system added to %s"), *GetFName().ToString(), *System->GetFName().ToString())
 //		}
 //	}
 //}
@@ -786,10 +793,10 @@ FPartTransform UPart::GetTransform()
 //{
 //	/*for (auto& i : NounClasses)
 //	{
-//		UE_LOG(LogTemp, Warning, TEXT("Noun classes %s"), *i.Get()->GetDisplayNameText().ToString())
+//		//UE_LOG(LogTemp, Warning, TEXT("Noun classes %s"), *i.Get()->GetDisplayNameText().ToString())
 //	}
 //
-//	UE_LOG(LogTemp, Warning, TEXT("part class %s"), *this->GetClass()->GetDisplayNameText().ToString())*/
+//	//UE_LOG(LogTemp, Warning, TEXT("part class %s"), *this->GetClass()->GetDisplayNameText().ToString())*/
 //
 //	// I know this is gross but I was trying to get the game playable when I made this. I realized that parts that you didn't have the Voidsong for would activate if you
 //	// didn't play any nouns even though they shouldn't.
@@ -808,7 +815,7 @@ FPartTransform UPart::GetTransform()
 //		}
 //		else if (IsValid(Cast<UBaseNounVoidsong>(i)))
 //		{
-//			//UE_LOG(LogTemp, Warning, TEXT("noun voidsong %s"), *i->GetFName().ToString())
+//			////UE_LOG(LogTemp, Warning, TEXT("noun voidsong %s"), *i->GetFName().ToString())
 //			AvailableNouns.Emplace(Cast<UBaseNounVoidsong>(i)->Noun);
 //		}
 //	}

@@ -31,16 +31,19 @@ protected:
 	void ApplyMoldToTarget();
 
 	/**
+	 * Sets the mold this is editing.
+	 * 
+	 * @param NewMold - The new mold to edit.
+	 */
+	UFUNCTION(BlueprintCallable)
+	void SetMold(TArray<FMinimalPartInstanceData> NewMold);
+	void SetMold(MinimalPixelMoldDataType NewMold);
+
+	/**
 	 * Sets the the mold of this to be the same as target's mold.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void LoadMoldFromTarget();
-
-	/**
-	 * Saves the current mold to the target Voidgrid
-	 */
-	UFUNCTION(BlueprintCallable)
-	void SaveMoldToTarget();
 
 	/**
 	 * Saves the mold of this to a save slot of the given name.
@@ -146,7 +149,7 @@ private:
 };
 
 /**
- * A save game class for storing a PixelMold
+ * A save game class for storing a LocationsToPixelState
  */
 UCLASS()
 class VOIDSINGER_API UPixelMoldSave : public USaveGame
