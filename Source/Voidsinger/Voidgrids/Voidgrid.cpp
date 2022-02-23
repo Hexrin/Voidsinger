@@ -801,10 +801,10 @@ const bool AVoidgrid::UseResources(TMap<EResourceType, float> UsedResources)
 	// \/ Check if all resources can be used \/ /
 	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
 	{
-		if (!Resources.Contains(EachUsedResource.Key) | Resources.FindRef(EachUsedResource.Key) < EachUsedResource.Value)
+		if ((!Resources.Contains(EachUsedResource.Key)) | (Resources.FindRef(EachUsedResource.Key) < EachUsedResource.Value))
 		{
 			//Return if not all resources can be used.
-			return;
+			return false;
 		}
 	}
 	// /\ Check if all resources can be used /\ /
@@ -812,9 +812,12 @@ const bool AVoidgrid::UseResources(TMap<EResourceType, float> UsedResources)
 	// \/ Use the resources \/ /
 	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
 	{
+		//Emplace will override the previous key value pair
 		Resources.Emplace(EachUsedResource.Key, Resources.FindRef(EachUsedResource.Key) - EachUsedResource.Value);
 	}
 	// /\ Use the resources /\ /
+
+	return true;
 }
 
 /* /\ Resource Management /\ *\
