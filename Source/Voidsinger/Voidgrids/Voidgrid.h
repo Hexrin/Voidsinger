@@ -48,9 +48,19 @@ public:
 		{
 			TargetPartOfPixel = UPart::GetNullPart();
 		}
+		SetTargetPart(TargetPartOfPixel);
+		SetCurrentPart(PartOfPixel);
+		SetIntact(bPixelIntact);
+	}
 
-
-		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), TargetPartOfPixel->GetOuter());//Outer may cause memory leak. Im not sure
+	//Constructs a FGridPixelData using a part.
+	FGridPixelData(UPart* TargetPartOfPixel, bool bPixelIntact = false)
+	{
+		if (!IsValid(TargetPartOfPixel))
+		{
+			TargetPartOfPixel = UPart::GetNullPart();
+		}
+		UPart* PartOfPixel = TargetPartOfPixel;
 
 		SetTargetPart(TargetPartOfPixel);
 		SetCurrentPart(PartOfPixel);
@@ -58,20 +68,10 @@ public:
 	}
 
 	//Constructs a FGridPixelData using a part.
-	FGridPixelData(UPart* TargetPartOfPixel = nullptr, bool bPixelIntact = false)
+	FGridPixelData(bool bPixelIntact = false)
 	{
-		UPart* PartOfPixel = UPart::GetNullPart();
-
-		if (!IsValid(TargetPartOfPixel))
-		{
-			TargetPartOfPixel = UPart::GetNullPart();
-		}
-
-
-		Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), TargetPartOfPixel->GetOuter());//Outer may cause memory leak. Im not sure
-
-		SetTargetPart(TargetPartOfPixel);
-		SetCurrentPart(PartOfPixel);
+		SetTargetPart(UPart::GetNullPart());
+		SetCurrentPart(UPart::GetNullPart());
 		SetIntact(bPixelIntact);
 	}
 
@@ -95,6 +95,10 @@ public:
 		if (bNewIntact != bIntact)
 		{			
 			Temperature = 0;
+		}
+
+		if (!bNewIntact && GetTargetPart() != UPart::GetNullPart())
+		{
 			SetCurrentPart(GetTargetPart());
 		}
 
@@ -133,6 +137,14 @@ public:
 	}
 
 	/**
+	 * Gets whether or not this is curently the target part.
+	 */
+	bool IsTargetPart()
+	{
+		return bIntact && CurrentPart == TargetPart;
+	}
+
+	/**
 	 * Gets the part of this pixel.
 	 *
 	 * @return The part of this pixel.
@@ -155,8 +167,12 @@ public:
 			NewPart = UPart::GetNullPart();
 		}
 
-		if (CurrentPart != NewPart && IsValid(Material) && IsValid(NewPart) && IsValid(NewPart->GetData()) && IsValid(NewPart->GetData()->Texture))
+		if (NewPart != UPart::GetNullPart() && CurrentPart != NewPart && IsValid(NewPart) && IsValid(NewPart->GetData()) && IsValid(NewPart->GetData()->Texture))
 		{
+			if (!Material->IsValidLowLevel())
+			{
+				Material = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(NULL, TEXT("/Game/2DAssets/Parts/Mat_BaseFreeformPart.Mat_BaseFreeformPart"), NULL, LOAD_None, NULL), NewPart->GetOuter(), FName(TEXT("Pixel_Mat")));
+			}
 			Material->SetTextureParameterValue(TEXT("PartTexture"), NewPart->GetData()->Texture);
 		}
 		CurrentPart = NewPart;
@@ -304,7 +320,7 @@ FORCEINLINE uint32 GetTypeHash(const FVoidgridState& Thing)
 \* \/ ========= \/ */
 
 //Used for dispatching events requireing a grid locaiton.
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGridLocationDelegate, FIntPoint, GridLocaction, bool, bApplyChangeEffect);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FGridLocationDelegate, FIntPoint, GridLocaction, bool, bApplyChangeEffect, UPart*, Part);
 //Used for dispatching events requireing mass information.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMassDelegate, float, Mass, FVector2D, CenterOfMass, float, MomentOfInertia);
 //Used for dispatching simple events with no data.
@@ -559,7 +575,10 @@ private:
 	void ClearVoidgrid();
 
 	//Stores the Pixel Mold of this.
-	PixelMoldType PixelMold;
+	PixelMoldType LocationsToPixelState;
+
+	//Stores the target parts and shape of this.
+	TSet<FMinimalPartInstanceData> TargetParts;
 
 	//Stores the Locations of all damaged and temporary part Pixels.
 	TSet<GridLocationType> MutablePixels;
@@ -643,6 +662,10 @@ private:
 	//Stores the default triangles of a single pixel mesh
 	UPROPERTY()
 	TArray<int32> PixelTriangles;
+
+	//Stores number of mesh sections that have been created.
+	UPROPERTY()
+	int32 MeshSectionCounter { 0 };
 
 	/* /\ Pixel Mesh /\ *\
 	\* ---------------- */

@@ -22,7 +22,29 @@ void UPixelMoldEditorBase::ApplyMoldToTarget()
 	if (IsValid(Target))
 	{
 		Target->SetPixelMold(Mold);
-		SaveMoldToTarget();
+	}
+}
+
+/**
+ * Sets the mold this is editing.
+ *
+ * @param NewMold - The new mold to edit.
+ */
+void UPixelMoldEditorBase::SetMold(TArray<FMinimalPartInstanceData> NewMold)
+{
+	SetMold(TSet<FMinimalPartInstanceData>(NewMold));
+}
+void UPixelMoldEditorBase::SetMold(MinimalPixelMoldDataType NewMold)
+{
+	Mold = NewMold;
+
+	PartLocations.Empty();
+	for (FMinimalPartInstanceData PartData : Mold)
+	{
+		for (GridLocationType PartLocation : PartData.Data->Shape)
+		{
+			PartLocations.Emplace(PartData.Transform.TransformGridLocation(PartLocation), PartData);
+		}
 	}
 }
 
@@ -31,16 +53,9 @@ void UPixelMoldEditorBase::ApplyMoldToTarget()
  */
 void UPixelMoldEditorBase::LoadMoldFromTarget()
 {
-	Mold = Target->GetPixelMold();
-	OnMoldUpdated(Mold.Array(), Mold.Array(), false);
-}
+	SetMold(Target->GetPixelMold());
 
-/**
- * Saves the current mold to the target Voidgrid
- */
-void UPixelMoldEditorBase::SaveMoldToTarget()
-{
-	Target->SaveState();
+	OnMoldUpdated(Mold.Array(), Mold.Array(), false);
 }
 
 /**
@@ -71,7 +86,7 @@ bool UPixelMoldEditorBase::LoadMold(FString MoldName)
 	UPixelMoldSave* MoldSave = Cast<UPixelMoldSave>(UGameplayStatics::LoadGameFromSlot(MoldSaveSlotNamePrefix.Append(MoldName), 0));
 	if (MoldSave)
 	{
-		MoldSave->Data = Mold;
+		SetMold(MoldSave->Data);
 		return true;
 	}
 	return false;
@@ -146,6 +161,7 @@ bool UPixelMoldEditorBase::PlacePart(UPartData* Part, FPartTransform Transform, 
 		{
 			PartLocations.Emplace(Transform.TransformGridLocation(ShapeComponent), PartBeingAdded);
 		}
+
 		OnMoldUpdated(Mold.Array(), TArray<FMinimalPartInstanceData>(&PartBeingAdded, 1), false);
 		return true;
 	}
@@ -182,14 +198,8 @@ bool UPixelMoldEditorBase::RemovePart(FIntPoint Location, bool bCallUpdatedEvent
 
 
 	FMinimalPartInstanceData PartToRemove = PartLocations.FindRef(Location);
-	if (Mold.Contains(PartToRemove))
+	if (ensureMsgf(Mold.Contains(PartToRemove), TEXT("--- Removing of %s, %s, %i Faild ---\n\t\tSet hashing failed."), *PartToRemove.Data->GetFName().ToString(), *(PartToRemove.Transform.GetGridLocation().ToString()), (int32)PartToRemove.Transform.Rotation))
 	{
-		Mold.Remove(PartToRemove);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("--- Removing of %s, %s, %i Faild ---\n\t\tSet hashing failed. Cause: unkown"), *PartToRemove.Data->GetFName().ToString(), *(PartToRemove.Transform.GetGridLocation().ToString()), (int32)PartToRemove.Transform.Rotation);
-		Mold.Compact();
 		Mold.Remove(PartToRemove);
 	}
 

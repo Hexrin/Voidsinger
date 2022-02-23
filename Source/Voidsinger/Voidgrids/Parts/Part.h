@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "PartData.h"
+#include "Internationalization/TextLocalizationResource.h"
 #include "Part.generated.h"
 
 class AVoidgrid;
@@ -81,15 +82,17 @@ struct VOIDSINGER_API FPartTransform
 {
 	GENERATED_BODY()
 
-protected:
+public:
+	//Stores the rotation of the part.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPartRotation Rotation;
+
+//protected:
 	//Stores the Location in IntPoint form for accessablity in blueprints.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FIntPoint Location;
 
 public:
-	//Stores the rotation of the part.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EPartRotation Rotation;
 
 	//Gets the location of the part.
 	GridLocationType GetGridLocation() const
@@ -143,6 +146,14 @@ public:
 		return NewShape;
 	}
 
+	FString ToString() const
+	{
+		FString Return = Location.ToString();
+		Return.AppendInt((uint8)(Rotation));
+		//Return->
+		return Return;
+	}
+
 	bool operator==(const FPartTransform& Other) const
 	{
 		return Location == Other.Location && Rotation == Other.Rotation;
@@ -155,8 +166,7 @@ uint32 GetTypeHash(const FPartTransform& Thing);
 #else // optimize by inlining in shipping and development builds
 FORCEINLINE uint32 GetTypeHash(const FPartTransform& Thing)
 {
-	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FPartTransform));
-	return Hash;
+	return FTextLocalizationResource::HashString(Thing.ToString());
 }
 #endif
 
@@ -245,7 +255,7 @@ public:
 	 *
 	 * @return The shape of this part.
 	 */
-	FORCEINLINE float GetPixelMass() { return Data->Mass/GetDefaultShape().Num(); };
+	FORCEINLINE float GetPixelMass() { return IsValid(Data) ? Data->Mass/GetDefaultShape().Num() : 0; };
 
 	/**
 	 * Sets whether a pixel on this part is frozen or not
@@ -302,7 +312,7 @@ private:
 	 * @param Location - The location of the pixel that was removed.
 	 */
 	UFUNCTION()
-	void RemovePixel(FIntPoint Location, bool bApplyChangeEffect);
+	void RemovePixel(FIntPoint Location, bool bApplyChangeEffect, UPart* Part);
 
 	/**
 	 * Updates shape after a pixel of this part has been added.
@@ -310,7 +320,7 @@ private:
 	 * @param Location - The location of the pixel that was added.
 	 */
 	UFUNCTION()
-	void AddPixel(FIntPoint Location, bool bApplyChangeEffect);
+	void AddPixel(FIntPoint Location, bool bApplyChangeEffect, UPart* Part);
 
 	/**
 	 * Stores whether this is functional.
@@ -370,13 +380,14 @@ struct FMinimalPartInstanceData
 	GENERATED_BODY()
 
 public:
+	//Stores the location and rotation of the part
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	FPartTransform Transform;
+
 	//Stores the class of the part
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	UPartData* Data;
 
-	//Stores the location and rotation of the part
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-	FPartTransform Transform;
 
 	FMinimalPartInstanceData(UPartData* PartData = nullptr, FPartTransform PartTransform = FPartTransform())
 	{
@@ -394,6 +405,11 @@ public:
 	{
 		return Data == Other.Data && Transform == Other.Transform;
 	}
+
+	FString ToString() const
+	{
+		return Transform.ToString() + Data->GetName();
+	}
 };
 
 //Hash function for FMinimalPartInstanceData
@@ -402,8 +418,7 @@ uint32 GetTypeHash(const FMinimalPartInstanceData& Thing);
 #else // optimize by inlining in shipping and development builds
 FORCEINLINE uint32 GetTypeHash(const FMinimalPartInstanceData& Thing)
 {
-	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FMinimalPartInstanceData));
-	return Hash;
+	return FTextLocalizationResource::HashString(Thing.ToString());
 }
 #endif
 
@@ -457,6 +472,19 @@ struct FPartInstanceData
 		MinimalData = FMinimalPartInstanceData(Part->GetData(), Part->GetTransform());
 		Shape = Part->GetShape();
 	}
+
+	FString ToString() const
+	{
+		FString ShapeString;
+
+		for (FIntPoint EachIntPoint : Shape)
+		{
+			ShapeString.Append(EachIntPoint.ToString());
+		}
+
+		return MinimalData.ToString() + ShapeString;
+	}
+
 private:
 	//Stores the data required to replicate this part
 	UPROPERTY()
@@ -473,8 +501,7 @@ uint32 GetTypeHash(const FPartInstanceData& Thing);
 #else // optimize by inlining in shipping and development builds
 FORCEINLINE uint32 GetTypeHash(const FPartInstanceData& Thing)
 {
-	uint32 Hash = FCrc::MemCrc32(&Thing, sizeof(FPartInstanceData));
-	return Hash;
+	return FTextLocalizationResource::HashString(Thing.ToString());
 }
 #endif
 

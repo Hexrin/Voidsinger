@@ -15,7 +15,7 @@
 void AShip::BeginPlay()
 {
 	Super::BeginPlay();
-	LoadState(true);
+	LoadState();
 }
 
 /* /\ Initialization /\ *\
@@ -124,7 +124,7 @@ UVoidsong* AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const
 		else
 		{
 			//Print an error message if unable to play due to invalid game mode or world
-			UE_LOG(LogTemp, Warning, TEXT("Failed to play Voidsong. Either the world or the game mode is null on ship %s"), *GetFName().ToString());
+			UE_LOG(LogTemp, Error, TEXT("Failed to play Voidsong. Either the world or the game mode is null on ship %s"), *GetFName().ToString());
 		}
 		// \/ Make this ship unable to play Voidsongs until the duration is up \/ /
 
@@ -175,25 +175,17 @@ void AShip::SaveState()
 		SaveGameInstance->Location = FVector2D(GetActorLocation());
 
 		UGameplayStatics::SaveGameToSlot(SaveGameInstance, GetSaveStateSlotName(), 0);
-
 	}
 }
 
 /**
  * Loads this ships state.
  */
-void AShip::LoadState(bool bLoadMold)
+void AShip::LoadState()
 {
 	if (UShipSaveState* SaveGameInstance = Cast<UShipSaveState>(UGameplayStatics::LoadGameFromSlot(GetSaveStateSlotName(), 0)))
 	{
-		if (bLoadMold)
-		{
-			SetState(SaveGameInstance->VoidgridState);
-		}
-		else
-		{
-			SetState(FVoidgridState(GetPixelMold(), SaveGameInstance->VoidgridState.State));
-		}
+		SetState(SaveGameInstance->VoidgridState);
 	}
 }
 
