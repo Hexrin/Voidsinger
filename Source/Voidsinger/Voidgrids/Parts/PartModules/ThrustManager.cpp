@@ -8,7 +8,7 @@
 
 UThrustManager::UThrustManager()
 {
-	//Voidgrid = Cast<AVoidgrid>(GetOuter());
+	Voidgrid = Cast<AVoidgrid>(GetOuter());
 }
 
 /* ------------------------ *\
@@ -42,15 +42,22 @@ float UThrustManager::TimeToLocation(const FVector2D Location, const bool bAccel
 	float a = 1;
 	float timetoVelocity = 0;
 
-	if (bAccelerating == true) {
+	if (bAccelerating) 
+	{
 		a = (GetMaximumAccelerationInDirection(FVector2D(Voidgrid->GetActorLocation()) - (Location)));
+		if (!(Voidgrid->GetVelocity().GetSafeNormal2D()).Equals((((Voidgrid->GetVelocity())) - FVector(Location, 0)).GetSafeNormal()))
+		{
+			timetoVelocity = (((FVector2D(Voidgrid->GetVelocity())) - (((FVector2D(Voidgrid->GetVelocity())) - (Location)))) / (a)).Size();
+			b = ((Voidgrid->GetVelocity()) - FVector(Location, 0)).Size();
+		}
 	}
-	
-	if (!(Voidgrid->GetVelocity().GetSafeNormal2D()).Equals((((Voidgrid->GetVelocity())) - FVector(Location,0)).GetSafeNormal())) {
-		timetoVelocity = (((FVector2D(Voidgrid->GetVelocity())) - (((FVector2D(Voidgrid->GetVelocity())) - (Location)))) / (a)).Size();
-		b = ((Voidgrid->GetVelocity()) - FVector(Location, 0)).Size();
+	else
+	{
+		if (!(Voidgrid->GetVelocity().GetSafeNormal2D()).Equals((((Voidgrid->GetVelocity())) - FVector(Location, 0)).GetSafeNormal()))
+		{
+			return -1;
+		}
 	}
-
 	float timeToLocation = (((-1 * b) + (sqrt((b * b) - (4 * a * c)))) / (2 * a));
 	return (timetoVelocity + timeToLocation);
 }
