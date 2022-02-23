@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PartModule.h"
+#include "Voidsinger/Voidgrids/Parts/PartModules/PartModule.h"
 #include "Voidsinger/Voidsongs/Voidsong.h"
 #include "ActivatablePartModule.generated.h"
 
