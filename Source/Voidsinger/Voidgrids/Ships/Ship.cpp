@@ -124,7 +124,7 @@ UVoidsong* AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const
 		else
 		{
 			//Print an error message if unable to play due to invalid game mode or world
-			UE_LOG(LogTemp, Warning, TEXT("Failed to play Voidsong. Either the world or the game mode is null on ship %s"), *GetFName().ToString());
+			UE_LOG(LogTemp, Error, TEXT("Failed to play Voidsong. Either the world or the game mode is null on ship %s"), *GetFName().ToString());
 		}
 		// \/ Make this ship unable to play Voidsongs until the duration is up \/ /
 

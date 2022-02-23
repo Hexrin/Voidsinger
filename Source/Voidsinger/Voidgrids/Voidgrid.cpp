@@ -58,27 +58,6 @@ void AVoidgrid::Tick(float DeltaTime)
 	for (int EachHeatTickPassed = 0; EachHeatTickPassed < DeltaHeatTime / HeatTick; DeltaHeatTime -= HeatTick)
 	{
 		SpreadHeat();
-
-		UE_LOG(LogTemp, Warning, TEXT("------ \\/ Mutable Pixels \\/ -----"));
-		for (FIntPoint Pixel : MutablePixels)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *Pixel.ToString());
-		}
-		UE_LOG(LogTemp, Warning, TEXT("------ /\\ Mutable Pixels /\\ -----\n"));
-
-		UE_LOG(LogTemp, Warning, TEXT("------ \\/ Parts \\/ -----"));
-		for (UPart* Part : Parts)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *Part->GetName());
-		}
-		UE_LOG(LogTemp, Warning, TEXT("------ /\\ Parts /\\ -----\n"));
-
-		UE_LOG(LogTemp, Warning, TEXT("------ \\/ Temp Parts \\/ -----"));
-		for (UPart* Part : TemporaryParts)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *Part->GetName());
-		}
-		UE_LOG(LogTemp, Warning, TEXT("------ /\\ Temp Parts /\\ -----\n"));
 	}
 	
 
