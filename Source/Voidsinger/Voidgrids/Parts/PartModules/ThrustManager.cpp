@@ -35,18 +35,24 @@ float UThrustManager::TimeToLinearVelocity(const FVector2D Velocity) const
  * @param Location - The target location to predict the time to reach.
  * @return The time it will take to reach a certain location. Returns -1 if it is impossible to reach the target location.
  */
-float UThrustManager::TimeToLocation(const FVector2D Location, const bool bAccelerating)
+float UThrustManager::TimeToLocation(const FVector2D Location, const bool bAccelerating) const
 {
 	float c = (Voidgrid->GetActorLocation().Size() - (Location).Size());
 	float b = (Voidgrid->GetVelocity().Size());
-	float a = (GetMaximumAccelerationInDirection(FVector2D(Voidgrid->GetActorLocation()) - (Location)));
-	if ((!Voidgrid->GetVelocity().GetSafeNormal2D()).Equals(((FVector2D(Voidgrid->GetVelocity())) - (Location)).GetSafeNormal()))
-	{
+	float a = 1;
+	float timetoVelocity = 0;
 
-	/*w
-	float timeToLocation = (((-1 * b) + (sqrt((b * b) - (4 * a * c)))) / (2 * a));
-	return timeToLocation;
+	if (bAccelerating == true) {
+		a = (GetMaximumAccelerationInDirection(FVector2D(Voidgrid->GetActorLocation()) - (Location)));
+	}
 	
+	if (!(Voidgrid->GetVelocity().GetSafeNormal2D()).Equals((((Voidgrid->GetVelocity())) - FVector(Location,0)).GetSafeNormal())) {
+		timetoVelocity = (((FVector2D(Voidgrid->GetVelocity())) - (((FVector2D(Voidgrid->GetVelocity())) - (Location)))) / (a)).Size();
+		b = ((Voidgrid->GetVelocity()) - FVector(Location, 0)).Size();
+	}
+
+	float timeToLocation = (((-1 * b) + (sqrt((b * b) - (4 * a * c)))) / (2 * a));
+	return (timetoVelocity + timeToLocation);
 }
 /**
  * Predicts the time it will take to reach a certain angular velocity given the Voidgrid's thrusters.

@@ -532,7 +532,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UThrustManager> ThrustManagerClass;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UThrustManager* ThrustManager;
 
 private:

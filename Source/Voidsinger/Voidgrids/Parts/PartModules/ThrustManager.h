@@ -85,9 +85,9 @@ class VOIDSINGER_API UThrustManager : public UObject
 	UFUNCTION(BlueprintPure)
 	float TimeToOrientation(const float Orientation, const bool bAccelerating) const;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void AddManagedThrustSource(FThrustSource ThrustSource);
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void RemoveManagedThrustSource(FThrustSource ThrustSource);
 
 private:
