@@ -40,11 +40,10 @@ float UThrustManager::TimeToLocation(const FVector2D Location, const bool bAccel
 	float c = (Voidgrid->GetActorLocation().Size() - (Location).Size());
 	float b = (Voidgrid->GetVelocity().Size());
 	float a = (GetMaximumAccelerationInDirection(FVector2D(Voidgrid->GetActorLocation()) - (Location)));
-	
-	if (Voidgrid->GetVelocity().Normalize() /= (FVector2D(Voidgrid->GetActorLocation()) - (Location)).Normalize
+	if ((!Voidgrid->GetVelocity().GetSafeNormal2D()).Equals(((FVector2D(Voidgrid->GetVelocity())) - (Location)).GetSafeNormal()))
 	{
 
-	}
+	/*w
 	float timeToLocation = (((-1 * b) + (sqrt((b * b) - (4 * a * c)))) / (2 * a));
 	return timeToLocation;
 	
