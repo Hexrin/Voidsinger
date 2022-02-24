@@ -5,6 +5,7 @@
 
 #include "ThrusterModule.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
+#include <Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
 
 UThrustManager::UThrustManager()
 {
@@ -38,24 +39,31 @@ float UThrustManager::TimeToLinearVelocity(const FVector2D Velocity) const
 float UThrustManager::TimeToLocation(const FVector2D Location, const bool bAccelerating) const
 {
 	float c = (Voidgrid->GetActorLocation().Size() - (Location).Size());
-	float b = (Voidgrid->GetVelocity().Size());
+	float b = (Voidgrid->LinearVelocity.Size());
 	float a = 1;
 	float timetoVelocity = 0;
 
 	if (bAccelerating) 
 	{
-		a = (GetMaximumAccelerationInDirection(FVector2D(Voidgrid->GetActorLocation()) - (Location)));
-		if (!(Voidgrid->GetVelocity().GetSafeNormal2D()).Equals((((Voidgrid->GetVelocity())) - FVector(Location, 0)).GetSafeNormal()))
+		// a = (GetMaximumAccelerationInDirection(FVector2D(Voidgrid->GetActorLocation()) - (Location)));
+		if ((FVector(Voidgrid->LinearVelocity.GetSafeNormal(), 0) - (UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0)))).Size() != 0)
 		{
-			timetoVelocity = (((FVector2D(Voidgrid->GetVelocity())) - (((FVector2D(Voidgrid->GetVelocity())) - (Location)))) / (a)).Size();
-			b = ((Voidgrid->GetVelocity()) - FVector(Location, 0)).Size();
+
+		if (GetMaximumAccelerationInDirection(FVector2D((FVector(Voidgrid->LinearVelocity, 0)) - (((UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0))))))) =!= 0)
+			timetoVelocity = (((FVector(Voidgrid->LinearVelocity,0)) - (((UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0)))))) / (a)).Size();
+			b = ((Voidgrid->LinearVelocity) - (Location)).Size();
+		}
+		else
+		{
+			return -1;
 		}
 	}
 	else
 	{
-		if (!(Voidgrid->GetVelocity().GetSafeNormal2D()).Equals((((Voidgrid->GetVelocity())) - FVector(Location, 0)).GetSafeNormal()))
+		if ((FVector(Voidgrid->LinearVelocity.GetSafeNormal(), 0) - (UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0)))).Size() != 0)
 		{
 			return -1;
+
 		}
 	}
 	float timeToLocation = (((-1 * b) + (sqrt((b * b) - (4 * a * c)))) / (2 * a));
