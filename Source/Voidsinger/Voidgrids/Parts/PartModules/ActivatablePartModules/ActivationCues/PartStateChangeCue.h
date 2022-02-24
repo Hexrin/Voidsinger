@@ -36,7 +36,7 @@ ENUM_CLASS_FLAGS(EPartStateChange);
 /**
  * Subclass of the base activation cue that is activated when the part state changed
  */
-UCLASS()
+UCLASS(BlueprintType)
 class VOIDSINGER_API UPartStateChangeCue : public UBaseActivationCue
 {
 	GENERATED_BODY()
@@ -53,14 +53,14 @@ private:
 	/*
 	 * Broadcasts the "OnActivate" delegate
 	 * 
-	 * @param bApplyChangeEffect - Allows this function to bind to the part state changed delegates. The value is not used.
+	 * @param bApplyChangeEffect - Whether or not to actually call the delegate
 	 */
 	void BroadcastDelegate(bool bApplyChangeEffect);
 
 public:
 
 	//Stores which part states to broadcast the delegate from
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Part State")
 	EPartStateChange PartStates;
 
 };

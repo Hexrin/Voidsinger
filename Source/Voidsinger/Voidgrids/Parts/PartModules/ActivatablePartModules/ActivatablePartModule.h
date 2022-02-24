@@ -6,6 +6,7 @@
 #include "Voidsinger/Voidgrids/Parts/PartModules/PartModule.h"
 #include "Voidsinger/Voidsongs/Voidsong.h"
 #include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/PartActivationData.h"
+#include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivationCues/BaseActivationCue.h"
 #include "ActivatablePartModule.generated.h"
 
 
@@ -105,36 +106,37 @@ protected:
 public:
 	// \/ Activate \/ /
 
+	void Activate(const FPartActivationData Data);
 	/**
 	 * Calls the "OnActivate" function with an Effectiveness of 1 so the part module's functionality is executed.
 	 */
-	void Activate(bool bApplyEffect = true);
+	//void Activate(bool bApplyEffect = true);
 
-	/**
-	 * Calls the "OnActivate" function so the part module's functionality is executed
-	 *
-	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
-	 */
-	UFUNCTION(BlueprintCallable, DisplayName = "Activate", Category = "Activation")
-	void ActivateWithEffectiveness(float Effectiveness);
+	///**
+	// * Calls the "OnActivate" function so the part module's functionality is executed
+	// *
+	// * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
+	// */
+	//UFUNCTION(BlueprintCallable, DisplayName = "Activate", Category = "Activation")
+	//void ActivateWithEffectiveness(float Effectiveness);
 
-	/**
-	 * Calls the "OnActivate" function so the part module's functionality is executed
-	 *
-	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
-	 * @param Vector - The direction to activate this part in.
-	 * @param Rotation - The rotation of the effect of this voidsong.
-	 */
-	UFUNCTION(BlueprintCallable, DisplayName = "Activate", Category = "Activation")
-	void ActivateWithEffectivenessVectorAndRotation(float Effectiveness, FVector2D Vector, float Rotation);
+	///**
+	// * Calls the "OnActivate" function so the part module's functionality is executed
+	// *
+	// * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
+	// * @param Vector - The direction to activate this part in.
+	// * @param Rotation - The rotation of the effect of this voidsong.
+	// */
+	//UFUNCTION(BlueprintCallable, DisplayName = "Activate", Category = "Activation")
+	//void ActivateWithEffectivenessVectorAndRotation(float Effectiveness, FVector2D Vector, float Rotation);
 
-	/**
-	 * Calls the "OnActivate" function with the Verbs played in a Voidsong so the part module's functionality of executed
-	 * 
-	 * @param Verbs - The Verbs played in the Voidsong
-	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
-	 */
-	void ActivateFromVoidsong(const TArray<UBaseVerbMotif*> Verbs, float Effectiveness);
+	///**
+	// * Calls the "OnActivate" function with the Verbs played in a Voidsong so the part module's functionality of executed
+	// * 
+	// * @param Verbs - The Verbs played in the Voidsong
+	// * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
+	// */
+	//void ActivateFromVoidsong(const TArray<UBaseVerbMotif*> Verbs, float Effectiveness);
 
 	// /\ Activate /\ /
 
@@ -155,15 +157,18 @@ public:
 	void BindToDelegates();
 
 	/**
-	 * Checks whether to bind to the Voidsong given by seeing if this module statisfies the Voidsong conditions. If it does, ActivateWithEffectiveness is bound to the relavent VoidsongCues.
+	 * Checks whether to bind to the Voidsong given by seeing if this module statisfies the Voidsong conditions. If it does, Activate is bound to the relavent VoidsongCues.
 	 *
 	 * @param Voidsong - The Voidsong to bind to
 	 */
 	void BindToVoidsong(UVoidsong* Voidsong);
 
+	UPROPERTY(EditAnywhere, Category = "DelegateBinding", Instanced)
+	TArray<UBaseActivationCue*> ActivationCues;
+
 	// The events to bind Activate to
-	UPROPERTY(EditAnywhere, Category = "DelegateBinding")
-	EActivationCue ActivationCues;
+	//UPROPERTY(EditAnywhere, Category = "DelegateBinding")
+	//EActivationCue ActivationCues;
 
 	// The Voidsong events to bind Activate to
 	UPROPERTY(EditAnywhere, Category = "DelegateBinding")

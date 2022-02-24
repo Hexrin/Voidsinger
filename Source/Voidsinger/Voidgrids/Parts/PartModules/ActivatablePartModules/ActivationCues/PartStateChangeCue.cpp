@@ -47,11 +47,14 @@ void UPartStateChangeCue::Initialize(UPart* OwningPart)
 /*
  * Broadcasts the "OnActivate" delegate
  *
- * @param bApplyChangeEffect - Allows this function to bind to the part state changed delegates. The value is not used.
+ * @param bApplyChangeEffect - Whether or not to actually call the delegate
  */
 void UPartStateChangeCue::BroadcastDelegate(bool bApplyChangeEffect)
 {
-	OnActivate.Broadcast(FPartActivationData());
+	if (bApplyChangeEffect)
+	{
+		OnActivate.Broadcast(FPartActivationData());
+	}
 }
 
 /* /\ =================== /\ *\
