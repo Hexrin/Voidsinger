@@ -16,10 +16,14 @@ class UPart;
 //Broadcasts the activation data when this activation cue is called
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FActivationCue, FPartActivationData, ActivationData);
 
+/* \/ ================== \/ *\
+|  \/ UBaseActivationCue \/  |
+\* \/ ================== \/ */
+
 /**
  * Base class for activation cues. Activation cues contain delegates that part modules can bind to.
  */
-UCLASS()
+UCLASS(EditInlineNew, Blueprintable)
 class VOIDSINGER_API UBaseActivationCue : public UObject
 {
 	GENERATED_BODY()
@@ -33,6 +37,10 @@ public:
 
 	//Delegate for broadcasting the activation data when this activation cue is called
 	UPROPERTY(BlueprintAssignable)
-	FActivationCue OnActivationCue;
+	FActivationCue OnActivate;
 
 };
+
+/* /\ ================== /\ *\
+|  /\ UBaseActivationCue /\  |
+\* /\ ================== /\ */
