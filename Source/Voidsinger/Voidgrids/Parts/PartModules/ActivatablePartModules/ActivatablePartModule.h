@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Voidsinger/Voidgrids/Parts/PartModules/PartModule.h"
 #include "Voidsinger/Voidsongs/Voidsong.h"
+#include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/PartActivationData.h"
 #include "ActivatablePartModule.generated.h"
 
 
@@ -59,45 +60,6 @@ ENUM_CLASS_FLAGS(EVoidsongCue)
 /* /\ ============ /\ *\
 |  /\ EVoidsongCue /\  |
 \* /\ ============ /\ */
-
-/* \/ =================== \/ *\
-|  \/ FPartActivationData \/  |
-\* \/ =================== \/ */
-
-USTRUCT(BlueprintType)
-struct FPartActivationData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<UBaseVerbMotif*> Verbs;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float Effectiveness { 1 };
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FVector2D Vector = FVector2D::ZeroVector;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float Rotation { 0 };
-
-	FPartActivationData(float ActivationEffectiveness = 1, FVector2D ActivationVector = FVector2D::ZeroVector, float ActivationRotation = 0, TArray<UBaseVerbMotif*> ActivationVerbs = TArray<UBaseVerbMotif*>())
-	{
-		Effectiveness = ActivationEffectiveness;
-		Vector = ActivationVector;
-		Rotation = ActivationRotation;
-		Verbs = ActivationVerbs;
-	}
-
-	FPartActivationData(TArray<UBaseVerbMotif*> ActivationVerbs, float ActivationEffectiveness = 1, FVector2D ActivationVector = FVector2D::ZeroVector, float ActivationRotation = 0)
-	{
-		FPartActivationData(ActivationEffectiveness, ActivationVector, ActivationRotation, ActivationVerbs);
-	}
-};
-
-/* /\ =================== /\ *\
-|  /\ FPartActivationData /\  |
-\* /\ =================== /\ */
 
 /* \/ ====================== \/ *\
 |  \/ UActivatablePartModule \/  |
