@@ -49,16 +49,24 @@ public:
 
 	/*
 	 * Initializes this activation cue's variables and bindings
+	 * 
+	 * @param OwningModule - The module that owns this activation cue
 	 */
 	virtual void Initialize(UActivatablePartModule* OwningModule) override;
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */
 
-private:
+	/* ---------------- *\
+	\* \/ Delegation \/ */
 
-	/* --------------- *\
-	\* \/ Delegates \/ */
+public:
+
+	//Stores which part states to broadcast the delegate from
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Delegation", meta = (Bitmask, BitmaskEnum = EPartStateChange))
+	int32 PartStates;
+
+private:
 
 	/*
 	 * Broadcasts the "OnActivate" delegate
@@ -68,14 +76,8 @@ private:
 	UFUNCTION()
 	void BroadcastDelegate(bool bApplyChangeEffect);
 
-public:
-
-	//Stores which part states to broadcast the delegate from
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Part State", meta = (Bitmask, BitmaskEnum = EPartStateChange))
-	int32 PartStates;
-
-	/* /\ Delegates /\ *\
-	\* --------------- */
+	/* /\ Delegation /\ *\
+	\* ---------------- */
 
 };
 

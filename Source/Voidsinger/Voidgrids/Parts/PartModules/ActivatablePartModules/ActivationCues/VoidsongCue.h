@@ -53,14 +53,22 @@ public:
 
 	/*
 	 * Initializes this activation cue's variables and bindings
+	 * 
+	 * @param OwningModule - The module that owns this activation cue
 	 */
 	virtual void Initialize(UActivatablePartModule* OwningModule) override;
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */
 	
-	/* --------------- *\
-	\* \/ Delegates \/ */
+	/* ---------------- *\
+	\* \/ Delegation \/ */
+
+public:
+
+	//Stores which Voidsong cues to broadcast the delegate from
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Voidsong Cue", meta = (Bitmask, BitmaskEnum = EVoidsongCall))
+	int32 VoidsongCues;
 
 private:
 
@@ -81,19 +89,11 @@ private:
 	UFUNCTION()
 	void BindToVoidsong(UVoidsong* Voidsong);
 
-public:
-
-	//Stores which Voidsong cues to broadcast the delegate from
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Voidsong Cue", meta = (Bitmask, BitmaskEnum = EVoidsongCall))
-	int32 VoidsongCues;
-
-private:
-
 	//Stores a reference to the owning module
 	UActivatablePartModule* Module;
 
-	/* /\ Delegates /\ *\
-	\* --------------- */
+	/* /\ Delegation /\ *\
+	\* ---------------- */
 };
 
 /* /\ ============ /\ *\

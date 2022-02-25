@@ -32,38 +32,22 @@ public:
 
 	/*
 	 * Initializes this activation cue's variables and bindings
+	 * 
+	 * @param OwningModule - The module that owns this activation cue
 	 */
 	virtual void Initialize(UActivatablePartModule* OwningModule) override;
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */
 
-	/* --------------- *\
-	\* \/ Delegates \/ */
+	/* ---------------- *\
+	\* \/ Delegation \/ */
 
 public:
 
 	//Stores when this activation cue will be activated
 	UPROPERTY(Instanced, EditAnywhere)
 	TArray<UBaseActivationCue*> ActivationCues;
-
-private:
-
-	/*
-	 * Creates and uses the resources specified
-	 *
-	 * @param Data - The activation data containing all relavent information, including the effectiveness
-	 */
-	UFUNCTION()
-	void ManageResources(FPartActivationData Data);
-
-	/* /\ Delegates /\ *\
-	\* --------------- */
-
-	/* --------------- *\
-	\* \/ Resources \/ */
-
-public:
 
 	//Stores what resources this cue will use
 	UPROPERTY(EditAnywhere)
@@ -75,10 +59,19 @@ public:
 
 private:
 
+	/*
+	 * Creates and uses the resources specified
+	 *
+	 * @param Data - The activation data containing all relavent information, including the effectiveness
+	 */
+	UFUNCTION()
+	void ManageResources(FPartActivationData Data);
+
+	//Stores the Voidgrid that owns this activation cue
 	AVoidgrid* Voidgrid;
 
-	/* /\ Resources /\ *\
-	\* --------------- */
+	/* /\ Delegation /\ *\
+	\* ---------------- */
 
 };
 

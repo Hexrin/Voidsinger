@@ -25,14 +25,16 @@ public:
 
 	/*
 	 * Initializes this activation cue's variables and bindings
+	 * 
+	 * @param OwningModule - The module that owns this activation cue
 	 */
 	virtual void Initialize(UActivatablePartModule* OwningModule) override;
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */
 
-	/* --------------- *\
-	\* \/ Delegates \/ */
+	/* ---------------- *\
+	\* \/ Delegation \/ */
 
 private:
 
@@ -44,8 +46,8 @@ private:
 	UFUNCTION()
 	void BroadcastDelegate(FPartActivationData Data);
 
-	/* /\ Delegates /\ *\
-	\* --------------- */
+	/* /\ Delegation /\ *\
+	\* ---------------- */
 };
 
 /* /\ ================= /\ *\

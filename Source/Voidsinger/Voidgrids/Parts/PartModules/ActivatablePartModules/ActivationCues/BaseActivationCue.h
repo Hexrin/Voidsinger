@@ -28,17 +28,31 @@ class VOIDSINGER_API UBaseActivationCue : public UObject
 {
 	GENERATED_BODY()
 	
+	/* -------------------- *\
+	\* \/ Initialization \/ */
+
 public:
 
 	/*
 	 * Initializes this activation cue's variables and bindings
+	 * 
+	 * @param OwningModule - The module that owns this activation cue
 	 */
+	UFUNCTION(Category = "Initialization")
 	virtual void Initialize(UActivatablePartModule* OwningModule);
 
+	/* /\ Initialization /\ *\
+	\* -------------------- */
+
+	/* ---------------- *\
+	\* \/ Delegation \/ */
+
 	//Delegate for broadcasting the activation data when this activation cue is called
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "Delegation")
 	FActivationCue OnActivate;
 
+	/* /\ Delegation /\ *\
+	\* ---------------- */
 };
 
 /* /\ ================== /\ *\

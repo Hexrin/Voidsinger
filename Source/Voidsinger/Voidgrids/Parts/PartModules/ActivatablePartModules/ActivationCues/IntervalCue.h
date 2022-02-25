@@ -46,18 +46,22 @@ private:
 	 */
 	virtual TStatId GetStatId() const override;
 
-public:
-
-	//The time interval that the delegate should be called at. If this is less than the tick rate, then the interval will be every tick.
-	UPROPERTY(EditAnywhere)
-	float Interval;
-
-private:
-
 	float TimeSinceLastInterval;
 
 	/* /\ Tick /\ *\
 	\* ---------- */
+
+	/* ---------------- *\
+	\* \/ Delegation \/ */
+
+public:
+
+	//The time interval that the delegate should be called at. If this is less than the tick rate, then the interval will be every tick.
+	UPROPERTY(EditAnywhere, Category = "Delegation")
+	float Interval;
+
+	/* /\ Delegation /\ *\
+	\* ---------------- */
 };
 
 /* /\ ============ /\ *\

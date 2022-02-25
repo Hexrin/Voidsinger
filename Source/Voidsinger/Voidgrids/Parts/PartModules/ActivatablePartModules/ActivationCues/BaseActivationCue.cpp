@@ -7,13 +7,18 @@
 |  \/ UBaseActivationCue \/  |
 \* \/ ================== \/ */
 
+/* -------------------- *\
+\* \/ Initialization \/ */
+
 /*
  * Initializes this activation cue's variables and bindings
  */
 void UBaseActivationCue::Initialize(UActivatablePartModule* OwningModule)
 {
-
 }
+
+/* /\ Initialization /\ *\
+\* -------------------- */
 
 /* /\ ================== /\ *\
 |  /\ UBaseActivationCue /\  |
