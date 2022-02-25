@@ -3,12 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivationCues/BaseActivationCue.h"
+#include "BaseActivationCue.h"
 #include "Tickable.h"
 #include "IntervalCue.generated.h"
 
+/* \/ ============ \/ *\
+|  \/ UIntervalCue \/  |
+\* \/ ============ \/ */
+
 /**
- * 
+ * Subclass of the base activation cue that is activated after every interval of time that passes
  */
 UCLASS()
 class VOIDSINGER_API UIntervalCue : public UBaseActivationCue, public FTickableGameObject
@@ -55,3 +59,7 @@ private:
 	/* /\ Tick /\ *\
 	\* ---------- */
 };
+
+/* /\ ============ /\ *\
+|  /\ UIntervalCue /\  |
+\* /\ ============ /\ */

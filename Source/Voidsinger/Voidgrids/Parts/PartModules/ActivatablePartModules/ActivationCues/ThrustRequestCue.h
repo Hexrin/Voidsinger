@@ -3,11 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivationCues/BaseActivationCue.h"
+#include "BaseActivationCue.h"
 #include "ThrustRequestCue.generated.h"
 
+/* \/ ================= \/ *\
+|  \/ UThrustRequestCue \/  |
+\* \/ ================= \/ */
+
 /**
- * 
+ * Subclass of the base activation cue that is activated when a thrust request is created
  */
 UCLASS()
 class VOIDSINGER_API UThrustRequestCue : public UBaseActivationCue
@@ -43,3 +47,7 @@ private:
 	/* /\ Delegates /\ *\
 	\* --------------- */
 };
+
+/* /\ ================= /\ *\
+|  /\ UThrustRequestCue /\  |
+\* /\ ================= /\ */

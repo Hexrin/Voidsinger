@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivationCues/BaseActivationCue.h"
+#include "BaseActivationCue.h"
 #include "PartStateChangeCue.generated.h"
 
 /* \/ ================ \/ *\
@@ -35,7 +35,7 @@ ENUM_CLASS_FLAGS(EPartStateChange);
 \* \/ =================== \/ */
 
 /**
- * Subclass of the base activation cue that is activated when the part state changed
+ * Subclass of the base activation cue that is activated when the part state is changed
  */
 UCLASS()
 class VOIDSINGER_API UPartStateChangeCue : public UBaseActivationCue
