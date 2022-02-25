@@ -290,3 +290,19 @@ void APlayerShip::ParseSequenceIntoMotifData(TArray<int32> Sequence, TArray<UBas
 
 /* /\ Voidsong Activation /\ *\
 \* ------------------------- */
+
+/* ------------- *\
+\* \/ Faction \/ */
+
+/**
+ * Gets the faction of the Voidgrid.
+ *
+ * @return The faction of the Voidgrid.
+ */
+EFaction APlayerShip::GetFaction() const
+{
+	return EFaction::Player;
+}
+
+/* /\ Faction /\ *\
+\* ------------- */
