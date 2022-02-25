@@ -98,7 +98,7 @@ void UActivatablePartModule::Activate(const FPartActivationData Data)
 void UActivatablePartModule::BindToDelegates()
 {
 	//Bind "BindToVoidsong" to Voidsong played
-	Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->OnVoidsongPlayed.AddDynamic(this, &UActivatablePartModule::BindToVoidsong);
+	//Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->OnVoidsongPlayed.AddDynamic(this, &UActivatablePartModule::BindToVoidsong);
 
 	// \/ Bind Activate to the Activation Cues selected \/ /
 
@@ -136,7 +136,7 @@ void UActivatablePartModule::BindToDelegates()
 	for (UBaseActivationCue* EachActivationCue : ActivationCues)
 	{
 		EachActivationCue->Initialize(Part);
-		EachActivationCue->OnActivate.AddDynamic(this, &UActivatablePartModule::Activate);
+		EachActivationCue->OnActivate.AddUniqueDynamic(this, &UActivatablePartModule::Activate);
 	}
 
 }
@@ -174,3 +174,24 @@ void UActivatablePartModule::BindToVoidsong(UVoidsong* Voidsong)
 
 /* /\ Delegate Binding /\ *\
 \* ---------------------- */
+
+/* ----------- *\
+\* \/ World \/ */
+
+/*
+ * Gives the activatable part module access to the world
+ * 
+ * @return - A reference to the world
+ */
+UWorld* UActivatablePartModule::GetWorld() const
+{
+	if (IsValid(Part))
+	{
+		return Part->GetWorld();
+	}
+
+	return nullptr;
+}
+
+/* /\ World /\ *\
+\* ----------- */

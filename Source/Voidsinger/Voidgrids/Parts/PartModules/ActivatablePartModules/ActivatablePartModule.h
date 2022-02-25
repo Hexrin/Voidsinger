@@ -106,6 +106,7 @@ protected:
 public:
 	// \/ Activate \/ /
 
+	UFUNCTION()
 	void Activate(const FPartActivationData Data);
 	/**
 	 * Calls the "OnActivate" function with an Effectiveness of 1 so the part module's functionality is executed.
@@ -173,8 +174,22 @@ public:
 	// The Voidsong events to bind Activate to
 	UPROPERTY(EditAnywhere, Category = "DelegateBinding")
 	EVoidsongCue VoidsongCues;
+
 	/* /\ Delegate Binding /\ *\
 	\* ---------------------- */
+
+	/* ----------- *\
+	\* \/ World \/ */
+
+	/*
+	 * Gives the activatable part module access to the world
+	 *
+	 * @return - A reference to the world
+	 */
+	virtual UWorld* GetWorld() const override;
+
+	/* /\ World /\ *\
+	\* ----------- */
 
 };
 
