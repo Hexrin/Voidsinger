@@ -4,6 +4,10 @@
 #include "BaseActivationCue.h"
 #include "ResourceCue.h"
 
+/* \/ ============ \/ *\
+|  \/ UResourceCue \/  |
+\* \/ ============ \/ */
+
 /* -------------------- *\
 \* \/ Initialization \/ */
 
@@ -37,3 +41,7 @@ void UResourceCue::ManageResources(FPartActivationData Data)
 
 /* /\ Delegates /\ *\
 \* --------------- */
+
+/* /\ ============ /\ *\
+|  /\ UResourceCue /\  |
+\* /\ ============ /\ */

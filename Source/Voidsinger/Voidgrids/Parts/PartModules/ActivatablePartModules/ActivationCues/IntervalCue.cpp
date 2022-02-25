@@ -3,6 +3,10 @@
 
 #include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivationCues/IntervalCue.h"
 
+/* \/ ============ \/ *\
+|  \/ UIntervalCue \/  |
+\* \/ ============ \/ */
+
 /* ---------- *\
 \* \/ Tick \/ */
 
@@ -44,3 +48,7 @@ TStatId UIntervalCue::GetStatId() const
 
 /* /\ Tick /\ *\
 \* ---------- */
+
+/* /\ ============ /\ *\
+|  /\ UIntervalCue /\  |
+\* /\ ============ /\ */

@@ -6,6 +6,10 @@
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 #include "Voidsinger/Voidgrids/Parts/PartModules/ThrustManager.h"
 
+/* \/ ================= \/ *\
+|  \/ UThrustRequestCue \/  |
+\* \/ ================= \/ */
+
 /* -------------------- *\
 \* \/ Initialization \/ */
 
@@ -35,3 +39,7 @@ void UThrustRequestCue::BroadcastDelegate(FPartActivationData Data)
 
 /* /\ Delegates /\ *\
 \* --------------- */
+
+/* /\ ================= /\ *\
+|  /\ UThrustRequestCue /\  |
+\* /\ ================= /\ */
