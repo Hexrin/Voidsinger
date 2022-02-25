@@ -70,8 +70,8 @@ void UPartStateChangeCue::BroadcastDelegate(bool bApplyChangeEffect)
 	}
 }
 
-/* /\ Delegates /\ *\
-\* --------------- */
+/* /\ Delegation /\ *\
+\* ---------------- */
 
 /* /\ =================== /\ *\
 |  /\ UPartStateChangeCue /\  |

@@ -38,8 +38,8 @@ void UThrustRequestCue::BroadcastDelegate(FPartActivationData Data)
 	OnActivate.Broadcast(Data);
 }
 
-/* /\ Delegates /\ *\
-\* --------------- */
+/* /\ Delegation /\ *\
+\* ---------------- */
 
 /* /\ ================= /\ *\
 |  /\ UThrustRequestCue /\  |

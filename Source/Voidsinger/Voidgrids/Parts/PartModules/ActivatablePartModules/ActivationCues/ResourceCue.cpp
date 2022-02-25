@@ -45,8 +45,8 @@ void UResourceCue::ManageResources(FPartActivationData Data)
 
 }
 
-/* /\ Delegates /\ *\
-\* --------------- */
+/* /\ Delegation /\ *\
+\* ---------------- */
 
 /* /\ ============ /\ *\
 |  /\ UResourceCue /\  |

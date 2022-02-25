@@ -75,8 +75,8 @@ void UVoidsongCue::BindToVoidsong(UVoidsong* Voidsong)
 	}
 }
 
-/* /\ Delegates /\ *\
-\* --------------- */
+/* /\ Delegation /\ *\
+\* ---------------- */
 
 /* /\ ============ /\ *\
 |  /\ UVoidsongCue /\  |
