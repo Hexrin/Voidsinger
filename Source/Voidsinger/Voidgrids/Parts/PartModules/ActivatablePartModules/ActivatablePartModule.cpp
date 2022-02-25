@@ -3,8 +3,6 @@
 
 #include "ActivatablePartModule.h"
 #include "Voidsinger/Voidgrids/Parts/Part.h"
-#include "Voidsinger/Voidgrids/Voidgrid.h"
-#include "Voidsinger/StarSystemGameMode.h"
 #include "Kismet/GameplayStatics.h"
 
 /* -------------------- *\
@@ -139,37 +137,6 @@ void UActivatablePartModule::BindToDelegates()
 		EachActivationCue->OnActivate.AddUniqueDynamic(this, &UActivatablePartModule::Activate);
 	}
 
-}
-
-/**
- * Checks whether to bind to the Voidsong given by seeing if this module statisfies the Voidsong conditions. If it does, ActivateWithEffectiveness is bound to the relavent VoidsongCues.
- *
- * @param Voidsong - The Voidsong to bind to
- */
-void UActivatablePartModule::BindToVoidsong(UVoidsong* Voidsong)
-{
-	//If this module's noun is not unbound, check if it satisfies the Voidsong requirements to activate. Also check if this should be bound to a VoidsongCue.
-	//if (Noun != ENoun::Unbound && (bool)(ActivationCues & EActivationCue::OnVoidsongCue))
-	//{
-	//	//Factions check is true if this faction is one of the factions played 
-	//	bool bFactionsCheck = Voidsong->GetVoidsongData().GetFactions().Contains(Part->GetVoidgrid()->GetFaction());
-
-	//	//Nouns check is true if this noun is one of the nouns played
-	//	bool bNounsCheck = Voidsong->GetVoidsongData().GetNouns().Contains(Noun);
-
-	//	//If this part module satisfies the conditions of the Voidsong, bind the events
-	//	if (bFactionsCheck && bNounsCheck)
-	//	{
-	//		if ((bool)(VoidsongCues & EVoidsongCue::ForDuration))
-	//		{
-	//			Voidsong->ForDuration.AddDynamic(this, &UActivatablePartModule::ActivateFromVoidsong);
-	//		}
-	//		if ((bool)(VoidsongCues & EVoidsongCue::OnBeat))
-	//		{
-	//			Voidsong->OnBeat.AddDynamic(this, &UActivatablePartModule::ActivateFromVoidsong);
-	//		}
-	//	}
-	//}
 }
 
 /* /\ Delegate Binding /\ *\

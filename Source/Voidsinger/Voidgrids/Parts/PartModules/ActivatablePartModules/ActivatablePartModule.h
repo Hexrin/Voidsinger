@@ -18,50 +18,6 @@ class UPart;
 /* /\ Forward Declarations /\ *\
 \* ------------------------- */
 
-/* \/ ============== \/ *\
-|  \/ EActivationCue \/  |
-\* \/ ============== \/ */
-
-/**
- * This enum stores delegate names. Module functions can be bound to these delegates by choosing options in this enum.
- */
-UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EActivationCue : uint8
-{
-	OnDamaged					UMETA(DisplayName = "OnDamaged", Tooltip = "When the part is damaged in any way"),
-	OnRepaired					UMETA(DisplayName = "OnRepaired", Tooltip = "When the part is repaired in any way. This is different from fully repaired as you can repair a part one pixel at a time"),
-	OnFunctionalityLost			UMETA(DisplayName = "OnFunctionalityLost", Tooltip = "When the part can no longer function"),
-	OnFunctionalityRestored		UMETA(DisplayName = "OnFunctionalityRestored", Tooltip = "When the part gains enough pixels to function"),
-	OnDestroyed					UMETA(DisplayName = "OnDestroyed", Tooltip = "When the part is completely destroyed"),
-	OnFullyRepaired				UMETA(DisplayName = "OnFullyRepaired", Tooltip = "When the part becomes fully intact"),
-	OnTick						UMETA(DisplayName = "OnTick", Tooltip = "Every tick"),
-	OnVoidsongCue				UMETA(DisplayName = "OnVoidsong", Tooltip = "When a Voidsong cue is called"),
-};
-ENUM_CLASS_FLAGS(EActivationCue);
-
-/* /\ ============== /\ *\
-|  /\ EActivationCue /\  |
-\* /\ ============== /\ */
-
-/* \/ ============ \/ *\
-|  \/ EVoidsongCue \/  |
-\* \/ ============ \/ */
-
-/**
- * This enum stores delegate names specific to Voidsongs. Module functions can be bound to these delegates by choosing options in this enum.
- */
-UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EVoidsongCue : uint8
-{
-	OnBeat			UMETA(DisplayName = "OnBeat"),
-	ForDuration		UMETA(DisplayName = "ForDuration"),
-};
-ENUM_CLASS_FLAGS(EVoidsongCue)
-
-/* /\ ============ /\ *\
-|  /\ EVoidsongCue /\  |
-\* /\ ============ /\ */
-
 /* \/ ====================== \/ *\
 |  \/ UActivatablePartModule \/  |
 \* \/ ====================== \/ */
@@ -157,23 +113,9 @@ public:
 	 */
 	void BindToDelegates();
 
-	/**
-	 * Checks whether to bind to the Voidsong given by seeing if this module statisfies the Voidsong conditions. If it does, Activate is bound to the relavent VoidsongCues.
-	 *
-	 * @param Voidsong - The Voidsong to bind to
-	 */
-	void BindToVoidsong(UVoidsong* Voidsong);
-
+	//Stores what activation cues to bind to
 	UPROPERTY(EditAnywhere, Category = "DelegateBinding", Instanced)
 	TArray<UBaseActivationCue*> ActivationCues;
-
-	// The events to bind Activate to
-	//UPROPERTY(EditAnywhere, Category = "DelegateBinding")
-	//EActivationCue ActivationCues;
-
-	// The Voidsong events to bind Activate to
-	UPROPERTY(EditAnywhere, Category = "DelegateBinding")
-	EVoidsongCue VoidsongCues;
 
 	/* /\ Delegate Binding /\ *\
 	\* ---------------------- */
