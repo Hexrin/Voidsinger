@@ -9,6 +9,9 @@
 |  \/ UPartStateChangeCue \/  |
 \* \/ =================== \/ */
 
+/* -------------------- *\
+\* \/ Initialization \/ */
+
 /*
  * Initializes this activation cue's variables and bindings
  */
@@ -44,6 +47,12 @@ void UPartStateChangeCue::Initialize(UPart* OwningPart)
 	// /\ Bind "BroadcastDelegate" to all part state changes specified /\ /
 }
 
+/* /\ Initialization /\ *\
+\* -------------------- */
+
+/* --------------- *\
+\* \/ Delegates \/ */
+
 /*
  * Broadcasts the "OnActivate" delegate
  *
@@ -56,6 +65,9 @@ void UPartStateChangeCue::BroadcastDelegate(bool bApplyChangeEffect)
 		OnActivate.Broadcast(FPartActivationData());
 	}
 }
+
+/* /\ Delegates /\ *\
+\* --------------- */
 
 /* /\ =================== /\ *\
 |  /\ UPartStateChangeCue /\  |

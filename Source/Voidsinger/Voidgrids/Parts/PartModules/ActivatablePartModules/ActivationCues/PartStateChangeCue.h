@@ -42,6 +42,9 @@ class VOIDSINGER_API UPartStateChangeCue : public UBaseActivationCue
 {
 	GENERATED_BODY()
 	
+	/* -------------------- *\
+	\* \/ Initialization \/ */
+
 public:
 
 	/*
@@ -49,7 +52,13 @@ public:
 	 */
 	virtual void Initialize(UPart* OwningPart) override;
 
+	/* /\ Initialization /\ *\
+	\* -------------------- */
+
 private:
+
+	/* --------------- *\
+	\* \/ Delegates \/ */
 
 	/*
 	 * Broadcasts the "OnActivate" delegate
@@ -64,6 +73,9 @@ public:
 	//Stores which part states to broadcast the delegate from
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Part State", meta = (Bitmask, BitmaskEnum = EPartStateChange))
 	int32 PartStates;
+
+	/* /\ Delegates /\ *\
+	\* --------------- */
 
 };
 
