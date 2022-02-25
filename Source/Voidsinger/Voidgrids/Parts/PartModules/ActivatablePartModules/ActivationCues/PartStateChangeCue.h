@@ -11,7 +11,7 @@
 \* \/ ================ \/ */
 
 /**
- * This enum stores delegate names related to the part state.
+ * This enum stores delegate names related to the part state
  */
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EPartStateChange : uint8
