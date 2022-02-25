@@ -23,7 +23,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FActivationCue, const FPartActivatio
 /**
  * Base class for activation cues. Activation cues contain delegates that part modules can bind to.
  */
-UCLASS(EditInlineNew, Blueprintable, BlueprintType)
+UCLASS(EditInlineNew, Abstract)
 class VOIDSINGER_API UBaseActivationCue : public UObject
 {
 	GENERATED_BODY()

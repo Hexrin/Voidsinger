@@ -37,7 +37,7 @@ ENUM_CLASS_FLAGS(EPartStateChange);
 /**
  * Subclass of the base activation cue that is activated when the part state changed
  */
-UCLASS(BlueprintType)
+UCLASS()
 class VOIDSINGER_API UPartStateChangeCue : public UBaseActivationCue
 {
 	GENERATED_BODY()
