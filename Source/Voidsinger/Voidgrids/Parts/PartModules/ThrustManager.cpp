@@ -24,7 +24,7 @@ UThrustManager::UThrustManager()
  */
 float UThrustManager::TimeToLinearVelocity(const FVector2D Velocity) const
 {
-	FVector2D AccelerationDirection = ((Voidgrid->LinearVelocity) - Velocity);
+	FVector2D AccelerationDirection = (Velocity - (Voidgrid->LinearVelocity));
 	float timetoAcceleration = ((AccelerationDirection) / (GetMaximumAccelerationInDirection(AccelerationDirection))).Size();
 	return timetoAcceleration;
 }
@@ -45,17 +45,19 @@ float UThrustManager::TimeToLocation(const FVector2D Location, const bool bAccel
 
 	if (bAccelerating) 
 	{
-		// a = (GetMaximumAccelerationInDirection(FVector2D(Voidgrid->GetActorLocation()) - (Location)));
+		a = (GetMaximumAccelerationInDirection((Location)-FVector2D(Voidgrid->GetActorLocation())));	
 		if ((FVector(Voidgrid->LinearVelocity.GetSafeNormal(), 0) - (UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0)))).Size() != 0)
 		{
 
-		if (GetMaximumAccelerationInDirection(FVector2D((FVector(Voidgrid->LinearVelocity, 0)) - (((UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0))))))) =!= 0)
-			timetoVelocity = (((FVector(Voidgrid->LinearVelocity,0)) - (((UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0)))))) / (a)).Size();
-			b = ((Voidgrid->LinearVelocity) - (Location)).Size();
-		}
-		else
-		{
-			return -1;
+			if (GetMaximumAccelerationInDirection(FVector2D((FVector(Voidgrid->LinearVelocity, 0)) - (((UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0))))))) != 0)
+			{
+				return -1;
+			}
+			else
+			{
+				timetoVelocity = (((FVector(Voidgrid->LinearVelocity, 0)) - (((UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0)))))) / (a)).Size();
+				b = ((Voidgrid->LinearVelocity) - (Location)).Size();
+			}
 		}
 	}
 	else
@@ -78,8 +80,9 @@ float UThrustManager::TimeToLocation(const FVector2D Location, const bool bAccel
  */
 float UThrustManager::TimeToAngularVelocity(const float Velocity) const
 { 
-	FVector2D AngularDirection = ((Voidgrid->AngularVelocity) - (Velocity));
-	return ((AngularDirection) / (GetMaximumAccelerationInDirection(AngularDirection))).Size();
+	float AngularDirection = ((Voidgrid->AngularVelocity) - (Velocity));
+	UE_LOG(LogTemp, Warning, TEXT("AngularDirection = %f"), AngularDirection);
+	return ((AngularDirection) / (GetMaximumAccelerationInDirection(AngularDirection)));
 
 }
 
@@ -105,6 +108,25 @@ float UThrustManager::TimeToOrientation(const float Orientation, const bool bAcc
 	}
 	
 	return (Voidgrid->AngularVelocity > 0 ? CounterClockwiseAngularDistance : ClockwiseAngularDistance) / Voidgrid->AngularVelocity;
+}
+
+FVector2D UThrustManager::ThrustDirection(const FVector2D ThrustDirection, FThrustSource ThrustSource) const
+{
+	return FMath::Max((ThrustSource.Direction | ThrustDirection * ThrustSource.Force),0.f);
+}
+
+float UThrustManager::ThrustRotation(const bool bClockwise, FThrustSource ThrustSource) const
+{
+	float RotationalEffectivness = (ThrustSource.Location - Voidgrid->CenterOfMass) ^ ThrustSource.Direction;
+	if (bClockwise)
+	{
+		return (RotationalEffectivness) * ThrustSource.Force;
+		
+	}
+	else
+	{
+		return ((RotationalEffectivness)*ThrustSource.Force) * -1.f;
+	}
 }
 
 void UThrustManager::AddManagedThrustSource(FThrustSource ThrustSource)
