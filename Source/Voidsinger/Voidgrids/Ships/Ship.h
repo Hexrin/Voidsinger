@@ -81,7 +81,7 @@ protected:
 protected:
 
 	//Tracks whether this ship can play Voidsongs
-	bool bCanPlayVoidsongs;
+	bool bCanPlayVoidsongs{ true };
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */
