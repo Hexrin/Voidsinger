@@ -3,6 +3,7 @@
 
 #include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivationCues/PartStateChangeCue.h"
 #include "Voidsinger/Voidgrids/Parts/Part.h"
+#include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivatablePartModule.h"
 #include "PartStateChangeCue.h"
 
 /* \/ =================== \/ *\
@@ -15,8 +16,11 @@
 /*
  * Initializes this activation cue's variables and bindings
  */
-void UPartStateChangeCue::Initialize(UPart* OwningPart)
+void UPartStateChangeCue::Initialize(UActivatablePartModule* OwningModule)
 {
+	//Stores a reference to the owning part
+	UPart* OwningPart = OwningModule->Part;
+
 	// \/ Bind "BroadcastDelegate" to all part state changes specified \/ /
 
 	if ((bool)(PartStates & (int)(EPartStateChange::OnDamaged)))

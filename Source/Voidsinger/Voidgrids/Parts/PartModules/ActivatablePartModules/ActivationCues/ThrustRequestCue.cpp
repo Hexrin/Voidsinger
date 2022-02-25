@@ -4,6 +4,7 @@
 #include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivationCues/ThrustRequestCue.h"
 #include "Voidsinger/Voidgrids/Parts/Part.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
+#include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivatablePartModule.h"
 #include "Voidsinger/Voidgrids/Parts/PartModules/ThrustManager.h"
 
 /* \/ ================= \/ *\
@@ -16,9 +17,9 @@
 /*
  * Initializes this activation cue's variables and bindings
  */
-void UThrustRequestCue::Initialize(UPart* OwningPart)
+void UThrustRequestCue::Initialize(UActivatablePartModule* OwningModule)
 {
-	OwningPart->GetVoidgrid()->ThrustManager->OnThrustRequest.AddDynamic(this, &UThrustRequestCue::BroadcastDelegate);
+	OwningModule->Part->GetVoidgrid()->ThrustManager->OnThrustRequest.AddDynamic(this, &UThrustRequestCue::BroadcastDelegate);
 }
 
 /* /\ Initialization /\ *\

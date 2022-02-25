@@ -9,7 +9,7 @@
 
 // \/ Forward declarations \/ /
 
-class UPart;
+class UActivatablePartModule;
 
 // /\ Forward declarations /\ /
 
@@ -33,7 +33,7 @@ public:
 	/*
 	 * Initializes this activation cue's variables and bindings
 	 */
-	virtual void Initialize(UPart* OwningPart);
+	virtual void Initialize(UActivatablePartModule* OwningModule);
 
 	//Delegate for broadcasting the activation data when this activation cue is called
 	UPROPERTY(BlueprintAssignable)

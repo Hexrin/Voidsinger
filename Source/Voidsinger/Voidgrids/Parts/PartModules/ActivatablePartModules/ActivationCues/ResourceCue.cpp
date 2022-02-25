@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "BaseActivationCue.h"
 #include "ResourceCue.h"
+#include "BaseActivationCue.h"
+#include "Voidsinger/Voidgrids/Parts/Part.h"
+#include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivatablePartModule.h"
 
 /* \/ ============ \/ *\
 |  \/ UResourceCue \/  |
@@ -14,11 +15,16 @@
 /*
  * Initializes this activation cue's variables and bindings
  */
-void UResourceCue::Initialize(UPart* OwningPart)
+void UResourceCue::Initialize(UActivatablePartModule* OwningModule)
 {
+	//Stores a reference to the owning part
+	UPart* OwningPart = OwningModule->Part;
+
+	Voidgrid = OwningPart->GetVoidgrid();
+
 	for (UBaseActivationCue* EachActivationCue : ActivationCues)
 	{
-		EachActivationCue->Initialize(OwningPart);
+		EachActivationCue->Initialize(OwningModule);
 		EachActivationCue->OnActivate.AddUniqueDynamic(this, &UResourceCue::ManageResources);
 	}
 }

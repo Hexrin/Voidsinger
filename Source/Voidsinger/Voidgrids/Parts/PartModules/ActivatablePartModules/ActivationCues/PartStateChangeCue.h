@@ -50,7 +50,7 @@ public:
 	/*
 	 * Initializes this activation cue's variables and bindings
 	 */
-	virtual void Initialize(UPart* OwningPart) override;
+	virtual void Initialize(UActivatablePartModule* OwningModule) override;
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */

@@ -10,7 +10,7 @@
 /*
  * Initializes this activation cue's variables and bindings
  */
-void UBaseActivationCue::Initialize(UPart* OwningPart)
+void UBaseActivationCue::Initialize(UActivatablePartModule* OwningModule)
 {
 
 }

@@ -135,7 +135,7 @@ void UActivatablePartModule::BindToDelegates()
 
 	for (UBaseActivationCue* EachActivationCue : ActivationCues)
 	{
-		EachActivationCue->Initialize(Part);
+		EachActivationCue->Initialize(this);
 		EachActivationCue->OnActivate.AddUniqueDynamic(this, &UActivatablePartModule::Activate);
 	}
 
