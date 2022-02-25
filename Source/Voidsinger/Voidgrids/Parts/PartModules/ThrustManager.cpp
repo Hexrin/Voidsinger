@@ -3,7 +3,7 @@
 
 #include "ThrustManager.h"
 
-#include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ThrusterModule.h"
+#include "ThrusterModule.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 
 UThrustManager::UThrustManager()
