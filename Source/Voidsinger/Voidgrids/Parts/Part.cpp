@@ -241,7 +241,7 @@ void UPart::RemovePixel(FIntPoint Location, bool bApplyChangeEffect, UPart* Part
 			//Check if there are enough pixels frozen for the part to not be functional
 			bool bFrozenNotFunctionalCheck = ((float)FrozenPixels.Num() / (float)GetDefaultShape().Num()) > (1 - GetData()->FunctionalityPercent);
 
-			if (bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent) && (bFrozenNotFunctionalCheck))
+			if (bFunctional && (((float)Shape.Num() / (float)GetDefaultShape().Num()) < GetData()->FunctionalityPercent) || (bFrozenNotFunctionalCheck))
 			{
 				bFunctional = false;
 				OnFunctionalityLost.Broadcast(bApplyChangeEffect);
