@@ -185,7 +185,7 @@ void UActivatablePartModule::BindToVoidsong(UVoidsong* Voidsong)
  */
 UWorld* UActivatablePartModule::GetWorld() const
 {
-	if (IsValid(Part))
+	if (Part->IsValidLowLevel())
 	{
 		return Part->GetWorld();
 	}
