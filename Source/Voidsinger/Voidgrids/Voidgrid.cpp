@@ -700,8 +700,10 @@ void AVoidgrid::ClearVoidgrid()
  * @param WorldLocation - The location of the center of the explosion.
  * @param Raduis - The distance from the ceneter whithin which pixels will be destroyed.
  */
-void AVoidgrid::Explode(UObject* WorldContext,  FVector WorldLocation, float Radius)
+void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, float Radius)
 {
+	DrawDebugSphere(WorldContext->GetWorld(), WorldLocation, Radius, 50, FColor::Red, true);
+
 	TArray<FOverlapResult> Results = TArray<FOverlapResult>();
 	WorldContext->GetWorld()->OverlapMultiByChannel(Results, WorldLocation, FQuat::Identity, ECollisionChannel::ECC_Pawn, FCollisionShape::MakeSphere(Radius));
 

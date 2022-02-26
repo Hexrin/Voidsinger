@@ -605,7 +605,7 @@ public:
 	 * @param Raduis - The distance from the ceneter whithin which pixels will be destroyed.
 	 */
 	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContext"))
-	static void Explode(UObject* WorldContext, FVector WorldLocation, float Radius);
+	static void ExplodeVoidgrids(UObject* WorldContext, FVector WorldLocation, float Radius);
 
 private:
 	/**
