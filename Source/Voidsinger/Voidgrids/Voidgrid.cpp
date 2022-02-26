@@ -47,7 +47,11 @@ AVoidgrid::AVoidgrid()
 	}
 }
 
-//Used to update location and thrust control.
+/*
+ * Used to update location, thrust control, heat spread, and resources.
+ * 
+ * @param DeltaTime - The time between ticks
+ */
 void AVoidgrid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -60,8 +64,6 @@ void AVoidgrid::Tick(float DeltaTime)
 		SpreadHeat();
 	}
 	
-
-
 	DeltaHeatTime += DeltaTime;
 
 }
@@ -832,6 +834,72 @@ EFaction AVoidgrid::GetFaction() const
 \* \/ Resource Management \/ */
 
 /*
+ * Adds a resource call to the list of resource calls sorted by priority
+ * 
+ * @param ResourceCall - The new resource call
+ */
+void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
+{
+	//Stores the lower index of the range where ResourceCall should be
+	int LowerIndex = 0;
+
+	//Stores the upper index of the range where ResourceCall should be
+	int UpperIndex = ResourceCalls.Num() - 1;
+
+	//Stores the middle index between the lower index and the upper index
+	int MiddleIndex = (LowerIndex + UpperIndex) / 2;
+
+	//Start the binary search
+	while (true)
+	{
+		if (LowerIndex > UpperIndex)
+		{
+			ResourceCalls.EmplaceAt(MiddleIndex + 1, ResourceCall);
+			break;
+		}
+
+		MiddleIndex = (LowerIndex + UpperIndex) / 2;
+
+		// \/ Find information about whether this call fits here \/ //
+
+		bool bPriorityEqual = ResourceCalls[MiddleIndex].Priority == ResourceCall.Priority;
+		bool bPriorityGreaterThanOrEqualPrevious = !ResourceCalls.IsValidIndex(MiddleIndex - 1) || ResourceCall.Priority >= ResourceCalls[MiddleIndex - 1].Priority;
+		bool bPriorityLessThanCurrent = ResourceCall.Priority < ResourceCalls[MiddleIndex].Priority;
+		bool bPriorityFitsBetween = bPriorityGreaterThanOrEqualPrevious && bPriorityLessThanCurrent;
+
+		// /\ Find information about whether this call fits here /\ //
+
+		if (bPriorityEqual || bPriorityFitsBetween)
+		{
+			ResourceCalls.EmplaceAt(MiddleIndex, ResourceCall);
+			break;
+		}
+		else if (!bPriorityLessThanCurrent)
+		{
+			LowerIndex = MiddleIndex + 1;
+		}
+		else if (bPriorityLessThanCurrent)
+		{
+			UpperIndex = MiddleIndex - 1;
+		}
+	}
+}
+
+/*
+ * Handles all resource calls made this tick by using and adding the resources specified
+ */
+void AVoidgrid::HandleResourceCalls()
+{
+	for (FResourceCall EachResourceCall : ResourceCalls)
+	{
+		if (UseResources(EachResourceCall.ResourceTypesToAmountUsed))
+		{
+			AddResources(EachResourceCall.ResourceTypesToAmountCreated);
+		}
+	}
+}
+
+/*
  * Adds resources to the Voidgrid
  *
  * @param AddedResources - The resources added and how much of each is added
@@ -862,7 +930,7 @@ void AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
 const bool AVoidgrid::UseResources(TMap<EResourceType, float> UsedResources)
 {
 
-	// \/ Check if all resources can be used \/ /
+	// \/ Check if all resources can be used \/ //
 	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
 	{
 		if ((!Resources.Contains(EachUsedResource.Key)) | (Resources.FindRef(EachUsedResource.Key) < EachUsedResource.Value))
@@ -871,77 +939,18 @@ const bool AVoidgrid::UseResources(TMap<EResourceType, float> UsedResources)
 			return false;
 		}
 	}
-	// /\ Check if all resources can be used /\ /
+	// /\ Check if all resources can be used /\ //
 
-	// \/ Use the resources \/ /
+	// \/ Use the resources \/ //
 	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
 	{
 		//Emplace will override the previous key value pair
 		Resources.Emplace(EachUsedResource.Key, Resources.FindRef(EachUsedResource.Key) - EachUsedResource.Value);
 	}
-	// /\ Use the resources /\ /
+	// /\ Use the resources /\ //
 
 	return true;
 }
 
 /* /\ Resource Management /\ *\
 \* ------------------------- */
-
-//Notes, delete later
-
-////Comment -Mabel Suggestion
-//void UPartGridComponent::DistrubuteHeat()
-//{
-//	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
-//	NewHeatMap.Reserve(PartGrid.Num());
-//
-//	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
-//	for (int j = 0; j < PartGrid.Num(); j++)
-//	{
-//		float NewHeat = 0;
-//
-//		//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
-//		for (int i = 0; i < 4; i++)
-//		{
-//			FIntPoint TargetPoint = ((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
-//
-//			if (PartGrid.Contains(TargetPoint + PartGrid.LocationAtIndex(j)))
-//			{
-//				//4 is borderline magic number. I understand why you used it but still -Mabel Suggestion
-//				NewHeat += PartGrid.FindRef(TargetPoint + PartGrid.LocationAtIndex(j)).GetTemperature() * HeatPropagationFactor / (4);
-//			}
-//		}
-//
-//		//Math is occuring that needs to be commented. Why is the pixels current temperature mutiplied by 1 - the heat propagation factor? -Mabel Suggestion
-//		NewHeat = PartGrid.ValueAtIndex(j).GetTemperature() * (1 - HeatPropagationFactor) + NewHeat;
-//
-//
-//		//Why 0.5? comment plz (also, is it.... magic number?) -Mabel Suggestion
-//		NewHeatMap.Emplace(PartGrid.LocationAtIndex(j), NewHeat > .05 ? NewHeat : 0);
-//	}
-//
-//	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
-//
-//	//You iterate through the part grid not once, but twice in this function. Big oof if I'm being honest. Honestly, it'd be better to just have heat not spread
-//	//if this is the way that we're doing it. This is so bad for large ships. 
-//	//I wonder if each part could handle it's own heat and distribute to the places around it instead of doing this on the part grid? I don't know how much it would help but 
-//	//it might help a little bit. Not sure, that might be just as laggy. -Mabel Suggestion
-//	for (int i = 0; i < PartGrid.Num(); i++)
-//	{
-//		if (NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)) > PartGrid.ValueAtIndex(i).Part->GetHeatResistance())
-//		{
-//			KeysToDestroy.Emplace(PartGrid.LocationAtIndex(i));
-//		}
-//		else
-//		{
-//			PartGrid.ValueAtIndex(i).SetTemperature(NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)));
-//		}
-//	}
-//
-//	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" 
-//	//"Val" is just as bad as i. Just saying. -Mabel Suggestion
-//	for (FIntPoint Val : KeysToDestroy)
-//	{
-//		DestroyPixel(Val);
-//	}
-//}

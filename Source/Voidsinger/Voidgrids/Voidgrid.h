@@ -317,7 +317,7 @@ FORCEINLINE uint32 GetTypeHash(const FVoidgridState& Thing)
 
 
 /* \/ ======== \/ *\
-|  \/ Voidgrid \/  |
+|  \/ AVoidgrid \/  |
 \* \/ ========= \/ */
 
 //Used for dispatching events requireing a grid locaiton.
@@ -338,7 +338,11 @@ public:
 	//Sets default values for this voidgrid's properties
 	AVoidgrid();
 
-	//Used to update location and thrust control.
+	/*
+	 * Used to update location, thrust control, heat spread, and resources.
+	 *
+	 * @param DeltaTime - The time between ticks
+	 */
 	virtual void Tick(float DeltaTime) override;
 
 	/* ------------- *\
@@ -693,11 +697,27 @@ public:
 public:
 
 	/*
+	 * Adds a resource call to the list of resource calls sorted by priority
+	 *
+	 * @param ResourceCall - The new resource call
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Resource Management")
+	void AddResourceCall(FResourceCall ResourceCall);
+	
+private:
+
+	/*
+	 * Handles all resource calls made this tick by using and adding the resources specified
+	 */
+	UFUNCTION(Category = "Resource Management")
+	void HandleResourceCalls();
+
+	/*
 	 * Adds resources to the Voidgrid
 	 * 
 	 * @param AddedResources - The resources added and how much of each is added
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Resource Management")
 	void AddResources(TMap<EResourceType, float> AddedResources);
 
 	/*
@@ -707,24 +727,22 @@ public:
 	 * 
 	 * @return - Whether the resources were successfully used or not
 	 */
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Category = "Resource Management")
 	const bool UseResources(TMap<EResourceType, float> UsedResources);
 
-private:
-
 	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
-	UPROPERTY()
+	UPROPERTY(Category = "Resource Management")
 	TMap<EResourceType, float> Resources;
+
+	//Stores all of the resource calls that were made this tick
+	UPROPERTY(Category = "Resource Management")
+	TArray<FResourceCall> ResourceCalls;
 
 	/* /\ Resource Management /\ *\
 	\* ------------------------- */
 };
 
 /* /\ ========= /\ *\
-|  /\ Voidgrid /\  |
+|  /\ AVoidgrid /\  |
 \* /\ ========= /\ */
-
-/* \/ ========= \/ *\
-|  \/ AVoidgrid \/  |
-\* \/ ========= \/ */
 
