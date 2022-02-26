@@ -690,6 +690,79 @@ void AVoidgrid::ClearVoidgrid()
 /* /\ Pixel Mold /\ *\
 \* ---------------- */
 
+/* --------------- *\
+\* \/ Explosion \/ */
+
+/**
+ * Causes an explosion at a world location. This will remove all pixels within the explosion radius, but pixel strenght may reduce the radius.
+ *
+ * @param WorldContext - An object used to get the world that the explosion will occur in.
+ * @param WorldLocation - The location of the center of the explosion.
+ * @param Raduis - The distance from the ceneter whithin which pixels will be destroyed.
+ */
+void AVoidgrid::Explode(UObject* WorldContext,  FVector WorldLocation, float Radius)
+{
+	TArray<FOverlapResult> Results = TArray<FOverlapResult>();
+	WorldContext->GetWorld()->OverlapMultiByChannel(Results, WorldLocation, FQuat::Identity, ECollisionChannel::ECC_Pawn, FCollisionShape::MakeSphere(Radius));
+
+	for (FOverlapResult EachResult : Results)
+	{
+		if (AVoidgrid* OtherVoidgrid = Cast<AVoidgrid>(EachResult.GetActor()))
+		{
+			FVector2D GridRelativeExplosionLocation = FVector2D(OtherVoidgrid->GetTransform().InverseTransformPosition(WorldLocation)) - OtherVoidgrid->CenterOfMass;
+			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation.IntPoint(), GridRelativeExplosionLocation, Radius);
+		}
+	}
+}
+
+/**
+ * Recursive function that will explode all pixels shadowed by the pixel at grid location.
+ *
+ * @param GridLoction - The pixel to remove.
+ * @param GridRelativeExplosionLocation -  The location of the center of the explosion relative to the pixel grid.
+ * @param Radius - The radius of the eplosion.
+ */
+void AVoidgrid::StartExplosionAtPixel(FIntPoint GridLoction, FVector2D GridRelativeExplosionLocation, float Radius)
+{
+	FVector2D ExplosionRelativeLocation = FVector2D(GridLoction) - GridRelativeExplosionLocation;
+	if (ExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius))
+	{
+		float PartStrenght = 1;
+		if (LocationsToPixelState.Contains(GridLoction))
+		{
+			PartStrenght = LocationsToPixelState.Find(GridLoction)->GetCurrentPart()->GetData()->Strength;
+		}
+		PartStrenght--;
+
+		if (GridRelativeExplosionLocation.IntPoint() == GridLoction)
+		{
+			StartExplosionAtPixel(GridLoction + FIntPoint( 0, 1), GridRelativeExplosionLocation, Radius - PartStrenght);
+			StartExplosionAtPixel(GridLoction + FIntPoint( 0,-1), GridRelativeExplosionLocation, Radius - PartStrenght);
+			StartExplosionAtPixel(GridLoction + FIntPoint( 1, 0), GridRelativeExplosionLocation, Radius - PartStrenght);
+			StartExplosionAtPixel(GridLoction + FIntPoint(-1, 0), GridRelativeExplosionLocation, Radius - PartStrenght);
+		}
+		else
+		{
+			FIntPoint ExplosionRelativeLocationSign = FIntPoint(FMath::Sign(ExplosionRelativeLocation.X), FMath::Sign(ExplosionRelativeLocation.Y));
+
+			StartExplosionAtPixel(GridLoction + ExplosionRelativeLocationSign, GridRelativeExplosionLocation, Radius - PartStrenght);
+
+			if (abs(ExplosionRelativeLocation.X) > abs(ExplosionRelativeLocation.Y))
+			{
+				StartExplosionAtPixel(GridLoction + FIntPoint(ExplosionRelativeLocationSign.X, 0), GridRelativeExplosionLocation, Radius - PartStrenght);
+			}
+			else if (abs(ExplosionRelativeLocation.Y) > abs(ExplosionRelativeLocation.X))
+			{
+				StartExplosionAtPixel(GridLoction + FIntPoint(ExplosionRelativeLocationSign.Y, 0), GridRelativeExplosionLocation, Radius - PartStrenght);
+			}
+		}
+		RemovePixel(GridLoction);
+	}
+}
+
+/* /\ Explosion /\ *\
+\* --------------- */
+
 /* ---------------- *\
 \* \/ Pixel Mesh \/ */
 

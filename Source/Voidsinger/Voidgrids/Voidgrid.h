@@ -594,6 +594,33 @@ private:
 	/* /\ Pixel Mold /\ *\
 	\* ---------------- */
 
+	/* --------------- *\
+	\* \/ Explosion \/ */
+public:
+	/**
+	 * Causes an explosion at a world location. This will remove all pixels within the explosion radius, but pixel strenght may reduce the radius.
+	 * 
+	 * @param WorldContext - An object used to get the world that the explosion will occur in.
+	 * @param WorldLocation - The location of the center of the explosion.
+	 * @param Raduis - The distance from the ceneter whithin which pixels will be destroyed.
+	 */
+	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContext"))
+	static void Explode(UObject* WorldContext, FVector WorldLocation, float Radius);
+
+private:
+	/**
+	 * Recursive function that will explode all pixels shadowed by the pixel at grid location.
+	 * 
+	 * @param GridLoction - The pixel to remove.
+	 * @param GridRelativeExplosionLocation -  The location of the center of the explosion relative to the pixel grid.
+	 * @param Radius - The radius of the eplosion.
+	 */
+	UFUNCTION()
+	void StartExplosionAtPixel(FIntPoint GridLoction, FVector2D GridRelativeExplosionLocation, float Radius);
+
+	/* /\ Explosion /\ *\
+	\* --------------- */
+
 	/* ---------------- *\
 	\* \/ Pixel Mesh \/ */
 
