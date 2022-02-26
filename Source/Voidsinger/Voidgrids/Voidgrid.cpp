@@ -860,7 +860,7 @@ void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 
 		MiddleIndex = (LowerIndex + UpperIndex) / 2;
 
-		// \/ Find information about whether this call fits here \/ //
+		// \/ Find information about whether this call fits here \/ //   // This feels unnessarly complicated. They may be an easyer way to do this.
 
 		bool bPriorityEqual = ResourceCalls[MiddleIndex].Priority == ResourceCall.Priority;
 		bool bPriorityGreaterThanOrEqualPrevious = !ResourceCalls.IsValidIndex(MiddleIndex - 1) || ResourceCall.Priority >= ResourceCalls[MiddleIndex - 1].Priority;
@@ -878,7 +878,7 @@ void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 		{
 			LowerIndex = MiddleIndex + 1;
 		}
-		else if (bPriorityLessThanCurrent)
+		else if (bPriorityLessThanCurrent)//umm this is the same as the last else if so it will never be called. - Liam Suggestion.
 		{
 			UpperIndex = MiddleIndex - 1;
 		}
@@ -888,7 +888,7 @@ void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 /*
  * Handles all resource calls made this tick by using and adding the resources specified
  */
-void AVoidgrid::HandleResourceCalls()
+void AVoidgrid::HandleResourceCalls() // this is never called.
 {
 	for (FResourceCall EachResourceCall : ResourceCalls)
 	{
@@ -933,6 +933,7 @@ const bool AVoidgrid::UseResources(TMap<EResourceType, float> UsedResources)
 	// \/ Check if all resources can be used \/ //
 	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
 	{
+		// Did you want to use the bitwise operator?
 		if ((!Resources.Contains(EachUsedResource.Key)) | (Resources.FindRef(EachUsedResource.Key) < EachUsedResource.Value))
 		{
 			//Return if not all resources can be used.
