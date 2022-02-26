@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ResourceType.generated.h"
 
 
 /* \/ =============== \/ *\
-|  \/ [Resource Type] \/  |
+|  \/ [EResourceType] \/  |
 \* \/ =============== \/ */
 
 /*
@@ -24,5 +25,71 @@ enum class EResourceType : uint8
 };
 
 /* /\ =============== /\ *\
-|  /\ [Resource Type] /\  |
+|  /\ [EResourceType] /\  |
+\* /\ =============== /\ */
+
+/* \/ =============== \/ *\
+|  \/ [FResourceCall] \/  |
+\* \/ =============== \/ */
+
+/*
+ * Stores the resources used and created by this call, as well as the priority of the call
+ */
+USTRUCT()
+struct VOIDSINGER_API FResourceCall
+{
+	GENERATED_BODY()
+
+public:
+
+	/* ------------------ *\
+	\* \/ Constructors \/ */
+
+	/*
+	 * Default constructor
+	 */
+	FResourceCall()
+	{
+		FResourceCall(0, TMap<EResourceType, float>(), TMap<EResourceType, float>());
+	}
+
+	/*
+	 * Constructor taking in priority and resources 
+	 * 
+	 * @param PriorityOfCall - The priority of this resource call
+	 * @param ResourceTypesToUsed - A map of resource types to the amount used of each
+	 * @param ResourceTypesToCreated - A map of resource types to the amount created of each
+	 */
+	FResourceCall(int PriorityOfCall, TMap<EResourceType, float> ResourceTypesToUsed, TMap<EResourceType, float> ResourceTypesToCreated)
+	{
+		Priority = PriorityOfCall;
+		ResourceTypesToAmountUsed = ResourceTypesToUsed;
+		ResourceTypesToAmountCreated = ResourceTypesToCreated;
+	}
+
+	/* /\ Constructors /\ *\
+	\* ------------------ */
+
+	/* ------------------------- *\
+	\* \/ Resource Management \/ */
+
+	//The priority of this resource call
+	UPROPERTY(Category = "Resource Management")
+	int Priority{ 0 };
+
+	//A map of resource types to the amount used of each
+	UPROPERTY(Category = "Resource Management")
+	TMap<EResourceType, float> ResourceTypesToAmountUsed{ TMap<EResourceType, float>() };
+
+	//A map of resource types to the amount created of each
+	UPROPERTY(Category = "Resource Management")
+	TMap<EResourceType, float> ResourceTypesToAmountCreated{ TMap<EResourceType, float>() };
+
+	/* /\ Resource Management /\ *\
+	\* ------------------------- */
+
+};
+
+/* /\ =============== /\ *\
+|  /\ [FResourceCall] /\  |
 \* /\ =============== /\ */
