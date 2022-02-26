@@ -404,7 +404,7 @@ private:
 
 	//Stores the mass of this voidgrid.
 	UPROPERTY()
-	float Mass{ 1 };
+	float Mass{ 0 };
 
 	//Stores the mass of this voidgrid.
 	UPROPERTY()
