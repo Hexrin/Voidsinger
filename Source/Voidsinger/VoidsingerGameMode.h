@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Voidsongs/VoidsongManager.h"
-#include "StarSystemGameMode.generated.h"
+#include "VoidsingerGameMode.generated.h"
 
 /**
  * Game mode. Provides a way to access the Voidsong Manager
  */
 UCLASS()
-class VOIDSINGER_API AStarSystemGameMode : public AGameModeBase
+class VOIDSINGER_API AVoidsingerGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
@@ -23,7 +23,7 @@ public:
 	/**
 	 * Intitializes default properties
 	 */
-	AStarSystemGameMode();
+	AVoidsingerGameMode();
 
 	/* /\ Initialization /\ *\
 	\* -------------------- */

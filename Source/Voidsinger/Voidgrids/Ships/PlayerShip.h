@@ -223,4 +223,19 @@ private:
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */
+
+	/* ------------- *\
+	\* \/ Faction \/ */
+
+public:
+
+	/**
+	 * Gets the faction of the Voidgrid.
+	 *
+	 * @return The faction of the Voidgrid.
+	 */
+	virtual EFaction GetFaction() const override;
+
+	/* /\ Faction /\ *\
+	\* ------------- */
 };
