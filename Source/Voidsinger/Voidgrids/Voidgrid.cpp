@@ -359,6 +359,30 @@ void AVoidgrid::SpreadHeat()
 \* \/ Pixel Mold \/ */
 
 /**
+ * Gets the grid loction of a world loction.
+ *
+ * @param WorldLocation - The world location to transform.
+ * @return The grid loction of WorldLocation;
+ */
+UFUNCTION(BlueprintPure)
+FIntPoint AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
+{
+	return (FVector2D(GetTransform().InverseTransformPosition(WorldLocation)) + CenterOfMass).IntPoint();
+}
+
+/**
+ * Gets the world location of a grid loction.
+ *
+ * @param GridLoction - The grid location to transform.
+ * @return The world loction of GridLoction;
+ */
+UFUNCTION(BlueprintPure)
+FVector AVoidgrid::TransformGridToWorld(FIntPoint GridLocation) const
+{
+	return GetTransform().TransformPosition(FVector(FVector2D(GridLocation) - CenterOfMass, 0));
+}
+
+/**
  * Sets the pixel mold of the ship
  *
  * @param NewPixelMold - The value to assign to the pixel mold of the ship
@@ -702,7 +726,7 @@ void AVoidgrid::ClearVoidgrid()
  */
 void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, float Radius)
 {
-	DrawDebugSphere(WorldContext->GetWorld(), WorldLocation, Radius, 50, FColor::Red, true);
+	DrawDebugCircle(WorldContext->GetWorld(), FTransform(FRotator(90, 0, 0), WorldLocation + FVector(0, 0, 0.1), FVector(1)).ToMatrixWithScale(), Radius, 50, FColor::Cyan, false, 2, 0U, .05);
 
 	TArray<FOverlapResult> Results = TArray<FOverlapResult>();
 	WorldContext->GetWorld()->OverlapMultiByChannel(Results, WorldLocation, FQuat::Identity, ECollisionChannel::ECC_Pawn, FCollisionShape::MakeSphere(Radius));
@@ -711,7 +735,7 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 	{
 		if (AVoidgrid* OtherVoidgrid = Cast<AVoidgrid>(EachResult.GetActor()))
 		{
-			FVector2D GridRelativeExplosionLocation = FVector2D(OtherVoidgrid->GetTransform().InverseTransformPosition(WorldLocation)) - OtherVoidgrid->CenterOfMass;
+			FVector2D GridRelativeExplosionLocation = OtherVoidgrid->TransformWorldToGrid(WorldLocation);
 			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation.IntPoint(), GridRelativeExplosionLocation, Radius);
 		}
 	}
@@ -724,39 +748,34 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
  * @param GridRelativeExplosionLocation -  The location of the center of the explosion relative to the pixel grid.
  * @param Radius - The radius of the eplosion.
  */
-void AVoidgrid::StartExplosionAtPixel(FIntPoint GridLoction, FVector2D GridRelativeExplosionLocation, float Radius)
+void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRelativeExplosionLocation, float Radius, FVector2D Arc)
 {
-	FVector2D ExplosionRelativeLocation = FVector2D(GridLoction) - GridRelativeExplosionLocation;
+	static TArray<FIntPoint> PossilbeShadowLocations{ TArray<FIntPoint>() };
+
+
+	FVector2D ExplosionRelativeLocation = FVector2D(PixelLoction) - GridRelativeExplosionLocation;
 	if (ExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius))
 	{
-		float PartStrenght = 1;
-		if (LocationsToPixelState.Contains(GridLoction))
+		if (LocationsToPixelState.Contains(PixelLoction) && LocationsToPixelState.Find(PixelLoction)->IsIntact())
 		{
-			PartStrenght = LocationsToPixelState.Find(GridLoction)->GetCurrentPart()->GetData()->Strength;
-		}
-		PartStrenght--;
-
-		if (GridRelativeExplosionLocation.IntPoint() == GridLoction)
-		{
-			StartExplosionAtPixel(GridLoction + FIntPoint( 0, 1), GridRelativeExplosionLocation, Radius - PartStrenght);
-			StartExplosionAtPixel(GridLoction + FIntPoint( 0,-1), GridRelativeExplosionLocation, Radius - PartStrenght);
-			StartExplosionAtPixel(GridLoction + FIntPoint( 1, 0), GridRelativeExplosionLocation, Radius - PartStrenght);
-			StartExplosionAtPixel(GridLoction + FIntPoint(-1, 0), GridRelativeExplosionLocation, Radius - PartStrenght);
+			Radius -= LocationsToPixelState.Find(PixelLoction)->GetCurrentPart()->GetData()->Strength;
 		}
 		else
 		{
-			FIntPoint ExplosionRelativeLocationSign = FIntPoint(FMath::Sign(ExplosionRelativeLocation.X), FMath::Sign(ExplosionRelativeLocation.Y));
+			Radius--;
+		}
 
-			StartExplosionAtPixel(GridLoction + ExplosionRelativeLocationSign, GridRelativeExplosionLocation, Radius - PartStrenght);
+		if (GridRelativeExplosionLocation.IntPoint() == GridLoction)
+		{
+			for (FIntPoint EachPossibleShadowLocation : PossilbeShadowLocations)
+			{
+				StartExplosionAtPixel(GridLoction + EachPossibleShadowLocation, GridRelativeExplosionLocation, Radius);
+				DrawDebugDirectionalArrow(GetWorld(), TransformGridToWorld(GridLoction), TransformGridToWorld(GridLoction + EachPossibleShadowLocation), .02, FColor::Blue, true);
+			}
+		}
+		else
+		{
 
-			if (abs(ExplosionRelativeLocation.X) > abs(ExplosionRelativeLocation.Y))
-			{
-				StartExplosionAtPixel(GridLoction + FIntPoint(ExplosionRelativeLocationSign.X, 0), GridRelativeExplosionLocation, Radius - PartStrenght);
-			}
-			else if (abs(ExplosionRelativeLocation.Y) > abs(ExplosionRelativeLocation.X))
-			{
-				StartExplosionAtPixel(GridLoction + FIntPoint(ExplosionRelativeLocationSign.Y, 0), GridRelativeExplosionLocation, Radius - PartStrenght);
-			}
 		}
 		RemovePixel(GridLoction);
 	}
