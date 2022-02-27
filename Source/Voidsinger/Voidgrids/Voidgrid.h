@@ -709,7 +709,7 @@ private:
 	/*
 	 * Handles all resource calls made this tick by using and adding the resources specified
 	 */
-	UFUNCTION(Category = "Resource Management")
+	UFUNCTION()
 	void HandleResourceCalls();
 
 	/*
@@ -717,7 +717,7 @@ private:
 	 * 
 	 * @param AddedResources - The resources added and how much of each is added
 	 */
-	UFUNCTION(Category = "Resource Management")
+	UFUNCTION()
 	void AddResources(TMap<EResourceType, float> AddedResources);
 
 	/*
@@ -727,15 +727,15 @@ private:
 	 * 
 	 * @return - Whether the resources were successfully used or not
 	 */
-	UFUNCTION(Category = "Resource Management")
+	UFUNCTION()
 	const bool UseResources(TMap<EResourceType, float> UsedResources);
 
 	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
-	UPROPERTY(Category = "Resource Management")
+	UPROPERTY()
 	TMap<EResourceType, float> Resources;
 
 	//Stores all of the resource calls that were made this tick
-	UPROPERTY(Category = "Resource Management")
+	UPROPERTY()
 	TArray<FResourceCall> ResourceCalls;
 
 	/* /\ Resource Management /\ *\

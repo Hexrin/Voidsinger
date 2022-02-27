@@ -856,7 +856,7 @@ void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 		if (LowerIndex > UpperIndex)
 		{
 			//When the lower index is greater than the number of resource calls, that means the new call needs to be at the end of the array
-			if (!LowerIndex > ResourceCalls.Num())
+			if (!(LowerIndex > ResourceCalls.Num()))
 			{
 				ResourceCalls.EmplaceAt(MiddleIndex, ResourceCall);
 				break;

@@ -35,7 +35,7 @@ enum class EResourceType : uint8
 /*
  * Stores the resources used and created by this call, as well as the priority of the call
  */
-USTRUCT()
+USTRUCT(BlueprintType)
 struct VOIDSINGER_API FResourceCall
 {
 	GENERATED_BODY()
@@ -74,15 +74,15 @@ public:
 	\* \/ Resource Management \/ */
 
 	//The priority of this resource call
-	UPROPERTY(Category = "Resource Management")
+	UPROPERTY(EditAnywhere, Category = "Resource Management")
 	int Priority{ 0 };
 
 	//A map of resource types to the amount used of each
-	UPROPERTY(Category = "Resource Management")
+	UPROPERTY(EditAnywhere, Category = "Resource Management")
 	TMap<EResourceType, float> ResourceTypesToAmountUsed{ TMap<EResourceType, float>() };
 
 	//A map of resource types to the amount created of each
-	UPROPERTY(Category = "Resource Management")
+	UPROPERTY(EditAnywhere, Category = "Resource Management")
 	TMap<EResourceType, float> ResourceTypesToAmountCreated{ TMap<EResourceType, float>() };
 
 	/* /\ Resource Management /\ *\
