@@ -66,6 +66,7 @@ void AVoidgrid::Tick(float DeltaTime)
 	
 	DeltaHeatTime += DeltaTime;
 
+	HandleResourceCalls();
 }
 
 /* ------------- *\
@@ -854,33 +855,32 @@ void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 	{
 		if (LowerIndex > UpperIndex)
 		{
-			ResourceCalls.EmplaceAt(MiddleIndex + 1, ResourceCall);
-			break;
+			//When the lower index is greater than the number of resource calls, that means the new call needs to be at the end of the array
+			if (!LowerIndex > ResourceCalls.Num())
+			{
+				ResourceCalls.EmplaceAt(MiddleIndex, ResourceCall);
+				break;
+			}
+			else
+			{
+				ResourceCalls.Emplace(ResourceCall);
+			}
 		}
 
 		MiddleIndex = (LowerIndex + UpperIndex) / 2;
 
-		// \/ Find information about whether this call fits here \/ //   // This feels unnessarly complicated. They may be an easyer way to do this.
-
-		bool bPriorityEqual = ResourceCalls[MiddleIndex].Priority == ResourceCall.Priority;
-		bool bPriorityGreaterThanOrEqualPrevious = !ResourceCalls.IsValidIndex(MiddleIndex - 1) || ResourceCall.Priority >= ResourceCalls[MiddleIndex - 1].Priority;
-		bool bPriorityLessThanCurrent = ResourceCall.Priority < ResourceCalls[MiddleIndex].Priority;
-		bool bPriorityFitsBetween = bPriorityGreaterThanOrEqualPrevious && bPriorityLessThanCurrent;
-
-		// /\ Find information about whether this call fits here /\ //
-
-		if (bPriorityEqual || bPriorityFitsBetween)
+		if (ResourceCalls[MiddleIndex].Priority == ResourceCall.Priority)
 		{
 			ResourceCalls.EmplaceAt(MiddleIndex, ResourceCall);
 			break;
 		}
-		else if (!bPriorityLessThanCurrent)
-		{
-			LowerIndex = MiddleIndex + 1;
-		}
-		else if (bPriorityLessThanCurrent)//umm this is the same as the last else if so it will never be called. - Liam Suggestion.
+		else if (ResourceCall.Priority < ResourceCalls[MiddleIndex].Priority)
 		{
 			UpperIndex = MiddleIndex - 1;
+		}
+		else 
+		{
+			LowerIndex = MiddleIndex + 1;
 		}
 	}
 }
@@ -888,7 +888,7 @@ void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 /*
  * Handles all resource calls made this tick by using and adding the resources specified
  */
-void AVoidgrid::HandleResourceCalls() // this is never called.
+void AVoidgrid::HandleResourceCalls()
 {
 	for (FResourceCall EachResourceCall : ResourceCalls)
 	{
@@ -933,8 +933,7 @@ const bool AVoidgrid::UseResources(TMap<EResourceType, float> UsedResources)
 	// \/ Check if all resources can be used \/ //
 	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
 	{
-		// Did you want to use the bitwise operator?
-		if ((!Resources.Contains(EachUsedResource.Key)) | (Resources.FindRef(EachUsedResource.Key) < EachUsedResource.Value))
+		if ((!Resources.Contains(EachUsedResource.Key)) || (Resources.FindRef(EachUsedResource.Key) < EachUsedResource.Value))
 		{
 			//Return if not all resources can be used.
 			return false;
