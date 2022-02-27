@@ -864,6 +864,7 @@ void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 			else
 			{
 				ResourceCalls.Emplace(ResourceCall);
+				break;
 			}
 		}
 
