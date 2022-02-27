@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivationCues/BaseActivationCue.h"
-#include "Voidsinger/VoidsingerTypes.h"
+#include "Voidsinger/Voidgrids/ResourceType.h"
 #include "ResourceCue.generated.h"
 
 // \/ Forward declarations \/ /
@@ -49,13 +49,9 @@ public:
 	UPROPERTY(Instanced, EditAnywhere)
 	TArray<UBaseActivationCue*> ActivationCues;
 
-	//Stores what resources this cue will use
+	//Stores the resources and priority of this cue
 	UPROPERTY(EditAnywhere)
-	TMap<EResourceType, float> ResourcesToUse;
-
-	//Stores what resources this cue will create
-	UPROPERTY(EditAnywhere)
-	TMap<EResourceType, float> ResourcesToCreate;
+	FResourceCall ResourceCall;
 
 private:
 
@@ -65,7 +61,7 @@ private:
 	 * @param Data - The activation data containing all relavent information, including the effectiveness
 	 */
 	UFUNCTION()
-	void ManageResources(FPartActivationData Data);
+	void CreateResourceCall(FPartActivationData Data);
 
 	//Stores the Voidgrid that owns this activation cue
 	AVoidgrid* Voidgrid;

@@ -23,27 +23,27 @@ void UPartStateChangeCue::Initialize(UActivatablePartModule* OwningModule)
 
 	// \/ Bind "BroadcastDelegate" to all part state changes specified \/ /
 
-	if ((bool)(PartStates & (int)(EPartStateChange::OnDamaged)))
+	if ((bool)(PartStateMask & (int)(EPartStateChange::OnDamaged)))
 	{
 		OwningPart->OnDamaged.AddDynamic(this, &UPartStateChangeCue::BroadcastDelegate);
 	}
-	if ((bool)(PartStates & (int)(EPartStateChange::OnRepaired)))
+	if ((bool)(PartStateMask & (int)(EPartStateChange::OnRepaired)))
 	{
 		OwningPart->OnRepaired.AddDynamic(this, &UPartStateChangeCue::BroadcastDelegate);
 	}
-	if ((bool)(PartStates & (int)(EPartStateChange::OnFunctionalityLost)))
+	if ((bool)(PartStateMask & (int)(EPartStateChange::OnFunctionalityLost)))
 	{
 		OwningPart->OnFunctionalityLost.AddDynamic(this, &UPartStateChangeCue::BroadcastDelegate);
 	}
-	if ((bool)(PartStates & (int)(EPartStateChange::OnFunctionalityRestored)))
+	if ((bool)(PartStateMask & (int)(EPartStateChange::OnFunctionalityRestored)))
 	{
 		OwningPart->OnFunctionalityRestored.AddDynamic(this, &UPartStateChangeCue::BroadcastDelegate);
 	}
-	if ((bool)(PartStates & (int)(EPartStateChange::OnDestroyed)))
+	if ((bool)(PartStateMask & (int)(EPartStateChange::OnDestroyed)))
 	{
 		OwningPart->OnDestroyed.AddDynamic(this, &UPartStateChangeCue::BroadcastDelegate);
 	}
-	if ((bool)(PartStates & (int)(EPartStateChange::OnFullyRepaired)))
+	if ((bool)(PartStateMask & (int)(EPartStateChange::OnFullyRepaired)))
 	{
 		OwningPart->OnFullyRepaired.AddDynamic(this, &UPartStateChangeCue::BroadcastDelegate);
 	}

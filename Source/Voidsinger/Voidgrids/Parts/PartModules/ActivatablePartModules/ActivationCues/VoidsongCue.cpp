@@ -23,8 +23,6 @@ void UVoidsongCue::Initialize(UActivatablePartModule* OwningModule)
 {
 	Module = OwningModule;
 
-	UE_LOG(LogTemp, Warning, TEXT("game mode is %s"), *UGameplayStatics::GetGameMode(Module->GetWorld())->GetName());
-
 	//Bind "BindToVoidsong" to Voidsong played
 	Cast<AVoidsingerGameMode>(UGameplayStatics::GetGameMode(Module->GetWorld()))->VoidsongManager->OnVoidsongPlayed.AddDynamic(this, &UVoidsongCue::BindToVoidsong);
 }
@@ -59,15 +57,15 @@ void UVoidsongCue::BindToVoidsong(UVoidsong* Voidsong)
 		//If this part module satisfies the conditions of the Voidsong, bind the events
 		if (bFactionsCheck && bNounsCheck)
 		{
-			if ((bool)(VoidsongCues & (int)(EVoidsongCall::OnPlay)))
+			if ((bool)(VoidsongCueMask & (int)(EVoidsongCall::OnPlay)))
 			{
 				BroadcastDelegate(Voidsong->GetVoidsongData().GetVerbMotifs(), 1);
 			}
-			if ((bool)(VoidsongCues & (int)(EVoidsongCall::ForDuration)))
+			if ((bool)(VoidsongCueMask & (int)(EVoidsongCall::ForDuration)))
 			{
 				Voidsong->ForDuration.AddDynamic(this, &UVoidsongCue::BroadcastDelegate);
 			}
-			if ((bool)(VoidsongCues & (int)(EVoidsongCall::OnBeat)))
+			if ((bool)(VoidsongCueMask & (int)(EVoidsongCall::OnBeat)))
 			{
 				Voidsong->OnBeat.AddDynamic(this, &UVoidsongCue::BroadcastDelegate);
 			}

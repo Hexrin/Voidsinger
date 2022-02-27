@@ -68,7 +68,7 @@ public:
 
 	//Stores which Voidsong cues to broadcast the delegate from
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Voidsong Cue", meta = (Bitmask, BitmaskEnum = EVoidsongCall))
-	int32 VoidsongCues;
+	int32 VoidsongCueMask;
 
 private:
 

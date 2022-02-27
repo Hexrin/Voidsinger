@@ -13,8 +13,10 @@ class UActivatablePartModule;
 
 // /\ Forward declarations /\ /
 
-//Broadcasts the activation data when this activation cue is called
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FActivationCue, const FPartActivationData, ActivationData);
+/*
+ * Broadcasts the activation data when this activation cue is called
+ */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FActivationCueDelegate, const FPartActivationData, ActivationData);
 
 /* \/ ================== \/ *\
 |  \/ UBaseActivationCue \/  |
@@ -49,7 +51,7 @@ public:
 
 	//Delegate for broadcasting the activation data when this activation cue is called
 	UPROPERTY(BlueprintAssignable, Category = "Delegation")
-	FActivationCue OnActivate;
+	FActivationCueDelegate OnActivate;
 
 	/* /\ Delegation /\ *\
 	\* ---------------- */

@@ -3,6 +3,7 @@
 #include "ResourceCue.h"
 #include "BaseActivationCue.h"
 #include "Voidsinger/Voidgrids/Parts/Part.h"
+#include "Voidsinger/Voidgrids/Voidgrid.h"
 #include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivatablePartModule.h"
 
 /* \/ ============ \/ *\
@@ -25,7 +26,7 @@ void UResourceCue::Initialize(UActivatablePartModule* OwningModule)
 	for (UBaseActivationCue* EachActivationCue : ActivationCues)
 	{
 		EachActivationCue->Initialize(OwningModule);
-		EachActivationCue->OnActivate.AddUniqueDynamic(this, &UResourceCue::ManageResources);
+		EachActivationCue->OnActivate.AddUniqueDynamic(this, &UResourceCue::CreateResourceCall);
 	}
 }
 
@@ -40,9 +41,24 @@ void UResourceCue::Initialize(UActivatablePartModule* OwningModule)
  *
  * @param Data - The activation data containing all relavent information, including the effectiveness
  */
-void UResourceCue::ManageResources(FPartActivationData Data)
+void UResourceCue::CreateResourceCall(FPartActivationData Data)
 {
+	//Stores the resource call adjusted with effectiveness
+	FResourceCall AdjustedResourceCall;
 
+	for (TPair<EResourceType, float> EachResourceTypeToAmountUsed : ResourceCall.ResourceTypesToAmountUsed)
+	{
+		AdjustedResourceCall.ResourceTypesToAmountUsed.Emplace(EachResourceTypeToAmountUsed.Key, EachResourceTypeToAmountUsed.Value * Data.Effectiveness);
+	}
+
+	for (TPair<EResourceType, float> EachResourceTypeToAmountCreated : ResourceCall.ResourceTypesToAmountCreated)
+	{
+		AdjustedResourceCall.ResourceTypesToAmountCreated.Emplace(EachResourceTypeToAmountCreated.Key, EachResourceTypeToAmountCreated.Value * Data.Effectiveness);
+	}
+
+	Voidgrid->AddResourceCall(AdjustedResourceCall);
+
+	OnActivate.Broadcast(Data);
 }
 
 /* /\ Delegation /\ *\

@@ -64,7 +64,7 @@ public:
 
 	//Stores which part states to broadcast the delegate from
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Delegation", meta = (Bitmask, BitmaskEnum = EPartStateChange))
-	int32 PartStates;
+	int32 PartStateMask;
 
 private:
 
