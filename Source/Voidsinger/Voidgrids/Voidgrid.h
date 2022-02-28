@@ -10,12 +10,12 @@
 #include "ProceduralMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "VectorArc.h"
 #include "Voidgrid.generated.h"
 
 
 
 class UThrustManager;
-struct FExplosionArc;
 
 //The type used for storing pixel data
 typedef FGridPixelData PixelType;
@@ -497,6 +497,24 @@ public:
 	FGridLocationDelegate OnPixelAdded;
 
 	/**
+	 * Gets the grid loction of a world loction.
+	 *
+	 * @param WorldLocation - The world location to transform.
+	 * @return The grid loction of WorldLocation;
+	 */
+	UFUNCTION(BlueprintPure)
+	FIntPoint TransformWorldToGrid(FVector WorldLocation) const;
+
+	/**
+	 * Gets the world location of a grid loction.
+	 *
+	 * @param GridLoction - The grid location to transform.
+	 * @return The world loction of GridLoction;
+	 */
+	UFUNCTION(BlueprintPure)
+	FVector TransformGridToWorld(FIntPoint GridLocation) const;
+
+	/**
 	 * Sets the pixel mold of the voidgrid
 	 * 
 	 * @param NewPixelMold - The value to assign to the pixel mold of the voidgrid
@@ -616,7 +634,7 @@ private:
 	 * @param Radius - The radius of the explosion.
 	 */
 	UFUNCTION()
-	void StartExplosionAtPixel(FIntPoint GridLoction, FVector2D GridRelativeExplosionLocation, float Radius, FExplosionArc Arc);
+	void StartExplosionAtPixel(FIntPoint GridLoction, FVector2D GridRelativeExplosionLocation, float Radius, FVectorArc Arc = FVectorArc());
 
 	/* /\ Explosion /\ *\
 	\* --------------- */

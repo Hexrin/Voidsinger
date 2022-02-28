@@ -3,7 +3,6 @@
 
 #include "Voidgrid.h"
 #include "Voidsinger/Voidgrids/Parts/PartModules/ThrustManager.h"
-#include "ExplosionArc"
 #include "DrawDebugHelpers.h"
 #include "Parts/Part.h"
 
@@ -366,7 +365,6 @@ void AVoidgrid::SpreadHeat()
  * @param WorldLocation - The world location to transform.
  * @return The grid loction of WorldLocation;
  */
-UFUNCTION(BlueprintPure)
 FIntPoint AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
 {
 	return (FVector2D(GetTransform().InverseTransformPosition(WorldLocation)) + CenterOfMass).IntPoint();
@@ -378,7 +376,6 @@ FIntPoint AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
  * @param GridLoction - The grid location to transform.
  * @return The world loction of GridLoction;
  */
-UFUNCTION(BlueprintPure)
 FVector AVoidgrid::TransformGridToWorld(FIntPoint GridLocation) const
 {
 	return GetTransform().TransformPosition(FVector(FVector2D(GridLocation) - CenterOfMass, 0));
@@ -750,7 +747,7 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
  * @param GridRelativeExplosionLocation -  The location of the center of the explosion relative to the pixel grid.
  * @param Radius - The radius of the explosion.
  */
-void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRelativeExplosionLocation, float Radius, FExplosionArc Arc)
+void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRelativeExplosionLocation, float Radius, FVectorArc Arc)
 {
 	static TArray<FIntPoint> PossilbeShadowLocations{ TArray<FIntPoint>() };
 	if (PossilbeShadowLocations.IsEmpty()) 
@@ -777,19 +774,13 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 			Radius--;
 		}
 
-		if (GridRelativeExplosionLocation.IntPoint() == GridLoction)
+		for (FIntPoint EachPossibleShadowLocation : PossilbeShadowLocations)
 		{
-			for (FIntPoint EachPossibleShadowLocation : PossilbeShadowLocations)
-			{
-				StartExplosionAtPixel(GridLoction + EachPossibleShadowLocation, GridRelativeExplosionLocation, Radius);
-				DrawDebugDirectionalArrow(GetWorld(), TransformGridToWorld(GridLoction), TransformGridToWorld(GridLoction + EachPossibleShadowLocation), .02, FColor::Blue, true);
-			}
+			StartExplosionAtPixel(PixelLoction + EachPossibleShadowLocation, GridRelativeExplosionLocation, Radius);
+			DrawDebugDirectionalArrow(GetWorld(), TransformGridToWorld(PixelLoction), TransformGridToWorld(PixelLoction + EachPossibleShadowLocation), .02, FColor::Blue, true);
 		}
-		else
-		{
 
-		}
-		RemovePixel(GridLoction);
+		RemovePixel(PixelLoction);
 	}
 }
 
