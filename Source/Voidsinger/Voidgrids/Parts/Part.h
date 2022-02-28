@@ -225,6 +225,9 @@ public:
 private:
 	//Stores the functionality of this part.
 	UPartData* Data;
+
+	//Stores the modules of this part
+	TArray<UPartModule*> Modules;
 	
 	/* /\ Part Data /\ *\
 	\* --------------- */

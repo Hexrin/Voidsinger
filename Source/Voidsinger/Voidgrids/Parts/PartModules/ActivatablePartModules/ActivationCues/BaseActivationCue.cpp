@@ -2,11 +2,16 @@
 
 
 #include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivationCues/BaseActivationCue.h"
+#include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivatablePartModule.h"
 
 /* \/ ================== \/ *\
 |  \/ UBaseActivationCue \/  |
 \* \/ ================== \/ */
 
+UBaseActivationCue::UBaseActivationCue()
+{
+	UE_LOG(LogTemp, Warning, TEXT("i am constructed for some reason"));
+}
 /* -------------------- *\
 \* \/ Initialization \/ */
 
@@ -15,6 +20,8 @@
  */
 void UBaseActivationCue::Initialize(UActivatablePartModule* OwningModule)
 {
+	Module = OwningModule;
+	Part = OwningModule->Part;
 }
 
 /* /\ Initialization /\ *\

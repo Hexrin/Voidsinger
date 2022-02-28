@@ -2,6 +2,8 @@
 
 
 #include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivationCues/IntervalCue.h"
+#include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ActivatablePartModule.h"
+#include "Voidsinger/Voidgrids/Parts/Part.h"
 
 /* \/ ============ \/ *\
 |  \/ UIntervalCue \/  |
@@ -17,12 +19,45 @@
  */
 void UIntervalCue::Tick(float DeltaTime)
 {
+	/*if (IsValid(this))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("this still valid"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("this not valid"));
+	}
+	if (IsValid(Module))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("module still valid"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("module not valid"));
+	}
+	if (IsValid(Part))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("part still valid"))
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("part not valid"));
+	}*/
+
 	TimeSinceLastInterval += DeltaTime;
 
 	if (TimeSinceLastInterval > Interval)
 	{
 		OnActivate.Broadcast(FPartActivationData(TimeSinceLastInterval));
 		TimeSinceLastInterval = 0;
+		/*if (IsValid(Part))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("part still valid"))
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("part not valid"));
+		}*/
 	}
 }
 

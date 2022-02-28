@@ -138,7 +138,9 @@ UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData PartData)
 	
 	for (UPartModule* EachModule : NewPart->GetData()->Modules)
 	{
-		EachModule->InitializeVariables(NewPart);
+		UPartModule* CopiedModule = DuplicateObject<UPartModule>(EachModule, NewPart);
+		NewPart->Modules.Emplace(CopiedModule);
+		CopiedModule->InitializeVariables(NewPart);
 	}
 
 	OwningVoidgrid->OnPixelRemoved.AddDynamic(NewPart, &UPart::RemovePixel);

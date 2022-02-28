@@ -35,6 +35,8 @@ class VOIDSINGER_API UBaseActivationCue : public UObject
 
 public:
 
+	UBaseActivationCue();
+
 	/*
 	 * Initializes this activation cue's variables and bindings
 	 * 
@@ -55,6 +57,10 @@ public:
 
 	/* /\ Delegation /\ *\
 	\* ---------------- */
+
+	//temp
+	UActivatablePartModule* Module;
+	UPart* Part;
 };
 
 /* /\ ================== /\ *\
