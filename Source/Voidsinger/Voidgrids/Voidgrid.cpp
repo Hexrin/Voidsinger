@@ -3,6 +3,7 @@
 
 #include "Voidgrid.h"
 #include "Voidsinger/Voidgrids/Parts/PartModules/ThrustManager.h"
+#include "ExplosionArc"
 #include "DrawDebugHelpers.h"
 #include "Parts/Part.h"
 
@@ -746,12 +747,22 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
  *
  * @param GridLoction - The pixel to remove.
  * @param GridRelativeExplosionLocation -  The location of the center of the explosion relative to the pixel grid.
- * @param Radius - The radius of the eplosion.
+ * @param Radius - The radius of the explosion.
  */
-void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRelativeExplosionLocation, float Radius, FVector2D Arc)
+void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRelativeExplosionLocation, float Radius, FExplosionArc Arc)
 {
 	static TArray<FIntPoint> PossilbeShadowLocations{ TArray<FIntPoint>() };
-
+	if (PossilbeShadowLocations.IsEmpty()) 
+	{
+		PossilbeShadowLocations.Emplace(FIntPoint( 0, 1));
+		PossilbeShadowLocations.Emplace(FIntPoint( 1, 1));
+		PossilbeShadowLocations.Emplace(FIntPoint( 1, 0));
+		PossilbeShadowLocations.Emplace(FIntPoint( 1,-1));
+		PossilbeShadowLocations.Emplace(FIntPoint( 0,-1));
+		PossilbeShadowLocations.Emplace(FIntPoint(-1,-1));
+		PossilbeShadowLocations.Emplace(FIntPoint(-1, 0));
+		PossilbeShadowLocations.Emplace(FIntPoint(-1, 1));
+	}
 
 	FVector2D ExplosionRelativeLocation = FVector2D(PixelLoction) - GridRelativeExplosionLocation;
 	if (ExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius))

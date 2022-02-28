@@ -15,7 +15,7 @@
 
 
 class UThrustManager;
-
+struct FExplosionArc;
 
 //The type used for storing pixel data
 typedef FGridPixelData PixelType;
@@ -613,10 +613,10 @@ private:
 	 * 
 	 * @param GridLoction - The pixel to remove.
 	 * @param GridRelativeExplosionLocation -  The location of the center of the explosion relative to the pixel grid.
-	 * @param Radius - The radius of the eplosion.
+	 * @param Radius - The radius of the explosion.
 	 */
 	UFUNCTION()
-	void StartExplosionAtPixel(FIntPoint GridLoction, FVector2D GridRelativeExplosionLocation, float Radius);
+	void StartExplosionAtPixel(FIntPoint GridLoction, FVector2D GridRelativeExplosionLocation, float Radius, FExplosionArc Arc);
 
 	/* /\ Explosion /\ *\
 	\* --------------- */
@@ -717,8 +717,3 @@ public:
 /* /\ ========= /\ *\
 |  /\ Voidgrid /\  |
 \* /\ ========= /\ */
-
-/* \/ ========= \/ *\
-|  \/ AVoidgrid \/  |
-\* \/ ========= \/ */
-
