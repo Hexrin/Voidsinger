@@ -30,19 +30,60 @@ struct VOIDSINGER_API FVectorArc
 	UPROPERTY()
 	bool bUpperArcNegativeY;
 
-	FExplosionArc(FVector2D LowerArcLimit = FVector2D::UnitVector, FVector2D UpperArcLimit = FVector2D::UnitVector)
+	FVectorArc(FVector2D LowerArcLimit = FVector2D::UnitVector, FVector2D UpperArcLimit = FVector2D::UnitVector)
 	{
-		SetNewArcValue(LowerArcLimit, UpperArcLimit);
+		LowerArcXValue = LowerArcLimit.X;
+		bLowerArcNegativeY = LowerArcLimit.Y < 0;
+		UpperArcXValue = UpperArcLimit.X;
+		bUpperArcNegativeY = UpperArcLimit.Y < 0;
+		bArcRestricted = LowerArcLimit == UpperArcLimit
 	}
 
 	void SetNewArcValue(FVector2D LowerArcLimit, FVector2D UpperArcLimit)
 	{
-		//bLowerArcNegativeY = LowerArcLimit.Y < 0;
-		//LowerArcXValue = bLowerArcNegativeY ? FMath::Min(LowerArcXValue, LowerArcLimit.X) : FMath::Max(LowerArcXValue, LowerArcLimit.X)
-
-
-		//bUpperArcNegativeY = UpperArcLimit.Y < 0;
-		//UpperArcXValue = bUpperArcNegativeY ? FMath::Min(UpperArcXValue, UpperArcLimit.X) : FMath::Max(UpperArcXValue, UpperArcLimit.X)
+		//If arc is not
+		if (UpperArcXValue == LowerArcXValue && bLowerArcNegativeY == bUpperArcNegativeY)
+		{
+			LowerArcXValue = LowerArcLimit.X;
+			bLowerArcNegativeY = LowerArcLimit.Y < 0;
+			UpperArcXValue = UpperArcLimit.X;
+			bUpperArcNegativeY = UpperArcLimit.Y < 0;
+		}
+		else
+		{
+			if (bUpperArcNegativeY == bLowerArcNegativeY)
+			{
+				if (LowerArcLimit.Y < 0 == bLowerArcNegativeY)
+				{
+					LowerArcXValue = LowerArcLimit.X < UpperArcLimit.X ? FMath::Min(LowerArcXValue, LowerArcLimit.X) : FMath::Max(LowerArcXValue, LowerArcLimit.X);
+				}
+				if (UpperArcLimit.Y < 0 == bUpperArcNegativeY)
+				{
+					UpperArcXValue = UpperArcLimit.X < LowerArcLimit.X ? FMath::Min(UpperArcXValue, UpperArcLimit.X) : FMath::Max(UpperArcXValue, UpperArcLimit.X);
+				}
+			}
+			else
+			{
+				if (LowerArcLimit.Y < 0 == bLowerArcNegativeY)
+				{
+					LowerArcXValue = bLowerArcNegativeY ? FMath::Max(LowerArcXValue, LowerArcLimit.X) : FMath::Min(LowerArcXValue, LowerArcLimit.X);
+				}
+				else
+				{
+					LowerArcXValue = LowerArcLimit.X;
+					bLowerArcNegativeY = LowerArcLimit.Y < 0;
+				}
+				if (UpperArcLimit.Y < 0 == bUpperArcNegativeY)
+				{
+					UpperArcXValue = bUpperArcNegativeY ? FMath::Max(UpperArcXValue, UpperArcLimit.X) : FMath::Min(UpperArcXValue, UpperArcLimit.X);
+				}
+				else
+				{
+					UpperArcXValue = UpperArcLimit.X;
+					bUpperArcNegativeY = UpperArcLimit.Y < 0;
+				}
+			}
+		}
 	}
 
 	/**
@@ -50,6 +91,11 @@ struct VOIDSINGER_API FVectorArc
 	 */
 	bool IsLocationInArc(FVector2D Location)
 	{
+		if (UpperArcXValue == LowerArcXValue && bLowerArcNegativeY == bUpperArcNegativeY)
+		{
+			return true;
+		}
+
 		if (bLowerArcNegativeY == bUpperArcNegativeY && (Location.Y < 0 == bUpperArcNegativeY))
 		{
 			if (UpperArcXValue < LowerArcXValue)
@@ -67,4 +113,8 @@ struct VOIDSINGER_API FVectorArc
 			return Location.Y < 0 ? Location.X >= LowerArcXValue : Location.X >= UpperArcXValue;
 		}
 	}
+
+private:
+	UPROPERTY()
+	bool bArcRestricted;
 };
