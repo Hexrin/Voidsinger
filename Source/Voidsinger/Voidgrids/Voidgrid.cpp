@@ -776,8 +776,35 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 
 		for (FIntPoint EachPossibleShadowLocation : PossilbeShadowLocations)
 		{
-			StartExplosionAtPixel(PixelLoction + EachPossibleShadowLocation, GridRelativeExplosionLocation, Radius);
-			DrawDebugDirectionalArrow(GetWorld(), TransformGridToWorld(PixelLoction), TransformGridToWorld(PixelLoction + EachPossibleShadowLocation), .02, FColor::Blue, true);
+			FIntPoint PossilbeShadowLocation = PixelLoction + EachPossibleShadowLocation;
+			if (Arc.IsLocationInArc(FVector2D(PossilbeShadowLocation)))
+			{
+				FVectorArc NewArc = Arc;
+				if (PossilbeShadowLocation.X > 0)
+				{
+					if (PossilbeShadowLocation.Y > 0)
+					{
+						NewArc.ShrinkArcLimits(FVector2D(PossilbeShadowLocation) + FVector2D(0.5, -0.5), FVector2D(PossilbeShadowLocation) + FVector2D(-0.5, 0.5));
+					}
+					else
+					{
+						NewArc.ShrinkArcLimits(FVector2D(PossilbeShadowLocation) + FVector2D(-0.5, -0.5), FVector2D(PossilbeShadowLocation) + FVector2D(0.5, 0.5));
+					}
+				}
+				else
+				{
+					if (PossilbeShadowLocation.Y > 0)
+					{
+						NewArc.ShrinkArcLimits(FVector2D(PossilbeShadowLocation) + FVector2D(-0.5, 0.5), FVector2D(PossilbeShadowLocation) + FVector2D(0.5, -0.5));
+					}
+					else
+					{
+						NewArc.ShrinkArcLimits(FVector2D(PossilbeShadowLocation) + FVector2D(0.5, 0.5), FVector2D(PossilbeShadowLocation) + FVector2D(-0.5, -0.5));
+					}
+				}
+				StartExplosionAtPixel(PixelLoction + EachPossibleShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
+				DrawDebugDirectionalArrow(GetWorld(), TransformGridToWorld(PixelLoction), TransformGridToWorld(PixelLoction + EachPossibleShadowLocation), .02, FColor::Blue, true);
+			}
 		}
 
 		RemovePixel(PixelLoction);
