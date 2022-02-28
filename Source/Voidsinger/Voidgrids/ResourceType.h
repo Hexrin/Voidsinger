@@ -32,6 +32,8 @@ enum class EResourceType : uint8
 |  \/ [FResourceCall] \/  |
 \* \/ =============== \/ */
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResourceCallCompleted);
+
 /*
  * Stores the resources used and created by this call, as well as the priority of the call
  */
@@ -84,6 +86,10 @@ public:
 	//A map of resource types to the amount created of each
 	UPROPERTY(EditAnywhere, Category = "Resource Management")
 	TMap<EResourceType, float> ResourceTypesToAmountCreated{ TMap<EResourceType, float>() };
+
+	//A delegate that is called when the resource call is completed
+	UPROPERTY()
+	FResourceCallCompleted OnResourceCallCompleted;
 
 	/* /\ Resource Management /\ *\
 	\* ------------------------- */

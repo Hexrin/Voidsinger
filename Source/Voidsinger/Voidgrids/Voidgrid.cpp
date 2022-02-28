@@ -896,8 +896,11 @@ void AVoidgrid::HandleResourceCalls()
 		if (UseResources(EachResourceCall.ResourceTypesToAmountUsed))
 		{
 			AddResources(EachResourceCall.ResourceTypesToAmountCreated);
+			EachResourceCall.OnResourceCallCompleted.Broadcast();
 		}
 	}
+
+	ResourceCalls.Empty();
 }
 
 /*

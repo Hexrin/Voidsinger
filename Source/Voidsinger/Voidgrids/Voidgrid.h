@@ -704,6 +704,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Resource Management")
 	void AddResourceCall(FResourceCall ResourceCall);
 	
+	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
+	UPROPERTY(BlueprintReadOnly, Category = "Resource Management")
+	TMap<EResourceType, float> Resources;
+
 private:
 
 	/*
@@ -729,10 +733,6 @@ private:
 	 */
 	UFUNCTION()
 	const bool UseResources(TMap<EResourceType, float> UsedResources);
-
-	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
-	UPROPERTY()
-	TMap<EResourceType, float> Resources;
 
 	//Stores all of the resource calls that were made this tick
 	UPROPERTY()

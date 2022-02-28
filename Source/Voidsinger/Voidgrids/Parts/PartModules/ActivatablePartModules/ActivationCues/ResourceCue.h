@@ -56,15 +56,27 @@ public:
 private:
 
 	/*
-	 * Creates and uses the resources specified
+	 * Creates a resource call
 	 *
 	 * @param Data - The activation data containing all relavent information, including the effectiveness
 	 */
 	UFUNCTION()
 	void CreateResourceCall(FPartActivationData Data);
 
+	/*
+	 * Finishes the resource call by calling "OnActivate"
+	 */
+	UFUNCTION()
+	void OnResourceCallCompleted();
+
 	//Stores the Voidgrid that owns this activation cue
+	UPROPERTY()
 	AVoidgrid* Voidgrid;
+
+
+	//Stores the activation data of the last activation
+	UPROPERTY()
+	FPartActivationData PartActivationData;
 
 	/* /\ Delegation /\ *\
 	\* ---------------- */

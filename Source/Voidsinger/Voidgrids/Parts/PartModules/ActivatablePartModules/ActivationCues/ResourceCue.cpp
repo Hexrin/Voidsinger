@@ -43,6 +43,8 @@ void UResourceCue::Initialize(UActivatablePartModule* OwningModule)
  */
 void UResourceCue::CreateResourceCall(FPartActivationData Data)
 {
+	PartActivationData = Data;
+
 	//Stores the resource call adjusted with effectiveness
 	FResourceCall AdjustedResourceCall;
 
@@ -56,9 +58,16 @@ void UResourceCue::CreateResourceCall(FPartActivationData Data)
 		AdjustedResourceCall.ResourceTypesToAmountCreated.Emplace(EachResourceTypeToAmountCreated.Key, EachResourceTypeToAmountCreated.Value * Data.Effectiveness);
 	}
 
+
+	AdjustedResourceCall.OnResourceCallCompleted.AddDynamic(this, &UResourceCue::OnResourceCallCompleted);
+
 	Voidgrid->AddResourceCall(AdjustedResourceCall);
 
-	OnActivate.Broadcast(Data);
+}
+
+void UResourceCue::OnResourceCallCompleted()
+{
+	OnActivate.Broadcast(PartActivationData);
 }
 
 /* /\ Delegation /\ *\
