@@ -44,7 +44,7 @@ class VOIDSINGER_API UThrustManager : public UObject
 
 	/* ------------------------ *\
 	\* \/ Thrust Predictions \/ */
-
+public:
 	/**
 	 * Predicts the time it will take to reach a certain linear velocity given the Voidgrid's thrusters.
 	 * 
@@ -91,8 +91,9 @@ class VOIDSINGER_API UThrustManager : public UObject
 	* @param ThrustSource - The Thruster the function is using to get the direction of the Thrust
 	* @return The Direction of the thrust
 	*/
-	UFUNCTION(BluepriintPure)
-	FVector2D ThrustDirection(const FVector2D ThrustDirection, FThrustSource ThrustSource) const;
+	UFUNCTION(BlueprintPure)
+	FVector2D GetThrustDirection(const FVector2D ThrustDirection, FThrustSource ThrustSource) const;
+
 	/**
 	* Finds the Rotation of the Thrust Source given whether the Thruster is thrusting in a Clockwise or CounterClockwise direction
 	* @param bClockwise - Return true if thrusting in a Clockwise direction, return false if thrusting in a CounterClockwise direction
@@ -100,7 +101,7 @@ class VOIDSINGER_API UThrustManager : public UObject
 	* @return the Rotation of the thrust 
 	*/
 	UFUNCTION(BlueprintPure)
-		float ThrustRotation(const bool bClockwise, FThrustSource ThrustSource) const;
+	float GetThrustRotation(const bool bClockwise, FThrustSource ThrustSource) const;
 
 	UFUNCTION(BlueprintCallable)
 	void AddManagedThrustSource(FThrustSource ThrustSource);

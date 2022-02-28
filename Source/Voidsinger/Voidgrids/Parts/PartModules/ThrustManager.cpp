@@ -110,22 +110,21 @@ float UThrustManager::TimeToOrientation(const float Orientation, const bool bAcc
 	return (Voidgrid->AngularVelocity > 0 ? CounterClockwiseAngularDistance : ClockwiseAngularDistance) / Voidgrid->AngularVelocity;
 }
 
-FVector2D UThrustManager::ThrustDirection(const FVector2D ThrustDirection, FThrustSource ThrustSource) const
+FVector2D UThrustManager::GetThrustDirection(const FVector2D ThrustDirection, FThrustSource ThrustSource) const
 {
 	return FMath::Max((ThrustSource.Direction | ThrustDirection * ThrustSource.Force),0.f);
 }
 
-float UThrustManager::ThrustRotation(const bool bClockwise, FThrustSource ThrustSource) const
+float UThrustManager::GetThrustRotation(const bool bClockwise, FThrustSource ThrustSource) const
 {
-	float RotationalEffectivness = (ThrustSource.Location - Voidgrid->CenterOfMass) ^ ThrustSource.Direction;
-	if (bClockwise)
+	float RotationalEffectivness = ((ThrustSource.Location - Voidgrid->CenterOfMass) ^ ThrustSource.Direction)*ThrustSource.Force;
+	if (bClockwise) 
 	{
-		return (RotationalEffectivness) * ThrustSource.Force;
-		
+		return RotationalEffectivness;
 	}
 	else
 	{
-		return ((RotationalEffectivness)*ThrustSource.Force) * -1.f;
+		return RotationalEffectivness* -1.f;
 	}
 }
 

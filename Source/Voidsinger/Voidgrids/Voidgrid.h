@@ -545,13 +545,29 @@ public:
 	 */
 	void RepairPixel();
 
+	/*
+	*[ThrustManagerClass - Returns the Class of a UThrustManager]
+	*/
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UThrustManager> ThrustManagerClass;
 
-	UPROPERTY(BlueprintReadOnly)
-	UThrustManager* ThrustManager;
+	/*
+	* [GetThrustManager - Returns the variable ThrustManager given the UThrustManager]
+	* @return - [Returns the variable ThrustManager]
+	*/
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE UThrustManager* GetThrustManager() { return ThrustManager; };
 
 private:
+
+	/*
+	*[ThrustManager - Returns the value of UThrustManager]
+	*/
+	UPROPERTY()
+	UThrustManager* ThrustManager;
+
 	/**
 	 * Set pixel intact
 	 *
@@ -573,6 +589,7 @@ private:
 	 * Does not call OnDamaged.
 	 */
 	void ClearVoidgrid();
+
 
 	//Stores the Pixel Mold of this.
 	PixelMoldType LocationsToPixelState;
