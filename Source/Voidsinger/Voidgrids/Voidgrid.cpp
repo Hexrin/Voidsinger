@@ -232,6 +232,7 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 	{
 		CenterOfMass = DeltaMass / (Mass + DeltaMass)  * MassLocation + Mass / (Mass + DeltaMass) * CenterOfMass;
 		Mass += DeltaMass;
+		AddActorLocalOffset(PixelMeshComponent->GetRelativeLocation() + FVector(CenterOfMass, 0));
 		PixelMeshComponent->SetRelativeLocation(FVector(-1 * CenterOfMass, 0));
 		MomentOfInertia += (1 / 12) + DeltaMass * (MassLocation).SizeSquared();
 		OnMassChanged.Broadcast(Mass, CenterOfMass, MomentOfInertia);
