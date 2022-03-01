@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PixelMoldEditorBase.h"
+#include "Voidsinger/VoidsingerGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -122,11 +123,12 @@ TArray<FString> UPixelMoldEditorBase::GetAllMoldNames()
  * @param OverrridePriorParts - Whether or not the part you are placing should override the parts it is placed on top of if possible.
  * @return Whether the part placement was a success.
  */
-bool UPixelMoldEditorBase::PlacePart(UPartData* Part, FPartTransform Transform, bool bOverrridePriorParts)
+bool UPixelMoldEditorBase::PlacePart(UPartData* Part, FPartTransform Transform, bool bOverrridePriorParts, bool bFreeBuildMode)
 {
-	if (IsValid(Part) && Part->Shape.Num() != 0)
+	int32 RemainingPixels =  - Part->Cost;
+	if (IsValid(Part) && Part->Shape.Num() != 0 && (bFreeBuildMode || (Cast<UVoidsingerGameInstance>(GetGameInstance())->WithdrawPixels(Part->Cost))))
 	{
-		//Search for overlaping parts.
+		//Search for overlaping parts. 
 		TSet<FMinimalPartInstanceData> PartsToRemove = TSet<FMinimalPartInstanceData>();
 		for (GridLocationType ShapeComponent : Part->Shape)
 		{

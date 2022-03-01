@@ -88,7 +88,7 @@ protected:
 	 * @return Whether the part placement was a success.
 	 */
 	UFUNCTION(BlueprintCallable)
-	bool PlacePart(UPartData* Part, FPartTransform Transform, bool bOverrridePriorParts = false);
+	bool PlacePart(UPartData* Part, FPartTransform Transform, bool bOverrridePriorParts = false, bool bFreeBuildMode = false);
 
 
 	// \/ RemovePart() \/ /
