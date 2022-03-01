@@ -94,10 +94,11 @@ struct VOIDSINGER_API FVectorArc
 		}
 		float LocationCotValue = GetVectorCot(Location);
 
-		if (UpperArcCotValue == 0 && LowerArcCotValue == 0)
-		{
-			return Location.Y == 0 || bUpperArcNegativeY == Location.Y < 0;
-		}
+		//if (UpperArcCotValue == 0 && LowerArcCotValue == 0)
+		//{
+		//	return Location.X == 0 || bUpperArcNegativeY == Location.X < 0;
+		//}
+
 
 		if (bLowerArcNegativeY == bUpperArcNegativeY)
 		{

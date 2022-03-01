@@ -735,7 +735,7 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 		if (AVoidgrid* OtherVoidgrid = Cast<AVoidgrid>(EachResult.GetActor()))
 		{
 			FVector2D GridRelativeExplosionLocation = OtherVoidgrid->TransformWorldToGrid(WorldLocation);
-			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation.IntPoint(), GridRelativeExplosionLocation, Radius, FVectorArc(FVector2D(0, -1), FVector2D(1,-1)));
+			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation.IntPoint(), GridRelativeExplosionLocation, Radius, FVectorArc(FVector2D(1, 1), FVector2D(-1,1)));
 		}
 	}
 }
