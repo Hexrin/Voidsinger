@@ -84,7 +84,7 @@ struct VOIDSINGER_API FVectorArc
 	}
 
 	/**
-	 * Gets whether or not the given location is within the arc of this
+	 * Gets whether or not the given location is within the arc of this.
 	 */
 	bool IsLocationInArc(FVector2D Location)
 	{
@@ -94,22 +94,23 @@ struct VOIDSINGER_API FVectorArc
 		}
 		float LocationCotValue = GetVectorCot(Location);
 
-		if (bLowerArcNegativeY == bUpperArcNegativeY && (Location.Y < 0 == bUpperArcNegativeY))
+		if (UpperArcCotValue == 0 && LowerArcCotValue == 0)
 		{
-			if (UpperArcCotValue < LowerArcCotValue)
+			return Location.Y == 0 || bUpperArcNegativeY == Location.Y < 0;
+		}
+
+		if (bLowerArcNegativeY == bUpperArcNegativeY)
+		{
+			//                 true                     true
+			if (UpperArcCotValue > LowerArcCotValue == bUpperArcNegativeY)
 			{
-				return FMath::IsWithinInclusive(LocationCotValue, UpperArcCotValue, LowerArcCotValue);
+				return FMath::IsWithinInclusive(LocationCotValue, LowerArcCotValue, UpperArcCotValue) && Location.Y < 0 == (bUpperArcNegativeY || bLowerArcNegativeY);
 			}
-			return LocationCotValue >= UpperArcCotValue || LocationCotValue <= LowerArcCotValue;
+			return LocationCotValue >= LowerArcCotValue || LocationCotValue <= UpperArcCotValue || Location.Y < 0 != (bUpperArcNegativeY || bLowerArcNegativeY);
 		}
-		if (bUpperArcNegativeY)
-		{
-			return Location.Y < 0 ? LocationCotValue <= UpperArcCotValue : LocationCotValue <= LowerArcCotValue;
-		}
-		else
-		{
-			return Location.Y < 0 ? LocationCotValue >= LowerArcCotValue : LocationCotValue >= UpperArcCotValue;
-		}
+		//Loc = (-1,0)
+		//          false                false               -inf                 1                      -inf                 0
+		return (bUpperArcNegativeY == Location.Y < 0) ? LocationCotValue <= UpperArcCotValue : LocationCotValue >= LowerArcCotValue;
 	}
 
 	/**

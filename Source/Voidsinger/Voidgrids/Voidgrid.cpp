@@ -735,7 +735,7 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 		if (AVoidgrid* OtherVoidgrid = Cast<AVoidgrid>(EachResult.GetActor()))
 		{
 			FVector2D GridRelativeExplosionLocation = OtherVoidgrid->TransformWorldToGrid(WorldLocation);
-			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation.IntPoint(), GridRelativeExplosionLocation, Radius, FVectorArc(FVector2D(1, 0), FVector2D(0, 1)));
+			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation.IntPoint(), GridRelativeExplosionLocation, Radius, FVectorArc(FVector2D(0, -1), FVector2D(1,-1)));
 		}
 	}
 }
@@ -767,11 +767,7 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 	{
 		if (LocationsToPixelState.Contains(PixelLoction) && LocationsToPixelState.Find(PixelLoction)->IsIntact())
 		{
-			Radius -= LocationsToPixelState.Find(PixelLoction)->GetCurrentPart()->GetData()->Strength;
-		}
-		else
-		{
-			Radius--;
+			Radius -= LocationsToPixelState.Find(PixelLoction)->GetCurrentPart()->GetData()->Strength - 1;
 		}
 
 		for (FIntPoint EachPossibleShadowLocation : PossilbeShadowLocations)
@@ -782,39 +778,39 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 			if (ExplosionRelativePossilbeShadowLocation.SizeSquared() > ExplosionRelativeLocation.SizeSquared() && Arc.IsLocationInArc(ExplosionRelativePossilbeShadowLocation))
 			{
 				FVectorArc NewArc = Arc;
-				if (ExplosionRelativePossilbeShadowLocation.X > 0)
-				{
-					if (ExplosionRelativePossilbeShadowLocation.Y > 0)
-					{
-						NewArc.ShrinkArcLimits(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5));
-						//FColor DebugColor = FColor::MakeRandomColor();
-						//FVector DebugOffset = FVector(0,0, .5 * FMath::FRand());
-						//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(GridRelativeExplosionLocation - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5) - CenterOfMass, 0)), DebugColor, true);
-						//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(GridRelativeExplosionLocation - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5) - CenterOfMass, 0)), DebugColor, true);
-						//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5) - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5) - CenterOfMass, 0)), DebugColor, true);
+				//if (ExplosionRelativePossilbeShadowLocation.X > 0)
+				//{
+				//	if (ExplosionRelativePossilbeShadowLocation.Y > 0)
+				//	{
+				//		NewArc.ShrinkArcLimits(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5));
+				//		//FColor DebugColor = FColor::MakeRandomColor();
+				//		//FVector DebugOffset = FVector(0,0, .5 * FMath::FRand());
+				//		//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(GridRelativeExplosionLocation - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5) - CenterOfMass, 0)), DebugColor, true);
+				//		//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(GridRelativeExplosionLocation - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5) - CenterOfMass, 0)), DebugColor, true);
+				//		//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5) - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5) - CenterOfMass, 0)), DebugColor, true);
 
 
-						//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5) - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5) - CenterOfMass, 0)), DebugColor, true);
-						//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5) - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5) - CenterOfMass, 0)), DebugColor, true);
-						//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5) - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5) - CenterOfMass, 0)), DebugColor, true);
-						//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5) - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5) - CenterOfMass, 0)), DebugColor, true);
-					}
-					else
-					{
-						NewArc.ShrinkArcLimits(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5));
-					}
-				}
-				else
-				{
-					if (ExplosionRelativePossilbeShadowLocation.Y > 0)
-					{
-						NewArc.ShrinkArcLimits(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5));
-					}
-					else
-					{
-						NewArc.ShrinkArcLimits(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5));
-					}
-				}
+				//		//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5) - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5) - CenterOfMass, 0)), DebugColor, true);
+				//		//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5) - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5) - CenterOfMass, 0)), DebugColor, true);
+				//		//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5) - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5) - CenterOfMass, 0)), DebugColor, true);
+				//		//DrawDebugLine(GetWorld(), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5) - CenterOfMass, 0)), DebugOffset + GetTransform().TransformPosition(FVector(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5) - CenterOfMass, 0)), DebugColor, true);
+				//	}
+				//	else
+				//	{
+				//		NewArc.ShrinkArcLimits(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5));
+				//	}
+				//}
+				//else
+				//{
+				//	if (ExplosionRelativePossilbeShadowLocation.Y > 0)
+				//	{
+				//		NewArc.ShrinkArcLimits(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5));
+				//	}
+				//	else
+				//	{
+				//		NewArc.ShrinkArcLimits(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5));
+				//	}
+				//}
 				StartExplosionAtPixel(PixelLoction + EachPossibleShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
 				//DrawDebugDirectionalArrow(GetWorld(), TransformGridToWorld(PixelLoction), TransformGridToWorld(PixelLoction + EachPossibleShadowLocation), .02, FColor::Blue, true);
 			}
