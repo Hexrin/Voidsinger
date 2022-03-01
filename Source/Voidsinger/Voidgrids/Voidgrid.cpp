@@ -775,7 +775,7 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 			FIntPoint PossilbeShadowLocation = PixelLoction + EachPossibleShadowLocation;
 			FVector2D ExplosionRelativePossilbeShadowLocation = FVector2D(PossilbeShadowLocation) - GridRelativeExplosionLocation;
 
-			if ((EachPossibleShadowLocation.X == FMath::Sign(ExplosionRelativeLocation.X) || EachPossibleShadowLocation.Y == FMath::Sign(ExplosionRelativeLocation.Y)) && Arc.IsLocationInArc(ExplosionRelativePossilbeShadowLocation) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue)
+			if (ExplosionRelativePossilbeShadowLocation.SizeSquared() > ExplosionRelativeLocation.SizeSquared() && Arc.IsLocationInArc(ExplosionRelativePossilbeShadowLocation))
 			{
 				FVectorArc NewArc = Arc;
 				//if (ExplosionRelativePossilbeShadowLocation.X > 0)
