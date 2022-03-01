@@ -146,6 +146,7 @@ public:
 	/**
 	 * Calls the "OnActivate" function with an Effectiveness of 1 so the part module's functionality is executed.
 	 */
+	UFUNCTION(BlueprintCallable, Category = "Activation")
 	void Activate(bool bApplyEffect = true);
 
 	/**
@@ -153,7 +154,7 @@ public:
 	 *
 	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
 	 */
-	UFUNCTION(BlueprintCallable, DisplayName = "Activate", Category = "Activation")
+	UFUNCTION(BlueprintCallable, Category = "Activation")
 	void ActivateWithEffectiveness(float Effectiveness);
 
 	/**
@@ -163,7 +164,7 @@ public:
 	 * @param Vector - The direction to activate this part in.
 	 * @param Rotation - The rotation of the effect of this voidsong.
 	 */
-	UFUNCTION(BlueprintCallable, DisplayName = "Activate", Category = "Activation")
+	UFUNCTION(BlueprintCallable, Category = "Activation")
 	void ActivateWithEffectivenessVectorAndRotation(float Effectiveness, FVector2D Vector, float Rotation);
 
 	/**
@@ -172,6 +173,7 @@ public:
 	 * @param Verbs - The Verbs played in the Voidsong
 	 * @param Effectiveness - The effectiveness of the activation. Useful for when activate is called every tick
 	 */
+	UFUNCTION(BlueprintCallable, Category = "Activation")
 	void ActivateFromVoidsong(const TArray<UBaseVerbMotif*> Verbs, float Effectiveness);
 
 	// /\ Activate /\ /

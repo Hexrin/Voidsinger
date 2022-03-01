@@ -21,20 +21,23 @@ void UThrusterModule::InitializeVariables(UPart* OwningPart)
  */
 void UThrusterModule::OnActivate_Implementation(const FPartActivationData Data)
 {
-	FVector2D RotatedThrustDirection = UPartRotationFunctions::RotateLocation(ThrustDirection, Part->GetTransform().Rotation);
-	bool ClockwiseRotation = true;
-	if ((FVector2D::CrossProduct((Data.Vector).GetSafeNormal(), ((RotatedThrustDirection).GetSafeNormal()))) > 0.f)
+	if (IsValid(Part))
 	{
-		ClockwiseRotation = true;
-	}
-	else
-	{
-		ClockwiseRotation = false;
-	}
+		FVector2D RotatedThrustDirection = UPartRotationFunctions::RotateLocation(ThrustDirection, Part->GetTransform().Rotation);
+		bool ClockwiseRotation = true;
+		if ((FVector2D::CrossProduct((Data.Vector).GetSafeNormal(), ((RotatedThrustDirection).GetSafeNormal()))) > 0.f)
+		{
+			ClockwiseRotation = true;
+		}
+		else
+		{
+			ClockwiseRotation = false;
+		}
 
-	if ((GetVoidgrid()->GetThrustManager()->GetThrustDirection(RotatedThrustDirection, FThrustSource(1.f,RotatedThrustDirection,Data.Vector))) > (FVector2D(0,0)) || (GetVoidgrid()->GetThrustManager()->GetThrustRotation(ClockwiseRotation, FThrustSource(1.f,RotatedThrustDirection,Data.Vector))) > 0.f)
-	{
-		ActivateWithEffectivenessVectorAndRotation(1, Part->GetTransform().Location, float(Part->GetTransform().Rotation));
+		if ((GetVoidgrid()->GetThrustManager()->GetThrustDirection(RotatedThrustDirection, FThrustSource(1.f, RotatedThrustDirection, Data.Vector))) > (FVector2D(0, 0)) || (GetVoidgrid()->GetThrustManager()->GetThrustRotation(ClockwiseRotation, FThrustSource(1.f, RotatedThrustDirection, Data.Vector))) > 0.f)
+		{
+			ActivateWithEffectivenessVectorAndRotation(1, Part->GetTransform().Location, float(Part->GetTransform().Rotation));
+		}
 	}
 }
 
