@@ -61,6 +61,7 @@ void UResourceCue::CreateResourceCall(FPartActivationData Data)
 
 
 		AdjustedResourceCall.OnResourceCallCompleted.AddDynamic(this, &UResourceCue::OnResourceCallCompleted);
+		AdjustedResourceCall.Priority = ResourceCall.Priority;
 
 		Part->GetVoidgrid()->AddResourceCall(AdjustedResourceCall);
 	}

@@ -841,6 +841,7 @@ EFaction AVoidgrid::GetFaction() const
  */
 void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 {
+
 	//Stores the lower index of the range where ResourceCall should be
 	int LowerIndex = 0;
 
