@@ -892,7 +892,7 @@ void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
  */
 void AVoidgrid::HandleResourceCalls()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("resource calls num %i"), ResourceCalls.Num())
+	UE_LOG(LogTemp, Warning, TEXT("resource calls num %i"), ResourceCalls.Num())
 	for (FResourceCall EachResourceCall : ResourceCalls)
 	{
 		if (UseResources(EachResourceCall.ResourceTypesToAmountUsed))

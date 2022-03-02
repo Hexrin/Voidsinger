@@ -62,7 +62,11 @@ private:
 	float TimeSinceLastInterval;
 
 	//Stores a reference to the owning part
+	UPROPERTY()
 	UPart* Part;
+
+	UPROPERTY()
+	UActivatablePartModule* Module;
 
 	/* /\ Tick /\ *\
 	\* ---------- */

@@ -19,6 +19,7 @@
  */
 void UIntervalCue::Initialize(UActivatablePartModule* OwningModule)
 {
+	Module = OwningModule;
 	Part = OwningModule->Part;
 }
 
@@ -60,21 +61,13 @@ void UIntervalCue::Tick(float DeltaTime)
 		UE_LOG(LogTemp, Warning, TEXT("part not valid"));
 	}*/
 
-	UE_LOG(LogTemp, Warning, TEXT("tick on %s"), *GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("tick on %s"), *GetName());
 	TimeSinceLastInterval += DeltaTime;
 
 	if (TimeSinceLastInterval > Interval)
 	{
 		OnActivate.Broadcast(FPartActivationData(TimeSinceLastInterval));
 		TimeSinceLastInterval = 0;
-		if (IsValid(Part))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("part still valid"))
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("part not valid"));
-		}
 	}
 }
 

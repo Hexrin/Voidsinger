@@ -224,9 +224,11 @@ public:
 
 private:
 	//Stores the functionality of this part.
+	UPROPERTY()
 	UPartData* Data;
 
 	//Stores the modules of this part
+	UPROPERTY()
 	TArray<UPartModule*> Modules;
 	
 	/* /\ Part Data /\ *\
