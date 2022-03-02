@@ -123,10 +123,9 @@ TArray<FString> UPixelMoldEditorBase::GetAllMoldNames()
  * @param OverrridePriorParts - Whether or not the part you are placing should override the parts it is placed on top of if possible.
  * @return Whether the part placement was a success.
  */
-bool UPixelMoldEditorBase::PlacePart(UPartData* Part, FPartTransform Transform, bool bOverrridePriorParts, bool bFreeBuildMode)
+bool UPixelMoldEditorBase::PlacePart(UPartData* Part, FPartTransform Transform, bool bOverrridePriorParts)
 {
-	int32 RemainingPixels =  - Part->Cost;
-	if (IsValid(Part) && Part->Shape.Num() != 0 && (bFreeBuildMode || (Cast<UVoidsingerGameInstance>(GetGameInstance())->WithdrawPixels(Part->Cost))))
+	if (IsValid(Part) && Part->Shape.Num() != 0 && (bFreeBuildMode || ((Cast<UVoidsingerGameInstance>(GetGameInstance())->GetPixels() -(Part->Cost)) > 0.f)))
 	{
 		//Search for overlaping parts. 
 		TSet<FMinimalPartInstanceData> PartsToRemove = TSet<FMinimalPartInstanceData>();
@@ -165,6 +164,10 @@ bool UPixelMoldEditorBase::PlacePart(UPartData* Part, FPartTransform Transform, 
 		}
 
 		OnMoldUpdated(Mold.Array(), TArray<FMinimalPartInstanceData>(&PartBeingAdded, 1), false);
+		if (bFreeBuildMode == false)
+		{
+			Cast<UVoidsingerGameInstance>(GetGameInstance())->WithdrawPixels(Part->Cost);
+		}
 		return true;
 	}
 	return false;
@@ -198,8 +201,9 @@ bool UPixelMoldEditorBase::RemovePart(FIntPoint Location, bool bCallUpdatedEvent
 		return false;
 	}
 
-
+	int32 GetPixels = (Cast<UVoidsingerGameInstance>(GetGameInstance())->GetPixels());
 	FMinimalPartInstanceData PartToRemove = PartLocations.FindRef(Location);
+	Cast<UVoidsingerGameInstance>(GetGameInstance())->SetPixels(GetPixels + PartToRemove.Data->Cost);
 	if (ensureMsgf(Mold.Contains(PartToRemove), TEXT("--- Removing of %s, %s, %i Faild ---\n\t\tSet hashing failed."), *PartToRemove.Data->GetFName().ToString(), *(PartToRemove.Transform.GetGridLocation().ToString()), (int32)PartToRemove.Transform.Rotation))
 	{
 		Mold.Remove(PartToRemove);
