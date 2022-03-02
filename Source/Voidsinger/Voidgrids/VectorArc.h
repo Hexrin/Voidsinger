@@ -31,7 +31,7 @@ struct VOIDSINGER_API FVectorArc
 	 * @param LowerArcLimit - The target lower limit of this arc. The arc will be in the clockwise dirction of this vector.
 	 * @param UpperArcLimit - The target upper limit of this arc. The arc will be in the counterclockwise dirction of this vector.
 	 */
-	void ShrinkArcLimits(FVector2D LowerArcLimit, FVector2D UpperArcLimit)
+	void ShrinkArcBounds(FVector2D LowerArcLimit, FVector2D UpperArcLimit)
 	{
 		//If arc is not restricted then try inilizing the arc with the given limits
 		if (!bArcRestricted)
@@ -40,46 +40,16 @@ struct VOIDSINGER_API FVectorArc
 		}
 		else
 		{
-			//The X/Y of the LowerArcLimit.
-			float LowerArcLimitCot = GetVectorCot(LowerArcLimit);
-
-			//The X/Y of the UpperArcLimit.
-			float UpperArcLimitCot = GetVectorCot(UpperArcLimit);
-
-			//If the limits are in the same hemisphere
-			if (bUpperArcNegativeY == bLowerArcNegativeY)
+			if (IsLocationInArc(LowerArcLimit))
 			{
-				//
-				if (LowerArcLimit.Y < 0 == bLowerArcNegativeY)
-				{
-					LowerArcCotValue = LowerArcLimitCot < UpperArcLimitCot ? FMath::Clamp(LowerArcCotValue, LowerArcLimitCot, UpperArcCotValue) : FMath::Clamp(UpperArcCotValue, UpperArcCotValue, LowerArcLimitCot);
-				}
-				if (UpperArcLimit.Y < 0 == bUpperArcNegativeY)
-				{
-					UpperArcCotValue = UpperArcLimitCot < LowerArcLimitCot ? FMath::Clamp(UpperArcCotValue, UpperArcLimitCot, LowerArcCotValue) : FMath::Clamp(UpperArcCotValue, LowerArcCotValue, UpperArcLimitCot);
-				}
+				LowerArcCotValue = GetVectorCot(LowerArcLimit);
+				bLowerArcNegativeY = LowerArcLimit.Y < 0;
 			}
-			else
+			if (IsLocationInArc(UpperArcLimit))
 			{
-				if (LowerArcLimit.Y < 0 == bLowerArcNegativeY)
-				{
-					LowerArcCotValue = bLowerArcNegativeY ? FMath::Clamp(LowerArcCotValue, LowerArcLimitCot, UpperArcCotValue) : FMath::Clamp(UpperArcCotValue, UpperArcCotValue, LowerArcLimitCot);
-				}
-				else
-				{
-					LowerArcCotValue = LowerArcLimitCot;
-					bLowerArcNegativeY = LowerArcLimit.Y < 0;
-				}
-				if (UpperArcLimit.Y < 0 == bUpperArcNegativeY)
-				{
-					UpperArcCotValue = bUpperArcNegativeY ? FMath::Clamp(UpperArcCotValue, UpperArcLimitCot, LowerArcCotValue) : FMath::Clamp(UpperArcCotValue, LowerArcCotValue, UpperArcLimitCot);
-				}
-				else
-				{
-					UpperArcCotValue = UpperArcLimitCot;
-					bUpperArcNegativeY = UpperArcLimit.Y < 0;
-				}
-			}
+				UpperArcCotValue = GetVectorCot(UpperArcLimit);
+				bUpperArcNegativeY = UpperArcLimit.Y < 0;
+			}			
 		}
 	}
 
@@ -94,10 +64,13 @@ struct VOIDSINGER_API FVectorArc
 		}
 		float LocationCotValue = GetVectorCot(Location);
 
+		//    true                        true
 		if (bLowerArcNegativeY == bUpperArcNegativeY)
 		{
-			if (UpperArcCotValue < LowerArcCotValue == bUpperArcNegativeY)
+			//     1/3                  3
+			if (LowerArcCotValue < UpperArcCotValue)
 			{
+				//                                  1/2                1/3                  3                true                 true                    true
 				return FMath::IsWithinInclusive(LocationCotValue, LowerArcCotValue, UpperArcCotValue) && Location.Y < 0 == (bUpperArcNegativeY || bLowerArcNegativeY);
 			}
 			return LocationCotValue >= LowerArcCotValue || LocationCotValue <= UpperArcCotValue || Location.Y < 0 != (bUpperArcNegativeY || bLowerArcNegativeY);
