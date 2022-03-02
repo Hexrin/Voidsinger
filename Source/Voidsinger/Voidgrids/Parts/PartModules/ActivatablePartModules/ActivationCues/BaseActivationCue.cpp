@@ -8,20 +8,16 @@
 |  \/ UBaseActivationCue \/  |
 \* \/ ================== \/ */
 
-UBaseActivationCue::UBaseActivationCue()
-{
-	UE_LOG(LogTemp, Warning, TEXT("i am constructed for some reason"));
-}
 /* -------------------- *\
 \* \/ Initialization \/ */
 
 /*
  * Initializes this activation cue's variables and bindings
+ * 
+ * @param OwningModule - The module that owns this activation cue
  */
 void UBaseActivationCue::Initialize(UActivatablePartModule* OwningModule)
 {
-	Module = OwningModule;
-	Part = OwningModule->Part;
 }
 
 /* /\ Initialization /\ *\

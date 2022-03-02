@@ -54,6 +54,7 @@ AVoidgrid::AVoidgrid()
  */
 void AVoidgrid::Tick(float DeltaTime)
 {
+	UE_LOG(LogTemp, Warning, TEXT("voidgrid tick"));
 	Super::Tick(DeltaTime);
 
 	UpdateTransform(DeltaTime);
