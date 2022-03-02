@@ -841,7 +841,6 @@ EFaction AVoidgrid::GetFaction() const
  */
 void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 {
-	UE_LOG(LogTemp, Warning, TEXT("resource call added"))
 	//Stores the lower index of the range where ResourceCall should be
 	int LowerIndex = 0;
 
@@ -892,7 +891,6 @@ void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
  */
 void AVoidgrid::HandleResourceCalls()
 {
-	UE_LOG(LogTemp, Warning, TEXT("resource calls num %i"), ResourceCalls.Num())
 	for (FResourceCall EachResourceCall : ResourceCalls)
 	{
 		if (UseResources(EachResourceCall.ResourceTypesToAmountUsed))
