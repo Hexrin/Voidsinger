@@ -36,32 +36,6 @@ void UIntervalCue::Initialize(UActivatablePartModule* OwningModule)
  */
 void UIntervalCue::Tick(float DeltaTime)
 {
-	/*if (IsValid(this))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("this still valid"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("this not valid"));
-	}
-	if (IsValid(Module))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("module still valid"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("module not valid"));
-	}
-	if (IsValid(Part))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("part still valid"))
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("part not valid"));
-	}*/
-
-	//UE_LOG(LogTemp, Warning, TEXT("tick on %s"), *GetName());
 	TimeSinceLastInterval += DeltaTime;
 
 	if (TimeSinceLastInterval > Interval)
@@ -78,7 +52,7 @@ void UIntervalCue::Tick(float DeltaTime)
  */
 bool UIntervalCue::IsTickable() const
 {
-	return (!IsTemplate(RF_ClassDefaultObject) && IsValid(Part));
+	return (!IsTemplate(RF_ClassDefaultObject) && IsValid(Part) && Part->HasAnyPixelsIntact() && (!bMustBeFunctional || Part->IsFunctional()));
 }
 
 /**

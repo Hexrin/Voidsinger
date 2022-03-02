@@ -20,10 +20,7 @@
  */
 void UResourceCue::Initialize(UActivatablePartModule* OwningModule)
 {
-	//Stores a reference to the owning part
-	UPart* OwningPart = OwningModule->Part;
-
-	Voidgrid = OwningPart->GetVoidgrid();
+	Part = OwningModule->Part;
 
 	for (UBaseActivationCue* EachActivationCue : ActivationCues)
 	{
@@ -45,26 +42,28 @@ void UResourceCue::Initialize(UActivatablePartModule* OwningModule)
  */
 void UResourceCue::CreateResourceCall(FPartActivationData Data)
 {
-	PartActivationData = Data;
-
-	//Stores the resource call adjusted with effectiveness
-	FResourceCall AdjustedResourceCall;
-
-	for (TPair<EResourceType, float> EachResourceTypeToAmountUsed : ResourceCall.ResourceTypesToAmountUsed)
+	if ((!bMustBeFunctional || Part->IsFunctional()))
 	{
-		AdjustedResourceCall.ResourceTypesToAmountUsed.Emplace(EachResourceTypeToAmountUsed.Key, EachResourceTypeToAmountUsed.Value * Data.Effectiveness);
+		PartActivationData = Data;
+
+		//Stores the resource call adjusted with effectiveness
+		FResourceCall AdjustedResourceCall;
+
+		for (TPair<EResourceType, float> EachResourceTypeToAmountUsed : ResourceCall.ResourceTypesToAmountUsed)
+		{
+			AdjustedResourceCall.ResourceTypesToAmountUsed.Emplace(EachResourceTypeToAmountUsed.Key, EachResourceTypeToAmountUsed.Value * Data.Effectiveness);
+		}
+
+		for (TPair<EResourceType, float> EachResourceTypeToAmountCreated : ResourceCall.ResourceTypesToAmountCreated)
+		{
+			AdjustedResourceCall.ResourceTypesToAmountCreated.Emplace(EachResourceTypeToAmountCreated.Key, EachResourceTypeToAmountCreated.Value * Data.Effectiveness);
+		}
+
+
+		AdjustedResourceCall.OnResourceCallCompleted.AddDynamic(this, &UResourceCue::OnResourceCallCompleted);
+
+		Part->GetVoidgrid()->AddResourceCall(AdjustedResourceCall);
 	}
-
-	for (TPair<EResourceType, float> EachResourceTypeToAmountCreated : ResourceCall.ResourceTypesToAmountCreated)
-	{
-		AdjustedResourceCall.ResourceTypesToAmountCreated.Emplace(EachResourceTypeToAmountCreated.Key, EachResourceTypeToAmountCreated.Value * Data.Effectiveness);
-	}
-
-
-	AdjustedResourceCall.OnResourceCallCompleted.AddDynamic(this, &UResourceCue::OnResourceCallCompleted);
-
-	Voidgrid->AddResourceCall(AdjustedResourceCall);
-
 }
 
 void UResourceCue::OnResourceCallCompleted()

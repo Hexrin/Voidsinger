@@ -279,6 +279,14 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE  bool IsFunctional() { return bFunctional; };
 
+	/**
+	 * Gets whether or not this part has any pixels intact
+	 * 
+	 * @return - Whether or not this part has any pixels intact
+	 */
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool HasAnyPixelsIntact() { return !(Shape.Num() == 0); };
+
 public:
 
 	// \/ Activation Cues \/ /

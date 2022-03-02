@@ -46,12 +46,16 @@ public:
 public:
 
 	//Stores when this activation cue will be activated
-	UPROPERTY(Instanced, EditAnywhere)
+	UPROPERTY(Instanced, EditAnywhere, Category = "Delegation")
 	TArray<UBaseActivationCue*> ActivationCues;
 
 	//Stores the resources and priority of this cue
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Delegation")
 	FResourceCall ResourceCall;
+
+	//Whether the part this cue is on has to be functional for this cue to activate
+	UPROPERTY(EditAnywhere, Category = "Delegation")
+	bool bMustBeFunctional{ true };
 
 private:
 
@@ -69,10 +73,8 @@ private:
 	UFUNCTION()
 	void OnResourceCallCompleted();
 
-	//Stores the Voidgrid that owns this activation cue
-	UPROPERTY()
-	AVoidgrid* Voidgrid;
-
+	//Stores the part that owns this activation cue
+	UPart* Part;
 
 	//Stores the activation data of the last activation
 	UPROPERTY()

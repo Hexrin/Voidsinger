@@ -62,10 +62,10 @@ private:
 	float TimeSinceLastInterval;
 
 	//Stores a reference to the owning part
-	UPROPERTY()
+	//UPROPERTY()
 	UPart* Part;
 
-	UPROPERTY()
+	//UPROPERTY()
 	UActivatablePartModule* Module;
 
 	/* /\ Tick /\ *\
@@ -79,6 +79,10 @@ public:
 	//The time interval that the delegate should be called at. If this is less than the tick rate, then the interval will be every tick.
 	UPROPERTY(EditAnywhere, Category = "Delegation")
 	float Interval;
+
+	//Whether the part this cue is on has to be functional for the interval to be called
+	UPROPERTY(EditAnywhere, Category = "Delegation")
+	bool bMustBeFunctional{ true };
 
 	/* /\ Delegation /\ *\
 	\* ---------------- */
