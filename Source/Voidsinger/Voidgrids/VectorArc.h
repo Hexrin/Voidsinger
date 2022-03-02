@@ -64,19 +64,17 @@ struct VOIDSINGER_API FVectorArc
 		}
 		float LocationCotValue = GetVectorCot(Location);
 
-		//    true                        true
+
 		if (bLowerArcNegativeY == bUpperArcNegativeY)
 		{
-			//     1/3                  3
-			if (LowerArcCotValue < UpperArcCotValue)
+			if (LowerArcCotValue <= UpperArcCotValue)
 			{
-				//                                  1/2                1/3                  3                true                 true                    true
-				return FMath::IsWithinInclusive(LocationCotValue, LowerArcCotValue, UpperArcCotValue) && Location.Y < 0 == (bUpperArcNegativeY || bLowerArcNegativeY);
+				return (LocationCotValue > LowerArcCotValue && LocationCotValue < UpperArcCotValue) && Location.Y < 0 == (bUpperArcNegativeY || bLowerArcNegativeY);
 			}
-			return LocationCotValue >= LowerArcCotValue || LocationCotValue <= UpperArcCotValue || Location.Y < 0 != (bUpperArcNegativeY || bLowerArcNegativeY);
+			return LocationCotValue > LowerArcCotValue || LocationCotValue < UpperArcCotValue || Location.Y < 0 != (bUpperArcNegativeY || bLowerArcNegativeY);
 		}
 
-		return (bUpperArcNegativeY == Location.Y < 0) ? LocationCotValue <= UpperArcCotValue : LocationCotValue >= LowerArcCotValue;
+		return (bUpperArcNegativeY == Location.Y < 0) ? LocationCotValue < UpperArcCotValue : LocationCotValue > LowerArcCotValue;
 	}
 
 	/**
