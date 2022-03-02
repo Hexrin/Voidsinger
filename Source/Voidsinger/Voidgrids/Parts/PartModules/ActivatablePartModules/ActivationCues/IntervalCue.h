@@ -19,6 +19,18 @@ class VOIDSINGER_API UIntervalCue : public UBaseActivationCue, public FTickableG
 {
 	GENERATED_BODY()
 
+	/* -------------------- *\
+	\* \/ Initialization \/ */
+
+	/*
+	 * Initializes this activation cue's variables and bindings
+	 *
+	 * @param OwningModule - The module that owns this activation cue
+	 */
+	virtual void Initialize(UActivatablePartModule* OwningModule) override;
+
+	/* /\ Initialization /\ *\
+	\* -------------------- */
 
 	/* ---------- *\
 	\* \/ Tick \/ */
@@ -46,7 +58,11 @@ private:
 	 */
 	virtual TStatId GetStatId() const override;
 
+	//Stores the time since the last tick interval
 	float TimeSinceLastInterval;
+
+	//Stores a reference to the owning part
+	UPart* Part;
 
 	/* /\ Tick /\ *\
 	\* ---------- */

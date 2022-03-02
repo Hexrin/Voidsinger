@@ -9,6 +9,22 @@
 |  \/ UIntervalCue \/  |
 \* \/ ============ \/ */
 
+/* -------------------- *\
+\* \/ Initialization \/ */
+
+/*
+ * Initializes this activation cue's variables and bindings
+ *
+ * @param OwningModule - The module that owns this activation cue
+ */
+void UIntervalCue::Initialize(UActivatablePartModule* OwningModule)
+{
+	Part = OwningModule->Part;
+}
+
+/* /\ Initialization /\ *\
+\* -------------------- */
+
 /* ---------- *\
 \* \/ Tick \/ */
 
@@ -44,20 +60,21 @@ void UIntervalCue::Tick(float DeltaTime)
 		UE_LOG(LogTemp, Warning, TEXT("part not valid"));
 	}*/
 
+	UE_LOG(LogTemp, Warning, TEXT("tick on %s"), *GetName());
 	TimeSinceLastInterval += DeltaTime;
 
 	if (TimeSinceLastInterval > Interval)
 	{
 		OnActivate.Broadcast(FPartActivationData(TimeSinceLastInterval));
 		TimeSinceLastInterval = 0;
-		/*if (IsValid(Part))
+		if (IsValid(Part))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("part still valid"))
 		}
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("part not valid"));
-		}*/
+		}
 	}
 }
 
@@ -68,7 +85,7 @@ void UIntervalCue::Tick(float DeltaTime)
  */
 bool UIntervalCue::IsTickable() const
 {
-	return (!IsTemplate(RF_ClassDefaultObject));
+	return (!IsTemplate(RF_ClassDefaultObject) && IsValid(Part));
 }
 
 /**
