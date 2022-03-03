@@ -54,16 +54,15 @@ void AVoidgrid::Tick(float DeltaTime)
 
 	UpdateTransform(DeltaTime);
 
+	DeltaHeatTime += DeltaTime;
+	
 	//Find how many heat ticks have passed and call SpreadHeat that number of times
 	for (int EachHeatTickPassed = 0; EachHeatTickPassed < DeltaHeatTime / HeatTick; DeltaHeatTime -= HeatTick)
 	{
 		SpreadHeat();
+		DeltaHeatTime = 0;
 	}
 	
-
-
-	DeltaHeatTime += DeltaTime;
-
 }
 
 /* ------------- *\
