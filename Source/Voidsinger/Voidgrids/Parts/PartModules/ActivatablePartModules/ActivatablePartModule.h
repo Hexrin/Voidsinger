@@ -114,7 +114,7 @@ public:
 	void BindToDelegates();
 
 	//Stores what activation cues to bind to
-	UPROPERTY(EditAnywhere, Category = "DelegateBinding", Instanced)
+	UPROPERTY(EditAnywhere, Category = "DelegateBinding", Instanced) //Catagory names need spaces (UE doesnt add them in the editor) and should be the same as the noun category - Liam Suggestion
 	TArray<UBaseActivationCue*> ActivationCues;
 
 	/* /\ Delegate Binding /\ *\

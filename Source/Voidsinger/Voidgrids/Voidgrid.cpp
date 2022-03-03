@@ -835,9 +835,9 @@ EFaction AVoidgrid::GetFaction() const
 \* \/ Resource Management \/ */
 
 /*
- * Adds a resource call to the list of resource calls sorted by priority
+ * Adds a resource call to the list of resource calls sorted by priority. //What is a resouce call? - Liam Suggestion
  * 
- * @param ResourceCall - The new resource call
+ * @param ResourceCall - The new resource call.
  */
 void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 {
@@ -851,7 +851,7 @@ void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 	//Stores the middle index between the lower index and the upper index
 	int MiddleIndex = (LowerIndex + UpperIndex) / 2;
 
-	//Start the binary search
+	//Start the binary search //search for what - Liam Suggestion
 	while (true)
 	{
 		if (LowerIndex > UpperIndex)
@@ -888,7 +888,7 @@ void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 }
 
 /*
- * Handles all resource calls made this tick by using and adding the resources specified
+ * Handles all resource calls made this tick by using and adding the resources specified. //It uses resouces too right? - Liam Suggestion
  */
 void AVoidgrid::HandleResourceCalls()
 {
@@ -902,7 +902,7 @@ void AVoidgrid::HandleResourceCalls()
 	}
 
 	ResourceCalls.Empty();
-	//UE_LOG(LogTemp, Warning, TEXT("resource calls emptied"))
+	//UE_LOG(LogTemp, Warning, TEXT("resource calls emptied")) //Grr debug - Liam Suggestion
 }
 
 /*

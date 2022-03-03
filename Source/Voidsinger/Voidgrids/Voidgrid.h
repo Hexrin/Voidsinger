@@ -706,7 +706,7 @@ public:
 	
 	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
 	UPROPERTY(BlueprintReadOnly, Category = "Resource Management")
-	TMap<EResourceType, float> Resources;
+	TMap<EResourceType, float> Resources; //This shoulnt be public since you can set it to any value. There should be a getter function instead. - Liam Suggestion
 
 private:
 
@@ -734,7 +734,7 @@ private:
 	UFUNCTION()
 	const bool UseResources(TMap<EResourceType, float> UsedResources);
 
-	//Stores all of the resource calls that were made this tick
+	//Stores all of the resource calls that were made this tick //What is a call? - Liam Suggestion
 	UPROPERTY()
 	TArray<FResourceCall> ResourceCalls;
 

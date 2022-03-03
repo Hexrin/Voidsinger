@@ -51,7 +51,7 @@ public:
 
 	//Stores the resources and priority of this cue
 	UPROPERTY(EditAnywhere, Category = "Delegation")
-	FResourceCall ResourceCall;
+	FResourceCall ResourceCall; //Activation cues should never apply the effect of activation. In other words the cue should not be able to add resouces, that should be handeled by the part when Activate is called. - Liam Suggestion
 
 	//Whether the part this cue is on has to be functional for this cue to activate
 	UPROPERTY(EditAnywhere, Category = "Delegation")
