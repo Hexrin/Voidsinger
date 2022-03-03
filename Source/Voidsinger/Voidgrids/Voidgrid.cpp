@@ -63,6 +63,40 @@ void AVoidgrid::Tick(float DeltaTime)
 		DeltaHeatTime = 0;
 	}
 	
+	//Temperature debugging, very lag probably
+
+	for (TPair<FIntPoint, PixelType> EachLocationToPixel : LocationsToPixelState.GetGridPairs())
+	{
+		FColor Color;
+
+		if (EachLocationToPixel.Value.GetTemperature() < 0)
+		{
+			if (EachLocationToPixel.Value.GetTemperature() < -5)
+			{
+				Color = FColor::Blue;
+			}
+			else
+			{
+				Color = FColor::Cyan;
+			}
+		}
+		else if (EachLocationToPixel.Value.GetTemperature() == 0)
+		{
+			Color = FColor::Green;
+		}
+		else
+		{
+			if (EachLocationToPixel.Value.GetTemperature() > 5)
+			{
+				Color = FColor::Red;
+			}
+			else
+			{
+				Color = FColor::Orange;
+			}
+		}
+		DrawDebugBox(GetWorld(), FVector(EachLocationToPixel.Key) /* + GetActorLocation()*/, FVector(0.4, 0.4, 0.1), Color);
+	}
 }
 
 /* ------------- *\
@@ -321,6 +355,10 @@ void AVoidgrid::SpreadHeat()
 
 	// \/ Set the temperature of each pixel and find whether it should be melted or frozen \/ /
 
+	//Stores what pixels should be melted. This is necessary because RemovePixel() will transfer the heat of the pixel to it's surrounding locations. You need to make sure
+	//that the heat RemovePixel() is transfering is 1. correct and 2. will not be overriden by the heat map.
+	TArray<FIntPoint> MeltedPixels;
+
 	for (TPair<FIntPoint, PixelType> EachPixel : LocationsToPixelState.GetGridPairs())
 	{
 		if (NewHeatMap.Contains(EachPixel.Key) && EachPixel.Value.IsIntact())
@@ -328,7 +366,7 @@ void AVoidgrid::SpreadHeat()
 			//Melt pixel
 			if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 			{
-				RemovePixel(EachPixel.Key);
+				MeltedPixels.Add(EachPixel.Key);
 			}
 
 			else
@@ -347,6 +385,12 @@ void AVoidgrid::SpreadHeat()
 				EachPixel.Value.SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
 			}
 		}
+	}
+
+	//Melt the melted pixels
+	for (FIntPoint EachMeltedPixel : MeltedPixels)
+	{
+		RemovePixel(EachMeltedPixel);
 	}
 
 	// /\ Set the temperature of each pixel and find whether it should be melted or frozen /\ /
@@ -518,6 +562,33 @@ FVoidgridState AVoidgrid::GetState()
  */
 void AVoidgrid::RemovePixel(GridLocationType Location)
 {
+
+	// \/ Transfer heat \/ //
+
+	for (int EachLocationAround = 0; EachLocationAround < 4; EachLocationAround++)
+	{
+		FIntPoint LocationAround;
+
+		switch (EachLocationAround)
+		{
+		case 0: 
+			LocationAround = FIntPoint(1, 0);
+			break;
+		case 1: 
+			LocationAround = FIntPoint(0, 1);
+			break;
+		case 2: 
+			LocationAround = FIntPoint(-1, 0);
+			break;
+		case 3: 
+			LocationAround = FIntPoint(0, -1);
+			break;
+		}
+		AddTemperatureAtLocation(Location + LocationAround, LocationsToPixelState.Find(Location)->GetTemperature() / 4);
+	}
+
+	// /\ Transfer heat /\ //
+
 	SetPixelIntact(Location, false);
 }
 
