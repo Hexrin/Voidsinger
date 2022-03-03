@@ -735,7 +735,7 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 		if (AVoidgrid* OtherVoidgrid = Cast<AVoidgrid>(EachResult.GetActor()))
 		{
 			FVector2D GridRelativeExplosionLocation = OtherVoidgrid->TransformWorldToGrid(WorldLocation);
-			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation.IntPoint(), GridRelativeExplosionLocation, Radius, FVectorArc(FVector2D(-1.5, 0.5),FVector2D(-0.5, 1.5)));
+			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation.IntPoint(), GridRelativeExplosionLocation, Radius);
 		}
 	}
 }
@@ -784,60 +784,60 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 				FVectorArc NewArc = Arc;
 
 				//Deterims the sign of X & Y
-				//int32 NextExplosionSignedDirection = (FMath::Sign(ExplosionRelativePossilbeShadowLocation.X) + 1) + 3 * (FMath::Sign(ExplosionRelativePossilbeShadowLocation.Y) + 1);
-				//switch (NextExplosionSignedDirection)
-				//{
-				//// X < 0 && Y < 0
-				//case 0:
-				//	NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5));
-				//	break;
-				//	
-				//// X > 0 && Y < 0
-				//case 1:
-				//	NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5));
-				//	break;
-				//	
-				//// X = 0 && Y < 0
-				//case 2:
-				//	NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5));
-				//	break;
-				//	
-				//// X < 0 && Y > 0
-				//case 3:
-				//	NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5));
-				//	break;
-				//	
-				//// X > 0 && Y > 0
-				//case 4:
-				//	NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5));
-				//	break;
-				//	
-				//// X = 0 && Y > 0
-				//case 5:
-				//	NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5));
-				//	break;
-				//	
-				//// X < 0 && Y = 0
-				//case 6:
-				//	NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5));
-				//	break;
-				//	
-				//// X > 0 && Y = 0
-				//case 7:
-				//	NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5));
-				//	break;
-				//	
-				//// X = 0 && Y = 0
-				//case 8:
-				//	break;
+				int32 NextExplosionSignedDirection = (FMath::Sign(ExplosionRelativePossilbeShadowLocation.X) + 1) + 3 * (FMath::Sign(ExplosionRelativePossilbeShadowLocation.Y) + 1);
+				switch (NextExplosionSignedDirection)
+				{
+				// X < 0 && Y < 0
+				case 0:
+					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5));
+					break;
+					
+				// X = 0 && Y < 0
+				case 1:
+					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5));
+					break;
+					
+				// X > 0 && Y < 0
+				case 2:
+					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5));
+					break;
+					
+				// X < 0 && Y = 0
+				case 3:
+					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5));
+					break;
+					
+				// X = 0 && Y = 0
+				case 4:
+					break;
+					
+				// X > 0 && Y = 0
+				case 5:
+					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5));
+					break;
+					
+				// X < 0 && Y > 0
+				case 6:
+					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5));
+					break;
+					
+				// X = 0 && Y > 0
+				case 7:
+					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5));
+					break;
+					
+				// X > 0 && Y > 0
+				case 8:
+					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5));
+					break;
 
-				//default:
-				//	ensureMsgf(false, TEXT("NextExplosionSignedDirection Invalid"));
-				//	break;
-				//}
+				default:
+					ensureMsgf(false, TEXT("NextExplosionSignedDirection Invalid"));
+					break;
+				}
+
 				StartExplosionAtPixel(PixelLoction + EachPossibleShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
 				DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLoction), DebugOffset + TransformGridToWorld(PixelLoction + EachPossibleShadowLocation), .02, FColor::Blue, true);
-
 			}
 			else if((FMath::IsNearlyEqual(EachPossibleShadowLocation.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachPossibleShadowLocation.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1)) && !Arc.IsLocationInArc(ExplosionRelativePossilbeShadowLocation))
 			{
