@@ -66,7 +66,7 @@ void AVoidgrid::Tick(float DeltaTime)
 	
 	DeltaHeatTime += DeltaTime;
 
-	HandleResourceCalls();
+	HandleResourceRequests();
 }
 
 /* ------------- *\
@@ -834,49 +834,49 @@ EFaction AVoidgrid::GetFaction() const
 /* ------------------------- *\
 \* \/ Resource Management \/ */
 
-/*
- * Adds a resource call to the list of resource calls sorted by priority. //What is a resouce call? - Liam Suggestion
- * 
- * @param ResourceCall - The new resource call.
+/**
+ * Adds a resource request to the list of resource requests sorted by priority
+ *
+ * @param ResourceRequest - The new resource request
  */
-void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
+void AVoidgrid::AddResourceRequest(FResourceRequest ResourceRequest)
 {
 
-	//Stores the lower index of the range where ResourceCall should be
+	//Stores the lower index of the range where ResourceRequest should be
 	int LowerIndex = 0;
 
-	//Stores the upper index of the range where ResourceCall should be
-	int UpperIndex = ResourceCalls.Num() - 1;
+	//Stores the upper index of the range where ResourceRequest should be
+	int UpperIndex = ResourceRequests.Num() - 1;
 
 	//Stores the middle index between the lower index and the upper index
 	int MiddleIndex = (LowerIndex + UpperIndex) / 2;
 
-	//Start the binary search //search for what - Liam Suggestion
+	//Start the binary search for the location the request should be
 	while (true)
 	{
 		if (LowerIndex > UpperIndex)
 		{
-			//When the lower index is greater than the number of resource calls, that means the new call needs to be at the end of the array
-			if (!(LowerIndex > ResourceCalls.Num()))
+			//When the lower index is greater than the number of resource requests, that means the new request needs to be at the end of the array
+			if (!(LowerIndex > ResourceRequests.Num()))
 			{
-				ResourceCalls.EmplaceAt(MiddleIndex, ResourceCall);
+				ResourceRequests.EmplaceAt(MiddleIndex, ResourceRequest);
 				break;
 			}
 			else
 			{
-				ResourceCalls.Emplace(ResourceCall);
+				ResourceRequests.Emplace(ResourceRequest);
 				break;
 			}
 		}
 
 		MiddleIndex = (LowerIndex + UpperIndex) / 2;
 
-		if (ResourceCalls[MiddleIndex].Priority == ResourceCall.Priority)
+		if (ResourceRequests[MiddleIndex].Priority == ResourceRequest.Priority)
 		{
-			ResourceCalls.EmplaceAt(MiddleIndex, ResourceCall);
+			ResourceRequests.EmplaceAt(MiddleIndex, ResourceRequest);
 			break;
 		}
-		else if (ResourceCall.Priority < ResourceCalls[MiddleIndex].Priority)
+		else if (ResourceRequest.Priority < ResourceRequests[MiddleIndex].Priority)
 		{
 			UpperIndex = MiddleIndex - 1;
 		}
@@ -887,22 +887,26 @@ void AVoidgrid::AddResourceCall(FResourceCall ResourceCall)
 	}
 }
 
-/*
- * Handles all resource calls made this tick by using and adding the resources specified. //It uses resouces too right? - Liam Suggestion
- */
-void AVoidgrid::HandleResourceCalls()
+const TMap<EResourceType, float> AVoidgrid::GetResources() const
 {
-	for (FResourceCall EachResourceCall : ResourceCalls)
+	return Resources;
+}
+
+/*
+ * Handles all resource requests made this tick by using the resources specified. 
+ */
+void AVoidgrid::HandleResourceRequests()
+{
+	for (FResourceRequest EachResourceRequest : ResourceRequests)
 	{
-		if (UseResources(EachResourceCall.ResourceTypesToAmountUsed))
+		if (UseResources(EachResourceRequest.ResourceTypesToAmountUsed))
 		{
-			AddResources(EachResourceCall.ResourceTypesToAmountCreated);
-			EachResourceCall.OnResourceCallCompleted.Broadcast();
+			AddResources(EachResourceRequest.ResourceTypesToAmountCreated);
+			EachResourceRequest.OnResourceRequestCompleted.Broadcast();
 		}
 	}
 
-	ResourceCalls.Empty();
-	//UE_LOG(LogTemp, Warning, TEXT("resource calls emptied")) //Grr debug - Liam Suggestion
+	ResourceRequests.Empty();
 }
 
 /*

@@ -51,7 +51,7 @@ public:
 
 	//Stores the resources and priority of this cue
 	UPROPERTY(EditAnywhere, Category = "Delegation")
-	FResourceCall ResourceCall; //Activation cues should never apply the effect of activation. In other words the cue should not be able to add resouces, that should be handeled by the part when Activate is called. - Liam Suggestion
+	FResourceRequest ResourceRequest; //Activation cues should never apply the effect of activation. In other words the cue should not be able to add resouces, that should be handeled by the part when Activate is called. - Liam Suggestion
 
 	//Whether the part this cue is on has to be functional for this cue to activate
 	UPROPERTY(EditAnywhere, Category = "Delegation")
@@ -60,18 +60,18 @@ public:
 private:
 
 	/*
-	 * Creates a resource call
+	 * Creates a resource request
 	 *
 	 * @param Data - The activation data containing all relavent information, including the effectiveness
 	 */
 	UFUNCTION()
-	void CreateResourceCall(FPartActivationData Data);
+	void CreateResourceRequest(FPartActivationData Data);
 
 	/*
-	 * Finishes the resource call by calling "OnActivate"
+	 * Finishes the resource request by calling "OnActivate"
 	 */
 	UFUNCTION()
-	void OnResourceCallCompleted();
+	void OnResourceRequestCompleted();
 
 	//Stores the part that owns this activation cue
 	UPart* Part;

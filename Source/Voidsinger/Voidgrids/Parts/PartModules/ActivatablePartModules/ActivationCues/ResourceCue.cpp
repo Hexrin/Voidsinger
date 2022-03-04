@@ -25,7 +25,7 @@ void UResourceCue::Initialize(UActivatablePartModule* OwningModule)
 	for (UBaseActivationCue* EachActivationCue : ActivationCues)
 	{
 		EachActivationCue->Initialize(OwningModule);
-		EachActivationCue->OnActivate.AddUniqueDynamic(this, &UResourceCue::CreateResourceCall);
+		EachActivationCue->OnActivate.AddUniqueDynamic(this, &UResourceCue::CreateResourceRequest);
 	}
 }
 
@@ -40,34 +40,34 @@ void UResourceCue::Initialize(UActivatablePartModule* OwningModule)
  *
  * @param Data - The activation data containing all relavent information, including the effectiveness
  */
-void UResourceCue::CreateResourceCall(FPartActivationData Data)
+void UResourceCue::CreateResourceRequest(FPartActivationData Data)
 {
 	if ((!bMustBeFunctional || Part->IsFunctional()))
 	{
 		PartActivationData = Data;
 
 		//Stores the resource call adjusted with effectiveness
-		FResourceCall AdjustedResourceCall;
+		FResourceRequest AdjustedResourceRequest;
 
-		for (TPair<EResourceType, float> EachResourceTypeToAmountUsed : ResourceCall.ResourceTypesToAmountUsed)
+		for (TPair<EResourceType, float> EachResourceTypeToAmountUsed : ResourceRequest.ResourceTypesToAmountUsed)
 		{
-			AdjustedResourceCall.ResourceTypesToAmountUsed.Emplace(EachResourceTypeToAmountUsed.Key, EachResourceTypeToAmountUsed.Value * Data.Effectiveness);
+			AdjustedResourceRequest.ResourceTypesToAmountUsed.Emplace(EachResourceTypeToAmountUsed.Key, EachResourceTypeToAmountUsed.Value * Data.Effectiveness);
 		}
 
-		for (TPair<EResourceType, float> EachResourceTypeToAmountCreated : ResourceCall.ResourceTypesToAmountCreated)
+		for (TPair<EResourceType, float> EachResourceTypeToAmountCreated : ResourceRequest.ResourceTypesToAmountCreated)
 		{
-			AdjustedResourceCall.ResourceTypesToAmountCreated.Emplace(EachResourceTypeToAmountCreated.Key, EachResourceTypeToAmountCreated.Value * Data.Effectiveness);
+			AdjustedResourceRequest.ResourceTypesToAmountCreated.Emplace(EachResourceTypeToAmountCreated.Key, EachResourceTypeToAmountCreated.Value * Data.Effectiveness);
 		}
 
 
-		AdjustedResourceCall.OnResourceCallCompleted.AddDynamic(this, &UResourceCue::OnResourceCallCompleted);
-		AdjustedResourceCall.Priority = ResourceCall.Priority;
+		AdjustedResourceRequest.OnResourceRequestCompleted.AddDynamic(this, &UResourceCue::OnResourceRequestCompleted);
+		AdjustedResourceRequest.Priority = ResourceRequest.Priority;
 
-		Part->GetVoidgrid()->AddResourceCall(AdjustedResourceCall);
+		Part->GetVoidgrid()->AddResourceRequest(AdjustedResourceRequest);
 	}
 }
 
-void UResourceCue::OnResourceCallCompleted()
+void UResourceCue::OnResourceRequestCompleted()
 {
 	OnActivate.Broadcast(PartActivationData);
 }

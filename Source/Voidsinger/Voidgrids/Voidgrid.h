@@ -696,27 +696,30 @@ public:
 
 public:
 
-	/*
-	 * Adds a resource call to the list of resource calls sorted by priority
+	/**
+	 * Adds a resource request to the list of resource requests sorted by priority
 	 *
-	 * @param ResourceCall - The new resource call
+	 * @param ResourceRequest - The new resource request
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Resource Management")
-	void AddResourceCall(FResourceCall ResourceCall);
+	void AddResourceRequest(FResourceRequest ResourceRequest);
 	
-	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
-	UPROPERTY(BlueprintReadOnly, Category = "Resource Management")
-	TMap<EResourceType, float> Resources; //This shoulnt be public since you can set it to any value. There should be a getter function instead. - Liam Suggestion
-
+	UFUNCTION(BlueprintCallable, Category = "Resource Management")
+	const TMap<EResourceType, float> GetResources() const;
+	
 private:
 
-	/*
-	 * Handles all resource calls made this tick by using and adding the resources specified
-	 */
-	UFUNCTION()
-	void HandleResourceCalls();
+	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
+	UPROPERTY()
+	TMap<EResourceType, float> Resources; 
 
 	/*
+	 * Handles all resource requests made this tick by using the resources specified.
+	 */
+	UFUNCTION()
+	void HandleResourceRequests();
+
+	/**
 	 * Adds resources to the Voidgrid
 	 * 
 	 * @param AddedResources - The resources added and how much of each is added
@@ -724,7 +727,7 @@ private:
 	UFUNCTION()
 	void AddResources(TMap<EResourceType, float> AddedResources);
 
-	/*
+	/**
 	 * Uses resources on the Voidgrid. Will not use up resources if not all the resources can be used.
 	 * 
 	 * @param UsedResources - The resources used and how much of each is used
@@ -734,9 +737,9 @@ private:
 	UFUNCTION()
 	const bool UseResources(TMap<EResourceType, float> UsedResources);
 
-	//Stores all of the resource calls that were made this tick //What is a call? - Liam Suggestion
+	//Stores all of the resource requests that were made this tick 
 	UPROPERTY()
-	TArray<FResourceCall> ResourceCalls;
+	TArray<FResourceRequest> ResourceRequests;
 
 	/* /\ Resource Management /\ *\
 	\* ------------------------- */

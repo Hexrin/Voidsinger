@@ -32,13 +32,13 @@ enum class EResourceType : uint8
 |  \/ [FResourceCall] \/  |
 \* \/ =============== \/ */
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResourceCallCompleted);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResourceRequestCompleted);
 
 /*
- * Stores the resources used and created by this call, as well as the priority of the call
+ * Stores the resources used and created by this resource request, as well as the priority of the request. A resource request is a request for resources to be used and added.
  */
 USTRUCT(BlueprintType)
-struct VOIDSINGER_API FResourceCall
+struct VOIDSINGER_API FResourceRequest
 {
 	GENERATED_BODY()
 
@@ -50,21 +50,21 @@ public:
 	/*
 	 * Default constructor
 	 */
-	FResourceCall()
+	FResourceRequest()
 	{
-		FResourceCall(0, TMap<EResourceType, float>(), TMap<EResourceType, float>());
+		FResourceRequest(0, TMap<EResourceType, float>(), TMap<EResourceType, float>());
 	}
 
 	/*
 	 * Constructor taking in priority and resources 
 	 * 
-	 * @param PriorityOfCall - The priority of this resource call
+	 * @param PriorityOfRequest - The priority of this resource request
 	 * @param ResourceTypesToUsed - A map of resource types to the amount used of each
 	 * @param ResourceTypesToCreated - A map of resource types to the amount created of each
 	 */
-	FResourceCall(int PriorityOfCall, TMap<EResourceType, float> ResourceTypesToUsed, TMap<EResourceType, float> ResourceTypesToCreated)
+	FResourceRequest(int PriorityOfRequest, TMap<EResourceType, float> ResourceTypesToUsed, TMap<EResourceType, float> ResourceTypesToCreated)
 	{
-		Priority = PriorityOfCall;
+		Priority = PriorityOfRequest;
 		ResourceTypesToAmountUsed = ResourceTypesToUsed;
 		ResourceTypesToAmountCreated = ResourceTypesToCreated;
 	}
@@ -89,7 +89,7 @@ public:
 
 	//A delegate that is called when the resource call is completed
 	UPROPERTY()
-	FResourceCallCompleted OnResourceCallCompleted;
+	FResourceRequestCompleted OnResourceRequestCompleted;
 
 	/* /\ Resource Management /\ *\
 	\* ------------------------- */
