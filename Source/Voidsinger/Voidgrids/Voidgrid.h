@@ -729,6 +729,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Resource Management")
 	void AddResourceRequest(FResourceRequest ResourceRequest);
 	
+	/**
+	 * Adds resources to the Voidgrid
+	 *
+	 * @param AddedResources - The resources added and how much of each is added
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Resource Management")
+	void AddResources(TMap<EResourceType, float> AddedResources);
+
 	UFUNCTION(BlueprintCallable, Category = "Resource Management")
 	const TMap<EResourceType, float> GetResources() const;
 	
@@ -739,14 +747,6 @@ private:
 	 */
 	UFUNCTION()
 	void HandleResourceRequests();
-
-	/**
-	 * Adds resources to the Voidgrid
-	 * 
-	 * @param AddedResources - The resources added and how much of each is added
-	 */
-	UFUNCTION()
-	void AddResources(TMap<EResourceType, float> AddedResources);
 
 	/**
 	 * Uses resources on the Voidgrid. Will not use up resources if not all the resources can be used.
