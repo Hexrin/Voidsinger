@@ -69,32 +69,32 @@ struct VOIDSINGER_API FVectorArc
 		{
 			if (LowerArcCotValue <= UpperArcCotValue)
 			{
-				return (LocationCotValue > LowerArcCotValue && LocationCotValue < UpperArcCotValue) && Location.Y < 0 == (bUpperArcNegativeY || bLowerArcNegativeY);
+				return (LocationCotValue >= LowerArcCotValue && LocationCotValue <= UpperArcCotValue) && Location.Y < 0 == (bUpperArcNegativeY || bLowerArcNegativeY);
 			}
-			return LocationCotValue > LowerArcCotValue || LocationCotValue < UpperArcCotValue || Location.Y < 0 != (bUpperArcNegativeY || bLowerArcNegativeY);
+			return LocationCotValue >= LowerArcCotValue || LocationCotValue <= UpperArcCotValue || Location.Y < 0 != (bUpperArcNegativeY || bLowerArcNegativeY);
 		}
 
-		return (bUpperArcNegativeY == Location.Y < 0) ? LocationCotValue < UpperArcCotValue : LocationCotValue > LowerArcCotValue;
+		return (bUpperArcNegativeY == Location.Y < 0) ? LocationCotValue <= UpperArcCotValue : LocationCotValue >= LowerArcCotValue;
 	}
 
 	/**
 	 * Gets whether or not the given location is within the arc of this.
 	 */
-	bool IsBoxInArc(FBox2D Box)
+	bool IsBoxInArc(FVector2D BoxMin, FVector2D BoxMax)
 	{
-		if (IsLocationInArc(Box.Min))
+		if (IsLocationInArc(BoxMin))
 		{
 			return true;
 		}
-		if (IsLocationInArc(Box.Max))
+		if (IsLocationInArc(BoxMax))
 		{
 			return true;
 		}
-		if (IsLocationInArc(Box.GetCenter() + FVector2D(-1,1) * Box.GetExtent()))
+		if (IsLocationInArc(FVector2D(BoxMin.X, BoxMax.Y)))
 		{
 			return true;
 		}
-		if (IsLocationInArc(Box.GetCenter() + FVector2D(1,-1) * Box.GetExtent()))
+		if (IsLocationInArc(FVector2D(BoxMax.X, BoxMin.Y)))
 		{
 			return true;
 		}
@@ -119,7 +119,7 @@ struct VOIDSINGER_API FVectorArc
 		}
 	}
 
-private:
+//private:
 	/**
 	 * Gets the Cotangent of the vector. This is a safe operation, will return FLT_MAX if Y = 0.
 	 * 
