@@ -851,7 +851,7 @@ void AVoidgrid::AddResourceRequest(FResourceRequest ResourceRequest)
 	//Stores the middle index between the lower index and the upper index
 	int MiddleIndex = (LowerIndex + UpperIndex) / 2;
 
-	//Start the binary search for the location the request should be // Location? Location doesnt realy make sense. Perhapse relative priority? - Liam Suggestion
+	//Start the binary search for the index the request should be in the ResourceRequests array 
 	while (true)
 	{
 		if (LowerIndex > UpperIndex)
