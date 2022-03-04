@@ -634,7 +634,7 @@ private:
 	 * @param Radius - The radius of the explosion.
 	 */
 	UFUNCTION()
-	void StartExplosionAtPixel(FIntPoint GridLoction, FVector2D GridRelativeExplosionLocation, float Radius, FVectorArc Arc = FVectorArc());
+	void StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRelativeExplosionLocation, float Radius, FVectorArc Arc = FVectorArc());
 
 	/* /\ Explosion /\ *\
 	\* --------------- */

@@ -751,17 +751,17 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 {
 	UE_LOG(LogTemp, Warning, TEXT("Start Explosion at %s"), *PixelLoction.ToString());
 
-	static TArray<FIntPoint> PossilbeShadowLocations{ TArray<FIntPoint>() };
-	if (PossilbeShadowLocations.IsEmpty()) 
+	static TArray<FIntPoint> PossilbeShadowLocationOffsets{ TArray<FIntPoint>() };
+	if (PossilbeShadowLocationOffsets.IsEmpty())
 	{
-		PossilbeShadowLocations.Emplace(FIntPoint( 0, 1));
-		PossilbeShadowLocations.Emplace(FIntPoint( 1, 1));
-		PossilbeShadowLocations.Emplace(FIntPoint( 1, 0));
-		PossilbeShadowLocations.Emplace(FIntPoint( 1,-1));
-		PossilbeShadowLocations.Emplace(FIntPoint( 0,-1));
-		PossilbeShadowLocations.Emplace(FIntPoint(-1,-1));
-		PossilbeShadowLocations.Emplace(FIntPoint(-1, 0));
-		PossilbeShadowLocations.Emplace(FIntPoint(-1, 1));
+		PossilbeShadowLocationOffsets.Emplace(FIntPoint( 0, 1));
+		PossilbeShadowLocationOffsets.Emplace(FIntPoint( 1, 1));
+		PossilbeShadowLocationOffsets.Emplace(FIntPoint( 1, 0));
+		PossilbeShadowLocationOffsets.Emplace(FIntPoint( 1,-1));
+		PossilbeShadowLocationOffsets.Emplace(FIntPoint( 0,-1));
+		PossilbeShadowLocationOffsets.Emplace(FIntPoint(-1,-1));
+		PossilbeShadowLocationOffsets.Emplace(FIntPoint(-1, 0));
+		PossilbeShadowLocationOffsets.Emplace(FIntPoint(-1, 1));
 	}
 
 	FVector2D ExplosionRelativeLocation = FVector2D(PixelLoction) - GridRelativeExplosionLocation;
@@ -772,80 +772,115 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 			Radius -= LocationsToPixelState.Find(PixelLoction)->GetCurrentPart()->GetData()->Strength - 1;
 		}
 
-		for (FIntPoint EachPossibleShadowLocation : PossilbeShadowLocations)
+		for (FIntPoint EachPossilbeShadowLocationOffset : PossilbeShadowLocationOffsets)
 		{
-			FIntPoint PossilbeShadowLocation = PixelLoction + EachPossibleShadowLocation;
-			FVector2D ExplosionRelativePossilbeShadowLocation = FVector2D(PossilbeShadowLocation) - GridRelativeExplosionLocation;
-
-			FVector DebugOffset = FVector(-.1 + .05 * FMath::FRand(), -.1 + .05 * FMath::FRand(), 2 * FMath::FRand());
-			if ((FMath::IsNearlyEqual(EachPossibleShadowLocation.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachPossibleShadowLocation.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1)) && Arc.IsLocationInArc(ExplosionRelativePossilbeShadowLocation) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue)
+			//FVector DebugOffset = FVector(-.1 + .05 * FMath::FRand(), -.1 + .05 * FMath::FRand(), 2 * FMath::FRand());
+			if (FMath::IsNearlyEqual(EachPossilbeShadowLocationOffset.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachPossilbeShadowLocationOffset.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1))
 			{
-				//FVector DebugOffset = FVector(0, 0, .5 * FMath::FRand());
+				FIntPoint PossilbeShadowLocation = PixelLoction + EachPossilbeShadowLocationOffset;
+				FVector2D ExplosionRelativePossilbeShadowLocation = FVector2D(PossilbeShadowLocation) - GridRelativeExplosionLocation;
+
 				FVectorArc NewArc = Arc;
 
 				//Deterims the sign of X & Y
 				int32 NextExplosionSignedDirection = (FMath::Sign(ExplosionRelativePossilbeShadowLocation.X) + 1) + 3 * (FMath::Sign(ExplosionRelativePossilbeShadowLocation.Y) + 1);
 				switch (NextExplosionSignedDirection)
 				{
-				// X < 0 && Y < 0
+					// X < 0 && Y < 0
 				case 0:
-					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5));
+					FBox2D PixelBounds = FBox2D(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5));
+					if (Arc.IsBoxInArc(PixelBounds) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue)
+					{
+						NewArc.ShrinkArcBounds(PixelBounds.Min, PixelBounds.Max);
+						StartExplosionAtPixel(PossilbeShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
+					}
 					break;
-					
-				// X = 0 && Y < 0
+
+					// X = 0 && Y < 0
 				case 1:
-					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5));
+					FBox2D PixelBounds = FBox2D(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5));
+					if (Arc.IsBoxInArc(PixelBounds) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue)
+					{
+						NewArc.ShrinkArcBounds(PixelBounds.Min, PixelBounds.Max);
+						StartExplosionAtPixel(PossilbeShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
+					}
 					break;
-					
-				// X > 0 && Y < 0
+
+					// X > 0 && Y < 0
 				case 2:
-					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5));
+					FBox2D PixelBounds = FBox2D(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5));
+					if (Arc.IsBoxInArc(PixelBounds) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue)
+					{
+						NewArc.ShrinkArcBounds(PixelBounds.Min, PixelBounds.Max);
+						StartExplosionAtPixel(PossilbeShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
+					}
 					break;
-					
-				// X < 0 && Y = 0
+
+					// X < 0 && Y = 0
 				case 3:
-					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5));
+					FBox2D PixelBounds = FBox2D(ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5));
+					if (Arc.IsBoxInArc(PixelBounds) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue)
+					{
+						NewArc.ShrinkArcBounds(PixelBounds.Min, PixelBounds.Max);
+						StartExplosionAtPixel(PossilbeShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
+					}
 					break;
-					
-				// X = 0 && Y = 0
+
+					// X = 0 && Y = 0
 				case 4:
+					FBox2D PixelBounds;
 					break;
-					
-				// X > 0 && Y = 0
+
+					// X > 0 && Y = 0
 				case 5:
-					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5));
+					FBox2D PixelBounds = FBox2D(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5));
+					if (Arc.IsBoxInArc(PixelBounds) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue)
+					{
+						NewArc.ShrinkArcBounds(PixelBounds.Min, PixelBounds.Max);
+						StartExplosionAtPixel(PossilbeShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
+					}
 					break;
-					
-				// X < 0 && Y > 0
+
+					// X < 0 && Y > 0
 				case 6:
-					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5));
+					FBox2D PixelBounds = FBox2D(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5));
+					if (Arc.IsBoxInArc(PixelBounds) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue)
+					{
+						NewArc.ShrinkArcBounds(PixelBounds.Min, PixelBounds.Max);
+						StartExplosionAtPixel(PossilbeShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
+					}
 					break;
-					
-				// X = 0 && Y > 0
+
+					// X = 0 && Y > 0
 				case 7:
-					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5));
+					FBox2D PixelBounds = FBox2D(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5));
+					if (Arc.IsBoxInArc(PixelBounds) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue)
+					{
+						NewArc.ShrinkArcBounds(PixelBounds.Min, PixelBounds.Max);
+						StartExplosionAtPixel(PossilbeShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
+					}
 					break;
-					
-				// X > 0 && Y > 0
+
+					// X > 0 && Y > 0
 				case 8:
-					NewArc.ShrinkArcBounds(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5));
+					FBox2D PixelBounds = FBox2D(ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5), ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5));
+					if (Arc.IsBoxInArc(PixelBounds) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue)
+					{
+						NewArc.ShrinkArcBounds(PixelBounds.Min, PixelBounds.Max);
+						StartExplosionAtPixel(PossilbeShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
+					}
 					break;
 
 				default:
 					ensureMsgf(false, TEXT("NextExplosionSignedDirection Invalid"));
 					break;
 				}
-
-				StartExplosionAtPixel(PixelLoction + EachPossibleShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
-				DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLoction), DebugOffset + TransformGridToWorld(PixelLoction + EachPossibleShadowLocation), .02, FColor::Blue, true);
-			}
-			else if((FMath::IsNearlyEqual(EachPossibleShadowLocation.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachPossibleShadowLocation.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1)) && !Arc.IsLocationInArc(ExplosionRelativePossilbeShadowLocation))
-			{
-				DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLoction), DebugOffset + TransformGridToWorld(PixelLoction + EachPossibleShadowLocation), .02, FColor::Red, true);
 			}
 		}
-
-		RemovePixel(PixelLoction);
+		if (Arc.IsLocationInArc(PixelLoction))
+		{
+			RemovePixel(PixelLoction);
+		}
 	}
 }
 

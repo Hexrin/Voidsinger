@@ -78,6 +78,30 @@ struct VOIDSINGER_API FVectorArc
 	}
 
 	/**
+	 * Gets whether or not the given location is within the arc of this.
+	 */
+	bool IsBoxInArc(FBox2D Box)
+	{
+		if (IsLocationInArc(Box.Min))
+		{
+			return true;
+		}
+		if (IsLocationInArc(Box.Max))
+		{
+			return true;
+		}
+		if (IsLocationInArc(Box.GetCenter() + FVector2D(-1,1) * Box.GetExtent()))
+		{
+			return true;
+		}
+		if (IsLocationInArc(Box.GetCenter() + FVector2D(1,-1) * Box.GetExtent()))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Sets this arc to be bound by the given vectors. If the limits are the same then the arc will contain the whole circle.
 	 * 
 	 * @param LowerArcLimit - The lower limit of this arc. The arc will be in the clockwise dirction of this vector.
