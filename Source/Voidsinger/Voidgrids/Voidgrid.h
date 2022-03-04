@@ -473,17 +473,20 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float HeatTick = 1;
 
-private:
-
-	//The time since the last heat tick
-	float DeltaHeatTime;
-	
-protected:
-
 	//The percent of heat that a pixel will spread to all surrounding pixels
 	UPROPERTY(EditDefaultsOnly)
 	float HeatPropagationFactor = 0.5;
 
+private:
+
+	//The time since the last heat tick
+	UPROPERTY()
+	float DeltaHeatTime;
+
+	//The locations that need their heat transfered to surrounding location and how much heat the location had
+	UPROPERTY()
+	TMap<FIntPoint, float> LocationsToTemperaturesPendingHeatTransfer;
+	
 	/* /\ Temperature /\ *\
 	\* ----------------- */
 
