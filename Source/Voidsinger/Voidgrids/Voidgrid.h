@@ -10,6 +10,7 @@
 #include "ProceduralMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "ResourceType.h"
 #include "Voidgrid.generated.h"
 
 
@@ -316,7 +317,7 @@ FORCEINLINE uint32 GetTypeHash(const FVoidgridState& Thing)
 
 
 /* \/ ======== \/ *\
-|  \/ Voidgrid \/  |
+|  \/ AVoidgrid \/  |
 \* \/ ========= \/ */
 
 //Used for dispatching events requireing a grid locaiton.
@@ -337,7 +338,11 @@ public:
 	//Sets default values for this voidgrid's properties
 	AVoidgrid();
 
-	//Used to update location and thrust control.
+	/*
+	 * Used to update location, thrust control, heat spread, and resources.
+	 *
+	 * @param DeltaTime - The time between ticks
+	 */
 	virtual void Tick(float DeltaTime) override;
 
 	/* ------------- *\
@@ -710,13 +715,62 @@ public:
 
 	/* /\ Faction /\ *\
 	\* ------------- */
+
+	/* ------------------------- *\
+	\* \/ Resource Management \/ */
+
+public:
+
+	/**
+	 * Adds a resource request to the list of resource requests sorted by priority
+	 *
+	 * @param ResourceRequest - The new resource request
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Resource Management")
+	void AddResourceRequest(FResourceRequest ResourceRequest);
+	
+	UFUNCTION(BlueprintCallable, Category = "Resource Management")
+	const TMap<EResourceType, float> GetResources() const;
+	
+private:
+
+	/**
+	 * Handles all resource requests made this tick by using the resources specified.
+	 */
+	UFUNCTION()
+	void HandleResourceRequests();
+
+	/**
+	 * Adds resources to the Voidgrid
+	 * 
+	 * @param AddedResources - The resources added and how much of each is added
+	 */
+	UFUNCTION()
+	void AddResources(TMap<EResourceType, float> AddedResources);
+
+	/**
+	 * Uses resources on the Voidgrid. Will not use up resources if not all the resources can be used.
+	 * 
+	 * @param UsedResources - The resources used and how much of each is used
+	 * 
+	 * @return - Whether the resources were successfully used or not
+	 */
+	UFUNCTION()
+	const bool UseResources(TMap<EResourceType, float> UsedResources);
+
+	//Stores all of the resource requests that were made this tick 
+	UPROPERTY()
+	TArray<FResourceRequest> ResourceRequests;
+
+	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
+	UPROPERTY()
+	TMap<EResourceType, float> Resources;
+
+	/* /\ Resource Management /\ *\
+	\* ------------------------- */
 };
 
 /* /\ ========= /\ *\
-|  /\ Voidgrid /\  |
+|  /\ AVoidgrid /\  |
 \* /\ ========= /\ */
-
-/* \/ ========= \/ *\
-|  \/ AVoidgrid \/  |
-\* \/ ========= \/ */
 

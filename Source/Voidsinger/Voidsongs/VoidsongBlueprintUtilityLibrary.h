@@ -76,7 +76,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 * @param AddedFactionMotifs - The Faction Motifs added
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VoidsongData|EmplaceMultipleMotifs")
-	static void EmplaceFactionMotifs(FVoidsongData VoidsongData, TArray<UBaseFactionMotif*> AddedFactionMotifs);
+	static void EmplaceFactionMotifs(FVoidsongData VoidsongData, TSet<UBaseFactionMotif*> AddedFactionMotifs);
 
 	/**
 	 * Adds multiple Noun Motifs to the Voidsong
@@ -85,7 +85,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 * @param AddedNounMotifs - The Noun Motifs added
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VoidsongData|EmplaceMultipleMotifs")
-	static void EmplaceNounMotifs(FVoidsongData VoidsongData, TArray<UBaseNounMotif*> AddedNounMotifs);
+	static void EmplaceNounMotifs(FVoidsongData VoidsongData, TSet<UBaseNounMotif*> AddedNounMotifs);
 
 	/**
 	 * Adds multiple Verb Motifs to the Voidsong
@@ -120,7 +120,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 * @return - Copy of FactionMotifs
 	 */
 	UFUNCTION(BlueprintPure, Category = "VoidsongData|Getters")
-	static TArray<UBaseFactionMotif*> GetFactionMotifs(FVoidsongData VoidsongData);
+	static TSet<UBaseFactionMotif*> GetFactionMotifs(FVoidsongData VoidsongData);
 
 	/**
 	 * Gets a copy of the Noun Motifs in the Voidsong
@@ -130,7 +130,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 * @return - Copy of NounMotifs
 	 */
 	UFUNCTION(BlueprintPure, Category = "VoidsongData|Getters")
-	static TArray<UBaseNounMotif*> GetNounMotifs(FVoidsongData VoidsongData);
+	static TSet<UBaseNounMotif*> GetNounMotifs(FVoidsongData VoidsongData);
 
 	/**
 	 * Gets a copy of all the Verb Motifs in the Voidsong
@@ -150,7 +150,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 * @return - Copy of Factions
 	 */
 	UFUNCTION(BlueprintPure, Category = "VoidsongData|Getters")
-	static TArray<EFaction> GetFactions(FVoidsongData VoidsongData);
+	static TSet<EFaction> GetFactions(FVoidsongData VoidsongData);
 
 	/**
 	 * Gets a copy of the Nouns (enum) in the Voidsong
@@ -160,7 +160,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 * @return - Copy of Nouns
 	 */
 	UFUNCTION(BlueprintPure, Category = "VoidsongData|Getters")
-	static TArray<ENoun> GetNouns(FVoidsongData VoidsongData);
+	static TSet<ENoun> GetNouns(FVoidsongData VoidsongData);
 
 	/*
 	 * Gets the duration of this Voidsong

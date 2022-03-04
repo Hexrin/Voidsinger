@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Ship.h"
-#include "Voidsinger/StarSystemGameMode.h"
+#include "Voidsinger/VoidsingerGameMode.h"
 #include "Voidsinger/Voidsongs/Voidsong.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -47,7 +47,7 @@ void AShip::AddNewMotifs(TArray<UBaseMotif*> MotifsAdded)
  * @param Nouns - The Noun Motifs played
  * @param Verbs - The Verb Motifs played
  */
-UVoidsong* AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs)
+UVoidsong* AShip::PlayVoidsong(const TSet<UBaseFactionMotif*>& Factions, const TSet<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs)
 {
 	if (bCanPlayVoidsongs)
 	{
@@ -84,7 +84,7 @@ UVoidsong* AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const
 	
 	// \/ Check if Factions is empty, if so play every playable Faction \/ /
 
-		TArray<UBaseFactionMotif*> FactionsToPlay;
+		TSet<UBaseFactionMotif*> FactionsToPlay;
 
 		if (!PlayableFactionsPlayed.IsEmpty())
 		{
@@ -100,7 +100,7 @@ UVoidsong* AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const
 
 	// \/ Check if Nouns is empty, if so play every playable Noun \/ /
 
-		TArray<UBaseNounMotif*> NounsToPlay;
+		TSet<UBaseNounMotif*> NounsToPlay;
 
 		if (!PlayableNounsPlayed.IsEmpty())
 		{
@@ -117,9 +117,9 @@ UVoidsong* AShip::PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const
 		FVoidsongData VoidsongData = FVoidsongData(FactionsToPlay, NounsToPlay, PlayableVerbsPlayed);
 
 		//Call the globally available "PlayVoidsong" function on the Game Mode
-		if (IsValid(Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))))
+		if (IsValid(Cast<AVoidsingerGameMode>(UGameplayStatics::GetGameMode(GetWorld()))))
 		{
-			return Cast<AStarSystemGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->PlayVoidsong(VoidsongData);
+			return Cast<AVoidsingerGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->VoidsongManager->PlayVoidsong(VoidsongData);
 		}
 		else
 		{

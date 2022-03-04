@@ -42,6 +42,8 @@ public:
 	/* ------------------- *\
 	\* \/ Functionality \/ */
 
+public:
+
 	/**
 	 * Updates any internal logic based on this parts functionality.
 	 */
@@ -55,6 +57,8 @@ public:
 	/* /\ Functionality /\ *\
 	\* ------------------- */
 
+public:
+
 	/**
 	 * Gets the voidgrid this is a part of.
 	 *
@@ -63,7 +67,6 @@ public:
 	UFUNCTION(BlueprintPure)
 	AVoidgrid* GetVoidgrid();
 
-protected:
 	// The part that this module is on
 	UPart* Part;
 };

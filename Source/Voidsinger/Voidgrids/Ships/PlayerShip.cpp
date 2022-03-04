@@ -226,8 +226,8 @@ void APlayerShip::PlaySequence(TArray<int32> Sequence)
 	{
 		// \/ Find Factions, Nouns, and Verbs played \/ /
 
-		TArray<UBaseFactionMotif*> Factions;
-		TArray<UBaseNounMotif*> Nouns;
+		TSet<UBaseFactionMotif*> Factions;
+		TSet<UBaseNounMotif*> Nouns;
 		TArray<UBaseVerbMotif*> Verbs;
 
 		ParseSequenceIntoMotifData(Sequence, Factions, Nouns, Verbs);
@@ -250,7 +250,7 @@ void APlayerShip::PlaySequence(TArray<int32> Sequence)
  * @param OutNouns - The Noun Motifs found
  * @param OutVerbs - The Verb Motifs found
  */
-void APlayerShip::ParseSequenceIntoMotifData(TArray<int32> Sequence, TArray<UBaseFactionMotif*>& OutFactions, TArray<UBaseNounMotif*>& OutNouns, TArray<UBaseVerbMotif*>& OutVerbs)
+void APlayerShip::ParseSequenceIntoMotifData(TArray<int32> Sequence, TSet<UBaseFactionMotif*>& OutFactions, TSet<UBaseNounMotif*>& OutNouns, TArray<UBaseVerbMotif*>& OutVerbs)
 {
 	for (UBaseMotif* EachPlayableMotif : PlayableMotifs.GetMotifs())
 	{
@@ -290,3 +290,19 @@ void APlayerShip::ParseSequenceIntoMotifData(TArray<int32> Sequence, TArray<UBas
 
 /* /\ Voidsong Activation /\ *\
 \* ------------------------- */
+
+/* ------------- *\
+\* \/ Faction \/ */
+
+/**
+ * Gets the faction of the Voidgrid.
+ *
+ * @return The faction of the Voidgrid.
+ */
+EFaction APlayerShip::GetFaction() const
+{
+	return EFaction::Player;
+}
+
+/* /\ Faction /\ *\
+\* ------------- */

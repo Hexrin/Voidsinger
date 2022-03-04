@@ -47,7 +47,11 @@ AVoidgrid::AVoidgrid()
 	}
 }
 
-//Used to update location and thrust control.
+/*
+ * Used to update location, thrust control, heat spread, and resources.
+ * 
+ * @param DeltaTime - The time between ticks
+ */
 void AVoidgrid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -61,7 +65,10 @@ void AVoidgrid::Tick(float DeltaTime)
 	{
 		SpreadHeat();
 		DeltaHeatTime = 0;
-	}
+	}	
+	DeltaHeatTime += DeltaTime;
+
+	HandleResourceRequests();
 }
 
 /* ------------- *\
@@ -882,61 +889,142 @@ EFaction AVoidgrid::GetFaction() const
 /* /\ Faction /\ *\
 \* ------------- */
 
-//Notes, delete later
+/* ------------------------- *\
+\* \/ Resource Management \/ */
 
-////Comment -Mabel Suggestion
-//void UPartGridComponent::DistrubuteHeat()
-//{
-//	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
-//	NewHeatMap.Reserve(PartGrid.Num());
-//
-//	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
-//	for (int j = 0; j < PartGrid.Num(); j++)
-//	{
-//		float NewHeat = 0;
-//
-//		//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
-//		for (int i = 0; i < 4; i++)
-//		{
-//			FIntPoint TargetPoint = ((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
-//
-//			if (PartGrid.Contains(TargetPoint + PartGrid.LocationAtIndex(j)))
-//			{
-//				//4 is borderline magic number. I understand why you used it but still -Mabel Suggestion
-//				NewHeat += PartGrid.FindRef(TargetPoint + PartGrid.LocationAtIndex(j)).GetTemperature() * HeatPropagationFactor / (4);
-//			}
-//		}
-//
-//		//Math is occuring that needs to be commented. Why is the pixels current temperature mutiplied by 1 - the heat propagation factor? -Mabel Suggestion
-//		NewHeat = PartGrid.ValueAtIndex(j).GetTemperature() * (1 - HeatPropagationFactor) + NewHeat;
-//
-//
-//		//Why 0.5? comment plz (also, is it.... magic number?) -Mabel Suggestion
-//		NewHeatMap.Emplace(PartGrid.LocationAtIndex(j), NewHeat > .05 ? NewHeat : 0);
-//	}
-//
-//	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
-//
-//	//You iterate through the part grid not once, but twice in this function. Big oof if I'm being honest. Honestly, it'd be better to just have heat not spread
-//	//if this is the way that we're doing it. This is so bad for large ships. 
-//	//I wonder if each part could handle it's own heat and distribute to the places around it instead of doing this on the part grid? I don't know how much it would help but 
-//	//it might help a little bit. Not sure, that might be just as laggy. -Mabel Suggestion
-//	for (int i = 0; i < PartGrid.Num(); i++)
-//	{
-//		if (NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)) > PartGrid.ValueAtIndex(i).Part->GetHeatResistance())
-//		{
-//			KeysToDestroy.Emplace(PartGrid.LocationAtIndex(i));
-//		}
-//		else
-//		{
-//			PartGrid.ValueAtIndex(i).SetTemperature(NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)));
-//		}
-//	}
-//
-//	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" 
-//	//"Val" is just as bad as i. Just saying. -Mabel Suggestion
-//	for (FIntPoint Val : KeysToDestroy)
-//	{
-//		DestroyPixel(Val);
-//	}
-//}
+/**
+ * Adds a resource request to the list of resource requests sorted by priority
+ *
+ * @param ResourceRequest - The new resource request
+ */
+void AVoidgrid::AddResourceRequest(FResourceRequest ResourceRequest)
+{
+
+	//Stores the lower index of the range where ResourceRequest should be
+	int LowerIndex = 0;
+
+	//Stores the upper index of the range where ResourceRequest should be
+	int UpperIndex = ResourceRequests.Num() - 1;
+
+	//Stores the middle index between the lower index and the upper index
+	int MiddleIndex = (LowerIndex + UpperIndex) / 2;
+
+	//Start the binary search for the index the request should be in the ResourceRequests array 
+	while (true)
+	{
+		if (LowerIndex > UpperIndex)
+		{
+			//When the lower index is greater than the number of resource requests, that means the new request needs to be at the end of the array
+			if (!(LowerIndex > ResourceRequests.Num()))
+			{
+				ResourceRequests.EmplaceAt(MiddleIndex, ResourceRequest);
+				break;
+			}
+			else
+			{
+				ResourceRequests.Emplace(ResourceRequest);
+				break;
+			}
+		}
+
+		MiddleIndex = (LowerIndex + UpperIndex) / 2;
+
+		if (ResourceRequests[MiddleIndex].Priority == ResourceRequest.Priority)
+		{
+			ResourceRequests.EmplaceAt(MiddleIndex, ResourceRequest);
+			break;
+		}
+		else if (ResourceRequest.Priority < ResourceRequests[MiddleIndex].Priority)
+		{
+			UpperIndex = MiddleIndex - 1;
+		}
+		else 
+		{
+			LowerIndex = MiddleIndex + 1;
+		}
+	}
+}
+
+const TMap<EResourceType, float> AVoidgrid::GetResources() const
+{
+	return Resources;
+}
+
+/**
+ * Handles all resource requests made this tick by using the resources specified. 
+ */
+void AVoidgrid::HandleResourceRequests()
+{
+	for (FResourceRequest EachResourceRequest : ResourceRequests)
+	{
+		if (UseResources(EachResourceRequest.ResourceTypesToAmountUsed))
+		{
+			EachResourceRequest.OnResourceRequestCompleted.Broadcast();
+		}
+	}
+
+	ResourceRequests.Empty();
+}
+
+/**
+ * Adds resources to the Voidgrid
+ *
+ * @param AddedResources - The resources added and how much of each is added
+ */
+void AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
+{
+	for (TPair<EResourceType, float> EachAddedResource : AddedResources)
+	{
+		if (EachAddedResource.Value < 0)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Attempted to add a negative amount of resource. Use 'UseResources' instead."));
+		}
+		else
+		{
+			if (Resources.Contains(EachAddedResource.Key))
+			{
+				//Emplace will override the previous key value pair.
+				Resources.Emplace(EachAddedResource.Key, Resources.FindRef(EachAddedResource.Key) + EachAddedResource.Value);
+			}
+			else
+			{
+				Resources.Emplace(EachAddedResource.Key, EachAddedResource.Value);
+			}
+		}
+	}
+}
+
+/**
+ * Uses resources on the Voidgrid. Will not use up resources if not all the resources can be used.
+ *
+ * @param UsedResources - The resources used and how much of each is used
+ *
+ * @return - Whether the resources were successfully used or not
+ */
+const bool AVoidgrid::UseResources(TMap<EResourceType, float> UsedResources)
+{
+
+	// \/ Check if all resources can be used \/ //
+	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
+	{
+		if ((!Resources.Contains(EachUsedResource.Key)) || (Resources.FindRef(EachUsedResource.Key) < EachUsedResource.Value))
+		{
+			//Return if not all resources can be used.
+			return false;
+		}
+	}
+	// /\ Check if all resources can be used /\ //
+
+	// \/ Use the resources \/ //
+	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
+	{
+		//Emplace will override the previous key value pair
+		Resources.Emplace(EachUsedResource.Key, Resources.FindRef(EachUsedResource.Key) - EachUsedResource.Value);
+	}
+	// /\ Use the resources /\ //
+
+	return true;
+}
+
+/* /\ Resource Management /\ *\
+\* ------------------------- */
