@@ -56,7 +56,7 @@ struct VOIDSINGER_API FVectorArc
 	/**
 	 * Gets whether or not the given location is within the arc of this.
 	 */
-	bool IsLocationInArc(FVector2D Location)
+	bool IsLocationInArc(FVector2D Location, bool bInclusiveBounds = true)
 	{
 		if (!bArcRestricted)
 		{
@@ -64,41 +64,38 @@ struct VOIDSINGER_API FVectorArc
 		}
 		float LocationCotValue = GetVectorCot(Location);
 
+		if (bInclusiveBounds)
+		{
+			if (bLowerArcNegativeY == bUpperArcNegativeY)
+			{
+				if (LowerArcCotValue <= UpperArcCotValue)
+				{
+					return (LocationCotValue >= LowerArcCotValue && LocationCotValue <= UpperArcCotValue) && Location.Y < 0 == (bUpperArcNegativeY || bLowerArcNegativeY);
+				}
+				return LocationCotValue >= LowerArcCotValue || LocationCotValue <= UpperArcCotValue || Location.Y < 0 != (bUpperArcNegativeY || bLowerArcNegativeY);
+			}
+
+			return (bUpperArcNegativeY == Location.Y < 0) ? LocationCotValue <= UpperArcCotValue : LocationCotValue >= LowerArcCotValue;
+		}
 
 		if (bLowerArcNegativeY == bUpperArcNegativeY)
 		{
 			if (LowerArcCotValue <= UpperArcCotValue)
 			{
-				return (LocationCotValue >= LowerArcCotValue && LocationCotValue <= UpperArcCotValue) && Location.Y < 0 == (bUpperArcNegativeY || bLowerArcNegativeY);
+				return (LocationCotValue > LowerArcCotValue && LocationCotValue < UpperArcCotValue) && Location.Y < 0 == (bUpperArcNegativeY || bLowerArcNegativeY);
 			}
-			return LocationCotValue >= LowerArcCotValue || LocationCotValue <= UpperArcCotValue || Location.Y < 0 != (bUpperArcNegativeY || bLowerArcNegativeY);
+			return LocationCotValue > LowerArcCotValue || LocationCotValue < UpperArcCotValue || Location.Y < 0 != (bUpperArcNegativeY || bLowerArcNegativeY);
 		}
 
-		return (bUpperArcNegativeY == Location.Y < 0) ? LocationCotValue <= UpperArcCotValue : LocationCotValue >= LowerArcCotValue;
+		return (bUpperArcNegativeY == Location.Y < 0) ? LocationCotValue < UpperArcCotValue : LocationCotValue > LowerArcCotValue;
 	}
 
 	/**
 	 * Gets whether or not the given location is within the arc of this.
 	 */
-	bool IsBoxInArc(FVector2D BoxMin, FVector2D BoxMax)
+	bool IsBoxInArc(FVector2D BoxMin, FVector2D BoxMax, bool bInclusiveBounds = true)
 	{
-		if (IsLocationInArc(BoxMin))
-		{
-			return true;
-		}
-		if (IsLocationInArc(BoxMax))
-		{
-			return true;
-		}
-		if (IsLocationInArc(FVector2D(BoxMin.X, BoxMax.Y)))
-		{
-			return true;
-		}
-		if (IsLocationInArc(FVector2D(BoxMax.X, BoxMin.Y)))
-		{
-			return true;
-		}
-		return false;
+		return IsLocationInArc(BoxMin, bInclusiveBounds) || IsLocationInArc(BoxMax, bInclusiveBounds) || IsLocationInArc(FVector2D(BoxMin.X, BoxMax.Y), bInclusiveBounds) || IsLocationInArc(FVector2D(BoxMax.X, BoxMin.Y), bInclusiveBounds);
 	}
 
 	/**
