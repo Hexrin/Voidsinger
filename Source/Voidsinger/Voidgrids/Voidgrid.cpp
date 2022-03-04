@@ -313,7 +313,7 @@ void AVoidgrid::SpreadHeat()
 			break;
 		}
 
-		NewHeatMap.Emplace(EachLocationToTemperaturePendingHeatTransfer.Key + LocationAround, (EachLocationToTemperaturePendingHeatTransfer.Value * TemperaturetPropagationFactor) / 4.0f);
+		NewHeatMap.Emplace(EachLocationToTemperaturePendingHeatTransfer.Key + LocationAround, (EachLocationToTemperaturePendingHeatTransfer.Value * TemperaturePropagationFactor) / 4.0f);
 		}
 	}
 
