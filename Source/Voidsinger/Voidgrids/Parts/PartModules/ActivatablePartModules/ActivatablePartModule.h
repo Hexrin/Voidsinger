@@ -54,6 +54,8 @@ protected:
 
 	/**
 	 * Called when the owning part is activated and calls the functionality of this part.
+	 * 
+	 * @param Data - The data of this actiation
 	 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, DisplayName = "Activate", Category = "Activation")
 	void OnActivate(const FPartActivationData Data);
