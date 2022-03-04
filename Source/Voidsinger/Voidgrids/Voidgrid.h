@@ -497,6 +497,24 @@ public:
 	FGridLocationDelegate OnPixelAdded;
 
 	/**
+	 * Gets the grid loction of a world loction.
+	 *
+	 * @param WorldLocation - The world location to transform.
+	 * @return The grid loction of WorldLocation;
+	 */
+	UFUNCTION(BlueprintPure)
+	FIntPoint TransformWorldToGrid(FVector WorldLocation) const;
+
+	/**
+	 * Gets the world location of a grid loction.
+	 *
+	 * @param GridLoction - The grid location to transform.
+	 * @return The world loction of GridLoction;
+	 */
+	UFUNCTION(BlueprintPure)
+	FVector TransformGridToWorld(FIntPoint GridLocation) const;
+
+	/**
 	 * Sets the pixel mold of the voidgrid
 	 * 
 	 * @param NewPixelMold - The value to assign to the pixel mold of the voidgrid
