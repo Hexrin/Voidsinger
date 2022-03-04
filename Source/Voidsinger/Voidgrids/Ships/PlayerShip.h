@@ -219,7 +219,7 @@ private:
 	 * @param OutNouns - The Noun Motifs found
 	 * @param OutVerbs - The Verb Motifs found
 	 */
-	void ParseSequenceIntoMotifData(TArray<int32> Sequence, TArray<UBaseFactionMotif*>& OutFactions, TArray<UBaseNounMotif*>& OutNouns, TArray<UBaseVerbMotif*>& OutVerbs);
+	void ParseSequenceIntoMotifData(TArray<int32> Sequence, TSet<UBaseFactionMotif*>& OutFactions, TSet<UBaseNounMotif*>& OutNouns, TArray<UBaseVerbMotif*>& OutVerbs);
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */

@@ -73,7 +73,7 @@ void UVoidsongBlueprintUtilityLibrary::EmplaceMotifs(FVoidsongData VoidsongData,
  * @param VoidsongData - The struct to edit
  * @param AddedFactionMotifs - The Faction Motifs added
  */
-void UVoidsongBlueprintUtilityLibrary::EmplaceFactionMotifs(FVoidsongData VoidsongData, TArray<UBaseFactionMotif*> AddedFactionMotifs)
+void UVoidsongBlueprintUtilityLibrary::EmplaceFactionMotifs(FVoidsongData VoidsongData, TSet<UBaseFactionMotif*> AddedFactionMotifs)
 {
 	VoidsongData.EmplaceFactionMotifs(AddedFactionMotifs);
 }
@@ -84,7 +84,7 @@ void UVoidsongBlueprintUtilityLibrary::EmplaceFactionMotifs(FVoidsongData Voidso
  * @param VoidsongData - The struct to edit
  * @param AddedNounMotifs - The Noun Motifs added
  */
-void UVoidsongBlueprintUtilityLibrary::EmplaceNounMotifs(FVoidsongData VoidsongData, TArray<UBaseNounMotif*> AddedNounMotifs)
+void UVoidsongBlueprintUtilityLibrary::EmplaceNounMotifs(FVoidsongData VoidsongData, TSet<UBaseNounMotif*> AddedNounMotifs)
 {
 	VoidsongData.EmplaceNounMotifs(AddedNounMotifs);
 }
@@ -125,7 +125,7 @@ TArray<UBaseMotif*> UVoidsongBlueprintUtilityLibrary::GetMotifs(FVoidsongData Vo
  *
  * @return - Copy of FactionMotifs
  */
-TArray<UBaseFactionMotif*> UVoidsongBlueprintUtilityLibrary::GetFactionMotifs(FVoidsongData VoidsongData)
+TSet<UBaseFactionMotif*> UVoidsongBlueprintUtilityLibrary::GetFactionMotifs(FVoidsongData VoidsongData)
 {
 	return VoidsongData.GetFactionMotifs();
 }
@@ -137,7 +137,7 @@ TArray<UBaseFactionMotif*> UVoidsongBlueprintUtilityLibrary::GetFactionMotifs(FV
  *
  * @return - Copy of NounMotifs
  */
-TArray<UBaseNounMotif*> UVoidsongBlueprintUtilityLibrary::GetNounMotifs(FVoidsongData VoidsongData)
+TSet<UBaseNounMotif*> UVoidsongBlueprintUtilityLibrary::GetNounMotifs(FVoidsongData VoidsongData)
 {
 	return VoidsongData.GetNounMotifs();
 }
@@ -161,7 +161,7 @@ TArray<UBaseVerbMotif*> UVoidsongBlueprintUtilityLibrary::GetVerbMotifs(FVoidson
  *
  * @return - Copy of Factions
  */
-TArray<EFaction> UVoidsongBlueprintUtilityLibrary::GetFactions(FVoidsongData VoidsongData)
+TSet<EFaction> UVoidsongBlueprintUtilityLibrary::GetFactions(FVoidsongData VoidsongData)
 {
 	return VoidsongData.GetFactions();
 }
@@ -173,7 +173,7 @@ TArray<EFaction> UVoidsongBlueprintUtilityLibrary::GetFactions(FVoidsongData Voi
  * 
  * @return - Copy of Nouns
  */
-TArray<ENoun> UVoidsongBlueprintUtilityLibrary::GetNouns(FVoidsongData VoidsongData)
+TSet<ENoun> UVoidsongBlueprintUtilityLibrary::GetNouns(FVoidsongData VoidsongData)
 {
 	return VoidsongData.GetNouns();
 }
