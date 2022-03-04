@@ -761,9 +761,7 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 	}
 	FVector2D ExplosionRelativeLocation = FVector2D(PixelLoction) - GridRelativeExplosionLocation;
 
-	//FColor DebugColor = FColor::MakeRandomColor();
-	//DrawDebugLine(GetWorld(), TransformGridToWorld(GridRelativeExplosionLocation.IntPoint()), TransformGridToWorld(GridRelativeExplosionLocation.IntPoint()) + ExplosionRelativeLocation.Size() * FVector(Arc.LowerArcCotValue, 1, 0), DebugColor, true);
-	//DrawDebugLine(GetWorld(), TransformGridToWorld(GridRelativeExplosionLocation.IntPoint()), TransformGridToWorld(GridRelativeExplosionLocation.IntPoint()) + ExplosionRelativeLocation.Size() * FVector(Arc.UpperArcCotValue, 1, 0), (DebugColor.ReinterpretAsLinear() * .5).ToFColor(true), true);
+	
 
 	if (LocationsToPixelState.Contains(PixelLoction) && LocationsToPixelState.Find(PixelLoction)->IsIntact())
 	{
@@ -773,7 +771,7 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 
 	for (FIntPoint EachPossilbeShadowLocationOffset : PossilbeShadowLocationOffsets)
 	{
-		FVector DebugOffset = FVector(-.1 + .05 * FMath::FRand(), -.1 + .05 * FMath::FRand(), 2 * FMath::FRand());
+		FVector DebugOffset = FVector(0,0, .5 * FMath::FRand() + .1);
 		if (FMath::IsNearlyEqual(EachPossilbeShadowLocationOffset.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachPossilbeShadowLocationOffset.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1))
 		{
 			FIntPoint PossilbeShadowLocation = PixelLoction + EachPossilbeShadowLocationOffset;
@@ -845,10 +843,11 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 				break;
 			}
 
-			if (ExplosionRelativePossilbeShadowLocation.SizeSquared() < FMath::Square(Radius) && (Arc.IsLocationInArc(PixelLowerArcBound, false) || Arc.IsLocationInArc(PixelUpperArcBound, false) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue))
+			if (ExplosionRelativePossilbeShadowLocation.SizeSquared() < FMath::Square(Radius) && (Arc.IsBoxInArc(PixelLowerArcBound, PixelUpperArcBound, false) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue))
 			{
 				NewArc.ShrinkArcBounds(PixelLowerArcBound, PixelUpperArcBound);
 				StartExplosionAtPixel(PossilbeShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
+
 				if (Arc.IsLocationInArc(PossilbeShadowLocation))
 				{
 					DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLoction), DebugOffset + TransformGridToWorld(PossilbeShadowLocation), .02, FColor::Blue, true);
