@@ -287,7 +287,7 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
  */
 void AVoidgrid::AddTemperatureAtLocation(FVector WorldLocation, float Temperature)
 {
-	FIntPoint RelativeLocation = FVector2D(WorldLocation - GetActorLocation()).IntPoint();
+	FIntPoint RelativeLocation = TransformWorldToGrid(WorldLocation);
 	AddTemperatureAtLocation(RelativeLocation, Temperature);
 }
 
@@ -301,6 +301,7 @@ void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
 {
 	if (LocationsToPixelState.Contains(Location))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("temperature added at %s"), *Location.ToString());
 		LocationsToPixelState.Find(Location)->AddTemperature(Temperature);
 	}
 }
