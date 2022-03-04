@@ -473,9 +473,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float HeatTick = 1;
 
-	//The percent of heat that a pixel will spread to all surrounding pixels
+	//The percent of temperature that a pixel will spread to all surrounding pixels
 	UPROPERTY(EditDefaultsOnly)
-	float HeatPropagationFactor = 0.5;
+	float TemperaturePropagationFactor = 0.5;
+
+	//The amount of temperature that is small enought that it's negligable
+	UPROPERTY(EditDefaultsOnly)
+	float NegligableTemperatureAmount{ 0.5 };
 
 private:
 

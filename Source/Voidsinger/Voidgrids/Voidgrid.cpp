@@ -62,41 +62,6 @@ void AVoidgrid::Tick(float DeltaTime)
 		SpreadHeat();
 		DeltaHeatTime = 0;
 	}
-	
-	//Temperature debugging, very lag probably
-
-	for (TPair<FIntPoint, PixelType> EachLocationToPixel : LocationsToPixelState.GetGridPairs())
-	{
-		FColor Color;
-
-		if (EachLocationToPixel.Value.GetTemperature() < 0)
-		{
-			if (EachLocationToPixel.Value.GetTemperature() < -5)
-			{
-				Color = FColor::Blue;
-			}
-			else
-			{
-				Color = FColor::Cyan;
-			}
-		}
-		else if (EachLocationToPixel.Value.GetTemperature() == 0)
-		{
-			Color = FColor::Green;
-		}
-		else
-		{
-			if (EachLocationToPixel.Value.GetTemperature() > 5)
-			{
-				Color = FColor::Red;
-			}
-			else
-			{
-				Color = FColor::Orange;
-			}
-		}
-		DrawDebugBox(GetWorld(), FVector(EachLocationToPixel.Key) /* + GetActorLocation()*/, FVector(0.4, 0.4, 0.1), Color);
-	}
 }
 
 /* ------------- *\
@@ -319,12 +284,8 @@ void AVoidgrid::SpreadHeat()
 	NewHeatMap.Reserve(LocationsToPixelState.Num());
 
 	//Iterate through the locations pending heat transfer and transfer their heat
-	
-	//UE_LOG(LogTemp, Warning, TEXT("locatiosn to temperatures pending heat transfer num %i"), LocationsToTemperaturesPendingHeatTransfer.Num());
-
 	for (TPair<FIntPoint, float> EachLocationToTemperaturePendingHeatTransfer : LocationsToTemperaturesPendingHeatTransfer)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("temperature %f"), EachLocationToTemperaturePendingHeatTransfer.Value);
 		for (int EachLocationAround = 0; EachLocationAround < 4; EachLocationAround++)
 		{
 		FIntPoint LocationAround;
@@ -345,9 +306,7 @@ void AVoidgrid::SpreadHeat()
 			break;
 		}
 
-		NewHeatMap.Emplace(EachLocationToTemperaturePendingHeatTransfer.Key + LocationAround, (EachLocationToTemperaturePendingHeatTransfer.Value * HeatPropagationFactor) / 4.0f);
-		//UE_LOG(LogTemp, Warning, TEXT("temperature added at %s amount %f"), *(Location + LocationAround).ToString(), LocationsToPixelState.Find(Location)->GetTemperature() / 4.0f);
-
+		NewHeatMap.Emplace(EachLocationToTemperaturePendingHeatTransfer.Key + LocationAround, (EachLocationToTemperaturePendingHeatTransfer.Value * TemperaturetPropagationFactor) / 4.0f);
 		}
 	}
 
@@ -372,18 +331,18 @@ void AVoidgrid::SpreadHeat()
 
 				//The heat added to this pixel from the other pixel is the other pixel's temperature multiplied by the heat propagation faction (how much heat it will spread to other pixels). It
 				//is divided by four because a pixel will spread heat to four other pixels.
-				AddedHeat += (OtherPixelTemperature * HeatPropagationFactor) / (4);
+				AddedHeat += (OtherPixelTemperature * TemperaturePropagationFactor) / (4);
 			}
 		}
 
 		//The heat remaining when this pixel spreads heat to the surrounding pixels
-		float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - HeatPropagationFactor);
+		float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - TemperaturePropagationFactor);
 
 		//									     	|-- If the new heat map contains this location then add that temperature in too --|
 		float NewHeat = RemainingHeat + AddedHeat + (NewHeatMap.Contains(EachPixel.Key) ? NewHeatMap.FindRef(EachPixel.Key) : 0);
 
-		//If the amount of heat is below .05, then it's negligable. 
-		NewHeatMap.Emplace(EachPixel.Key, NewHeat > .05 ? NewHeat : 0);
+		//If the amount of heat is within the negligable temperature amount, then it's negligable. 
+		NewHeatMap.Emplace(EachPixel.Key, ((NewHeat > NegligableTemperatureAmount) || (NewHeat < -NegligableTemperatureAmount)) ? NewHeat : 0);
 
 	}
 
@@ -391,52 +350,31 @@ void AVoidgrid::SpreadHeat()
 
 	// \/ Set the temperature of each pixel and find whether it should be melted or frozen \/ //
 
-	//Stores what pixels should be melted. This is necessary because RemovePixel() will transfer the heat of the pixel to it's surrounding locations. You need to make sure
-	//that the heat RemovePixel() is transfering is 1. correct and 2. will not be overriden by the heat map.
-	TArray<FIntPoint> MeltedPixels;
-
-	//UE_LOG(LogTemp, Warning, TEXT("---------------"));
-
 	for (TPair<FIntPoint, PixelType> EachPixel : LocationsToPixelState.GetGridPairs())
 	{
 		if (NewHeatMap.Contains(EachPixel.Key) && EachPixel.Value.IsIntact())
 		{
+			LocationsToPixelState.Find(EachPixel.Key)->SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
+
 			//Melt pixel
 			if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 			{
-				//UE_LOG(LogTemp, Warning, TEXT("pixel melted at location %s with temperature %f and heat resistnace %f"), *EachPixel.Key.ToString(), NewHeatMap.FindRef(EachPixel.Key), EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
-				MeltedPixels.Add(EachPixel.Key);
+				RemovePixel(EachPixel.Key);
 			}
 			else
 			{
 				//Freeze pixel
 				if (NewHeatMap.FindRef(EachPixel.Key) < -1 * EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 				{
-					EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, true);
+					LocationsToPixelState.Find(EachPixel.Key)->GetCurrentPart()->SetPixelFrozen(EachPixel.Key, true);
 				}
 				//Unfreeze pixel
 				else
 				{
-					EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, false);
+					LocationsToPixelState.Find(EachPixel.Key)->GetCurrentPart()->SetPixelFrozen(EachPixel.Key, false);
 				}
-
 			}
-
-			LocationsToPixelState.Find(EachPixel.Key)->SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
-
-			/*if (NewHeatMap.FindRef(EachPixel.Key) != 0)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("pixel at %s temperature set to %f"), *EachPixel.Key.ToString(), NewHeatMap.FindRef(EachPixel.Key));
-				UE_LOG(LogTemp, Warning, TEXT("get check %f"), LocationsToPixelState.Find(EachPixel.Key)->GetTemperature());
-			}*/
 		}
-	}
-
-	//UE_LOG(LogTemp, Warning, TEXT("Melted pixels num %i"), MeltedPixels.Num());
-	//Melt the melted pixels
-	for (FIntPoint EachMeltedPixel : MeltedPixels)
-	{
-		RemovePixel(EachMeltedPixel);
 	}
 
 	// /\ Set the temperature of each pixel and find whether it should be melted or frozen /\ /
@@ -632,37 +570,7 @@ FVoidgridState AVoidgrid::GetState()
  */
 void AVoidgrid::RemovePixel(GridLocationType Location)
 {
-
-	//UE_LOG(LogTemp, Warning, TEXT("remove pixel location %s, temperature %f"), *Location.ToString(), LocationsToPixelState.Find(Location)->GetTemperature());
-	// \/ Transfer heat \/ //
-
-	/*for (int EachLocationAround = 0; EachLocationAround < 4; EachLocationAround++)
-	{
-		FIntPoint LocationAround;
-
-		switch (EachLocationAround)
-		{
-		case 0: 
-			LocationAround = FIntPoint(1, 0);
-			break;
-		case 1: 
-			LocationAround = FIntPoint(0, 1);
-			break;
-		case 2: 
-			LocationAround = FIntPoint(-1, 0);
-			break;
-		case 3: 
-			LocationAround = FIntPoint(0, -1);
-			break;
-		}
-		AddTemperatureAtLocation(Location + LocationAround, LocationsToPixelState.Find(Location)->GetTemperature() / 4);
-		UE_LOG(LogTemp, Warning, TEXT("temperature added at %s amount %f"), *(Location + LocationAround).ToString(), LocationsToPixelState.Find(Location)->GetTemperature() / 4);
-
-	}*/
-
 	LocationsToTemperaturesPendingHeatTransfer.Emplace(Location, LocationsToPixelState.Find(Location)->GetTemperature());
-
-	// /\ Transfer heat /\ //
 
 	SetPixelIntact(Location, false);
 }
