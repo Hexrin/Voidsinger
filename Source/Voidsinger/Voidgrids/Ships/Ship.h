@@ -64,7 +64,7 @@ protected:
 	 * @return - The Voidsong object that was played
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VoidsongActivation")
-	UVoidsong* PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs);
+	UVoidsong* PlayVoidsong(const TSet<UBaseFactionMotif*>& Factions, const TSet<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs);
 
 	/*
 	 * Deactivates this ship's ability to play Voidsongs
