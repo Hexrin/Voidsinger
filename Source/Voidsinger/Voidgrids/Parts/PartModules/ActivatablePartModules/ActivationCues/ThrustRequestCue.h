@@ -23,7 +23,7 @@ class VOIDSINGER_API UThrustRequestCue : public UBaseActivationCue
 
 public:
 
-	/*
+	/**
 	 * Initializes this activation cue's variables and bindings
 	 * 
 	 * @param OwningModule - The module that owns this activation cue
@@ -38,7 +38,7 @@ public:
 
 private:
 
-	/*
+	/**
 	 * Broadcasts the "OnActivate" delegate
 	 *
 	 * @param Data - The activation data containing the effectiveness, move direction, and rotation of the thrust request

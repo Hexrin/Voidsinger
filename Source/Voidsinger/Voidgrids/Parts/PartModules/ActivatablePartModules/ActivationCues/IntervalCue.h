@@ -22,7 +22,7 @@ class VOIDSINGER_API UIntervalCue : public UBaseActivationCue, public FTickableG
 	/* -------------------- *\
 	\* \/ Initialization \/ */
 
-	/*
+	/**
 	 * Initializes this activation cue's variables and bindings
 	 *
 	 * @param OwningModule - The module that owns this activation cue

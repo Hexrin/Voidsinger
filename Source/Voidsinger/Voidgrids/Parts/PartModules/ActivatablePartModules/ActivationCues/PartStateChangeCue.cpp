@@ -13,7 +13,7 @@
 /* -------------------- *\
 \* \/ Initialization \/ */
 
-/*
+/**
  * Initializes this activation cue's variables and bindings
  * 
  * @param OwningModule - The module that owns this activation cue
@@ -59,7 +59,7 @@ void UPartStateChangeCue::Initialize(UActivatablePartModule* OwningModule)
 /* --------------- *\
 \* \/ Delegates \/ */
 
-/*
+/**
  * Broadcasts the "OnActivate" delegate
  *
  * @param bApplyChangeEffect - Whether or not to actually call the delegate

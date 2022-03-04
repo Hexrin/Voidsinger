@@ -11,7 +11,7 @@
 /* -------------------- *\
 \* \/ Initialization \/ */
 
-/*
+/**
  * Initializes this activation cue's variables and bindings
  * 
  * @param OwningModule - The module that owns this activation cue

@@ -14,7 +14,7 @@
 /* -------------------- *\
 \* \/ Initialization \/ */
 
-/*
+/**
  * Initializes this activation cue's variables and bindings
  * 
  * @param OwningModule - The module that owns this activation cue
@@ -30,7 +30,7 @@ void UThrustRequestCue::Initialize(UActivatablePartModule* OwningModule)
 /* --------------- *\
 \* \/ Delegates \/ */
 
-/*
+/**
  * Broadcasts the "OnActivate" delegate
  *
  * @param Data - The activation data containing the effectiveness, move direction, and rotation of the thrust request

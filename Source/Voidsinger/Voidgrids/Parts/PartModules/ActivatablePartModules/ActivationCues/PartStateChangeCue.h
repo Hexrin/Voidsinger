@@ -47,7 +47,7 @@ class VOIDSINGER_API UPartStateChangeCue : public UBaseActivationCue
 
 public:
 
-	/*
+	/**
 	 * Initializes this activation cue's variables and bindings
 	 * 
 	 * @param OwningModule - The module that owns this activation cue
@@ -68,7 +68,7 @@ public:
 
 private:
 
-	/*
+	/**
 	 * Broadcasts the "OnActivate" delegate
 	 * 
 	 * @param bApplyChangeEffect - Whether or not to actually call the delegate

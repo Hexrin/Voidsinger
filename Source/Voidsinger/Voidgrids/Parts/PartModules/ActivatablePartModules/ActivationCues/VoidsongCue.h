@@ -51,7 +51,7 @@ class VOIDSINGER_API UVoidsongCue : public UBaseActivationCue
 
 public:
 
-	/*
+	/**
 	 * Initializes this activation cue's variables and bindings
 	 * 
 	 * @param OwningModule - The module that owns this activation cue
@@ -72,7 +72,7 @@ public:
 
 private:
 
-	/*
+	/**
 	 * Broadcasts the "OnActivate" delegate
 	 *
 	 * @param Verbs - The verbs played in the Voidsong
