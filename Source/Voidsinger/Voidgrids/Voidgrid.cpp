@@ -945,9 +945,55 @@ void AVoidgrid::AddResourceRequest(FResourceRequest ResourceRequest)
 	}
 }
 
+/**
+ * Adds resources to the Voidgrid
+ *
+ * @param AddedResources - The resources added and how much of each is added
+ *
+ * @return - Whether all resources were added successfully or not
+ */
+const bool AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
+{
+	for (TPair<EResourceType, float> EachAddedResource : AddedResources)
+	{
+		if (EachAddedResource.Value < 0)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Attempted to add a negative amount of resource. Use 'UseResources' instead."));
+			return false;
+		}
+		else
+		{
+			if (Resources.Contains(EachAddedResource.Key))
+			{
+				//Emplace will override the previous key value pair.
+				Resources.Emplace(EachAddedResource.Key, Resources.FindRef(EachAddedResource.Key) + EachAddedResource.Value);
+			}
+			else
+			{
+				Resources.Emplace(EachAddedResource.Key, EachAddedResource.Value);
+			}
+		}
+	}
+}
+
+/**
+ * Gets the resources stored on this Voidgrid
+ *
+ * @return - The resources
+ */
 const TMap<EResourceType, float> AVoidgrid::GetResources() const
 {
 	return Resources;
+}
+
+/**
+ * Gets the storage capacities for each resource on this Voidgrid
+ *
+ * @return - The storage capacities
+ */
+const TMap<EResourceType, float> AVoidgrid::GetResourceStorageCapacities() const
+{
+	return ResourceTyepsToStorageCapacities;
 }
 
 /**
@@ -964,34 +1010,6 @@ void AVoidgrid::HandleResourceRequests()
 	}
 
 	ResourceRequests.Empty();
-}
-
-/**
- * Adds resources to the Voidgrid
- *
- * @param AddedResources - The resources added and how much of each is added
- */
-void AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
-{
-	for (TPair<EResourceType, float> EachAddedResource : AddedResources)
-	{
-		if (EachAddedResource.Value < 0)
-		{
-			UE_LOG(LogTemp, Error, TEXT("Attempted to add a negative amount of resource. Use 'UseResources' instead."));
-		}
-		else
-		{
-			if (Resources.Contains(EachAddedResource.Key))
-			{
-				//Emplace will override the previous key value pair.
-				Resources.Emplace(EachAddedResource.Key, Resources.FindRef(EachAddedResource.Key) + EachAddedResource.Value);
-			}
-			else
-			{
-				Resources.Emplace(EachAddedResource.Key, EachAddedResource.Value);
-			}
-		}
-	}
 }
 
 /**
