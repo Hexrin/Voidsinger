@@ -58,12 +58,14 @@ void AVoidgrid::Tick(float DeltaTime)
 
 	UpdateTransform(DeltaTime);
 
+	DeltaHeatTime += DeltaTime;
+	
 	//Find how many heat ticks have passed and call SpreadHeat that number of times
 	for (int EachHeatTickPassed = 0; EachHeatTickPassed < DeltaHeatTime / HeatTick; DeltaHeatTime -= HeatTick)
 	{
 		SpreadHeat();
-	}
-	
+		DeltaHeatTime = 0;
+	}	
 	DeltaHeatTime += DeltaTime;
 
 	HandleResourceRequests();
@@ -232,8 +234,9 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 {
 	if (DeltaMass != 0)
 	{
+		CenterOfMass = DeltaMass / (Mass + DeltaMass)  * MassLocation + Mass / (Mass + DeltaMass) * CenterOfMass;
 		Mass += DeltaMass;
-		CenterOfMass += DeltaMass / Mass * MassLocation;
+		AddActorLocalOffset(PixelMeshComponent->GetRelativeLocation() + FVector(CenterOfMass, 0));
 		PixelMeshComponent->SetRelativeLocation(FVector(-1 * CenterOfMass, 0));
 		MomentOfInertia += (1 / 12) + DeltaMass * (MassLocation).SizeSquared();
 		OnMassChanged.Broadcast(Mass, CenterOfMass, MomentOfInertia);
@@ -256,7 +259,7 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
  */
 void AVoidgrid::AddTemperatureAtLocation(FVector WorldLocation, float Temperature)
 {
-	FIntPoint RelativeLocation = FVector2D(WorldLocation - GetActorLocation()).IntPoint();
+	FIntPoint RelativeLocation = TransformWorldToGrid(WorldLocation);
 	AddTemperatureAtLocation(RelativeLocation, Temperature);
 }
 
@@ -282,10 +285,39 @@ void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
 void AVoidgrid::SpreadHeat()
 {
 	
-	// \/ Calculate the new heat map \/ /
+	// \/ Calculate the new heat map \/ //
 
 	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
 	NewHeatMap.Reserve(LocationsToPixelState.Num());
+
+	//Iterate through the locations pending heat transfer and transfer their heat
+	for (TPair<FIntPoint, float> EachLocationToTemperaturePendingHeatTransfer : LocationsToTemperaturesPendingHeatTransfer)
+	{
+		for (int EachLocationAround = 0; EachLocationAround < 4; EachLocationAround++)
+		{
+		FIntPoint LocationAround;
+
+		switch (EachLocationAround)
+		{
+		case 0:
+			LocationAround = FIntPoint(1, 0);
+			break;
+		case 1:
+			LocationAround = FIntPoint(0, 1);
+			break;
+		case 2:
+			LocationAround = FIntPoint(-1, 0);
+			break;
+		case 3:
+			LocationAround = FIntPoint(0, -1);
+			break;
+		}
+
+		NewHeatMap.Emplace(EachLocationToTemperaturePendingHeatTransfer.Key + LocationAround, (EachLocationToTemperaturePendingHeatTransfer.Value * TemperaturetPropagationFactor) / 4.0f);
+		}
+	}
+
+	LocationsToTemperaturesPendingHeatTransfer.Empty();
 
 	//Iterate through each point on the grid map to spread heat to each pixel
 	for (TPair<FIntPoint, PixelType> EachPixel : LocationsToPixelState.GetGridPairs())
@@ -306,48 +338,48 @@ void AVoidgrid::SpreadHeat()
 
 				//The heat added to this pixel from the other pixel is the other pixel's temperature multiplied by the heat propagation faction (how much heat it will spread to other pixels). It
 				//is divided by four because a pixel will spread heat to four other pixels.
-				AddedHeat += (OtherPixelTemperature * HeatPropagationFactor) / (4);
+				AddedHeat += (OtherPixelTemperature * TemperaturePropagationFactor) / (4);
 			}
 		}
 
 		//The heat remaining when this pixel spreads heat to the surrounding pixels
-		float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - HeatPropagationFactor);
+		float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - TemperaturePropagationFactor);
 
-		float NewHeat = RemainingHeat + AddedHeat;
+		//									     	|-- If the new heat map contains this location then add that temperature in too --|
+		float NewHeat = RemainingHeat + AddedHeat + (NewHeatMap.Contains(EachPixel.Key) ? NewHeatMap.FindRef(EachPixel.Key) : 0);
 
-		//If the amount of heat is below .05, then it's negligable. 
-		NewHeatMap.Emplace(EachPixel.Key, NewHeat > .05 ? NewHeat : 0);
+		//If the amount of heat is within the negligable temperature amount, then it's negligable. 
+		NewHeatMap.Emplace(EachPixel.Key, ((NewHeat > NegligableTemperatureAmount) || (NewHeat < -NegligableTemperatureAmount)) ? NewHeat : 0);
 
 	}
 
-	// /\ Calculate the new heat map /\ /
+	// /\ Calculate the new heat map /\ //
 
-	// \/ Set the temperature of each pixel and find whether it should be melted or frozen \/ /
+	// \/ Set the temperature of each pixel and find whether it should be melted or frozen \/ //
 
 	for (TPair<FIntPoint, PixelType> EachPixel : LocationsToPixelState.GetGridPairs())
 	{
 		if (NewHeatMap.Contains(EachPixel.Key) && EachPixel.Value.IsIntact())
 		{
+			LocationsToPixelState.Find(EachPixel.Key)->SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
+
 			//Melt pixel
 			if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 			{
 				RemovePixel(EachPixel.Key);
 			}
-
 			else
 			{
 				//Freeze pixel
 				if (NewHeatMap.FindRef(EachPixel.Key) < -1 * EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 				{
-					EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, true);
+					LocationsToPixelState.Find(EachPixel.Key)->GetCurrentPart()->SetPixelFrozen(EachPixel.Key, true);
 				}
 				//Unfreeze pixel
 				else
 				{
-					EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, false);
+					LocationsToPixelState.Find(EachPixel.Key)->GetCurrentPart()->SetPixelFrozen(EachPixel.Key, false);
 				}
-
-				EachPixel.Value.SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
 			}
 		}
 	}
@@ -360,6 +392,30 @@ void AVoidgrid::SpreadHeat()
 
 /* ---------------- *\
 \* \/ Pixel Mold \/ */
+
+/**
+ * Gets the grid loction of a world loction.
+ *
+ * @param WorldLocation - The world location to transform.
+ * @return The grid loction of WorldLocation;
+ */
+UFUNCTION(BlueprintPure)
+FIntPoint AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
+{
+	return (FVector2D(GetTransform().InverseTransformPosition(WorldLocation)) + CenterOfMass).IntPoint();
+}
+
+/**
+ * Gets the world location of a grid loction.
+ *
+ * @param GridLoction - The grid location to transform.
+ * @return The world loction of GridLoction;
+ */
+UFUNCTION(BlueprintPure)
+FVector AVoidgrid::TransformGridToWorld(FIntPoint GridLocation) const
+{
+	return GetTransform().TransformPosition(FVector(FVector2D(GridLocation) - CenterOfMass, 0));
+}
 
 /**
  * Sets the pixel mold of the ship
@@ -521,6 +577,8 @@ FVoidgridState AVoidgrid::GetState()
  */
 void AVoidgrid::RemovePixel(GridLocationType Location)
 {
+	LocationsToTemperaturesPendingHeatTransfer.Emplace(Location, LocationsToPixelState.Find(Location)->GetTemperature());
+
 	SetPixelIntact(Location, false);
 }
 

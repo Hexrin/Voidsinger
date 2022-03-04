@@ -421,7 +421,7 @@ public:
 
 	FString ToString() const
 	{
-		return Transform.ToString() + Data->GetName();
+		return Transform.ToString() + (IsValid(Data) ? Data->GetName() : "NONE");
 	}
 };
 

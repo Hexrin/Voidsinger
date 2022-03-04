@@ -409,7 +409,7 @@ private:
 
 	//Stores the mass of this voidgrid.
 	UPROPERTY()
-	float Mass{ 1 };
+	float Mass{ 0 };
 
 	//Stores the mass of this voidgrid.
 	UPROPERTY()
@@ -478,17 +478,24 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float HeatTick = 1;
 
+	//The percent of temperature that a pixel will spread to all surrounding pixels
+	UPROPERTY(EditDefaultsOnly)
+	float TemperaturePropagationFactor = 0.5;
+
+	//The amount of temperature that is small enought that it's negligable
+	UPROPERTY(EditDefaultsOnly)
+	float NegligableTemperatureAmount{ 0.5 };
+
 private:
 
 	//The time since the last heat tick
+	UPROPERTY()
 	float DeltaHeatTime;
+
+	//The locations that need their heat transfered to surrounding location and how much heat the location had
+	UPROPERTY()
+	TMap<FIntPoint, float> LocationsToTemperaturesPendingHeatTransfer;
 	
-protected:
-
-	//The percent of heat that a pixel will spread to all surrounding pixels
-	UPROPERTY(EditDefaultsOnly)
-	float HeatPropagationFactor = 0.5;
-
 	/* /\ Temperature /\ *\
 	\* ----------------- */
 
@@ -500,6 +507,24 @@ public:
 	FGridLocationDelegate OnPixelRemoved;
 	//Called when this is repaired.
 	FGridLocationDelegate OnPixelAdded;
+
+	/**
+	 * Gets the grid loction of a world loction.
+	 *
+	 * @param WorldLocation - The world location to transform.
+	 * @return The grid loction of WorldLocation;
+	 */
+	UFUNCTION(BlueprintPure)
+	FIntPoint TransformWorldToGrid(FVector WorldLocation) const;
+
+	/**
+	 * Gets the world location of a grid loction.
+	 *
+	 * @param GridLoction - The grid location to transform.
+	 * @return The world loction of GridLoction;
+	 */
+	UFUNCTION(BlueprintPure)
+	FVector TransformGridToWorld(FIntPoint GridLocation) const;
 
 	/**
 	 * Sets the pixel mold of the voidgrid
