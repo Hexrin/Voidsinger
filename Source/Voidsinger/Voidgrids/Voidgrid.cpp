@@ -404,6 +404,30 @@ void AVoidgrid::SpreadHeat()
 \* \/ Pixel Mold \/ */
 
 /**
+ * Gets the grid loction of a world loction.
+ *
+ * @param WorldLocation - The world location to transform.
+ * @return The grid loction of WorldLocation;
+ */
+UFUNCTION(BlueprintPure)
+FIntPoint AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
+{
+	return (FVector2D(GetTransform().InverseTransformPosition(WorldLocation)) + CenterOfMass).IntPoint();
+}
+
+/**
+ * Gets the world location of a grid loction.
+ *
+ * @param GridLoction - The grid location to transform.
+ * @return The world loction of GridLoction;
+ */
+UFUNCTION(BlueprintPure)
+FVector AVoidgrid::TransformGridToWorld(FIntPoint GridLocation) const
+{
+	return GetTransform().TransformPosition(FVector(FVector2D(GridLocation) - CenterOfMass, 0));
+}
+
+/**
  * Sets the pixel mold of the ship
  *
  * @param NewPixelMold - The value to assign to the pixel mold of the ship
