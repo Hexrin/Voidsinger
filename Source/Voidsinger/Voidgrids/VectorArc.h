@@ -95,12 +95,14 @@ struct VOIDSINGER_API FVectorArc
 	 */
 	bool DoesLinePassThoughArc(FVector2D LineStart, FVector2D LineEnd, bool bInclusiveBounds = true)
 	{
-		if (IsLocationInArc(LineStart, bInclusiveBounds) || IsLocationInArc(LineEnd, bInclusiveBounds))
+		FVector2D UpperArcBoundLocation = FVector2D(UpperArcCotValue, 1);
+		if (bUpperArcNegativeY)
 		{
-			return true;
+			UpperArcBoundLocation *= -1;
 		}
 
-		
+		//     | ----------------------- Get whether line enpoints are in bounds ---------------------- |    | ------------------------- Get whether line crosses bounds ------------------------- |                                                                               
+		return IsLocationInArc(LineStart, bInclusiveBounds) || IsLocationInArc(LineEnd, bInclusiveBounds) || FVectorArc(LineStart, LineEnd).IsLocationInArc(UpperArcBoundLocation, bInclusiveBounds);
 	}
 
 	/**
@@ -131,17 +133,6 @@ struct VOIDSINGER_API FVectorArc
 	float GetVectorCot(FVector2D Vector)
 	{
 		return Vector.Y != 0 ? Vector.X / Vector.Y : FMath::Sign(Vector.X) * FLT_MAX;
-	}
-
-	/**
-	 * Gets the Cotangent of the vector. This is a safe operation, will return FLT_MAX if Y = 0.
-	 *
-	 * @param Vector - The vector to get the cotangent of.
-	 * @return The cotangent of Vector.
-	 */
-	bool DoesLineInterectArcBound(FVector2D LineStart, FVector2D LineEnd, bool bUpperBound)
-	{
-		return FVectorArc(LineStart, LineEnd).IsLocationInArc()
 	}
 
 	//The lower arc vetor's X/Y value.
