@@ -709,11 +709,7 @@ public:
 	
 private:
 
-	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
-	UPROPERTY()
-	TMap<EResourceType, float> Resources; 
-
-	/*
+	/**
 	 * Handles all resource requests made this tick by using the resources specified.
 	 */
 	UFUNCTION()
@@ -740,6 +736,10 @@ private:
 	//Stores all of the resource requests that were made this tick 
 	UPROPERTY()
 	TArray<FResourceRequest> ResourceRequests;
+
+	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
+	UPROPERTY()
+	TMap<EResourceType, float> Resources;
 
 	/* /\ Resource Management /\ *\
 	\* ------------------------- */

@@ -13,7 +13,7 @@
 /* -------------------- *\
 \* \/ Initialization \/ */
 
-/*
+/**
  * Initializes this activation cue's variables and bindings
  * 
  * @param OwningModule - The module that owns this activation cue
@@ -35,7 +35,7 @@ void UResourceCue::Initialize(UActivatablePartModule* OwningModule)
 /* --------------- *\
 \* \/ Delegates \/ */
 
-/*
+/**
  * Creates and uses the resources specified
  *
  * @param Data - The activation data containing all relavent information, including the effectiveness
@@ -46,7 +46,7 @@ void UResourceCue::CreateResourceRequest(FPartActivationData Data)
 	{
 		PartActivationData = Data;
 
-		//Stores the resource call adjusted with effectiveness
+		//Stores the resource request adjusted with effectiveness
 		FResourceRequest AdjustedResourceRequest;
 
 		for (TPair<EResourceType, float> EachResourceTypeToAmountUsed : ResourceRequest.ResourceTypesToAmountUsed)
@@ -54,19 +54,17 @@ void UResourceCue::CreateResourceRequest(FPartActivationData Data)
 			AdjustedResourceRequest.ResourceTypesToAmountUsed.Emplace(EachResourceTypeToAmountUsed.Key, EachResourceTypeToAmountUsed.Value * Data.Effectiveness);
 		}
 
-		for (TPair<EResourceType, float> EachResourceTypeToAmountCreated : ResourceRequest.ResourceTypesToAmountCreated)
-		{
-			AdjustedResourceRequest.ResourceTypesToAmountCreated.Emplace(EachResourceTypeToAmountCreated.Key, EachResourceTypeToAmountCreated.Value * Data.Effectiveness);
-		}
-
+		AdjustedResourceRequest.Priority = ResourceRequest.Priority;
 
 		AdjustedResourceRequest.OnResourceRequestCompleted.AddDynamic(this, &UResourceCue::OnResourceRequestCompleted);
-		AdjustedResourceRequest.Priority = ResourceRequest.Priority;
 
 		Part->GetVoidgrid()->AddResourceRequest(AdjustedResourceRequest);
 	}
 }
 
+/**
+ * Finishes the resource request by calling "OnActivate"
+ */
 void UResourceCue::OnResourceRequestCompleted()
 {
 	OnActivate.Broadcast(PartActivationData);

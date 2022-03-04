@@ -16,7 +16,7 @@
 /* -------------------- *\
 \* \/ Initialization \/ */
 
-/*
+/**
  * Initializes this activation cue's variables and bindings
  * 
  * @param OwningModule - The module that owns this activation cue
@@ -35,6 +35,12 @@ void UVoidsongCue::Initialize(UActivatablePartModule* OwningModule)
 /* --------------- *\
 \* \/ Delegates \/ */
 
+/**
+ * Broadcasts the "OnActivate" delegate
+ *
+ * @param Verbs - The verbs played in the Voidsong
+ * @param Effectiveness - The effectiveness of the activation
+ */
 void UVoidsongCue::BroadcastDelegate(const TArray<UBaseVerbMotif*> Verbs, float Effectiveness)
 {
 	OnActivate.Broadcast(FPartActivationData(Verbs, Effectiveness));

@@ -13,7 +13,7 @@ class UActivatablePartModule;
 
 // /\ Forward declarations /\ /
 
-/*
+/**
  * Broadcasts the activation data when this activation cue is called
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FActivationCueDelegate, const FPartActivationData, ActivationData);
@@ -35,7 +35,7 @@ class VOIDSINGER_API UBaseActivationCue : public UObject
 
 public:
 
-	/*
+	/**
 	 * Initializes this activation cue's variables and bindings
 	 * 
 	 * @param OwningModule - The module that owns this activation cue

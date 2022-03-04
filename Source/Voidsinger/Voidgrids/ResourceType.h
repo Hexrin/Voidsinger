@@ -10,7 +10,7 @@
 |  \/ [EResourceType] \/  |
 \* \/ =============== \/ */
 
-/*
+/**
  * Stores the kind of resource something is
  */
 UENUM(BlueprintType, meta = (BitMask))
@@ -28,13 +28,13 @@ enum class EResourceType : uint8
 |  /\ [EResourceType] /\  |
 \* /\ =============== /\ */
 
-/* \/ =============== \/ *\
-|  \/ [FResourceCall] \/  |
-\* \/ =============== \/ */
+/* \/ ================== \/ *\
+|  \/ [FResourceRequest] \/  |
+\* \/ ================== \/ */
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FResourceRequestCompleted);
 
-/*
+/**
  * Stores the resources used and created by this resource request, as well as the priority of the request. A resource request is a request for resources to be used and added.
  */
 USTRUCT(BlueprintType)
@@ -47,26 +47,24 @@ public:
 	/* ------------------ *\
 	\* \/ Constructors \/ */
 
-	/*
+	/**
 	 * Default constructor
 	 */
 	FResourceRequest()
 	{
-		FResourceRequest(0, TMap<EResourceType, float>(), TMap<EResourceType, float>());
+		FResourceRequest(0, TMap<EResourceType, float>());
 	}
 
-	/*
+	/**
 	 * Constructor taking in priority and resources 
 	 * 
 	 * @param PriorityOfRequest - The priority of this resource request
 	 * @param ResourceTypesToUsed - A map of resource types to the amount used of each
-	 * @param ResourceTypesToCreated - A map of resource types to the amount created of each
 	 */
-	FResourceRequest(int PriorityOfRequest, TMap<EResourceType, float> ResourceTypesToUsed, TMap<EResourceType, float> ResourceTypesToCreated)
+	FResourceRequest(int PriorityOfRequest, TMap<EResourceType, float> ResourceTypesToUsed)
 	{
 		Priority = PriorityOfRequest;
 		ResourceTypesToAmountUsed = ResourceTypesToUsed;
-		ResourceTypesToAmountCreated = ResourceTypesToCreated;
 	}
 
 	/* /\ Constructors /\ *\
@@ -75,7 +73,7 @@ public:
 	/* ------------------------- *\
 	\* \/ Resource Management \/ */
 
-	//The priority of this resource call
+	//The priority of this resource Request
 	UPROPERTY(EditAnywhere, Category = "Resource Management")
 	int Priority{ 0 };
 
@@ -83,11 +81,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Resource Management")
 	TMap<EResourceType, float> ResourceTypesToAmountUsed{ TMap<EResourceType, float>() };
 
-	//A map of resource types to the amount created of each
-	UPROPERTY(EditAnywhere, Category = "Resource Management")
-	TMap<EResourceType, float> ResourceTypesToAmountCreated{ TMap<EResourceType, float>() };
-
-	//A delegate that is called when the resource call is completed
+	//A delegate that is called when the resource request is completed
 	UPROPERTY()
 	FResourceRequestCompleted OnResourceRequestCompleted;
 
@@ -96,6 +90,6 @@ public:
 
 };
 
-/* /\ =============== /\ *\
-|  /\ [FResourceCall] /\  |
-\* /\ =============== /\ */
+/* /\ ================== /\ *\
+|  /\ [FResourceRequest] /\  |
+\* /\ ================== /\ */

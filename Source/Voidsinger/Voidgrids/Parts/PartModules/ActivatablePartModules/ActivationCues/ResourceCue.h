@@ -30,7 +30,7 @@ class VOIDSINGER_API UResourceCue : public UBaseActivationCue
 
 public:
 
-	/*
+	/**
 	 * Initializes this activation cue's variables and bindings
 	 * 
 	 * @param OwningModule - The module that owns this activation cue
@@ -49,9 +49,9 @@ public:
 	UPROPERTY(Instanced, EditAnywhere, Category = "Delegation")
 	TArray<UBaseActivationCue*> ActivationCues;
 
-	//Stores the resources and priority of this cue
+	//Stores the resources used and priority of this cue
 	UPROPERTY(EditAnywhere, Category = "Delegation")
-	FResourceRequest ResourceRequest; //Activation cues should never apply the effect of activation. In other words the cue should not be able to add resouces, that should be handeled by the part when Activate is called. - Liam Suggestion
+	FResourceRequest ResourceRequest; 
 
 	//Whether the part this cue is on has to be functional for this cue to activate
 	UPROPERTY(EditAnywhere, Category = "Delegation")
@@ -59,7 +59,7 @@ public:
 
 private:
 
-	/*
+	/**
 	 * Creates a resource request
 	 *
 	 * @param Data - The activation data containing all relavent information, including the effectiveness
@@ -67,7 +67,7 @@ private:
 	UFUNCTION()
 	void CreateResourceRequest(FPartActivationData Data);
 
-	/*
+	/**
 	 * Finishes the resource request by calling "OnActivate"
 	 */
 	UFUNCTION()
