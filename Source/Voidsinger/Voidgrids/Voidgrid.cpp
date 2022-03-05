@@ -735,7 +735,7 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 		if (AVoidgrid* OtherVoidgrid = Cast<AVoidgrid>(EachResult.GetActor()))
 		{
 			FVector2D GridRelativeExplosionLocation = OtherVoidgrid->TransformWorldToGrid(WorldLocation);
-			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation.IntPoint(), GridRelativeExplosionLocation, Radius, FVectorArc(FVector2D(-1,1), FVector2D(1,1)));
+			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation.IntPoint(), GridRelativeExplosionLocation, Radius);
 		}
 	}
 }
@@ -751,6 +751,7 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 {
 	UE_LOG(LogTemp, Warning, TEXT("Start Explosion at %s"), *PixelLoction.ToString());
 
+	//Array of all adjacent pixel offests
 	static TArray<FIntPoint> PossilbeShadowLocationOffsets{ TArray<FIntPoint>() };
 	if (PossilbeShadowLocationOffsets.IsEmpty())
 	{
@@ -768,10 +769,11 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 		Radius -= LocationsToPixelState.Find(PixelLoction)->GetCurrentPart()->GetData()->Strength - 1;
 	}
 
-
+	// For each adjacent pixel
 	for (FIntPoint EachPossilbeShadowLocationOffset : PossilbeShadowLocationOffsets)
 	{
 		FVector DebugOffset = FVector(0,0, .5 * FMath::FRand() + .1);
+		// If in the correct direction for this quadrent.
 		if (FMath::IsNearlyEqual(EachPossilbeShadowLocationOffset.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachPossilbeShadowLocationOffset.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1))
 		{
 			FIntPoint PossilbeShadowLocation = PixelLoction + EachPossilbeShadowLocationOffset;
@@ -843,7 +845,8 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 				break;
 			}
 
-			if (ExplosionRelativePossilbeShadowLocation.SizeSquared() < FMath::Square(Radius) && (Arc.IsBoxInArc(PixelLowerArcBound, PixelUpperArcBound, false) || ExplosionRelativeLocation.IntPoint() == FIntPoint::ZeroValue))
+			//  | ------------------------------------ In radius ---------------------------|    | ----------------------------- In arc --------------------------------|
+			if (ExplosionRelativePossilbeShadowLocation.SizeSquared() < FMath::Square(Radius) && Arc.DoesLinePassThoughArc(PixelLowerArcBound, PixelUpperArcBound, false))
 			{
 				NewArc.ShrinkArcBounds(PixelLowerArcBound, PixelUpperArcBound);
 				StartExplosionAtPixel(PossilbeShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
@@ -857,17 +860,17 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 					DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLoction), DebugOffset + TransformGridToWorld(PossilbeShadowLocation), .02, FColor::Yellow, true);
 				}
 			}
-			else
+			else if (ExplosionRelativePossilbeShadowLocation.SizeSquared() < FMath::Square(Radius))
 			{
 				DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLoction), DebugOffset + TransformGridToWorld(PossilbeShadowLocation), .02, FColor::Red, true);
+			}
+			else
+			{
+				DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLoction), DebugOffset + TransformGridToWorld(PossilbeShadowLocation), .02, FColor::Black, true);
 			}
 		}
 	}
 
-	if (PixelLoction == FIntPoint(1, 5))
-	{
-
-	}
 	if (Arc.IsLocationInArc(PixelLoction))
 	{
 		RemovePixel(PixelLoction);

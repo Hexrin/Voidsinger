@@ -100,9 +100,14 @@ struct VOIDSINGER_API FVectorArc
 		{
 			UpperArcBoundLocation *= -1;
 		}
+		FVector2D LowerArcBoundLocation = FVector2D(LowerArcCotValue, 1);
+		if (bLowerArcNegativeY)
+		{
+			LowerArcBoundLocation *= -1;
+		}
 
-		//     | ----------------------- Get whether line enpoints are in bounds ---------------------- |    | ------------------------- Get whether line crosses bounds ------------------------- |                                                                               
-		return IsLocationInArc(LineStart, bInclusiveBounds) || IsLocationInArc(LineEnd, bInclusiveBounds) || FVectorArc(LineStart, LineEnd).IsLocationInArc(UpperArcBoundLocation, bInclusiveBounds);
+		//     | ----------------------- Get whether line enpoints are in bounds ---------------------- |    | --------------------------------------------------------------------------------- Get whether line crosses bounds ---------------------------------------------------------------------------------- |                                                                               
+		return IsLocationInArc(LineStart, bInclusiveBounds) || IsLocationInArc(LineEnd, bInclusiveBounds) || FVectorArc(LineStart, LineEnd).IsLocationInArc(UpperArcBoundLocation, bInclusiveBounds) || (!bInclusiveBounds && FVectorArc(LineStart, LineEnd).IsLocationInArc(LowerArcBoundLocation, bInclusiveBounds));
 	}
 
 	/**
