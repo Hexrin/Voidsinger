@@ -628,10 +628,11 @@ public:
 private:
 	/**
 	 * Recursive function that will explode all pixels shadowed by the pixel at grid location.
-	 * 
+	 *
 	 * @param GridLoction - The pixel to remove.
 	 * @param GridRelativeExplosionLocation -  The location of the center of the explosion relative to the pixel grid.
 	 * @param Radius - The radius of the explosion.
+	 * @param Arc - The arc to apply the explosion in. Only pixels inside the arc will be destroyed.
 	 */
 	UFUNCTION()
 	void StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRelativeExplosionLocation, float Radius, FVectorArc Arc = FVectorArc());

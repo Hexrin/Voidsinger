@@ -725,11 +725,13 @@ void AVoidgrid::ClearVoidgrid()
  */
 void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, float Radius)
 {
-	DrawDebugCircle(WorldContext->GetWorld(), FTransform(FRotator(90, 0, 0), WorldLocation + FVector(0, 0, 0.5), FVector(1)).ToMatrixWithScale(), Radius, 50, FColor::White, true, 2, 0U, .05);
+	DrawDebugCircle(WorldContext->GetWorld(), FTransform(FRotator(90, 0, 0), WorldLocation + FVector(0, 0, 0.5), FVector(1)).ToMatrixWithScale(), Radius, 50, FColor::White, false, 2, 0U, .05);
 
+	//Get all actors in radius
 	TArray<FOverlapResult> Results = TArray<FOverlapResult>();
 	WorldContext->GetWorld()->OverlapMultiByChannel(Results, WorldLocation, FQuat::Identity, ECollisionChannel::ECC_Pawn, FCollisionShape::MakeSphere(Radius));
-	FlushPersistentDebugLines(WorldContext->GetWorld());
+
+	//Start explosion at WorldLocation for each voidgrid found
 	for (FOverlapResult EachResult : Results)
 	{
 		if (AVoidgrid* OtherVoidgrid = Cast<AVoidgrid>(EachResult.GetActor()))
@@ -746,136 +748,127 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
  * @param GridLoction - The pixel to remove.
  * @param GridRelativeExplosionLocation -  The location of the center of the explosion relative to the pixel grid.
  * @param Radius - The radius of the explosion.
+ * @param Arc - The arc to apply the explosion in. Only pixels inside the arc will be destroyed.
  */
 void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRelativeExplosionLocation, float Radius, FVectorArc Arc)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Start Explosion at %s"), *PixelLoction.ToString());
-
 	//Array of all adjacent pixel offests
-	static TArray<FIntPoint> PossilbeShadowLocationOffsets{ TArray<FIntPoint>() };
-	if (PossilbeShadowLocationOffsets.IsEmpty())
+	static TArray<FIntPoint> AdjacentPixelOffests{ TArray<FIntPoint>() };
+	if (AdjacentPixelOffests.IsEmpty())
 	{
-		PossilbeShadowLocationOffsets.Emplace(FIntPoint( 0, 1));
-		PossilbeShadowLocationOffsets.Emplace(FIntPoint( 1, 0));
-		PossilbeShadowLocationOffsets.Emplace(FIntPoint( 0,-1));
-		PossilbeShadowLocationOffsets.Emplace(FIntPoint(-1, 0));
+		AdjacentPixelOffests.Emplace(FIntPoint( 0, 1));
+		AdjacentPixelOffests.Emplace(FIntPoint( 1, 0));
+		AdjacentPixelOffests.Emplace(FIntPoint( 0,-1));
+		AdjacentPixelOffests.Emplace(FIntPoint(-1, 0));
 	}
+
+	//The location of the pixel relative to the explosion's center.
 	FVector2D ExplosionRelativeLocation = FVector2D(PixelLoction) - GridRelativeExplosionLocation;
 
 	
-
+	//Shrink radius based on part strength.
 	if (LocationsToPixelState.Contains(PixelLoction) && LocationsToPixelState.Find(PixelLoction)->IsIntact())
 	{
 		Radius -= LocationsToPixelState.Find(PixelLoction)->GetCurrentPart()->GetData()->Strength - 1;
 	}
 
-	// For each adjacent pixel
-	for (FIntPoint EachPossilbeShadowLocationOffset : PossilbeShadowLocationOffsets)
+	//If in new explosion radius
+	if (ExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius))
 	{
-		FVector DebugOffset = FVector(0,0, .5 * FMath::FRand() + .1);
-		// If in the correct direction for this quadrent.
-		if (FMath::IsNearlyEqual(EachPossilbeShadowLocationOffset.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachPossilbeShadowLocationOffset.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1))
+		// \/ For each adjacent pixel start an explosion if in Arc \/ //
+		for (FIntPoint EachAdjacentPixelOffest : AdjacentPixelOffests)
 		{
-			FIntPoint PossilbeShadowLocation = PixelLoction + EachPossilbeShadowLocationOffset;
-			FVector2D ExplosionRelativePossilbeShadowLocation = FVector2D(PossilbeShadowLocation) - GridRelativeExplosionLocation;
-
-			FVectorArc NewArc = Arc;
-
-			FVector2D PixelLowerArcBound = FVector2D();
-			FVector2D PixelUpperArcBound = FVector2D();
-
-			//Deterims the sign of X & Y
-			int32 NextExplosionSignedDirection = (FMath::Sign(ExplosionRelativePossilbeShadowLocation.X) + 1) + 3 * (FMath::Sign(ExplosionRelativePossilbeShadowLocation.Y) + 1);
-			switch (NextExplosionSignedDirection)
+			// If in the correct direction for this quadrent.
+			if (FMath::IsNearlyEqual(EachAdjacentPixelOffest.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachAdjacentPixelOffest.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1))
 			{
-				// X < 0 && Y < 0
-			case 0:
-				PixelLowerArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5);
-				PixelUpperArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5);
-				break;
+				//The pixel location of the next pixel to destroy.
+				FIntPoint AdjacentPixelLocation = PixelLoction + EachAdjacentPixelOffest;
+				//The location relative to the center of the explosion of the next pixel to destroy.
+				FVector2D AdjacentPixelExplosionRelativeLocation = FVector2D(AdjacentPixelLocation) - GridRelativeExplosionLocation;
+				//The lower arc bound of an arc that coinatins only the AdjacentPixel.
+				FVector2D PixelLowerArcBound = FVector2D();
+				//The upper arc bound of an arc that coinatins only the AdjacentPixel.
+				FVector2D PixelUpperArcBound = FVector2D();
+				//The sign of X & Y in a tri-bit format
+				int32 NextExplosionSignedDirection = (FMath::Sign(AdjacentPixelExplosionRelativeLocation.X) + 1) + 3 * (FMath::Sign(AdjacentPixelExplosionRelativeLocation.Y) + 1);
 
-				// X = 0 && Y < 0
-			case 1:
-				PixelLowerArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5);
-				PixelUpperArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5);
-				break;
-
-				// X > 0 && Y < 0
-			case 2:
-				PixelLowerArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5);
-				PixelUpperArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5);
-				break;
-
-				// X < 0 && Y = 0
-			case 3:
-				PixelLowerArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5);
-				PixelUpperArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5);
-				break;
-
-				// X = 0 && Y = 0
-			case 4:
-				break;
-
-				// X > 0 && Y = 0
-			case 5:
-				PixelLowerArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5);
-				PixelUpperArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5);
-				break;
-
-				// X < 0 && Y > 0
-			case 6:
-				PixelLowerArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5);
-				PixelUpperArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, 0.5);
-				break;
-
-				// X = 0 && Y > 0
-			case 7:
-				PixelLowerArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, -0.5);
-				PixelUpperArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5);
-				break;
-
-				// X > 0 && Y > 0
-			case 8:
-				PixelLowerArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(-0.5, 0.5);
-				PixelUpperArcBound = ExplosionRelativePossilbeShadowLocation + FVector2D(0.5, -0.5);
-				break;
-
-			default:
-				ensureMsgf(false, TEXT("NextExplosionSignedDirection Invalid"));
-				break;
-			}
-
-			//  | ------------------------------------ In radius ---------------------------|    | ----------------------------- In arc --------------------------------|
-			if (ExplosionRelativePossilbeShadowLocation.SizeSquared() < FMath::Square(Radius) && Arc.DoesLinePassThoughArc(PixelLowerArcBound, PixelUpperArcBound, false))
-			{
-				NewArc.ShrinkArcBounds(PixelLowerArcBound, PixelUpperArcBound);
-				StartExplosionAtPixel(PossilbeShadowLocation, GridRelativeExplosionLocation, Radius, NewArc);
-
-				if (Arc.IsLocationInArc(PossilbeShadowLocation))
+				// \/ Sets PixelArcBounds based on sign \/ //
+				switch (NextExplosionSignedDirection)
 				{
-					DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLoction), DebugOffset + TransformGridToWorld(PossilbeShadowLocation), .02, FColor::Blue, true);
+					// X < 0 && Y < 0
+				case 0:
+					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, -0.5);
+					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, 0.5);
+					break;
+
+					// X = 0 && Y < 0
+				case 1:
+					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, 0.5);
+					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, 0.5);
+					break;
+
+					// X > 0 && Y < 0
+				case 2:
+					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, 0.5);
+					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, -0.5);
+					break;
+
+					// X < 0 && Y = 0
+				case 3:
+					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, -0.5);
+					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, 0.5);
+					break;
+
+					// X = 0 && Y = 0
+				case 4:
+					break;
+
+					// X > 0 && Y = 0
+				case 5:
+					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, 0.5);
+					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, -0.5);
+					break;
+
+					// X < 0 && Y > 0
+				case 6:
+					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, -0.5);
+					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, 0.5);
+					break;
+
+					// X = 0 && Y > 0
+				case 7:
+					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, -0.5);
+					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, -0.5);
+					break;
+
+					// X > 0 && Y > 0
+				case 8:
+					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, 0.5);
+					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, -0.5);
+					break;
+
+				default:
+					ensureMsgf(false, TEXT("NextExplosionSignedDirection Invalid"));
+					break;
 				}
-				else
+				// /\ Sets PixelArcBounds based on sign /\ //
+
+				//  | ------------------------------------ In radius ------------------------- |    | ----------------------------- In arc ------------------------------- |
+				if (AdjacentPixelExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius) && Arc.DoesLinePassThoughArc(PixelLowerArcBound, PixelUpperArcBound, false))
 				{
-					DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLoction), DebugOffset + TransformGridToWorld(PossilbeShadowLocation), .02, FColor::Yellow, true);
+					FVectorArc NewArc = Arc;
+					NewArc.ShrinkArcBounds(PixelLowerArcBound, PixelUpperArcBound);
+					StartExplosionAtPixel(AdjacentPixelLocation, GridRelativeExplosionLocation, Radius, NewArc);
 				}
-			}
-			else if (ExplosionRelativePossilbeShadowLocation.SizeSquared() < FMath::Square(Radius))
-			{
-				DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLoction), DebugOffset + TransformGridToWorld(PossilbeShadowLocation), .02, FColor::Red, true);
-			}
-			else
-			{
-				DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLoction), DebugOffset + TransformGridToWorld(PossilbeShadowLocation), .02, FColor::Black, true);
 			}
 		}
 	}
+		// /\ For each adjacent pixel start an explosion if in Arc /\ //
 
 	if (ExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius) && Arc.IsLocationInArc(PixelLoction))
 	{
 		RemovePixel(PixelLoction);
 	}
-	
 }
 
 /* /\ Explosion /\ *\
