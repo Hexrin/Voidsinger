@@ -862,11 +862,8 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 				}
 			}
 		}
-	}
 		// /\ For each adjacent pixel start an explosion if in Arc /\ //
 
-	if (ExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius) && Arc.IsLocationInArc(PixelLoction))
-	{
 		RemovePixel(PixelLoction);
 	}
 }
