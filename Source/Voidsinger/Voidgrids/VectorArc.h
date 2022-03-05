@@ -6,8 +6,8 @@
 #include "VectorArc.generated.h"
 
 /**
- * Stores an arc between two vectors.
- * Fast functions for arc matnimulation and testing.
+ * Stores an arc bound by two vectors.
+ * Fast functions for arc manipulation and testing.
  */
 USTRUCT()
 struct VOIDSINGER_API FVectorArc
@@ -17,97 +17,92 @@ struct VOIDSINGER_API FVectorArc
 	/**
 	 * Initilizes this arc to be bound by the given vectors. If the limits are the same then the arc will contain the whole circle.
 	 *
-	 * @param LowerArcLimit - The lower limit of this arc. The arc will be in the clockwise dirction of this vector.
-	 * @param UpperArcLimit - The upper limit of this arc. The arc will be in the counterclockwise dirction of this vector.
+	 * @param LowerArcBound - The lower bound of this arc. The arc will be in the clockwise dirction of this vector.
+	 * @param UpperArcBound - The upper bound of this arc. The arc will be in the counterclockwise dirction of this vector.
 	 */
-	FVectorArc(FVector2D LowerArcLimit = FVector2D::UnitVector, FVector2D UpperArcLimit = FVector2D::UnitVector)
+	FVectorArc(FVector2D LowerArcBound = FVector2D::UnitVector, FVector2D UpperArcBound = FVector2D::UnitVector)
 	{
-		SetArcBounds(LowerArcLimit, UpperArcLimit);
+		SetArcBounds(LowerArcBound, UpperArcBound);
 	}
 
 	/**
-	 * Attempts to shrink the arc to the given limits. If the limits srult in a wider arc then they will not be set.
+	 * Attempts to shrink the arc to the given bounds. If a bound would result in a wider arc then the .
 	 * 
-	 * @param LowerArcLimit - The target lower limit of this arc. The arc will be in the clockwise dirction of this vector.
-	 * @param UpperArcLimit - The target upper limit of this arc. The arc will be in the counterclockwise dirction of this vector.
+	 * @param LowerArcBound - The target lower bound of this arc. The arc will be in the clockwise dirction of this vector.
+	 * @param LowerArcBound - The target upper bound of this arc. The arc will be in the counterclockwise dirction of this vector.
 	 */
-	void ShrinkArcBounds(FVector2D LowerArcLimit, FVector2D UpperArcLimit)
+	void ShrinkArcBounds(FVector2D LowerArcBound, FVector2D UpperArcBound)
 	{
-		//If arc is not restricted then try inilizing the arc with the given limits
-		if (!bArcRestricted)
+		//If arc is not restricted then inilize the arc with the given limits.
+		if (!bArcBounded)
 		{
-			SetArcBounds(LowerArcLimit, UpperArcLimit);
+			SetArcBounds(LowerArcBound, UpperArcBound);
 		}
 		else
 		{
-			if (IsLocationInArc(LowerArcLimit))
+			//Adjust lower bound
+			if (IsLocationInArc(LowerArcBound))
 			{
-				LowerArcCotValue = GetVectorCot(LowerArcLimit);
-				bLowerArcNegativeY = LowerArcLimit.Y < 0;
+				LowerBoundCotValue = GetVectorCot(LowerArcBound);
+				bLowerBoundNegativeY = LowerArcBound.Y < 0;
 			}
-			if (IsLocationInArc(UpperArcLimit))
+
+			//Adjust upper bound
+			if (IsLocationInArc(UpperArcBound))
 			{
-				UpperArcCotValue = GetVectorCot(UpperArcLimit);
-				bUpperArcNegativeY = UpperArcLimit.Y < 0;
+				UpperBoundCotValue = GetVectorCot(UpperArcBound);
+				bUpperBoundNegativeY = UpperArcBound.Y < 0;
 			}			
 		}
 	}
 
 	/**
-	 * Gets whether or not the given location is within the arc of this.
+	 * Gets whether or not the given location is between the LowerBound and UpperBound of this.
+	 * 
+	 * @param Location - The location to check.
+	 * @param bInclusiveBounds - Whether or not to count a location on the bounds as between them.
+	 * @return Whether or not the given location is between the LowerBound and UpperBound of this.
 	 */
-	bool IsLocationInArc(FVector2D Location, bool bInclusiveBounds = true)
+	bool IsLocationInArc(FVector2D Location, bool bInclusiveBounds = true) const
 	{
-		if (!bArcRestricted)
+		//If arc not bounded the location will always be in it.
+		if (!bArcBounded)
 		{
 			return true;
 		}
+
+		//The cotangent value of Location.
 		float LocationCotValue = GetVectorCot(Location);
 
-		if (bInclusiveBounds)
+		//If bounds are in the same hemisphere
+		if (bLowerBoundNegativeY == bUpperBoundNegativeY)
 		{
-			if (bLowerArcNegativeY == bUpperArcNegativeY)
+			//If do not include other hemisphere
+			if (LowerBoundCotValue <= UpperBoundCotValue)
 			{
-				if (LowerArcCotValue <= UpperArcCotValue)
-				{
-					return (LocationCotValue >= LowerArcCotValue && LocationCotValue <= UpperArcCotValue) && Location.Y < 0 == (bUpperArcNegativeY || bLowerArcNegativeY);
-				}
-				return LocationCotValue >= LowerArcCotValue || LocationCotValue <= UpperArcCotValue || Location.Y < 0 != (bUpperArcNegativeY || bLowerArcNegativeY);
+				//     | --------------------------------------------------- Is Location between bounds ---------------------------------------------------- |    | ------------ Is Location in same hemisphere ------------ |
+				return IsGreaterThan(LocationCotValue, LowerBoundCotValue, bInclusiveBounds) && IsLessThan(LocationCotValue, UpperBoundCotValue, bInclusiveBounds) && Location.Y < 0 == (bUpperBoundNegativeY || bLowerBoundNegativeY);
 			}
-
-			return (bUpperArcNegativeY == Location.Y < 0) ? LocationCotValue <= UpperArcCotValue : LocationCotValue >= LowerArcCotValue;
+			//     | ------------------------------------------------ Is Location *NOT* between bounds ------------------------------------------------- |    | --------- Is Location *NOT* in same hemisphere --------- |
+			return IsGreaterThan(LocationCotValue, LowerBoundCotValue, bInclusiveBounds) || IsLessThan(LocationCotValue, UpperBoundCotValue, bInclusiveBounds) || Location.Y < 0 != (bUpperBoundNegativeY || bLowerBoundNegativeY);
 		}
 
-		if (bLowerArcNegativeY == bUpperArcNegativeY)
-		{
-			if (LowerArcCotValue <= UpperArcCotValue)
-			{
-				return (LocationCotValue > LowerArcCotValue && LocationCotValue < UpperArcCotValue) && Location.Y < 0 == (bUpperArcNegativeY || bLowerArcNegativeY);
-			}
-			return LocationCotValue > LowerArcCotValue || LocationCotValue < UpperArcCotValue || Location.Y < 0 != (bUpperArcNegativeY || bLowerArcNegativeY);
-		}
-
-		return (bUpperArcNegativeY == Location.Y < 0) ? LocationCotValue < UpperArcCotValue : LocationCotValue > LowerArcCotValue;
+		//Based on location hemisphere check to see if location is in the direction of the other bound.
+		return (bUpperBoundNegativeY == Location.Y < 0) ? IsLessThan(LocationCotValue, UpperBoundCotValue, bInclusiveBounds) : IsGreaterThan(LocationCotValue, LowerBoundCotValue, bInclusiveBounds);
 	}
 
 	/**
-	 * Gets whether or not the given location is within the arc of this.
+	 * Gets whether or not the line is passes through the arc of this.
+	 *
+	 * @param LineStart - One endpoint of the line to check.
+	 * @param LineEnd - One endpoint of the line to check.
+	 * @param bInclusiveBounds - Whether or not to count a location on the bounds as between them.
+	 * @return Whether or not the line is passes through the arc of this.
 	 */
-	bool DoesLinePassThoughArc(FVector2D LineStart, FVector2D LineEnd, bool bInclusiveBounds = true)
+	bool DoesLinePassThoughArc(FVector2D LineStart, FVector2D LineEnd, bool bInclusiveBounds = true) const
 	{
-		FVector2D UpperArcBoundLocation = FVector2D(UpperArcCotValue, 1);
-		if (bUpperArcNegativeY)
-		{
-			UpperArcBoundLocation *= -1;
-		}
-		FVector2D LowerArcBoundLocation = FVector2D(LowerArcCotValue, 1);
-		if (bLowerArcNegativeY)
-		{
-			LowerArcBoundLocation *= -1;
-		}
-
-		//     | ----------------------- Get whether line enpoints are in bounds ---------------------- |    | --------------------------------------------------------------------------------- Get whether line crosses bounds ---------------------------------------------------------------------------------- |                                                                               
-		return IsLocationInArc(LineStart, bInclusiveBounds) || IsLocationInArc(LineEnd, bInclusiveBounds) || FVectorArc(LineStart, LineEnd).IsLocationInArc(UpperArcBoundLocation, bInclusiveBounds) || (!bInclusiveBounds && FVectorArc(LineStart, LineEnd).IsLocationInArc(LowerArcBoundLocation, bInclusiveBounds));
+		//     | ----------------------- Get whether line enpoints are in bounds ---------------------- |    | --------------------------------------------------------------------------- Get whether line crosses bounds ----------------------------------------------------------------------------- |                                                                               
+		return IsLocationInArc(LineStart, bInclusiveBounds) || IsLocationInArc(LineEnd, bInclusiveBounds) || FVectorArc(LineStart, LineEnd).IsLocationInArc(GetUpperBound(), bInclusiveBounds) || (!bInclusiveBounds && FVectorArc(LineStart, LineEnd).IsLocationInArc(GetLowerBound(), bInclusiveBounds));
 	}
 
 	/**
@@ -116,47 +111,103 @@ struct VOIDSINGER_API FVectorArc
 	 * @param LowerArcLimit - The lower limit of this arc. The arc will be in the clockwise dirction of this vector.
 	 * @param UpperArcLimit - The upper limit of this arc. The arc will be in the counterclockwise dirction of this vector.
 	 */
-	void SetArcBounds(FVector2D LowerArcLimit, FVector2D UpperArcLimit)
+	void SetArcBounds(FVector2D LowerArcBound, FVector2D UpperArcBound)
 	{
-		bArcRestricted = LowerArcLimit != UpperArcLimit;
-		if (bArcRestricted)
+		bArcBounded = LowerArcBound != UpperArcBound;
+		if (bArcBounded)
 		{
-			LowerArcCotValue = GetVectorCot(LowerArcLimit);
-			bLowerArcNegativeY = LowerArcLimit.Y < 0;
-			UpperArcCotValue = GetVectorCot(UpperArcLimit);
-			bUpperArcNegativeY = UpperArcLimit.Y < 0;
+			LowerBoundCotValue = GetVectorCot(LowerArcBound);
+			bLowerBoundNegativeY = LowerArcBound.Y < 0;
+			UpperBoundCotValue = GetVectorCot(UpperArcBound);
+			bUpperBoundNegativeY = UpperArcBound.Y < 0;
 		}
 	}
 
-//private:
 	/**
-	 * Gets the Cotangent of the vector. This is a safe operation, will return FLT_MAX if Y = 0.
+	 * Gets the upper bound of this arc as a vector.
+	 * 
+	 * @return The upper bound of this arc as a vector.
+	 */
+	FVector2D GetUpperBound() const
+	{
+		FVector2D UpperArcBoundLocation = FVector2D(UpperBoundCotValue, 1);
+		if (bUpperBoundNegativeY)
+		{
+			UpperArcBoundLocation *= -1;
+		}
+		return UpperArcBoundLocation;
+	}
+
+	/**
+	 * Gets the lower bound of this arc as a vector.
+	 * 
+	 * @return The lower bound of this arc as a vector.
+	 */
+	FVector2D GetLowerBound() const
+	{
+		FVector2D LowerArcBoundLocation = FVector2D(LowerBoundCotValue, 1);
+		if (bLowerBoundNegativeY)
+		{
+			LowerArcBoundLocation *= -1;
+		}
+		return LowerArcBoundLocation;
+	}
+
+private:
+	/**
+	 * Gets the cotangent of the vector. This is a safe operation, will return FLT_MAX if Y = 0.
 	 * 
 	 * @param Vector - The vector to get the cotangent of.
 	 * @return The cotangent of Vector.
 	 */
-	float GetVectorCot(FVector2D Vector)
+	float GetVectorCot(FVector2D Vector) const
 	{
 		return Vector.Y != 0 ? Vector.X / Vector.Y : FMath::Sign(Vector.X) * FLT_MAX;
 	}
 
-	//The lower arc vetor's X/Y value.
+	/**
+	 * Gets whether or not A < B.
+	 * 
+	 * @param A - The value to test for lesserness. 
+     * @param B - The value to test for greaterness. 
+	 * @param bInclusive - Whether or not to count equality as less than.
+	 * @return Whether or not A < B.
+	 */
+	bool IsLessThan(float A, float B, bool bInclusive) const
+	{
+		return bInclusive ? A < B : A <= B;
+	}
+
+	/**
+	 * Gets whether or not A > B.
+	 *
+	 * @param A - The value to test for greaterness.
+	 * @param B - The value to test for lesserness.
+	 * @param bInclusive - Whether or not to count equality as greater than.
+	 * @return Whether or not A > B.
+	 */
+	bool IsGreaterThan(float A, float B, bool bInclusive) const
+	{
+		return bInclusive ? A > B : A >= B;
+	}
+
+	//The lower arc bound's cotangent (X/Y) value.
 	UPROPERTY()
-	float LowerArcCotValue;
+	float LowerBoundCotValue;
 
 	//Whether or not the lower arc vetor's Y value is negative.
 	UPROPERTY()
-	bool bLowerArcNegativeY;
+	bool bLowerBoundNegativeY;
 
-	//The upper arc vetor's X/Y value.
+	//The upper arc bound's cotangent (X/Y) value.
 	UPROPERTY()
-	float UpperArcCotValue;
+	float UpperBoundCotValue;
 
 	//Whether or not the upper arc vetor's Y value is negative.
 	UPROPERTY()
-	bool bUpperArcNegativeY;
+	bool bUpperBoundNegativeY;
 
 	//Whether or not this arc is bound by two differnt vectors.
 	UPROPERTY()
-	bool bArcRestricted;
+	bool bArcBounded;
 };
