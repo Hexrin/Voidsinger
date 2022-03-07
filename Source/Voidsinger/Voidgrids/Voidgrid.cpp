@@ -725,6 +725,8 @@ void AVoidgrid::ClearVoidgrid()
  */
 void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, float Radius)
 {
+
+	//Debugggg -Mabel Suggestion
 	DrawDebugCircle(WorldContext->GetWorld(), FTransform(FRotator(90, 0, 0), WorldLocation + FVector(0, 0, 0.5), FVector(1)).ToMatrixWithScale(), Radius, 50, FColor::White, false, 2, 0U, .05);
 
 	//Get all actors in radius
