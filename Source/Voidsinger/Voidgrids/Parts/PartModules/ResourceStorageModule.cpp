@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Voidsinger/Voidgrids/Voidgrid.h"
 #include "ResourceStorageModule.h"
+#include "Voidsinger/Voidgrids/Voidgrid.h"
 
 /* \/ ====================== \/ *\
 |  \/ UResourceStorageModule \/  |
