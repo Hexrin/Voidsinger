@@ -46,18 +46,25 @@ public:
 
 	/**
 	 * Updates any internal logic based on this parts functionality.
+	 * 
+	 * @param bApplyChangeEffect - Whether to apply the effects of this change
 	 */
-	virtual void FunctionalityRestored();
+	virtual void FunctionalityRestored(bool bApplyChangeEffect);
 
 	/**
 	 * Updates any internal logic based on this parts functionality.
+	 * 
+	 * @param bApplyChangeEffect - Whether to apply the effects of this change
 	 */
-	virtual void FunctionalityLost();
+	virtual void FunctionalityLost(bool bApplyChangeEffect);
 
 	/* /\ Functionality /\ *\
 	\* ------------------- */
 
 public:
+
+	/* ---------------- *\
+	\* \/ References \/ */
 
 	/**
 	 * Gets the voidgrid this is a part of.
@@ -69,6 +76,9 @@ public:
 
 	// The part that this module is on
 	UPart* Part;
+
+	/* /\ References /\ *\
+	\* ---------------- */
 };
 
 /* /\ =========== /\ *\

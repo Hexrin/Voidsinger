@@ -58,13 +58,17 @@ protected:
 protected:
 	/**
 	 * Updates voidgrid thrust capabilities.
+	 * 
+	 * @param bApplyChangeEffect - Whether to apply the effects of this change
 	 */
-	virtual void FunctionalityRestored() override;
+	virtual void FunctionalityRestored(bool bApplyChangeEffect) override;
 
 	/**
 	 * Updates voidgrid thrust capabilities.
+	 * 
+	 * @param bApplyChangeEffect - Whether to apply the effects of this change
 	 */
-	virtual void FunctionalityLost() override;
+	virtual void FunctionalityLost(bool bApplyChangeEffect) override;
 
 	/* /\ Functionality /\ *\
 	\* ------------------- */

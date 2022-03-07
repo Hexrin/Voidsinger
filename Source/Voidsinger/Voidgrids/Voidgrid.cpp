@@ -949,33 +949,30 @@ void AVoidgrid::AddResourceRequest(FResourceRequest ResourceRequest)
  * Adds resources to the Voidgrid
  *
  * @param AddedResources - The resources added and how much of each is added
- *
- * @return - Whether all resources were added successfully or not
  */
-const bool AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
+void AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
 {
 	for (TPair<EResourceType, float> EachAddedResource : AddedResources)
 	{
 		if (EachAddedResource.Value < 0)
 		{
 			UE_LOG(LogTemp, Error, TEXT("Attempted to add a negative amount of resource. Use 'UseResources' instead."));
-			return false;
 		}
 		else
 		{
-			if (Resources.Contains(EachAddedResource.Key))
-			{
-				//Emplace will override the previous key value pair.
-				Resources.Emplace(EachAddedResource.Key, Resources.FindRef(EachAddedResource.Key) + EachAddedResource.Value);
-			}
-			else
-			{
-				Resources.Emplace(EachAddedResource.Key, EachAddedResource.Value);
-			}
+
+			//Stores the storage capacity of this resource type
+			float Capacity = ResourceTypesToStorageCapacities.FindRef(EachAddedResource.Key);
+			//Stores the amount of this resource that this voidgrid already has
+			float CurrentAmount = Resources.Contains(EachAddedResource.Key) ? Resources.FindRef(EachAddedResource.Key) : 0;
+			//Stores the amount of resource that is actually added
+			float AddedAmount = CurrentAmount + EachAddedResource.Value > Capacity ? Capacity : Resources.FindRef(EachAddedResource.Key) + EachAddedResource.Value;
+				
+			//Emplace will override the previous key value pair.
+			Resources.Emplace(EachAddedResource.Key,AddedAmount);
 		}
 	}
 
-	return true;
 }
 
 /**

@@ -733,11 +733,9 @@ public:
 	 * Adds resources to the Voidgrid
 	 *
 	 * @param AddedResources - The resources added and how much of each is added
-	 * 
-	 * @return Whether all resources were added successfully or not
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Resource Management")
-	const bool AddResources(TMap<EResourceType, float> AddedResources);
+	void AddResources(TMap<EResourceType, float> AddedResources);
 
 	/**
 	 * Gets the resources stored on this Voidgrid
@@ -797,7 +795,7 @@ private:
 	UPROPERTY()
 	TMap<EResourceType, float> Resources;
 
-	//Stores the storage capacity for each resource type
+	//A map of all the resource types to how much of each resource the Voidgrid can store
 	UPROPERTY()
 	TMap<EResourceType, float> ResourceTypesToStorageCapacities;
 

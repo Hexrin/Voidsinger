@@ -15,6 +15,8 @@
 void UPartModule::InitializeVariables(UPart* OwningPart)
 {
 	Part = OwningPart;
+	Part->OnFunctionalityRestored.AddUniqueDynamic(this, &UPartModule::FunctionalityRestored);
+	Part->OnFunctionalityLost.AddUniqueDynamic(this, &UPartModule::FunctionalityLost);
 }
 
 /* /\ Initialization /\ *\
@@ -25,15 +27,19 @@ void UPartModule::InitializeVariables(UPart* OwningPart)
 
 /**
  * Updates any internal logic based on this parts functionality.
+ * 
+ * @param bApplyChangeEffect - Whether to apply the effects of this change
  */
-void UPartModule::FunctionalityRestored()
+void UPartModule::FunctionalityRestored(bool bApplyChangeEffect)
 {
 }
 
 /**
  * Updates any internal logic based on this parts functionality.
+ * 
+ * @param bApplyChangeEffect - Whether to apply the effects of this change
  */
-void UPartModule::FunctionalityLost()
+void UPartModule::FunctionalityLost(bool bApplyChangeEffect)
 {
 }
 
