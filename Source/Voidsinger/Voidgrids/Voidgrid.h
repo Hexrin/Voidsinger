@@ -616,7 +616,7 @@ private:
 	\* \/ Explosion \/ */
 public:
 	/**
-	 * Causes an explosion at a world location. This will remove all pixels within the explosion radius, but pixel strength may reduce the radius. //Rephrase if you can, this makes it sound like "this will remove all pixels within the explosion radius". Maybe "this will *try* to remove ..."? - Mabel Suggestion
+	 * Causes an explosion at a world location. This will try to remove all pixels within the explosion radius, but pixel strength may reduce the radius.
 	 * 
 	 * @param WorldContext - An object used to get the world that the explosion will occur in.
 	 * @param WorldLocation - The location of the center of the explosion.
@@ -627,7 +627,7 @@ public:
 
 private:
 	/**
-	 * Recursive function that will explode all pixels shadowed by the pixel at grid location. //What does "shadowed by" mean? I think I know what you meant, but that's only because I've been talking with you -Mabel Suggestion
+	 * Recursive function that will explode all pixels in a given arc that are not blocked by high strength parts.
 	 *
 	 * @param GridLocation - The pixel to remove.
 	 * @param GridRelativeExplosionLocation - The location of the center of the explosion relative to the pixel grid.

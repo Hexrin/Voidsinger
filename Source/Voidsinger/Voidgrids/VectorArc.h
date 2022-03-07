@@ -166,7 +166,7 @@ private:
 	}
 
 	/**
-	 * Gets whether or not A < B. //Why did you make a function for this? It seems unnecessary to make a function that replaces operators that already exist. -Mabel Suggestion
+	 * Gets whether or not A < B.
 	 * 
 	 * @param A - The value to test for lesserness. 
      * @param B - The value to test for greaterness. 
@@ -179,7 +179,7 @@ private:
 	}
 
 	/**
-	 * Gets whether or not A > B. //Why did you make a function for this? It seems unnecessary to make a function that replaces operators that already exist. -Mabel Suggestion
+	 * Gets whether or not A > B.
 	 *
 	 * @param A - The value to test for greaterness.
 	 * @param B - The value to test for lesserness.
