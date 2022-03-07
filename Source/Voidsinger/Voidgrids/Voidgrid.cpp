@@ -752,9 +752,10 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
  * @param Radius - The radius of the explosion.
  * @param Arc - The arc to apply the explosion in. Only pixels inside the arc will be destroyed.
  */
-void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRelativeExplosionLocation, float Radius, FVectorArc Arc)
+void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FVector2D GridRelativeExplosionLocation, float Radius, FVectorArc Arc)
 {
 	//Array of all adjacent pixel offests
+	//Wouldn't this go back and check the previous location you were at? Or am I missing something -Mabel Suggestion
 	static TArray<FIntPoint> AdjacentPixelOffests{ TArray<FIntPoint>() };
 	if (AdjacentPixelOffests.IsEmpty())
 	{
@@ -765,13 +766,13 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 	}
 
 	//The location of the pixel relative to the explosion's center.
-	FVector2D ExplosionRelativeLocation = FVector2D(PixelLoction) - GridRelativeExplosionLocation;
+	FVector2D ExplosionRelativeLocation = FVector2D(PixelLocation) - GridRelativeExplosionLocation;
 
 	
 	//Shrink radius based on part strength.
-	if (LocationsToPixelState.Contains(PixelLoction) && LocationsToPixelState.Find(PixelLoction)->IsIntact())
+	if (LocationsToPixelState.Contains(PixelLocation) && LocationsToPixelState.Find(PixelLocation)->IsIntact())
 	{
-		Radius -= LocationsToPixelState.Find(PixelLoction)->GetCurrentPart()->GetData()->Strength - 1;
+		Radius -= LocationsToPixelState.Find(PixelLocation)->GetCurrentPart()->GetData()->Strength - 1;
 	}
 
 	//If in new explosion radius
@@ -781,10 +782,10 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 		for (FIntPoint EachAdjacentPixelOffest : AdjacentPixelOffests)
 		{
 			// If in the correct direction for this quadrant.
-			if ((FMath::IsNearlyEqual(EachAdjacentPixelOffest.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachAdjacentPixelOffest.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1)) || PixelLoction == GridRelativeExplosionLocation.IntPoint())
+			if ((FMath::IsNearlyEqual(EachAdjacentPixelOffest.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachAdjacentPixelOffest.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1)) || PixelLocation == GridRelativeExplosionLocation.IntPoint())
 			{
 				//The pixel location of the next pixel to destroy.
-				FIntPoint AdjacentPixelLocation = PixelLoction + EachAdjacentPixelOffest;
+				FIntPoint AdjacentPixelLocation = PixelLocation + EachAdjacentPixelOffest;
 				//The location relative to the center of the explosion of the next pixel to destroy.
 				FVector2D AdjacentPixelExplosionRelativeLocation = FVector2D(AdjacentPixelLocation) - GridRelativeExplosionLocation;
 				//The lower arc bound of an arc that contains only the AdjacentPixel.
@@ -855,6 +856,7 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 				}
 				// /\ Sets PixelArcBounds based on sign /\ //
 
+				//You should add another check for "InVoidgridBounds". That way you don't check empty space if the explosion is larger than the voidgrid. I set the explosion radius to 1000 and the editor is still frozen (like 3 minutes later). I'm pretty sure it's because of this. Though maybe I hit an infinite loop somehow, i don't know.  -Mabel Suggestion
 				//  | ------------------------------------ In radius ------------------------- |    | ----------------------------- In arc ------------------------------- |
 				if (AdjacentPixelExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius) && Arc.DoesLinePassThoughArc(PixelLowerArcBound, PixelUpperArcBound, false))
 				{
@@ -866,7 +868,7 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 		}
 		// /\ For each adjacent pixel start an explosion if in Arc /\ //
 
-		RemovePixel(PixelLoction);
+		RemovePixel(PixelLocation);
 	}
 }
 
