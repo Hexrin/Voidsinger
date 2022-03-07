@@ -503,7 +503,7 @@ public:
 	 * @return The grid loction of WorldLocation;
 	 */
 	UFUNCTION(BlueprintPure)
-	FIntPoint TransformWorldToGrid(FVector WorldLocation) const;
+	FVector2D TransformWorldToGrid(FVector WorldLocation) const;
 
 	/**
 	 * Gets the world location of a grid loction.
@@ -512,7 +512,7 @@ public:
 	 * @return The world loction of GridLoction;
 	 */
 	UFUNCTION(BlueprintPure)
-	FVector TransformGridToWorld(FIntPoint GridLocation) const;
+	FVector TransformGridToWorld(FVector2D GridLocation) const;
 
 	/**
 	 * Sets the pixel mold of the voidgrid
