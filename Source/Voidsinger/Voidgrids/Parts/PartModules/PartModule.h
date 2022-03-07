@@ -49,6 +49,7 @@ public:
 	 * 
 	 * @param bApplyChangeEffect - Whether to apply the effects of this change
 	 */
+	UFUNCTION()
 	virtual void FunctionalityRestored(bool bApplyChangeEffect);
 
 	/**
@@ -56,6 +57,7 @@ public:
 	 * 
 	 * @param bApplyChangeEffect - Whether to apply the effects of this change
 	 */
+	UFUNCTION()
 	virtual void FunctionalityLost(bool bApplyChangeEffect);
 
 	/* /\ Functionality /\ *\
