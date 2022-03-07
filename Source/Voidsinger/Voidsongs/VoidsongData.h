@@ -224,7 +224,7 @@ public:
 	/**
 	 * Gets a copy of all the Motifs in the Voidsong
 	 * 
-	 * @return - Copy of Motifs
+	 * @return Copy of Motifs
 	 */
 	TArray<UBaseMotif*> GetMotifs()
 	{
@@ -234,7 +234,7 @@ public:
 	/**
 	 * Gets a copy of the Faction Motifs in the Voidsong
 	 *
-	 * @return - Copy of FactionMotifs
+	 * @return Copy of FactionMotifs
 	 */
 	TArray<UBaseFactionMotif*> GetFactionMotifs()
 	{
@@ -244,7 +244,7 @@ public:
 	/**
 	 * Gets a copy of the Noun Motifs in the Voidsong
 	 *
-	 * @return - Copy of NounMotifs
+	 * @return Copy of NounMotifs
 	 */
 	TArray<UBaseNounMotif*> GetNounMotifs()
 	{
@@ -254,7 +254,7 @@ public:
 	/**
 	 * Gets a copy of all the Verb Motifs in the Voidsong
 	 *
-	 * @return - Copy of VerbMotifs
+	 * @return Copy of VerbMotifs
 	 */
 	TArray<UBaseVerbMotif*> GetVerbMotifs()
 	{
@@ -264,7 +264,7 @@ public:
 	/**
 	 * Gets a copy of the Factions (enum) in the Voidsong
 	 *
-	 * @return - Copy of Factions
+	 * @return Copy of Factions
 	 */
 	TArray<EFaction> GetFactions()
 	{
@@ -274,7 +274,7 @@ public:
 	/**
 	 * Gets a copy of the Nouns (enum) in the Voidsong
 	 *
-	 * @return - Copy of Nouns
+	 * @return Copy of Nouns
 	 */
 	TArray<ENoun> GetNouns()
 	{
@@ -284,7 +284,7 @@ public:
 	/*
 	 * Gets the duration of this Voidsong
 	 * 
-	 * @return - The duration of the Voidsong
+	 * @return The duration of the Voidsong
 	 */
 	float GetDuration()
 	{

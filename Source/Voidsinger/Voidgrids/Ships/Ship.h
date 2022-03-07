@@ -61,7 +61,7 @@ protected:
 	 * @param Nouns - The Noun Motifs played
 	 * @param Verbs - The Verb Motifs played
 	 * 
-	 * @return - The Voidsong object that was played
+	 * @return The Voidsong object that was played
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VoidsongActivation")
 	UVoidsong* PlayVoidsong(const TArray<UBaseFactionMotif*>& Factions, const TArray<UBaseNounMotif*>& Nouns, const TArray<UBaseVerbMotif*>& Verbs);

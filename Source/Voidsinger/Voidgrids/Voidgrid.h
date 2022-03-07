@@ -129,7 +129,7 @@ public:
 	/**
 	 * Gets the temperature of this pixel.
 	 * 
-	 * @return - The temperature of this pixel
+	 * @return The temperature of this pixel
 	 */
 	float GetTemperature()
 	{
@@ -500,7 +500,7 @@ public:
 	 * Gets the grid loction of a world location.
 	 *
 	 * @param WorldLocation - The world location to transform.
-	 * @return - The grid location of WorldLocation;
+	 * @return The grid location of WorldLocation;
 	 */
 	UFUNCTION(BlueprintPure)
 	FVector2D TransformWorldToGrid(FVector WorldLocation) const;
@@ -509,7 +509,7 @@ public:
 	 * Gets the world location of a grid location.
 	 *
 	 * @param GridLoction - The grid location to transform.
-	 * @return - The world location of GridLocation;
+	 * @return The world location of GridLocation;
 	 */
 	UFUNCTION(BlueprintPure)
 	FVector TransformGridToWorld(FVector2D GridLocation) const;
@@ -525,7 +525,7 @@ public:
 	/**
 	 * Gets the minimal part data for all parts on this voidgrid.
 	 * 
-	 * @return - The minimal part data for all parts on this voidgrid.
+	 * @return The minimal part data for all parts on this voidgrid.
 	 */
 	UFUNCTION(BlueprintPure)
 	TSet<FMinimalPartInstanceData> GetPixelMold();
@@ -540,7 +540,7 @@ public:
 	/**
 	 * Gets the state of this voidgrid.
 	 *
-	 * @return - The state of this voidgrid.
+	 * @return The state of this voidgrid.
 	 */
 	FVoidgridState GetState();
 
@@ -683,7 +683,7 @@ private:
 	 * Generates the vertices of a pixel mesh
 	 * 
 	 * @param Location - The location of the pixel to generate vertices for.
-	 * @return - An array of vertices that can be used to generate a mesh for a pixel
+	 * @return An array of vertices that can be used to generate a mesh for a pixel
 	 */
 	TArray<FVector> GetPixelVertices(GridLocationType Location);
 
@@ -694,7 +694,7 @@ private:
 	 * @param UpperLeft - The vertex index of the upper left corner of the square.
 	 * @param LowerRight - The vertex index of the lower right corner of the square.
 	 * @param LowerLeft - The vertex index of the lower left corner of the square.
-	 * @return - An array of vertices that can be used to generate triangles that will form a square between the specified vertices.
+	 * @return An array of vertices that can be used to generate triangles that will form a square between the specified vertices.
 	 */
 	UFUNCTION()
 	TArray<int32> CreateTrianglesForPixelMeshFace(int32 UpperRight = 0, int32 UpperLeft = 1, int32 LowerRight = 2, int32 LowerLeft =3);
@@ -725,7 +725,7 @@ public:
 	/**
 	 * Gets the faction of the Voidgrid.
 	 * 
-	 * @return - The faction of the Voidgrid.
+	 * @return The faction of the Voidgrid.
 	 */
 	UFUNCTION(BlueprintPure)
 	virtual EFaction GetFaction() const;

@@ -61,7 +61,7 @@ struct VOIDSINGER_API FVectorArc
 	 * 
 	 * @param Location - The location to check.
 	 * @param bInclusiveBounds - Whether or not to count a location on the bounds as between them.
-	 * @return - Whether or not the given location is between the LowerBound and UpperBound of this.
+	 * @return Whether or not the given location is between the LowerBound and UpperBound of this.
 	 */
 	bool IsLocationInArc(FVector2D Location, bool bInclusiveBounds = true) const
 	{
@@ -97,7 +97,7 @@ struct VOIDSINGER_API FVectorArc
 	 * @param LineStart - One endpoint of the line to check.
 	 * @param LineEnd - One endpoint of the line to check.
 	 * @param bInclusiveBounds - Whether or not to count a location on the bounds as between them.
-	 * @return - Whether or not the line is passes through the arc of this.
+	 * @return Whether or not the line is passes through the arc of this.
 	 */
 	bool DoesLinePassThoughArc(FVector2D LineStart, FVector2D LineEnd, bool bInclusiveBounds = true) const
 	{
@@ -126,7 +126,7 @@ struct VOIDSINGER_API FVectorArc
 	/**
 	 * Gets the upper bound of this arc as a vector.
 	 * 
-	 * @return - The upper bound of this arc as a vector.
+	 * @return The upper bound of this arc as a vector.
 	 */
 	FVector2D GetUpperBound() const
 	{
@@ -141,7 +141,7 @@ struct VOIDSINGER_API FVectorArc
 	/**
 	 * Gets the lower bound of this arc as a vector.
 	 * 
-	 * @return - The lower bound of this arc as a vector.
+	 * @return The lower bound of this arc as a vector.
 	 */
 	FVector2D GetLowerBound() const
 	{
@@ -158,7 +158,7 @@ private:
 	 * Gets the cotangent of the vector. This is a safe operation, will return FLT_MAX if Y = 0.
 	 * 
 	 * @param Vector - The vector to get the cotangent of.
-	 * @return - The cotangent of Vector.
+	 * @return The cotangent of Vector.
 	 */
 	float GetVectorCot(FVector2D Vector) const
 	{
@@ -171,7 +171,7 @@ private:
 	 * @param A - The value to test for lesserness. 
      * @param B - The value to test for greaterness. 
 	 * @param bInclusive - Whether or not to count equality as less than.
-	 * @return - Whether or not A < B.
+	 * @return Whether or not A < B.
 	 */
 	bool IsLessThan(float A, float B, bool bInclusive) const
 	{
@@ -184,7 +184,7 @@ private:
 	 * @param A - The value to test for greaterness.
 	 * @param B - The value to test for lesserness.
 	 * @param bInclusive - Whether or not to count equality as greater than.
-	 * @return - Whether or not A > B.
+	 * @return Whether or not A > B.
 	 */
 	bool IsGreaterThan(float A, float B, bool bInclusive) const
 	{
