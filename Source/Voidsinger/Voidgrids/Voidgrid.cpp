@@ -974,6 +974,8 @@ const bool AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
 			}
 		}
 	}
+
+	return true;
 }
 
 /**
@@ -993,7 +995,7 @@ const TMap<EResourceType, float> AVoidgrid::GetResources() const
  */
 const TMap<EResourceType, float> AVoidgrid::GetResourceStorageCapacities() const
 {
-	return ResourceTyepsToStorageCapacities;
+	return ResourceTypesToStorageCapacities;
 }
 
 /**
@@ -1005,9 +1007,11 @@ void AVoidgrid::AddResourceStorageCapacity(TMap<EResourceType, float> ResourceTy
 {
 	for (TPair<EResourceType, float> EachResourceTypeToAmountToIncreaseCapacity : ResourceTypesToAmountToIncreaseCapacities)
 	{
+		//Stores the capacity added to this resource type
 		float AddedCapacity = EachResourceTypeToAmountToIncreaseCapacity.Value;
-		float NewStorageCapacity = ResourceTypesToStorageCapacities.Contains(EachResourceTypeToAmountToIncreaseCapacity.Key) ? ResourceTypesToStorageCapacities.FindRef(EachResourceTypeToAmountToIncreaseCapacity.Key) + AddedValue : AddedValue;
-		ResourceTypesToStorageCapacities.Emplace(NewStorageCapacity);
+		//Stores what the new capacity of this resource type will actually be
+		float NewStorageCapacity = ResourceTypesToStorageCapacities.Contains(EachResourceTypeToAmountToIncreaseCapacity.Key) ? ResourceTypesToStorageCapacities.FindRef(EachResourceTypeToAmountToIncreaseCapacity.Key) + AddedCapacity : AddedCapacity;
+		ResourceTypesToStorageCapacities.Emplace(EachResourceTypeToAmountToIncreaseCapacity.Key, NewStorageCapacity);
 	}
 }
 
@@ -1022,10 +1026,14 @@ void AVoidgrid::RemoveResourceStorageCapacity(TMap<EResourceType, float> Resourc
 	{
 		if (ResourceTypesToStorageCapacities.Contains(EachResourceTypeToAmountToDecreaseCapacity.Key))
 		{
+			//Stores the current capacity of this resource type
 			float CurrentCapacity = ResourceTypesToStorageCapacities.FindRef(EachResourceTypeToAmountToDecreaseCapacity.Key);
-			float CurrentCapacityMinusDecreasedAmount = ResourceTypesToStorageCapacities.FindRef(EachResourceTypeToAmountToDecreaseCapacity.Key) - EachResourceTypeToAmountToDecreaseCapacity.Value;
+			//Stores the current capacity minus the amount of capacity that was removed
+			float CurrentCapacityMinusDecreasedAmount = CurrentCapacity - EachResourceTypeToAmountToDecreaseCapacity.Value;
+			//Stores the new storage capacity
 			float NewStorageCapacity = CurrentCapacityMinusDecreasedAmount < 0 ? 0 : CurrentCapacityMinusDecreasedAmount;
-			ResourceTypesToStorageCapacities.Emplace(NewStorageCapacity);
+
+			ResourceTypesToStorageCapacities.Emplace(EachResourceTypeToAmountToDecreaseCapacity.Key, NewStorageCapacity);
 		}
 	}
 }

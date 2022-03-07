@@ -758,10 +758,18 @@ public:
 	/**
 	 * Adds storage capacity for each resource type specified, and increase them by the amount specified
 	 * 
-	 * @param IncreasedResourceTypesToStorageCapacities - The resource types to the amount of increased capacity 
+	 * @param ResourceTypesToAmountToIncreaseCapacities - The resource types to the amount of increased capacity 
 	 */
 	UFUNCTION()
-	void AddResourceStorageCapacity(TMap<EResourceType, float> IncreasedResourceTypesToStorageCapacities);
+	void AddResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToIncreaseCapacities);
+
+	/**
+	 * Removes storage capacity for each resource type specified, and decreases them by the amount specified
+	 * 
+	 * @param ResourceTypesToAmountToDecreaseCapacities - The resource types to the amount of decreased capacity
+	 */
+	UFUNCTION()
+	void RemoveResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToDecreaseCapacities);
 
 private:
 
