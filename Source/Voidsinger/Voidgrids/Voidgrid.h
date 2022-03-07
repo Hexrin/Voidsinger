@@ -10,6 +10,7 @@
 #include "ProceduralMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Voidsinger/VoidsingerTypes.h"
+#include "ResourceType.h"
 #include "Voidgrid.generated.h"
 
 
@@ -316,7 +317,7 @@ FORCEINLINE uint32 GetTypeHash(const FVoidgridState& Thing)
 
 
 /* \/ ======== \/ *\
-|  \/ Voidgrid \/  |
+|  \/ AVoidgrid \/  |
 \* \/ ========= \/ */
 
 //Used for dispatching events requireing a grid locaiton.
@@ -337,7 +338,11 @@ public:
 	//Sets default values for this voidgrid's properties
 	AVoidgrid();
 
-	//Used to update location and thrust control.
+	/*
+	 * Used to update location, thrust control, heat spread, and resources.
+	 *
+	 * @param DeltaTime - The time between ticks
+	 */
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 	/* ------------- *\
@@ -404,7 +409,7 @@ private:
 
 	//Stores the mass of this voidgrid.
 	UPROPERTY()
-	float Mass{ 1 };
+	float Mass{ 0 };
 
 	//Stores the mass of this voidgrid.
 	UPROPERTY()
@@ -473,17 +478,24 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float HeatTick = 1;
 
+	//The percent of temperature that a pixel will spread to all surrounding pixels
+	UPROPERTY(EditDefaultsOnly)
+	float TemperaturePropagationFactor = 0.5;
+
+	//The amount of temperature that is small enought that it's negligable
+	UPROPERTY(EditDefaultsOnly)
+	float NegligableTemperatureAmount{ 0.5 };
+
 private:
 
 	//The time since the last heat tick
+	UPROPERTY()
 	float DeltaHeatTime;
+
+	//The locations that need their heat transfered to surrounding location and how much heat the location had
+	UPROPERTY()
+	TMap<FIntPoint, float> LocationsToTemperaturesPendingHeatTransfer;
 	
-protected:
-
-	//The percent of heat that a pixel will spread to all surrounding pixels
-	UPROPERTY(EditDefaultsOnly)
-	float HeatPropagationFactor = 0.5;
-
 	/* /\ Temperature /\ *\
 	\* ----------------- */
 
@@ -495,6 +507,24 @@ public:
 	FGridLocationDelegate OnPixelRemoved;
 	//Called when this is repaired.
 	FGridLocationDelegate OnPixelAdded;
+
+	/**
+	 * Gets the grid loction of a world loction.
+	 *
+	 * @param WorldLocation - The world location to transform.
+	 * @return The grid loction of WorldLocation;
+	 */
+	UFUNCTION(BlueprintPure)
+	FIntPoint TransformWorldToGrid(FVector WorldLocation) const;
+
+	/**
+	 * Gets the world location of a grid loction.
+	 *
+	 * @param GridLoction - The grid location to transform.
+	 * @return The world loction of GridLoction;
+	 */
+	UFUNCTION(BlueprintPure)
+	FVector TransformGridToWorld(FIntPoint GridLocation) const;
 
 	/**
 	 * Sets the pixel mold of the voidgrid
@@ -702,13 +732,62 @@ public:
 
 	/* /\ Faction /\ *\
 	\* ------------- */
+
+	/* ------------------------- *\
+	\* \/ Resource Management \/ */
+
+public:
+
+	/**
+	 * Adds a resource request to the list of resource requests sorted by priority
+	 *
+	 * @param ResourceRequest - The new resource request
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Resource Management")
+	void AddResourceRequest(FResourceRequest ResourceRequest);
+	
+	UFUNCTION(BlueprintCallable, Category = "Resource Management")
+	const TMap<EResourceType, float> GetResources() const;
+	
+private:
+
+	/**
+	 * Handles all resource requests made this tick by using the resources specified.
+	 */
+	UFUNCTION()
+	void HandleResourceRequests();
+
+	/**
+	 * Adds resources to the Voidgrid
+	 * 
+	 * @param AddedResources - The resources added and how much of each is added
+	 */
+	UFUNCTION()
+	void AddResources(TMap<EResourceType, float> AddedResources);
+
+	/**
+	 * Uses resources on the Voidgrid. Will not use up resources if not all the resources can be used.
+	 * 
+	 * @param UsedResources - The resources used and how much of each is used
+	 * 
+	 * @return - Whether the resources were successfully used or not
+	 */
+	UFUNCTION()
+	const bool UseResources(TMap<EResourceType, float> UsedResources);
+
+	//Stores all of the resource requests that were made this tick 
+	UPROPERTY()
+	TArray<FResourceRequest> ResourceRequests;
+
+	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
+	UPROPERTY()
+	TMap<EResourceType, float> Resources;
+
+	/* /\ Resource Management /\ *\
+	\* ------------------------- */
 };
 
 /* /\ ========= /\ *\
-|  /\ Voidgrid /\  |
+|  /\ AVoidgrid /\  |
 \* /\ ========= /\ */
-
-/* \/ ========= \/ *\
-|  \/ AVoidgrid \/  |
-\* \/ ========= \/ */
 

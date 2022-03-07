@@ -28,10 +28,10 @@ private:
 	TArray<UBaseMotif*> Motifs = TArray<UBaseMotif*>();
 
 	//Faction Motifs played
-	TArray<UBaseFactionMotif*> FactionMotifs = TArray<UBaseFactionMotif*>();
+	TSet<UBaseFactionMotif*> FactionMotifs = TSet<UBaseFactionMotif*>();
 
 	//Noun Motifs played
-	TArray<UBaseNounMotif*> NounMotifs = TArray<UBaseNounMotif*>();
+	TSet<UBaseNounMotif*> NounMotifs = TSet<UBaseNounMotif*>();
 
 	//Verb Motifs played
 	TArray<UBaseVerbMotif*> VerbMotifs = TArray<UBaseVerbMotif*>();
@@ -44,13 +44,11 @@ private:
 
 private:
 
-	//Should be a set for O(1) .Contains - Liam Suggestion
 	//Factions played (enum)
-	TArray<EFaction> Factions = TArray<EFaction>();
+	TSet<EFaction> Factions = TSet<EFaction>();
 
-	//Should be a set for O(1) .Contains - Liam Suggestion
 	//Nouns played (enum)
-	TArray<ENoun> Nouns = TArray<ENoun>();
+	TSet<ENoun> Nouns = TSet<ENoun>();
 
 	/* /\ Enums /\ *\
 	\* ----------- */
@@ -75,7 +73,7 @@ public:
 	 */
 	FVoidsongData()
 	{
-		FVoidsongData(TArray<UBaseFactionMotif*>(), TArray<UBaseNounMotif*>(), TArray<UBaseVerbMotif*>());
+		FVoidsongData(TSet<UBaseFactionMotif*>(), TSet<UBaseNounMotif*>(), TArray<UBaseVerbMotif*>());
 	}
 
 	/**
@@ -85,7 +83,7 @@ public:
 	 * @param NounMotifsInVoisdong - The Noun Motifs played in this Voidsong
 	 * @param VerbMotifsInVoidsong - The Verb Motifs played in this Voidsong
 	 */
-	FVoidsongData(TArray<UBaseFactionMotif*> FactionMotifsInVoidsong, TArray<UBaseNounMotif*> NounMotifsInVoidsong, TArray<UBaseVerbMotif*> VerbMotifsInVoidsong)
+	FVoidsongData(TSet<UBaseFactionMotif*> FactionMotifsInVoidsong, TSet<UBaseNounMotif*> NounMotifsInVoidsong, TArray<UBaseVerbMotif*> VerbMotifsInVoidsong)
 	{
 		EmplaceFactionMotifs(FactionMotifsInVoidsong);
 		EmplaceNounMotifs(NounMotifsInVoidsong);
@@ -117,6 +115,10 @@ public:
 		{
 			EmplaceVerbMotif(Cast<UBaseVerbMotif>(MotifAdded));
 		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Added Motif of unknown type"));
+		}
 	}
 
 	/**
@@ -142,7 +144,7 @@ public:
 		Motifs.Emplace(AddedNounMotif);
 		NounMotifs.Emplace(AddedNounMotif);
 		Nouns.Emplace(AddedNounMotif->Noun);
-		//What about duration? - Liam Suggestion
+		Duration += AddedNounMotif->Duration;
 	}
 
 	/**
@@ -154,7 +156,7 @@ public:
 	{
 		Motifs.Emplace(AddedVerbMotif);
 		VerbMotifs.Emplace(AddedVerbMotif);
-		//What about duration? - Liam Suggestion
+		Duration += AddedVerbMotif->Duration;
 	}
 
 	/* /\ Emplace singular Motif /\ *\
@@ -181,7 +183,7 @@ public:
 	 *
 	 * @param AddedFactionMotifs - The Faction Motifs added
 	 */
-	void EmplaceFactionMotifs(TArray<UBaseFactionMotif*> AddedFactionMotifs)
+	void EmplaceFactionMotifs(TSet<UBaseFactionMotif*> AddedFactionMotifs)
 	{
 		for (UBaseFactionMotif* EachAddedFactionMotif : AddedFactionMotifs)
 		{
@@ -194,7 +196,7 @@ public:
 	 *
 	 * @param AddedNounMotifs - The Noun Motifs added
 	 */
-	void EmplaceNounMotifs(TArray<UBaseNounMotif*> AddedNounMotifs)
+	void EmplaceNounMotifs(TSet<UBaseNounMotif*> AddedNounMotifs)
 	{
 		for (UBaseNounMotif* EachAddedNounMotif : AddedNounMotifs)
 		{
@@ -226,7 +228,7 @@ public:
 	 * 
 	 * @return - Copy of Motifs
 	 */
-	TArray<UBaseMotif*> GetMotifs()
+	TArray<UBaseMotif*> GetMotifs() const
 	{
 		return TArray<UBaseMotif*>(Motifs);
 	}
@@ -236,9 +238,9 @@ public:
 	 *
 	 * @return - Copy of FactionMotifs
 	 */
-	TArray<UBaseFactionMotif*> GetFactionMotifs()
+	TSet<UBaseFactionMotif*> GetFactionMotifs() const
 	{
-		return TArray<UBaseFactionMotif*>(FactionMotifs);
+		return TSet<UBaseFactionMotif*>(FactionMotifs);
 	}
 
 	/**
@@ -246,9 +248,9 @@ public:
 	 *
 	 * @return - Copy of NounMotifs
 	 */
-	TArray<UBaseNounMotif*> GetNounMotifs()
+	TSet<UBaseNounMotif*> GetNounMotifs() const
 	{
-		return TArray<UBaseNounMotif*>(NounMotifs);
+		return TSet<UBaseNounMotif*>(NounMotifs);
 	}
 
 	/**
@@ -256,7 +258,7 @@ public:
 	 *
 	 * @return - Copy of VerbMotifs
 	 */
-	TArray<UBaseVerbMotif*> GetVerbMotifs()
+	TArray<UBaseVerbMotif*> GetVerbMotifs() const
 	{
 		return TArray<UBaseVerbMotif*>(VerbMotifs);
 	}
@@ -266,9 +268,9 @@ public:
 	 *
 	 * @return - Copy of Factions
 	 */
-	TArray<EFaction> GetFactions()
+	TSet<EFaction> GetFactions() const
 	{
-		return TArray<EFaction>(Factions);
+		return TSet<EFaction>(Factions);
 	}
 
 	/**
@@ -276,9 +278,9 @@ public:
 	 *
 	 * @return - Copy of Nouns
 	 */
-	TArray<ENoun> GetNouns()
+	TSet<ENoun> GetNouns() const
 	{
-		return TArray<ENoun>(Nouns);
+		return TSet<ENoun>(Nouns);
 	}
 
 	/*
@@ -286,7 +288,7 @@ public:
 	 * 
 	 * @return - The duration of the Voidsong
 	 */
-	float GetDuration()
+	float GetDuration() const
 	{
 		return Duration;
 	}

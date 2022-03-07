@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/PartActivationData.h"
 #include "ThrustManager.generated.h"
 
 class AVoidgrid;
@@ -32,6 +33,10 @@ struct VOIDSINGER_API FThrustSource
 		Location = ThrustLocation;
 	}
 };
+
+//Delegate that broadcasts a thrust request containing the effectiveness, move direction, and move rotation
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FThrustRequest, FPartActivationData, Data);
+
 /**
  * 
  */
@@ -140,4 +145,14 @@ private:
 	/* /\ Thrust Predictions /\ *\
 	\* ------------------------ */
 
+	/* --------------- *\
+	\* \/ Delegates \/ */
+
+public:
+
+	UPROPERTY()
+	FThrustRequest OnThrustRequest;
+
+	/* /\ Delegates /\ *\
+	\* --------------- */
 };

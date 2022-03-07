@@ -224,7 +224,12 @@ public:
 
 private:
 	//Stores the functionality of this part.
+	UPROPERTY()
 	UPartData* Data;
+
+	//Stores the modules of this part
+	UPROPERTY()
+	TArray<UPartModule*> Modules;
 	
 	/* /\ Part Data /\ *\
 	\* --------------- */
@@ -273,6 +278,14 @@ public:
 	 */
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE  bool IsFunctional() { return bFunctional; };
+
+	/**
+	 * Gets whether or not this part has any pixels intact
+	 * 
+	 * @return - Whether or not this part has any pixels intact
+	 */
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool HasAnyPixelsIntact() { return !(Shape.Num() == 0); };
 
 public:
 
@@ -408,7 +421,7 @@ public:
 
 	FString ToString() const
 	{
-		return Transform.ToString() + Data->GetName();
+		return Transform.ToString() + (IsValid(Data) ? Data->GetName() : "NONE");
 	}
 };
 

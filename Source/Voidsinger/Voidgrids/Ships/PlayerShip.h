@@ -219,8 +219,23 @@ private:
 	 * @param OutNouns - The Noun Motifs found
 	 * @param OutVerbs - The Verb Motifs found
 	 */
-	void ParseSequenceIntoMotifData(TArray<int32> Sequence, TArray<UBaseFactionMotif*>& OutFactions, TArray<UBaseNounMotif*>& OutNouns, TArray<UBaseVerbMotif*>& OutVerbs);
+	void ParseSequenceIntoMotifData(TArray<int32> Sequence, TSet<UBaseFactionMotif*>& OutFactions, TSet<UBaseNounMotif*>& OutNouns, TArray<UBaseVerbMotif*>& OutVerbs);
 
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */
+
+	/* ------------- *\
+	\* \/ Faction \/ */
+
+public:
+
+	/**
+	 * Gets the faction of the Voidgrid.
+	 *
+	 * @return The faction of the Voidgrid.
+	 */
+	virtual EFaction GetFaction() const override;
+
+	/* /\ Faction /\ *\
+	\* ------------- */
 };

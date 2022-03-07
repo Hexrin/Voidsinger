@@ -22,17 +22,17 @@
 //	VeryHard		UMETA(DisplayName = "Very Hard"),
 //};
 
-//Resource types. 
-UENUM(BlueprintType)
-enum class EResourceType : uint8
-{
-	Fuel			UMETA(DisplayName = "Fuel"),
-	Hydrogen		UMETA(DisplayName = "Hydrogen"),
-	InertGas		UMETA(DisplayName = "InertGas"),
-	Coolent			UMETA(DisplayName = "Coolent"),
-	Electricity		UMETA(DisplayName = "Electricity"),
-	Ammo			UMETA(DisplayName = "Ammo"),
-};
+////Resource types. 
+//UENUM(BlueprintType)
+//enum class EResourceType : uint8
+//{
+//	Fuel			UMETA(DisplayName = "Fuel"),
+//	Hydrogen		UMETA(DisplayName = "Hydrogen"),
+//	InertGas		UMETA(DisplayName = "InertGas"),
+//	Coolent			UMETA(DisplayName = "Coolent"),
+//	Electricity		UMETA(DisplayName = "Electricity"),
+//	Ammo			UMETA(DisplayName = "Ammo"),
+//};
 
 //Faction types. Enemy will probably be changed but it works for now.
 UENUM(BlueprintType)

@@ -52,23 +52,28 @@ void AVoidgrid::BeginPlay()
 	}
 }
 
-//Used to update location and thrust control.
+/*
+ * Used to update location, thrust control, heat spread, and resources.
+ * 
+ * @param DeltaTime - The time between ticks
+ */
 void AVoidgrid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	UpdateTransform(DeltaTime);
 
+	DeltaHeatTime += DeltaTime;
+	
 	//Find how many heat ticks have passed and call SpreadHeat that number of times
 	for (int EachHeatTickPassed = 0; EachHeatTickPassed < DeltaHeatTime / HeatTick; DeltaHeatTime -= HeatTick)
 	{
 		SpreadHeat();
-	}
-	
-
-
+		DeltaHeatTime = 0;
+	}	
 	DeltaHeatTime += DeltaTime;
 
+	HandleResourceRequests();
 }
 
 /* ------------- *\
@@ -234,8 +239,9 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 {
 	if (DeltaMass != 0)
 	{
+		CenterOfMass = DeltaMass / (Mass + DeltaMass)  * MassLocation + Mass / (Mass + DeltaMass) * CenterOfMass;
 		Mass += DeltaMass;
-		CenterOfMass += DeltaMass / Mass * MassLocation;
+		AddActorLocalOffset(PixelMeshComponent->GetRelativeLocation() + FVector(CenterOfMass, 0));
 		PixelMeshComponent->SetRelativeLocation(FVector(-1 * CenterOfMass, 0));
 		MomentOfInertia += (1 / 12) + DeltaMass * (MassLocation).SizeSquared();
 		OnMassChanged.Broadcast(Mass, CenterOfMass, MomentOfInertia);
@@ -258,7 +264,7 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
  */
 void AVoidgrid::AddTemperatureAtLocation(FVector WorldLocation, float Temperature)
 {
-	FIntPoint RelativeLocation = FVector2D(WorldLocation - GetActorLocation()).IntPoint();
+	FIntPoint RelativeLocation = TransformWorldToGrid(WorldLocation);
 	AddTemperatureAtLocation(RelativeLocation, Temperature);
 }
 
@@ -284,10 +290,39 @@ void AVoidgrid::AddTemperatureAtLocation(FIntPoint Location, float Temperature)
 void AVoidgrid::SpreadHeat()
 {
 	
-	// \/ Calculate the new heat map \/ /
+	// \/ Calculate the new heat map \/ //
 
 	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
 	NewHeatMap.Reserve(LocationsToPixelState.Num());
+
+	//Iterate through the locations pending heat transfer and transfer their heat
+	for (TPair<FIntPoint, float> EachLocationToTemperaturePendingHeatTransfer : LocationsToTemperaturesPendingHeatTransfer)
+	{
+		for (int EachLocationAround = 0; EachLocationAround < 4; EachLocationAround++)
+		{
+		FIntPoint LocationAround;
+
+		switch (EachLocationAround)
+		{
+		case 0:
+			LocationAround = FIntPoint(1, 0);
+			break;
+		case 1:
+			LocationAround = FIntPoint(0, 1);
+			break;
+		case 2:
+			LocationAround = FIntPoint(-1, 0);
+			break;
+		case 3:
+			LocationAround = FIntPoint(0, -1);
+			break;
+		}
+
+		NewHeatMap.Emplace(EachLocationToTemperaturePendingHeatTransfer.Key + LocationAround, (EachLocationToTemperaturePendingHeatTransfer.Value * TemperaturePropagationFactor) / 4.0f);
+		}
+	}
+
+	LocationsToTemperaturesPendingHeatTransfer.Empty();
 
 	//Iterate through each point on the grid map to spread heat to each pixel
 	for (TPair<FIntPoint, PixelType> EachPixel : LocationsToPixelState.GetGridPairs())
@@ -308,48 +343,48 @@ void AVoidgrid::SpreadHeat()
 
 				//The heat added to this pixel from the other pixel is the other pixel's temperature multiplied by the heat propagation faction (how much heat it will spread to other pixels). It
 				//is divided by four because a pixel will spread heat to four other pixels.
-				AddedHeat += (OtherPixelTemperature * HeatPropagationFactor) / (4);
+				AddedHeat += (OtherPixelTemperature * TemperaturePropagationFactor) / (4);
 			}
 		}
 
 		//The heat remaining when this pixel spreads heat to the surrounding pixels
-		float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - HeatPropagationFactor);
+		float RemainingHeat = EachPixel.Value.GetTemperature() * (1 - TemperaturePropagationFactor);
 
-		float NewHeat = RemainingHeat + AddedHeat;
+		//									     	|-- If the new heat map contains this location then add that temperature in too --|
+		float NewHeat = RemainingHeat + AddedHeat + (NewHeatMap.Contains(EachPixel.Key) ? NewHeatMap.FindRef(EachPixel.Key) : 0);
 
-		//If the amount of heat is below .05, then it's negligable. 
-		NewHeatMap.Emplace(EachPixel.Key, NewHeat > .05 ? NewHeat : 0);
+		//If the amount of heat is within the negligable temperature amount, then it's negligable. 
+		NewHeatMap.Emplace(EachPixel.Key, ((NewHeat > NegligableTemperatureAmount) || (NewHeat < -NegligableTemperatureAmount)) ? NewHeat : 0);
 
 	}
 
-	// /\ Calculate the new heat map /\ /
+	// /\ Calculate the new heat map /\ //
 
-	// \/ Set the temperature of each pixel and find whether it should be melted or frozen \/ /
+	// \/ Set the temperature of each pixel and find whether it should be melted or frozen \/ //
 
 	for (TPair<FIntPoint, PixelType> EachPixel : LocationsToPixelState.GetGridPairs())
 	{
 		if (NewHeatMap.Contains(EachPixel.Key) && EachPixel.Value.IsIntact())
 		{
+			LocationsToPixelState.Find(EachPixel.Key)->SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
+
 			//Melt pixel
 			if (NewHeatMap.FindRef(EachPixel.Key) > EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 			{
 				RemovePixel(EachPixel.Key);
 			}
-
 			else
 			{
 				//Freeze pixel
 				if (NewHeatMap.FindRef(EachPixel.Key) < -1 * EachPixel.Value.GetCurrentPart()->GetData()->HeatResistance)
 				{
-					EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, true);
+					LocationsToPixelState.Find(EachPixel.Key)->GetCurrentPart()->SetPixelFrozen(EachPixel.Key, true);
 				}
 				//Unfreeze pixel
 				else
 				{
-					EachPixel.Value.GetCurrentPart()->SetPixelFrozen(EachPixel.Key, false);
+					LocationsToPixelState.Find(EachPixel.Key)->GetCurrentPart()->SetPixelFrozen(EachPixel.Key, false);
 				}
-
-				EachPixel.Value.SetTemperature(NewHeatMap.FindRef(EachPixel.Key));
 			}
 		}
 	}
@@ -362,6 +397,30 @@ void AVoidgrid::SpreadHeat()
 
 /* ---------------- *\
 \* \/ Pixel Mold \/ */
+
+/**
+ * Gets the grid loction of a world loction.
+ *
+ * @param WorldLocation - The world location to transform.
+ * @return The grid loction of WorldLocation;
+ */
+UFUNCTION(BlueprintPure)
+FIntPoint AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
+{
+	return (FVector2D(GetTransform().InverseTransformPosition(WorldLocation)) + CenterOfMass).IntPoint();
+}
+
+/**
+ * Gets the world location of a grid loction.
+ *
+ * @param GridLoction - The grid location to transform.
+ * @return The world loction of GridLoction;
+ */
+UFUNCTION(BlueprintPure)
+FVector AVoidgrid::TransformGridToWorld(FIntPoint GridLocation) const
+{
+	return GetTransform().TransformPosition(FVector(FVector2D(GridLocation) - CenterOfMass, 0));
+}
 
 /**
  * Sets the pixel mold of the ship
@@ -523,6 +582,8 @@ FVoidgridState AVoidgrid::GetState()
  */
 void AVoidgrid::RemovePixel(GridLocationType Location)
 {
+	LocationsToTemperaturesPendingHeatTransfer.Emplace(Location, LocationsToPixelState.Find(Location)->GetTemperature());
+
 	SetPixelIntact(Location, false);
 }
 
@@ -833,61 +894,142 @@ EFaction AVoidgrid::GetFaction() const
 /* /\ Faction /\ *\
 \* ------------- */
 
-//Notes, delete later
+/* ------------------------- *\
+\* \/ Resource Management \/ */
 
-////Comment -Mabel Suggestion
-//void UPartGridComponent::DistrubuteHeat()
-//{
-//	TMap<FIntPoint, float> NewHeatMap = TMap<FIntPoint, float>();
-//	NewHeatMap.Reserve(PartGrid.Num());
-//
-//	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
-//	for (int j = 0; j < PartGrid.Num(); j++)
-//	{
-//		float NewHeat = 0;
-//
-//		//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" -Mabel Suggestion
-//		for (int i = 0; i < 4; i++)
-//		{
-//			FIntPoint TargetPoint = ((i % 2 == 1) ? FIntPoint((i > 1) ? 1 : -1, 0) : FIntPoint(0, (i > 1) ? 1 : -1));
-//
-//			if (PartGrid.Contains(TargetPoint + PartGrid.LocationAtIndex(j)))
-//			{
-//				//4 is borderline magic number. I understand why you used it but still -Mabel Suggestion
-//				NewHeat += PartGrid.FindRef(TargetPoint + PartGrid.LocationAtIndex(j)).GetTemperature() * HeatPropagationFactor / (4);
-//			}
-//		}
-//
-//		//Math is occuring that needs to be commented. Why is the pixels current temperature mutiplied by 1 - the heat propagation factor? -Mabel Suggestion
-//		NewHeat = PartGrid.ValueAtIndex(j).GetTemperature() * (1 - HeatPropagationFactor) + NewHeat;
-//
-//
-//		//Why 0.5? comment plz (also, is it.... magic number?) -Mabel Suggestion
-//		NewHeatMap.Emplace(PartGrid.LocationAtIndex(j), NewHeat > .05 ? NewHeat : 0);
-//	}
-//
-//	TArray<FIntPoint> KeysToDestroy = TArray<FIntPoint>();
-//
-//	//You iterate through the part grid not once, but twice in this function. Big oof if I'm being honest. Honestly, it'd be better to just have heat not spread
-//	//if this is the way that we're doing it. This is so bad for large ships. 
-//	//I wonder if each part could handle it's own heat and distribute to the places around it instead of doing this on the part grid? I don't know how much it would help but 
-//	//it might help a little bit. Not sure, that might be just as laggy. -Mabel Suggestion
-//	for (int i = 0; i < PartGrid.Num(); i++)
-//	{
-//		if (NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)) > PartGrid.ValueAtIndex(i).Part->GetHeatResistance())
-//		{
-//			KeysToDestroy.Emplace(PartGrid.LocationAtIndex(i));
-//		}
-//		else
-//		{
-//			PartGrid.ValueAtIndex(i).SetTemperature(NewHeatMap.FindRef(PartGrid.LocationAtIndex(i)));
-//		}
-//	}
-//
-//	//"Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion" 
-//	//"Val" is just as bad as i. Just saying. -Mabel Suggestion
-//	for (FIntPoint Val : KeysToDestroy)
-//	{
-//		DestroyPixel(Val);
-//	}
-//}
+/**
+ * Adds a resource request to the list of resource requests sorted by priority
+ *
+ * @param ResourceRequest - The new resource request
+ */
+void AVoidgrid::AddResourceRequest(FResourceRequest ResourceRequest)
+{
+
+	//Stores the lower index of the range where ResourceRequest should be
+	int LowerIndex = 0;
+
+	//Stores the upper index of the range where ResourceRequest should be
+	int UpperIndex = ResourceRequests.Num() - 1;
+
+	//Stores the middle index between the lower index and the upper index
+	int MiddleIndex = (LowerIndex + UpperIndex) / 2;
+
+	//Start the binary search for the index the request should be in the ResourceRequests array 
+	while (true)
+	{
+		if (LowerIndex > UpperIndex)
+		{
+			//When the lower index is greater than the number of resource requests, that means the new request needs to be at the end of the array
+			if (!(LowerIndex > ResourceRequests.Num()))
+			{
+				ResourceRequests.EmplaceAt(MiddleIndex, ResourceRequest);
+				break;
+			}
+			else
+			{
+				ResourceRequests.Emplace(ResourceRequest);
+				break;
+			}
+		}
+
+		MiddleIndex = (LowerIndex + UpperIndex) / 2;
+
+		if (ResourceRequests[MiddleIndex].Priority == ResourceRequest.Priority)
+		{
+			ResourceRequests.EmplaceAt(MiddleIndex, ResourceRequest);
+			break;
+		}
+		else if (ResourceRequest.Priority < ResourceRequests[MiddleIndex].Priority)
+		{
+			UpperIndex = MiddleIndex - 1;
+		}
+		else 
+		{
+			LowerIndex = MiddleIndex + 1;
+		}
+	}
+}
+
+const TMap<EResourceType, float> AVoidgrid::GetResources() const
+{
+	return Resources;
+}
+
+/**
+ * Handles all resource requests made this tick by using the resources specified. 
+ */
+void AVoidgrid::HandleResourceRequests()
+{
+	for (FResourceRequest EachResourceRequest : ResourceRequests)
+	{
+		if (UseResources(EachResourceRequest.ResourceTypesToAmountUsed))
+		{
+			EachResourceRequest.OnResourceRequestCompleted.Broadcast();
+		}
+	}
+
+	ResourceRequests.Empty();
+}
+
+/**
+ * Adds resources to the Voidgrid
+ *
+ * @param AddedResources - The resources added and how much of each is added
+ */
+void AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
+{
+	for (TPair<EResourceType, float> EachAddedResource : AddedResources)
+	{
+		if (EachAddedResource.Value < 0)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Attempted to add a negative amount of resource. Use 'UseResources' instead."));
+		}
+		else
+		{
+			if (Resources.Contains(EachAddedResource.Key))
+			{
+				//Emplace will override the previous key value pair.
+				Resources.Emplace(EachAddedResource.Key, Resources.FindRef(EachAddedResource.Key) + EachAddedResource.Value);
+			}
+			else
+			{
+				Resources.Emplace(EachAddedResource.Key, EachAddedResource.Value);
+			}
+		}
+	}
+}
+
+/**
+ * Uses resources on the Voidgrid. Will not use up resources if not all the resources can be used.
+ *
+ * @param UsedResources - The resources used and how much of each is used
+ *
+ * @return - Whether the resources were successfully used or not
+ */
+const bool AVoidgrid::UseResources(TMap<EResourceType, float> UsedResources)
+{
+
+	// \/ Check if all resources can be used \/ //
+	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
+	{
+		if ((!Resources.Contains(EachUsedResource.Key)) || (Resources.FindRef(EachUsedResource.Key) < EachUsedResource.Value))
+		{
+			//Return if not all resources can be used.
+			return false;
+		}
+	}
+	// /\ Check if all resources can be used /\ //
+
+	// \/ Use the resources \/ //
+	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
+	{
+		//Emplace will override the previous key value pair
+		Resources.Emplace(EachUsedResource.Key, Resources.FindRef(EachUsedResource.Key) - EachUsedResource.Value);
+	}
+	// /\ Use the resources /\ //
+
+	return true;
+}
+
+/* /\ Resource Management /\ *\
+\* ------------------------- */
