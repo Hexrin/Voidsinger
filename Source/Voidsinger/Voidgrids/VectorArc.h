@@ -26,7 +26,7 @@ struct VOIDSINGER_API FVectorArc
 	}
 
 	/**
-	 * Attempts to shrink the arc to the given bounds. If a bound would result in a wider arc then the . // unfinished comment? -Mabel Suggestion
+	 * Attempts to shrink the arc to the given bounds. If a new bound would result in a wider arc then the old bound will be used.
 	 * 
 	 * @param LowerArcBound - The target lower bound of this arc. The arc will be in the clockwise direction of this vector.
 	 * @param LowerArcBound - The target upper bound of this arc. The arc will be in the counterclockwise direction of this vector.
