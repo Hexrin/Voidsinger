@@ -30,7 +30,7 @@ void UResourceCreationModule::OnActivate_Implementation(const FPartActivationDat
 
 	// /\ Adjust the amount of resources created with effectiveness /\ //
 
-	Part->GetVoidgrid()->AddResources(AdjustedResourceTypesToAmountsCreated);
+	GetVoidgrid()->AddResources(AdjustedResourceTypesToAmountsCreated);
 }
 
 /* /\ Activation /\ *\

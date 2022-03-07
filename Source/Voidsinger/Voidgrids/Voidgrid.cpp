@@ -969,7 +969,7 @@ void AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
 			float AddedAmount = CurrentAmount + EachAddedResource.Value > Capacity ? Capacity : Resources.FindRef(EachAddedResource.Key) + EachAddedResource.Value;
 				
 			//Emplace will override the previous key value pair.
-			Resources.Emplace(EachAddedResource.Key,AddedAmount);
+			Resources.Emplace(EachAddedResource.Key, AddedAmount);
 		}
 	}
 
