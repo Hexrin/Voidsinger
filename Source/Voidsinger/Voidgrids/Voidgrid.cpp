@@ -733,6 +733,7 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 	TArray<FOverlapResult> Results = TArray<FOverlapResult>();
 	WorldContext->GetWorld()->OverlapMultiByChannel(Results, WorldLocation, FQuat::Identity, ECollisionChannel::ECC_Pawn, FCollisionShape::MakeSphere(Radius));
 
+	FlushPersistentDebugLines(WorldContext->GetWorld());
 	//Start explosion at WorldLocation for each voidgrid found
 	for (FOverlapResult EachResult : Results)
 	{
@@ -778,29 +779,31 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FVector2D GridRel
 	//If in new explosion radius
 	if (ExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius))
 	{
+		FVector DebugOffset = FVector(0, 0, .5 * FMath::FRand() + .1);
 		// \/ For each adjacent pixel start an explosion if in Arc \/ //
 		for (FIntPoint EachAdjacentPixelOffest : AdjacentPixelOffests)
 		{
+			//The pixel location of the next pixel to destroy.
+			FIntPoint AdjacentPixelLocation = PixelLocation + EachAdjacentPixelOffest;
+			//The location relative to the center of the explosion of the next pixel to destroy.
+			FVector2D AdjacentPixelExplosionRelativeLocation = FVector2D(AdjacentPixelLocation) - GridRelativeExplosionLocation;
 			// If in the correct direction for this quadrant.
-			if ((FMath::IsNearlyEqual(EachAdjacentPixelOffest.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachAdjacentPixelOffest.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1)) || PixelLocation == GridRelativeExplosionLocation.IntPoint())
+			if (AdjacentPixelExplosionRelativeLocation.SizeSquared() > ExplosionRelativeLocation.SizeSquared())
 			{
-				//The pixel location of the next pixel to destroy.
-				FIntPoint AdjacentPixelLocation = PixelLocation + EachAdjacentPixelOffest;
-				//The location relative to the center of the explosion of the next pixel to destroy.
-				FVector2D AdjacentPixelExplosionRelativeLocation = FVector2D(AdjacentPixelLocation) - GridRelativeExplosionLocation;
 				//The lower arc bound of an arc that contains only the AdjacentPixel.
 				FVector2D PixelLowerArcBound = FVector2D();
 				//The upper arc bound of an arc that contains only the AdjacentPixel.
 				FVector2D PixelUpperArcBound = FVector2D();
 				//The sign of X & Y in a tri-bit format
 				int32 NextExplosionSignedDirection = (FMath::Sign(AdjacentPixelExplosionRelativeLocation.X) + 1) + 3 * (FMath::Sign(AdjacentPixelExplosionRelativeLocation.Y) + 1);
-
+				
+				float VoidgridAngleCosine = FMath::Sin(GetActorRotation().GetAngle())
 				// \/ Sets PixelArcBounds based on sign \/ //
 				switch (NextExplosionSignedDirection)
 				{
 					// X < 0 && Y < 0
 				case 0:
-					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, -0.5);
+					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, -0.5).GetRotated();
 					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, 0.5);
 					break;
 
@@ -856,13 +859,22 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FVector2D GridRel
 				}
 				// /\ Sets PixelArcBounds based on sign /\ //
 
-				//You should add another check for "InVoidgridBounds". That way you don't check empty space if the explosion is larger than the voidgrid. I set the explosion radius to 1000 and the editor is still frozen (like 3 minutes later). I'm pretty sure it's because of this. Though maybe I hit an infinite loop somehow, i don't know.  -Mabel Suggestion
 				//  | ------------------------------------ In radius ------------------------- |    | ----------------------------- In arc ------------------------------- |
 				if (AdjacentPixelExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius) && Arc.DoesLinePassThoughArc(PixelLowerArcBound, PixelUpperArcBound, false))
 				{
 					FVectorArc NewArc = Arc;
 					NewArc.ShrinkArcBounds(PixelLowerArcBound, PixelUpperArcBound);
 					StartExplosionAtPixel(AdjacentPixelLocation, GridRelativeExplosionLocation, Radius, NewArc);
+				//}
+					DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLocation), DebugOffset + TransformGridToWorld(AdjacentPixelLocation), .02, FColor::Green, true);
+				}
+				else if (AdjacentPixelExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius))
+				{
+					DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLocation), DebugOffset + TransformGridToWorld(AdjacentPixelLocation), .02, FColor::Red, true);
+				}
+				else
+				{
+					DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLocation), DebugOffset + TransformGridToWorld(AdjacentPixelLocation), .02, FColor::Black, true);
 				}
 			}
 		}
