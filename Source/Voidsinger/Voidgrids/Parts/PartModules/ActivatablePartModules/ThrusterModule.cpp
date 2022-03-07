@@ -2,7 +2,7 @@
 
 
 #include "ThrusterModule.h"
-#include "ThrustManager.h"
+#include "Voidsinger/Voidgrids/ThrustManager.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 
 /**
@@ -21,22 +21,21 @@ void UThrusterModule::InitializeVariables(UPart* OwningPart)
  */
 void UThrusterModule::OnActivate_Implementation(const FPartActivationData Data)
 {
-	if (IsValid(Part))
+	if (IsValid(GetVoidgrid()))
 	{
-		FVector2D RotatedThrustDirection = UPartRotationFunctions::RotateLocation(ThrustDirection, Part->GetTransform().Rotation);
-		bool ClockwiseRotation = true;
-		if ((FVector2D::CrossProduct((Data.Vector).GetSafeNormal(), ((RotatedThrustDirection).GetSafeNormal()))) > 0.f)
+		if (IsValid(GetVoidgrid()->GetThrustManager()))
 		{
-			ClockwiseRotation = true;
+			if ((Data.Vector | ThrustDirection) > 0 && GetVoidgrid()->GetThrustManager()->TimeToLinearVelocity(Data.Vector) > 0)
+			{
+				Thrust();
+				return;
+			}
+
+			if(GetVoidgrid()->GetThrustManager()->GetThrustRotation())
 		}
 		else
 		{
-			ClockwiseRotation = false;
-		}
-
-		if ((GetVoidgrid()->GetThrustManager()->GetThrustDirection(RotatedThrustDirection, FThrustSource(1.f, RotatedThrustDirection, Data.Vector))) > (FVector2D(0, 0)) || (GetVoidgrid()->GetThrustManager()->GetThrustRotation(ClockwiseRotation, FThrustSource(1.f, RotatedThrustDirection, Data.Vector))) > 0.f)
-		{
-			ActivateWithEffectivenessVectorAndRotation(1, Part->GetTransform().Location, float(Part->GetTransform().Rotation));
+			UE_LOG(LogTemp, Error, TEXT("%s does not have a valid thrust manager"), *GetVoidgrid()->GetName());
 		}
 	}
 }

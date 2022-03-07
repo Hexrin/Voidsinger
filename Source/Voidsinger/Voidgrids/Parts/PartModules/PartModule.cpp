@@ -47,5 +47,9 @@ void UPartModule::FunctionalityLost()
  */
 AVoidgrid* UPartModule::GetVoidgrid()
 {
-	return Part->GetVoidgrid();
+	if(IsValid(Part))
+	{
+		return Part->GetVoidgrid();
+	}
+	return nullptr;
 }
