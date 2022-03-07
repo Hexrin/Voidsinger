@@ -107,7 +107,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 *
 	 * @param VoidsongData - The struct to get the Motifs of
 	 * 
-	 * @return - Copy of Motifs
+	 * @return Copy of Motifs
 	 */
 	UFUNCTION(BlueprintPure, Category = "VoidsongData|Getters")
 	static TArray<UBaseMotif*> GetMotifs(FVoidsongData VoidsongData);
@@ -117,7 +117,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 *
 	 * @param VoidsongData - The struct to get the Faction Motifs of
 	 * 
-	 * @return - Copy of FactionMotifs
+	 * @return Copy of FactionMotifs
 	 */
 	UFUNCTION(BlueprintPure, Category = "VoidsongData|Getters")
 	static TArray<UBaseFactionMotif*> GetFactionMotifs(FVoidsongData VoidsongData);
@@ -127,7 +127,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 *
 	 * @param VoidsongData - The struct to get the Noun Motifs of
 	 * 
-	 * @return - Copy of NounMotifs
+	 * @return Copy of NounMotifs
 	 */
 	UFUNCTION(BlueprintPure, Category = "VoidsongData|Getters")
 	static TArray<UBaseNounMotif*> GetNounMotifs(FVoidsongData VoidsongData);
@@ -137,7 +137,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 *
 	 * @param VoidsongData - The struct to get the Verb Motifs of
 	 * 
-	 * @return - Copy of VerbMotifs
+	 * @return Copy of VerbMotifs
 	 */
 	UFUNCTION(BlueprintPure, Category = "VoidsongData|Getters")
 	static TArray<UBaseVerbMotif*> GetVerbMotifs(FVoidsongData VoidsongData);
@@ -147,7 +147,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 *
 	 * @param VoidsongData - The struct to get the Factions of
 	 * 
-	 * @return - Copy of Factions
+	 * @return Copy of Factions
 	 */
 	UFUNCTION(BlueprintPure, Category = "VoidsongData|Getters")
 	static TArray<EFaction> GetFactions(FVoidsongData VoidsongData);
@@ -157,7 +157,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 *
 	 * @param VoidsongData - The struct to get the Nouns of
 	 * 
-	 * @return - Copy of Nouns
+	 * @return Copy of Nouns
 	 */
 	UFUNCTION(BlueprintPure, Category = "VoidsongData|Getters")
 	static TArray<ENoun> GetNouns(FVoidsongData VoidsongData);
@@ -167,7 +167,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	 * 
 	 * @param VoidsongData - The struct to get the duration of
 	 * 
-	 * @return - The duration of the Voidsong
+	 * @return The duration of the Voidsong
 	 */
 	UFUNCTION(BlueprintPure, Category = "VoidsongData|Getters")
 	static float GetDuration(FVoidsongData VoidsongData);

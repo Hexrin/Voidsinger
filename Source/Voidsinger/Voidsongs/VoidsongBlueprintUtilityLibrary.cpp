@@ -111,7 +111,7 @@ void UVoidsongBlueprintUtilityLibrary::EmplaceVerbMotifs(FVoidsongData VoidsongD
  *
  * @param VoidsongData - The struct to get the Motifs of
  *
- * @return - Copy of Motifs
+ * @return Copy of Motifs
  */
 TArray<UBaseMotif*> UVoidsongBlueprintUtilityLibrary::GetMotifs(FVoidsongData VoidsongData)
 {
@@ -123,7 +123,7 @@ TArray<UBaseMotif*> UVoidsongBlueprintUtilityLibrary::GetMotifs(FVoidsongData Vo
  *
  * @param VoidsongData - The struct to get the Faction Motifs of
  *
- * @return - Copy of FactionMotifs
+ * @return Copy of FactionMotifs
  */
 TArray<UBaseFactionMotif*> UVoidsongBlueprintUtilityLibrary::GetFactionMotifs(FVoidsongData VoidsongData)
 {
@@ -135,7 +135,7 @@ TArray<UBaseFactionMotif*> UVoidsongBlueprintUtilityLibrary::GetFactionMotifs(FV
  *
  * @param VoidsongData - The struct to get the Noun Motifs of
  *
- * @return - Copy of NounMotifs
+ * @return Copy of NounMotifs
  */
 TArray<UBaseNounMotif*> UVoidsongBlueprintUtilityLibrary::GetNounMotifs(FVoidsongData VoidsongData)
 {
@@ -147,7 +147,7 @@ TArray<UBaseNounMotif*> UVoidsongBlueprintUtilityLibrary::GetNounMotifs(FVoidson
  *
  * @param VoidsongData - The struct to get the Verb Motifs of
  *
- * @return - Copy of VerbMotifs
+ * @return Copy of VerbMotifs
  */
 TArray<UBaseVerbMotif*> UVoidsongBlueprintUtilityLibrary::GetVerbMotifs(FVoidsongData VoidsongData)
 {
@@ -159,7 +159,7 @@ TArray<UBaseVerbMotif*> UVoidsongBlueprintUtilityLibrary::GetVerbMotifs(FVoidson
  *
  * @param VoidsongData - The struct to get the Factions of
  *
- * @return - Copy of Factions
+ * @return Copy of Factions
  */
 TArray<EFaction> UVoidsongBlueprintUtilityLibrary::GetFactions(FVoidsongData VoidsongData)
 {
@@ -171,7 +171,7 @@ TArray<EFaction> UVoidsongBlueprintUtilityLibrary::GetFactions(FVoidsongData Voi
  *
  * @param VoidsongData - The struct to get the Nouns of
  * 
- * @return - Copy of Nouns
+ * @return Copy of Nouns
  */
 TArray<ENoun> UVoidsongBlueprintUtilityLibrary::GetNouns(FVoidsongData VoidsongData)
 {
@@ -183,7 +183,7 @@ TArray<ENoun> UVoidsongBlueprintUtilityLibrary::GetNouns(FVoidsongData VoidsongD
  * 
  * @param VoidsongData - The struct to get the duration of
  * 
- * @return - The duration of the Voidsong
+ * @return The duration of the Voidsong
  */
 float UVoidsongBlueprintUtilityLibrary::GetDuration(FVoidsongData VoidsongData)
 {

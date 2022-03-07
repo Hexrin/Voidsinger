@@ -363,7 +363,7 @@ void AVoidgrid::SpreadHeat()
  * Gets the grid location of a world location.
  *
  * @param WorldLocation - The world location to transform.
- * @return - The grid location of WorldLocation;
+ * @return The grid location of WorldLocation;
  */
 FVector2D AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
 {
@@ -374,7 +374,7 @@ FVector2D AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
  * Gets the world location of a grid location.
  *
  * @param GridLocation - The grid location to transform.
- * @return - The world location of GridLocation;
+ * @return The world location of GridLocation;
  */
 FVector AVoidgrid::TransformGridToWorld(FVector2D GridLocation) const
 {
@@ -446,7 +446,7 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 /**
  * Gets the minimal part data for all parts on this voidgrid.
  *
- * @return - The minimal part data for all parts on this voidgrid.
+ * @return The minimal part data for all parts on this voidgrid.
  */
 MinimalPixelMoldDataType AVoidgrid::GetPixelMold()
 {
@@ -507,7 +507,7 @@ void AVoidgrid::SetState(FVoidgridState NewState)
 /**
  * Gets the state of this voidgrid.
  *
- * @return - The state of this voidgrid.
+ * @return The state of this voidgrid.
  */
 FVoidgridState AVoidgrid::GetState()
 {
@@ -955,7 +955,7 @@ void AVoidgrid::SetPixelMeshVisibility(GridLocationType Location, bool bNewVisib
  * Generates the vertices of a pixel mesh
  *
  * @param Location - The location of the pixel to generate vertices for.
- * @return - An array of vertices that can be used to generate a mesh for a pixel
+ * @return An array of vertices that can be used to generate a mesh for a pixel
  */
 TArray<FVector> AVoidgrid::GetPixelVertices(GridLocationType Location)
 {
@@ -977,7 +977,7 @@ TArray<FVector> AVoidgrid::GetPixelVertices(GridLocationType Location)
  * @param UpperLeft - The vertex index of the upper left corner of the square.
  * @param LowerRight - The vertex index of the lower right corner of the square.
  * @param LowerLeft - The vertex index of the lower left corner of the square.
- * @return - An array of vertices that can be used to generate triangles that will form a square between the specified vertices.
+ * @return An array of vertices that can be used to generate triangles that will form a square between the specified vertices.
  */
 TArray<int32> AVoidgrid::CreateTrianglesForPixelMeshFace(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft)
 {
@@ -1001,7 +1001,7 @@ TArray<int32> AVoidgrid::CreateTrianglesForPixelMeshFace(int32 UpperRight, int32
 /**
  * Gets the faction of the Voidgrid.
  *
- * @return - The faction of the Voidgrid.
+ * @return The faction of the Voidgrid.
  */
 EFaction AVoidgrid::GetFaction() const
 {

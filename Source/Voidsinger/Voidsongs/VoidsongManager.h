@@ -39,7 +39,7 @@ public:
 	 *
 	 * @param VoidsongData - The Voidsong data played
 	 *
-	 * @return - The Voidsong played
+	 * @return The Voidsong played
 	 */
 	UFUNCTION(BlueprintCallable, Category = "VoisdongActivation")
 	UVoidsong* PlayVoidsong(FVoidsongData VoidsongData);
