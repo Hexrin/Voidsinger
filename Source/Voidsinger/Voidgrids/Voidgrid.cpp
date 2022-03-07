@@ -997,6 +997,40 @@ const TMap<EResourceType, float> AVoidgrid::GetResourceStorageCapacities() const
 }
 
 /**
+ * Adds storage capacity for each resource type specified, and increase them by the amount specified
+ *
+ * @param ResourceTypesToAmountToIncreaseCapacities - The resource types to the amount of increased capacity
+ */
+void AVoidgrid::AddResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToIncreaseCapacities)
+{
+	for (TPair<EResourceType, float> EachResourceTypeToAmountToIncreaseCapacity : ResourceTypesToAmountToIncreaseCapacities)
+	{
+		float AddedCapacity = EachResourceTypeToAmountToIncreaseCapacity.Value;
+		float NewStorageCapacity = ResourceTypesToStorageCapacities.Contains(EachResourceTypeToAmountToIncreaseCapacity.Key) ? ResourceTypesToStorageCapacities.FindRef(EachResourceTypeToAmountToIncreaseCapacity.Key) + AddedValue : AddedValue;
+		ResourceTypesToStorageCapacities.Emplace(NewStorageCapacity);
+	}
+}
+
+/**
+ * Removes storage capacity for each resource type specified, and decreases them by the amount specified
+ *
+ * @param ResourceTypesToAmountToDecreaseCapacities - The resource types to the amount of decreased capacity
+ */
+void AVoidgrid::RemoveResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToDecreaseCapacities)
+{
+	for (TPair<EResourceType, float> EachResourceTypeToAmountToDecreaseCapacity : ResourceTypesToAmountToDecreaseCapacities)
+	{
+		if (ResourceTypesToStorageCapacities.Contains(EachResourceTypeToAmountToDecreaseCapacity.Key))
+		{
+			float CurrentCapacity = ResourceTypesToStorageCapacities.FindRef(EachResourceTypeToAmountToDecreaseCapacity.Key);
+			float CurrentCapacityMinusDecreasedAmount = ResourceTypesToStorageCapacities.FindRef(EachResourceTypeToAmountToDecreaseCapacity.Key) - EachResourceTypeToAmountToDecreaseCapacity.Value;
+			float NewStorageCapacity = CurrentCapacityMinusDecreasedAmount < 0 ? 0 : CurrentCapacityMinusDecreasedAmount;
+			ResourceTypesToStorageCapacities.Emplace(NewStorageCapacity);
+		}
+	}
+}
+
+/**
  * Handles all resource requests made this tick by using the resources specified. 
  */
 void AVoidgrid::HandleResourceRequests()
