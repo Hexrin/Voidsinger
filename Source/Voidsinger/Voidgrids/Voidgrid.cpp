@@ -360,10 +360,10 @@ void AVoidgrid::SpreadHeat()
 \* \/ Pixel Mold \/ */
 
 /**
- * Gets the grid loction of a world loction.
+ * Gets the grid location of a world location.
  *
  * @param WorldLocation - The world location to transform.
- * @return The grid loction of WorldLocation;
+ * @return - The grid location of WorldLocation;
  */
 FIntPoint AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
 {
@@ -371,10 +371,10 @@ FIntPoint AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
 }
 
 /**
- * Gets the world location of a grid loction.
+ * Gets the world location of a grid location.
  *
- * @param GridLoction - The grid location to transform.
- * @return The world loction of GridLoction;
+ * @param GridLocation - The grid location to transform.
+ * @return - The world location of GridLocation;
  */
 FVector AVoidgrid::TransformGridToWorld(FIntPoint GridLocation) const
 {
@@ -446,7 +446,7 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 /**
  * Gets the minimal part data for all parts on this voidgrid.
  *
- * @return The minimal part data for all parts on this voidgrid.
+ * @return - The minimal part data for all parts on this voidgrid.
  */
 MinimalPixelMoldDataType AVoidgrid::GetPixelMold()
 {
@@ -507,7 +507,7 @@ void AVoidgrid::SetState(FVoidgridState NewState)
 /**
  * Gets the state of this voidgrid.
  *
- * @return The state of this voidgrid.
+ * @return - The state of this voidgrid.
  */
 FVoidgridState AVoidgrid::GetState()
 {
@@ -717,11 +717,11 @@ void AVoidgrid::ClearVoidgrid()
 \* \/ Explosion \/ */
 
 /**
- * Causes an explosion at a world location. This will remove all pixels within the explosion radius, but pixel strenght may reduce the radius.
+ * Causes an explosion at a world location. This will remove all pixels within the explosion radius, but pixel strength may reduce the radius.
  *
  * @param WorldContext - An object used to get the world that the explosion will occur in.
  * @param WorldLocation - The location of the center of the explosion.
- * @param Raduis - The distance from the ceneter whithin which pixels will be destroyed.
+ * @param Radius - The distance from the center within which pixels will be destroyed.
  */
 void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, float Radius)
 {
@@ -745,7 +745,7 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 /**
  * Recursive function that will explode all pixels shadowed by the pixel at grid location.
  *
- * @param GridLoction - The pixel to remove.
+ * @param GridLocation - The pixel to remove.
  * @param GridRelativeExplosionLocation -  The location of the center of the explosion relative to the pixel grid.
  * @param Radius - The radius of the explosion.
  * @param Arc - The arc to apply the explosion in. Only pixels inside the arc will be destroyed.
@@ -778,16 +778,16 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 		// \/ For each adjacent pixel start an explosion if in Arc \/ //
 		for (FIntPoint EachAdjacentPixelOffest : AdjacentPixelOffests)
 		{
-			// If in the correct direction for this quadrent.
+			// If in the correct direction for this quadrant.
 			if (FMath::IsNearlyEqual(EachAdjacentPixelOffest.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachAdjacentPixelOffest.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1))
 			{
 				//The pixel location of the next pixel to destroy.
 				FIntPoint AdjacentPixelLocation = PixelLoction + EachAdjacentPixelOffest;
 				//The location relative to the center of the explosion of the next pixel to destroy.
 				FVector2D AdjacentPixelExplosionRelativeLocation = FVector2D(AdjacentPixelLocation) - GridRelativeExplosionLocation;
-				//The lower arc bound of an arc that coinatins only the AdjacentPixel.
+				//The lower arc bound of an arc that contains only the AdjacentPixel.
 				FVector2D PixelLowerArcBound = FVector2D();
-				//The upper arc bound of an arc that coinatins only the AdjacentPixel.
+				//The upper arc bound of an arc that contains only the AdjacentPixel.
 				FVector2D PixelUpperArcBound = FVector2D();
 				//The sign of X & Y in a tri-bit format
 				int32 NextExplosionSignedDirection = (FMath::Sign(AdjacentPixelExplosionRelativeLocation.X) + 1) + 3 * (FMath::Sign(AdjacentPixelExplosionRelativeLocation.Y) + 1);
@@ -941,8 +941,8 @@ void AVoidgrid::RemovePixelMesh(GridLocationType Location)
 /**
  * Sets the visible a mesh segment for a pixel.
  *
- * @param Location - The location of the pixel set the visablilty of.
- * @param bNewVisibility - The visablity to set the pixel mesh to.
+ * @param Location - The location of the pixel set the visibility of.
+ * @param bNewVisibility - The visibility to set the pixel mesh to.
  */
 void AVoidgrid::SetPixelMeshVisibility(GridLocationType Location, bool bNewVisibility)
 {
@@ -953,7 +953,7 @@ void AVoidgrid::SetPixelMeshVisibility(GridLocationType Location, bool bNewVisib
  * Generates the vertices of a pixel mesh
  *
  * @param Location - The location of the pixel to generate vertices for.
- * @return An array of vertices that can be used to generate a mesh for a pixel
+ * @return - An array of vertices that can be used to generate a mesh for a pixel
  */
 TArray<FVector> AVoidgrid::GetPixelVertices(GridLocationType Location)
 {
@@ -975,7 +975,7 @@ TArray<FVector> AVoidgrid::GetPixelVertices(GridLocationType Location)
  * @param UpperLeft - The vertex index of the upper left corner of the square.
  * @param LowerRight - The vertex index of the lower right corner of the square.
  * @param LowerLeft - The vertex index of the lower left corner of the square.
- * @return An array of vertices that can be used to generate triangles that will form a square between the specified vertices.
+ * @return - An array of vertices that can be used to generate triangles that will form a square between the specified vertices.
  */
 TArray<int32> AVoidgrid::CreateTrianglesForPixelMeshFace(int32 UpperRight, int32 UpperLeft, int32 LowerRight, int32 LowerLeft)
 {
@@ -999,7 +999,7 @@ TArray<int32> AVoidgrid::CreateTrianglesForPixelMeshFace(int32 UpperRight, int32
 /**
  * Gets the faction of the Voidgrid.
  *
- * @return The faction of the Voidgrid.
+ * @return - The faction of the Voidgrid.
  */
 EFaction AVoidgrid::GetFaction() const
 {

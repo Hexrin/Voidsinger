@@ -44,7 +44,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 Cost;
 
-	//Heat Resistance is this parts ability to resist melting or frezing. If a part reaches a tempature whoes absolute value is above its heat resistance then it will either melt or freeze.
+	//Heat Resistance is this part's ability to resist melting or frezing. If a part reaches a tempature that's absolute value is above its heat resistance then it will either melt or freeze.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "1", ClampMax = "10"))
 	float HeatResistance{ 1 };
 

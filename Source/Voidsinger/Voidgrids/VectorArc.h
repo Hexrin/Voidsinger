@@ -15,10 +15,10 @@ struct VOIDSINGER_API FVectorArc
 	GENERATED_BODY()
 
 	/**
-	 * Initilizes this arc to be bound by the given vectors. If the limits are the same then the arc will contain the whole circle.
+	 * Initializes this arc to be bound by the given vectors. If the limits are the same then the arc will contain the whole circle.
 	 *
-	 * @param LowerArcBound - The lower bound of this arc. The arc will be in the clockwise dirction of this vector.
-	 * @param UpperArcBound - The upper bound of this arc. The arc will be in the counterclockwise dirction of this vector.
+	 * @param LowerArcBound - The lower bound of this arc. The arc will be in the clockwise direction of this vector.
+	 * @param UpperArcBound - The upper bound of this arc. The arc will be in the counterclockwise direction of this vector.
 	 */
 	FVectorArc(FVector2D LowerArcBound = FVector2D::UnitVector, FVector2D UpperArcBound = FVector2D::UnitVector)
 	{
@@ -26,14 +26,14 @@ struct VOIDSINGER_API FVectorArc
 	}
 
 	/**
-	 * Attempts to shrink the arc to the given bounds. If a bound would result in a wider arc then the .
+	 * Attempts to shrink the arc to the given bounds. If a bound would result in a wider arc then the . // unfinished comment? -Mabel Suggestion
 	 * 
-	 * @param LowerArcBound - The target lower bound of this arc. The arc will be in the clockwise dirction of this vector.
-	 * @param LowerArcBound - The target upper bound of this arc. The arc will be in the counterclockwise dirction of this vector.
+	 * @param LowerArcBound - The target lower bound of this arc. The arc will be in the clockwise direction of this vector.
+	 * @param LowerArcBound - The target upper bound of this arc. The arc will be in the counterclockwise direction of this vector.
 	 */
 	void ShrinkArcBounds(FVector2D LowerArcBound, FVector2D UpperArcBound)
 	{
-		//If arc is not restricted then inilize the arc with the given limits.
+		//If arc is not restricted then initialize the arc with the given limits.
 		if (!bArcBounded)
 		{
 			SetArcBounds(LowerArcBound, UpperArcBound);
@@ -61,7 +61,7 @@ struct VOIDSINGER_API FVectorArc
 	 * 
 	 * @param Location - The location to check.
 	 * @param bInclusiveBounds - Whether or not to count a location on the bounds as between them.
-	 * @return Whether or not the given location is between the LowerBound and UpperBound of this.
+	 * @return - Whether or not the given location is between the LowerBound and UpperBound of this.
 	 */
 	bool IsLocationInArc(FVector2D Location, bool bInclusiveBounds = true) const
 	{
@@ -97,7 +97,7 @@ struct VOIDSINGER_API FVectorArc
 	 * @param LineStart - One endpoint of the line to check.
 	 * @param LineEnd - One endpoint of the line to check.
 	 * @param bInclusiveBounds - Whether or not to count a location on the bounds as between them.
-	 * @return Whether or not the line is passes through the arc of this.
+	 * @return - Whether or not the line is passes through the arc of this.
 	 */
 	bool DoesLinePassThoughArc(FVector2D LineStart, FVector2D LineEnd, bool bInclusiveBounds = true) const
 	{
@@ -108,8 +108,8 @@ struct VOIDSINGER_API FVectorArc
 	/**
 	 * Sets this arc to be bound by the given vectors. If the limits are the same then the arc will contain the whole circle.
 	 * 
-	 * @param LowerArcLimit - The lower limit of this arc. The arc will be in the clockwise dirction of this vector.
-	 * @param UpperArcLimit - The upper limit of this arc. The arc will be in the counterclockwise dirction of this vector.
+	 * @param LowerArcLimit - The lower limit of this arc. The arc will be in the clockwise direction of this vector.
+	 * @param UpperArcLimit - The upper limit of this arc. The arc will be in the counterclockwise direction of this vector.
 	 */
 	void SetArcBounds(FVector2D LowerArcBound, FVector2D UpperArcBound)
 	{
@@ -126,7 +126,7 @@ struct VOIDSINGER_API FVectorArc
 	/**
 	 * Gets the upper bound of this arc as a vector.
 	 * 
-	 * @return The upper bound of this arc as a vector.
+	 * @return - The upper bound of this arc as a vector.
 	 */
 	FVector2D GetUpperBound() const
 	{
@@ -141,7 +141,7 @@ struct VOIDSINGER_API FVectorArc
 	/**
 	 * Gets the lower bound of this arc as a vector.
 	 * 
-	 * @return The lower bound of this arc as a vector.
+	 * @return - The lower bound of this arc as a vector.
 	 */
 	FVector2D GetLowerBound() const
 	{
@@ -158,7 +158,7 @@ private:
 	 * Gets the cotangent of the vector. This is a safe operation, will return FLT_MAX if Y = 0.
 	 * 
 	 * @param Vector - The vector to get the cotangent of.
-	 * @return The cotangent of Vector.
+	 * @return - The cotangent of Vector.
 	 */
 	float GetVectorCot(FVector2D Vector) const
 	{
@@ -166,12 +166,12 @@ private:
 	}
 
 	/**
-	 * Gets whether or not A < B.
+	 * Gets whether or not A < B. //Why did you make a function for this? It seems unnecessary to make a function that replaces operators that already exist. -Mabel Suggestion
 	 * 
 	 * @param A - The value to test for lesserness. 
      * @param B - The value to test for greaterness. 
 	 * @param bInclusive - Whether or not to count equality as less than.
-	 * @return Whether or not A < B.
+	 * @return - Whether or not A < B.
 	 */
 	bool IsLessThan(float A, float B, bool bInclusive) const
 	{
@@ -179,12 +179,12 @@ private:
 	}
 
 	/**
-	 * Gets whether or not A > B.
+	 * Gets whether or not A > B. //Why did you make a function for this? It seems unnecessary to make a function that replaces operators that already exist. -Mabel Suggestion
 	 *
 	 * @param A - The value to test for greaterness.
 	 * @param B - The value to test for lesserness.
 	 * @param bInclusive - Whether or not to count equality as greater than.
-	 * @return Whether or not A > B.
+	 * @return - Whether or not A > B.
 	 */
 	bool IsGreaterThan(float A, float B, bool bInclusive) const
 	{
@@ -195,7 +195,7 @@ private:
 	UPROPERTY()
 	float LowerBoundCotValue;
 
-	//Whether or not the lower arc vetor's Y value is negative.
+	//Whether or not the lower arc vector's Y value is negative.
 	UPROPERTY()
 	bool bLowerBoundNegativeY;
 
@@ -203,11 +203,11 @@ private:
 	UPROPERTY()
 	float UpperBoundCotValue;
 
-	//Whether or not the upper arc vetor's Y value is negative.
+	//Whether or not the upper arc vector's Y value is negative.
 	UPROPERTY()
 	bool bUpperBoundNegativeY;
 
-	//Whether or not this arc is bound by two differnt vectors.
+	//Whether or not this arc is bound by two different vectors.
 	UPROPERTY()
 	bool bArcBounded;
 };
