@@ -365,9 +365,9 @@ void AVoidgrid::SpreadHeat()
  * @param WorldLocation - The world location to transform.
  * @return - The grid location of WorldLocation;
  */
-FIntPoint AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
+FVector2D AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
 {
-	return (FVector2D(GetTransform().InverseTransformPosition(WorldLocation)) + CenterOfMass).IntPoint();
+	return (FVector2D(GetTransform().InverseTransformPosition(WorldLocation)) + CenterOfMass);
 }
 
 /**
@@ -376,9 +376,9 @@ FIntPoint AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
  * @param GridLocation - The grid location to transform.
  * @return - The world location of GridLocation;
  */
-FVector AVoidgrid::TransformGridToWorld(FIntPoint GridLocation) const
+FVector AVoidgrid::TransformGridToWorld(FVector2D GridLocation) const
 {
-	return GetTransform().TransformPosition(FVector(FVector2D(GridLocation) - CenterOfMass, 0));
+	return GetTransform().TransformPosition(FVector(GridLocation - CenterOfMass, 0));
 }
 
 /**
@@ -779,7 +779,7 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLoction, FVector2D GridRela
 		for (FIntPoint EachAdjacentPixelOffest : AdjacentPixelOffests)
 		{
 			// If in the correct direction for this quadrant.
-			if (FMath::IsNearlyEqual(EachAdjacentPixelOffest.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachAdjacentPixelOffest.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1))
+			if ((FMath::IsNearlyEqual(EachAdjacentPixelOffest.X, FMath::Sign(ExplosionRelativeLocation.X), 1) && FMath::IsNearlyEqual(EachAdjacentPixelOffest.Y, FMath::Sign(ExplosionRelativeLocation.Y), 1)) || PixelLoction == GridRelativeExplosionLocation.IntPoint())
 			{
 				//The pixel location of the next pixel to destroy.
 				FIntPoint AdjacentPixelLocation = PixelLoction + EachAdjacentPixelOffest;
