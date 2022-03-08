@@ -543,6 +543,16 @@ public:
 	TSet<FMinimalPartInstanceData> GetPixelMold();
 
 	/**
+	 * Gets whether the pixel at the given location is healable
+	 * 
+	 * @param PixelLocation - The location of the pixel to check
+	 * 
+	 * @return Whether or not the pixel is healable
+	 */
+	UFUNCTION(BlueprintPure)
+	const bool IsPixelHealable(FIntPoint PixelLocation) const;
+
+	/**
 	 * Sets the state of this voidgrid.
 	 *
 	 * @param NewState - The state to make this voidgrid match.
