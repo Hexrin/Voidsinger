@@ -635,7 +635,7 @@ private:
 	 * @param Arc - The arc to apply the explosion in. Only pixels inside the arc will be destroyed.
 	 */
 	UFUNCTION()
-	void StartExplosionAtPixel(FIntPoint PixelLocation, FVector2D GridRelativeExplosionLocation, float Radius, FVectorArc Arc = FVectorArc());
+	void StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRelativeExplosionLocation, float Radius, FVectorArc Arc = FVectorArc());
 
 	/* /\ Explosion /\ *\
 	\* --------------- */

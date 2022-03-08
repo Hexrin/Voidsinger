@@ -735,8 +735,8 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 	{
 		if (AVoidgrid* OtherVoidgrid = Cast<AVoidgrid>(EachResult.GetActor()))
 		{
-			FVector2D GridRelativeExplosionLocation = OtherVoidgrid->TransformWorldToGrid(WorldLocation);
-			OtherVoidgrid->StartExplosionAtPixel(FIntPoint::ZeroValue, FVector2D::ZeroVector, Radius);
+			FIntPoint GridRelativeExplosionLocation = OtherVoidgrid->TransformWorldToGrid(WorldLocation).IntPoint();
+			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation, GridRelativeExplosionLocation, Radius);
 		}
 	}
 }
@@ -749,7 +749,7 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
  * @param Radius - The radius of the explosion.
  * @param Arc - The arc to apply the explosion in. Only pixels inside the arc will be destroyed.
  */
-void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FVector2D GridRelativeExplosionLocation, float Radius, FVectorArc Arc)
+void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRelativeExplosionLocation, float Radius, FVectorArc Arc)
 {
 	//Array of all adjacent pixel offests
 	//Wouldn't this go back and check the previous location you were at? Or am I missing something -Mabel Suggestion
@@ -763,7 +763,7 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FVector2D GridRel
 	}
 
 	//The location of the pixel relative to the explosion's center.
-	FVector2D ExplosionRelativeLocation = FVector2D(PixelLocation) - GridRelativeExplosionLocation;
+	FIntPoint ExplosionRelativeLocation = PixelLocation - GridRelativeExplosionLocation;
 
 	
 	//Shrink radius based on part strength.
@@ -782,7 +782,7 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FVector2D GridRel
 			//The pixel location of the next pixel to destroy.
 			FIntPoint AdjacentPixelLocation = PixelLocation + EachAdjacentPixelOffest;
 			//The location relative to the center of the explosion of the next pixel to destroy.
-			FVector2D AdjacentPixelExplosionRelativeLocation = FVector2D(AdjacentPixelLocation) - GridRelativeExplosionLocation;
+			FVector2D AdjacentPixelExplosionRelativeLocation = AdjacentPixelLocation - GridRelativeExplosionLocation;
 			// If in the correct direction for this quadrant.
 			if (AdjacentPixelExplosionRelativeLocation.SizeSquared() > ExplosionRelativeLocation.SizeSquared())
 			{
