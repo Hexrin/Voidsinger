@@ -48,7 +48,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "1", ClampMax = "10"))
 	float HeatResistance{ 1 };
 
-	//Strength is this parts ability to resist explosions and impacts. A the explosion radius of any explosions effecting this part will be divided by the strenth.
+	//Strength is this parts ability to resist explosions and impacts. The explosion radius of any explosions affecting this part will be divided by the strength.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="1", ClampMax="10"))
 	float Strength{ 1 };
 

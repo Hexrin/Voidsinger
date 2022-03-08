@@ -363,7 +363,7 @@ void AVoidgrid::SpreadHeat()
  * Gets the grid location of a world location.
  *
  * @param WorldLocation - The world location to transform.
- * @return The grid location of WorldLocation;
+ * @return The grid location of WorldLocation.
  */
 FVector2D AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
 {
@@ -374,7 +374,7 @@ FVector2D AVoidgrid::TransformWorldToGrid(FVector WorldLocation) const
  * Gets the world location of a grid location.
  *
  * @param GridLocation - The grid location to transform.
- * @return The world location of GridLocation;
+ * @return The world location of GridLocation.
  */
 FVector AVoidgrid::TransformGridToWorld(FVector2D GridLocation) const
 {
