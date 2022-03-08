@@ -630,10 +630,6 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
 			}
 			UpdatePixelMesh(Location);
 		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Set intact to %i when already in that state at %s"), bNewIntact ? 1 : 0, *Location.ToString());
-		}
 	}
 }
 
@@ -740,7 +736,7 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 		if (AVoidgrid* OtherVoidgrid = Cast<AVoidgrid>(EachResult.GetActor()))
 		{
 			FVector2D GridRelativeExplosionLocation = OtherVoidgrid->TransformWorldToGrid(WorldLocation);
-			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation.IntPoint(), GridRelativeExplosionLocation, Radius);
+			OtherVoidgrid->StartExplosionAtPixel(FIntPoint::ZeroValue, FVector2D::ZeroVector, Radius);
 		}
 	}
 }
@@ -796,14 +792,12 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FVector2D GridRel
 				FVector2D PixelUpperArcBound = FVector2D();
 				//The sign of X & Y in a tri-bit format
 				int32 NextExplosionSignedDirection = (FMath::Sign(AdjacentPixelExplosionRelativeLocation.X) + 1) + 3 * (FMath::Sign(AdjacentPixelExplosionRelativeLocation.Y) + 1);
-				
-				float VoidgridAngleCosine = FMath::Sin(GetActorRotation().GetAngle())
 				// \/ Sets PixelArcBounds based on sign \/ //
 				switch (NextExplosionSignedDirection)
 				{
 					// X < 0 && Y < 0
 				case 0:
-					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, -0.5).GetRotated();
+					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, -0.5);
 					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, 0.5);
 					break;
 
