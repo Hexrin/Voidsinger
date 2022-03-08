@@ -752,20 +752,18 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRelativeExplosionLocation, float Radius, FVectorArc Arc)
 {
 	//Array of all adjacent pixel offests
-	//Wouldn't this go back and check the previous location you were at? Or am I missing something -Mabel Suggestion
 	static TArray<FIntPoint> AdjacentPixelOffests{ TArray<FIntPoint>() };
 	if (AdjacentPixelOffests.IsEmpty())
 	{
-		AdjacentPixelOffests.Emplace(FIntPoint( 0, 1));
-		AdjacentPixelOffests.Emplace(FIntPoint( 1, 0));
-		AdjacentPixelOffests.Emplace(FIntPoint( 0,-1));
+		AdjacentPixelOffests.Emplace(FIntPoint(0, 1));
+		AdjacentPixelOffests.Emplace(FIntPoint(1, 0));
+		AdjacentPixelOffests.Emplace(FIntPoint(0, -1));
 		AdjacentPixelOffests.Emplace(FIntPoint(-1, 0));
 	}
 
 	//The location of the pixel relative to the explosion's center.
 	FIntPoint ExplosionRelativeLocation = PixelLocation - GridRelativeExplosionLocation;
 
-	
 	//Shrink radius based on part strength.
 	if (LocationsToPixelState.Contains(PixelLocation) && LocationsToPixelState.Find(PixelLocation)->IsIntact())
 	{
@@ -783,7 +781,8 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRel
 			FIntPoint AdjacentPixelLocation = PixelLocation + EachAdjacentPixelOffest;
 			//The location relative to the center of the explosion of the next pixel to destroy.
 			FVector2D AdjacentPixelExplosionRelativeLocation = AdjacentPixelLocation - GridRelativeExplosionLocation;
-			// If in the correct direction for this quadrant.
+
+			// If further from the center of the explosion.
 			if (AdjacentPixelExplosionRelativeLocation.SizeSquared() > ExplosionRelativeLocation.SizeSquared())
 			{
 				//The lower arc bound of an arc that contains only the AdjacentPixel.
@@ -859,16 +858,6 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRel
 					FVectorArc NewArc = Arc;
 					NewArc.ShrinkArcBounds(PixelLowerArcBound, PixelUpperArcBound);
 					StartExplosionAtPixel(AdjacentPixelLocation, GridRelativeExplosionLocation, Radius, NewArc);
-				//}
-					DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLocation), DebugOffset + TransformGridToWorld(AdjacentPixelLocation), .02, FColor::Green, true);
-				}
-				else if (AdjacentPixelExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius))
-				{
-					DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLocation), DebugOffset + TransformGridToWorld(AdjacentPixelLocation), .02, FColor::Red, true);
-				}
-				else
-				{
-					DrawDebugDirectionalArrow(GetWorld(), DebugOffset + TransformGridToWorld(PixelLocation), DebugOffset + TransformGridToWorld(AdjacentPixelLocation), .02, FColor::Black, true);
 				}
 			}
 		}
