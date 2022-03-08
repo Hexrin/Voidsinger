@@ -14,15 +14,15 @@ struct VOIDSINGER_API FThrustSource
 {
 	GENERATED_BODY()
 
-	//The maximum inpulse force that can be applied by a thrust source.
+	//The maximum impulse force that can be applied by a thrust source.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0"))
 	float Force{ 0 };
 
-	//The direction of the impulse applyed by a thrust source.
+	//The direction of the impulse applied by a thrust source.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPreserveRatio))
 	FVector2D Direction{ FVector2D(1,0) };
 
-	//The location of the impulse applyed by a thrust source.
+	//The location of the impulse applied by a thrust source.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector2D Location{ FIntPoint::ZeroValue };
 
@@ -66,72 +66,91 @@ public:
 	 * @param TimeToVelocity -  Will be set to the time to reach the given location. Set to -1 if location is unachievable.
 	 * @param DirectionToVelocity - Set to the direction acceleration is needed in.
 	 * @param TargetLocation - The location to predict the thrust needed to arrive at.
-	 * @param ErrorRadius - The radius around the target location that count as being at 
-	 * @param bAccelerating - Whether or not to include the acceleration capablilies of this voidgrid in the predictions.
+	 * @param ErrorRadius - The radius around the target location that count as being at .
+	 * @param bAccelerating - Whether or not to include the acceleration capabilities of this voidgrid in the predictions.
 	 */
 	UFUNCTION(BlueprintPure)
-	void PredictThrustToLocation(float& TimeToLocation, FVector2D& DirectionToLocation, const FVector2D TargetLocation, const float ErrorRadius, const bool bAccelerating) const;
+	void PredictThrustToLocation(float& TimeToLocation, FVector2D& DirectionToLocation, const FVector2D TargetLocation, const bool bAccelerating = true, const float ErrorRadius = 0.f) const;
 
 	/**
-	 * Predicts the time it will take to reach a certain angular velocity given the Voidgrid's thrusters.
+	 * Predicts the direction of thrust and the time it will take to reach a certain angular velocity given the available thrust sources.
 	 *
-	 * @param Target - The voidgrid to predict the motion of.
-	 * @param Velocity - The target velocity to predict the time to reach.
-	 * @return The time it will take to reach a certain angular velocity. Returns -1 if it is impossible to reach the target velocity.
+	 * @param TimeToVelocity -  Will be set to the time to reach the given location. Set to -1 if location is unachievable.
+	 * @param bClockwiseToVelocity - Whether or not the voidgrid needs to accelerate in the clockwise direction to reach the target velocity.
+	 * @param TargetVelocity - The angular velocity in radians per second to predict the thrust needed to arrive at.
 	 */
 	UFUNCTION(BlueprintPure)
-	void PredictThrustToAngularVelocity(float& TimeToVelocity, bool& bClockwiseToVelocity, const float Velocity) const;
+	void PredictThrustToAngularVelocity(float& TimeToVelocity, bool& bClockwiseToVelocity, const float TargetVelocity) const;
 
 	/**
-	 * Predicts the time it will take to reach a certain orientation given the Voidgrid's thrusters.
+	 * Predicts the direction of thrust and the time it will take to reach a certain orientation given the available thrust sources.
 	 *
-	 * @param Orientation - The target orientation to predict the time to reach.
-	 * @param bAccelerating - Whether or not to factor in the voidgrids acceleration capabilites into the calculations
-	 * @return The time it will take to reach a certain orientation. Returns -1 if it is impossible to reach the target orientation.
+	 * @param TimeToVelocity -  Will be set to the time to reach the given location. Set to -1 if location is unachievable.
+	 * @param bClockwiseToVelocity - Whether or not the voidgrid needs to accelerate in the clockwise direction to reach the target velocity.
+	 * @param TargetOrientation - The orientation in radians to predict the thrust needed to arrive at.
+	 * @param bAccelerating - Whether or not to include the acceleration capabilities of this voidgrid in the predictions.
 	 */
 	UFUNCTION(BlueprintPure)
-	float PredictThrustToOrientation(float& TimeToOrientation, bool& bClockwiseToOrientation, const float Orientation, const bool bAccelerating) const;
+	float PredictThrustToOrientation(float& TimeToOrientation, bool& bClockwiseToOrientation, const float TargetOrientation, const bool bAccelerating = true) const;
 
 	/**
-	* Finds the Direction of the Thrust based on the Direction and force of the ThrustSource
-	* 
-	* @param ThrustDirection - The Direction of the Thruster 
-	* @param ThrustSource - The Thruster the function is using to get the direction of the Thrust
-	* @return The Direction of the thrust
-	*/
+	 * Gets the maximum possible acceleration that a given thrust source can cause in a given direction on this voidgrid.
+	 * 
+	 * @param Direction - The direction in local space to get the possible acceleration in. 
+	 * @param ThrustSource - The source of thrust used in calculations.
+	 * @return The magnitude of the acceleration.
+	 */
 	UFUNCTION(BlueprintPure)
-	float GetThrustSourceAccelerationInDirection(const FVector2D ThrustDirection, const FThrustSource ThrustSource) const;
+	float GetThrustSourceAccelerationInDirection(const FVector2D Direction, const FThrustSource ThrustSource) const;
 
 	/**
-	* Finds the Rotation of the Thrust Source given whether the Thruster is thrusting in a Clockwise or CounterClockwise direction
-	* @param bClockwise - Return true if thrusting in a Clockwise direction, return false if thrusting in a CounterClockwise direction
-	* @param ThrustSource - The Thruster that the function is using to get the rotation of the Thrust
-	* @return the Rotation of the thrust 
-	*/
+	 * Gets the maximum possible acceleration that a given thrust source can cause in a given angular direction on this voidgrid.
+	 *
+	 * @param bClockwise - The angular direction to get the possible acceleration in.
+	 * @param ThrustSource - The source of thrust used in calculations.
+	 * @return The magnitude of the acceleration.
+	 */
 	UFUNCTION(BlueprintPure)
 	float GetThrustSourceAccelerationInRotation(const bool bClockwise, const FThrustSource ThrustSource) const;
 
+	/**
+	 * Adds a thrust source to this for use in thrust prediction calculations.
+	 * 
+	 * @param ThrustSource - The thrust source to add.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void AddManagedThrustSource(FThrustSource ThrustSource);
+
+	/**
+	 * Removes a thrust source to this for use in thrust prediction calculations.
+	 *
+	 * @param ThrustSource - The thrust source to remove.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void RemoveManagedThrustSource(FThrustSource ThrustSource);
 
 private:
+	//The thrust force that can be applied in the forward direction.
 	UPROPERTY()
 	float ForwardThrust { 0 };
 
+	//The thrust force that can be applied in the backward direction.
 	UPROPERTY()
 	float BackwardThrust{ 0 };
-	
+
+	//The thrust force that can be applied in the left direction.
 	UPROPERTY()
 	float RightThrust{ 0 };
-	
+
+	//The thrust force that can be applied in the right direction.
 	UPROPERTY()
 	float LeftThrust{ 0 };
-	
+
+	//The thrust force that can be applied in the clockwise direction.
 	UPROPERTY()
 	float ClockwiseThrust{ 0 };
-	
+
+	//The thrust force that can be applied in the counterclockwise direction.
 	UPROPERTY()
 	float CounterClockwiseThrust{ 0 };
 	
