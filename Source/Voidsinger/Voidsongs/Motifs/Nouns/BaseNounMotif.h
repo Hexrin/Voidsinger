@@ -34,6 +34,10 @@ enum class ENoun : uint8
 |  /\ ENoun /\  |
 \* /\ ===== /\ */
 
+/* \/ ============== \/ *\
+|  \/ UBaseNounMotif \/  |
+\* \/ ============== \/ */
+
 /**
  * The BaseNounVoidsong stores a Noun type on it. It is the base class for all Noun Voidsongs. When this type of Voidsong is performed, any other Voidsongs played will only apply to
  * module's with the noun type stored on this Voidsong (or any other Noun Voidsongs that were also played).
@@ -55,3 +59,7 @@ public:
 	/* /\ Motif Data /\ *\
 	\* ---------------- */
 };
+
+/* /\ ============== /\ *\
+|  /\ UBaseNounMotif /\  |
+\* /\ ============== /\ */

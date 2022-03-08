@@ -8,6 +8,9 @@
 #include "VoidsongData.h"
 #include "Voidsong.generated.h"
 
+/* \/ ========= \/ *\
+|  \/ UVoidsong \/  |
+\* \/ ========= \/ */
 
 /* --------------- *\
 \* \/ Delegates \/ */
@@ -131,3 +134,7 @@ public:
 	\* ------------- */
 
 };
+
+/* /\ ========= /\ *\
+|  /\ UVoidsong /\  |
+\* /\ ========= /\ */

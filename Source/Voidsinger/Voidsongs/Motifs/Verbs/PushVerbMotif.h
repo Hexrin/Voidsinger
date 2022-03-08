@@ -6,6 +6,10 @@
 #include "BaseVerbMotif.h"
 #include "PushVerbMotif.generated.h"
 
+/* \/ ============== \/ *\
+|  \/ UPushVerbMotif \/  |
+\* \/ ============== \/ */
+
 /**
  * Pushes the ship hit with this Motif away from whatever activated this Voidsong
  */
@@ -33,3 +37,7 @@ class VOIDSINGER_API UPushVerbMotif : public UBaseVerbMotif
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */
 };
+
+/* /\ ============== /\ *\
+|  /\ UPushVerbMotif /\  |
+\* /\ ============== /\ */

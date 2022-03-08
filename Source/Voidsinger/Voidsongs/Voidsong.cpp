@@ -3,6 +3,10 @@
 
 #include "Voidsong.h"
 
+/* \/ ========= \/ *\
+|  \/ UVoidsong \/  |
+\* \/ ========= \/ */
+
 /* -------------------- *\
 \* \/ Initialization \/ */
 
@@ -106,3 +110,7 @@ FVoidsongData UVoidsong::GetVoidsongData()
 
 /* /\ Getters /\ *\
 \* ------------- */
+
+/* /\ ========= /\ *\
+|  /\ UVoidsong /\  |
+\* /\ ========= /\ */

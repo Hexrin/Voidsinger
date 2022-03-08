@@ -6,6 +6,10 @@
 #include "Voidsinger/Voidsongs/Motifs/BaseMotif.h"
 #include "BaseVerbMotif.generated.h"
 
+/* \/ ============== \/ *\
+|  \/ UBaseVerbMotif \/  |
+\* \/ ============== \/ */
+
 /**
  * The BaseVerbVoidsong stores an overridable fuction on it. It is the base class for all Verb Voidsongs. When this type of Voidsong is performed, an action will be executed when the parts that were activated
  * interact with something. For example, if the Verb Voidsong "Hot" was played along with the "Laser" noun, all lasers would fire with an extra hot laser. Whatever these lasers hit will be heated up.
@@ -33,3 +37,7 @@ public:
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */
 };
+
+/* /\ ============== /\ *\
+|  /\ UBaseVerbMotif /\  |
+\* /\ ============== /\ */

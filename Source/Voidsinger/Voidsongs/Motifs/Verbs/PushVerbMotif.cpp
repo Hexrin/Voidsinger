@@ -4,6 +4,10 @@
 #include "PushVerbMotif.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 
+/* \/ ============== \/ *\
+|  \/ UPushVerbMotif \/  |
+\* \/ ============== \/ */
+
 /* ------------------------- *\
 \* \/ Voidsong Activation \/ */
 
@@ -23,3 +27,7 @@ void UPushVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effe
 
 /* /\ Voidsong Activation /\ *\
 \* ------------------------- */
+
+/* /\ ============== /\ *\
+|  /\ UPushVerbMotif /\  |
+\* /\ ============== /\ */

@@ -7,6 +7,10 @@
 #include "Engine/DataAsset.h"
 #include "BaseMotif.generated.h"
 
+/* \/ ========== \/ *\
+|  \/ UBaseMotif \/  |
+\* \/ ========== \/ */
+
 /**
  * The base Voidsong is the base class for all Voidsongs. It holds information such as the activation sequence for the Voidsong.
  */
@@ -32,3 +36,7 @@ public:
 	\* ---------------- */
 	
 };
+
+/* /\ ========== /\ *\
+|  /\ UBaseMotif /\  |
+\* /\ ========== /\ */

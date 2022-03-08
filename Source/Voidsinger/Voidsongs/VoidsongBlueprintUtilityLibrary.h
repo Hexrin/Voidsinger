@@ -7,8 +7,12 @@
 #include "VoidsongData.h"
 #include "VoidsongBlueprintUtilityLibrary.generated.h"
 
+/* \/ ================================ \/ *\
+|  \/ UVoidsongBlueprintUtilityLibrary \/  |
+\* \/ ================================ \/ */
+
 /**
- * 
+ * A blueprint function library that allows blueprint manipulation of the FVoidsongData struct
  */
 UCLASS()
 class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctionLibrary
@@ -187,3 +191,7 @@ class VOIDSINGER_API UVoidsongBlueprintUtilityLibrary : public UBlueprintFunctio
 	static void ExecuteVerbMotifs(const TArray<UBaseVerbMotif*>& Verbs, UObject* Instigator, FHitResult Hit, float Effectiveness);
 
 };
+
+/* /\ ================================ /\ *\
+|  /\ UVoidsongBlueprintUtilityLibrary /\  |
+\* /\ ================================ /\ */

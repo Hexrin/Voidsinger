@@ -8,6 +8,10 @@
 #include "VoidsongData.h"
 #include "VoidsongManager.generated.h"
 
+/* \/ ================ \/ *\
+|  \/ UVoidsongManager \/  |
+\* \/ ================ \/ */
+
 /* --------------- *\
 \* \/ Delegates \/ */
 
@@ -51,3 +55,7 @@ public:
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */
 };
+
+/* /\ ================ /\ *\
+|  /\ UVoidsongManager /\  |
+\* /\ ================ /\ */

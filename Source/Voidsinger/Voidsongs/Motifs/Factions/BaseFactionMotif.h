@@ -7,6 +7,10 @@
 #include "Voidsinger/VoidsingerTypes.h"
 #include "BaseFactionMotif.generated.h"
 
+/* \/ ================= \/ *\
+|  \/ UBaseFactionMotif \/  |
+\* \/ ================= \/ */
+
 /**
  * The BaseFactionVoidsong stores a faction on it. It is the base class for all Faction Voidsongs. When this type of Voidsong is performed, any other Voidsongs played will only apply to
  * ship that are part of this Voidsong's faction (or any other Faction Voidsongs that were also played).
@@ -29,3 +33,7 @@ public:
 	\* ---------------- */
 
 };
+
+/* /\ ================= /\ *\
+|  /\ UBaseFactionMotif /\  |
+\* /\ ================= /\ */

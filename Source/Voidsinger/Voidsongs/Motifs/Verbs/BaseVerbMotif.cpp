@@ -4,6 +4,10 @@
 #include "BaseVerbMotif.h"
 #include "Kismet/GameplayStatics.h"
 
+/* \/ ============== \/ *\
+|  \/ UBaseVerbMotif \/  |
+\* \/ ============== \/ */
+
 /* ------------------------- *\
 \* \/ Voidsong Activation \/ */
 
@@ -20,3 +24,7 @@ void UBaseVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effe
 
 /* /\ Voidsong Activation /\ *\
 \* ------------------------- */
+
+/* /\ ============== /\ *\
+|  /\ UBaseVerbMotif /\  |
+\* /\ ============== /\ */

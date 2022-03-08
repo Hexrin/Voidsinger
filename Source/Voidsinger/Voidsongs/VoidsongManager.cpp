@@ -3,6 +3,10 @@
 
 #include "VoidsongManager.h"
 
+/* \/ ================ \/ *\
+|  \/ UVoidsongManager \/  |
+\* \/ ================ \/ */
+
 /* ------------------------- *\
 \* \/ Voidsong Activation \/ */
 
@@ -27,3 +31,7 @@ UVoidsong* UVoidsongManager::PlayVoidsong(FVoidsongData VoidsongData)
 
 /* /\ Voidsong Activation /\ *\
 \* ------------------------- */
+
+/* /\ ================ /\ *\
+|  /\ UVoidsongManager /\  |
+\* /\ ================ /\ */

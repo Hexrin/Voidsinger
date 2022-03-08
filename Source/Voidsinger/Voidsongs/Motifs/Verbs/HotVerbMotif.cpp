@@ -4,6 +4,10 @@
 #include "HotVerbMotif.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
 
+/* \/ ============= \/ *\
+|  \/ UHotVerbMotif \/  |
+\* \/ ============= \/ */
+
 /* ------------------------- *\
 \* \/ Voidsong Activation \/ */
 
@@ -21,3 +25,7 @@ void UHotVerbMotif::ApplyEffect(UObject* Instigator, FHitResult Hit, float Effec
 
 /* /\ Voidsong Activation /\ *\
 \* ------------------------- */
+
+/* /\ ============= /\ *\
+|  /\ UHotVerbMotif /\  |
+\* /\ ============= /\ */

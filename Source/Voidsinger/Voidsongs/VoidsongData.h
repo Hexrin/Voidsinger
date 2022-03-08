@@ -10,6 +10,10 @@
 #include "Voidsinger/VoidsingerTypes.h"
 #include "VoidsongData.generated.h"
 
+/* \/ ============= \/ *\
+|  \/ FVoidsongData \/  |
+\* \/ ============= \/ */
+
 /**
  * Stores Motifs that are played in a Voidsong
  */
@@ -296,3 +300,7 @@ public:
 	/* /\ Getters /\ *\
 	\* ------------- */
 };
+
+/* /\ ============= /\ *\
+|  /\ FVoidsongData /\  |
+\* /\ ============= /\ */

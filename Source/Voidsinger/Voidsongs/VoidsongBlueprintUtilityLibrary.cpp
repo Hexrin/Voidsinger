@@ -208,3 +208,7 @@ void UVoidsongBlueprintUtilityLibrary::ExecuteVerbMotifs(const TArray<UBaseVerbM
 		EachVerb->ApplyEffect(Instigator, Hit, Effectiveness);
 	}
 }
+
+/* /\ ================================ /\ *\
+|  /\ UVoidsongBlueprintUtilityLibrary /\  |
+\* /\ ================================ /\ */

@@ -6,6 +6,10 @@
 #include "BaseVerbMotif.h"
 #include "HotVerbMotif.generated.h"
 
+/* \/ ============= \/ *\
+|  \/ UHotVerbMotif \/  |
+\* \/ ============= \/ */
+
 /**
  * Heats up the ship hit with this Motif
  */
@@ -32,3 +36,7 @@ class VOIDSINGER_API UHotVerbMotif : public UBaseVerbMotif
 	/* /\ Voidsong Activation /\ *\
 	\* ------------------------- */
 };
+
+/* /\ ============= /\ *\
+|  /\ UHotVerbMotif /\  |
+\* /\ ============= /\ */
