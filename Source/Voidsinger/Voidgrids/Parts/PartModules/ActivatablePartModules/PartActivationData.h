@@ -15,8 +15,10 @@ struct FPartActivationData
 {
 	GENERATED_BODY()
 
+public:
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<UBaseVerbMotif*> Verbs;
+	TArray<UBaseVerbMotif*> Verbs = TArray<UBaseVerbMotif*>();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float Effectiveness{ 1 };
@@ -37,7 +39,10 @@ struct FPartActivationData
 
 	FPartActivationData(TArray<UBaseVerbMotif*> ActivationVerbs, float ActivationEffectiveness = 1, FVector2D ActivationVector = FVector2D::ZeroVector, float ActivationRotation = 0)
 	{
-		FPartActivationData(ActivationEffectiveness, ActivationVector, ActivationRotation, ActivationVerbs);
+		Effectiveness = ActivationEffectiveness;
+		Vector = ActivationVector;
+		Rotation = ActivationRotation;
+		Verbs = ActivationVerbs;
 	}
 };
 
