@@ -40,6 +40,7 @@ void UActivatablePartModule::OnActivate_Implementation(const FPartActivationData
  */
 void UActivatablePartModule::Activate(const FPartActivationData Data)
 {
+	UE_LOG(LogTemp, Warning, TEXT("part module activate data verbs num %i"), Data.Verbs.Num());
 	OnActivate(Data);
 }
 
