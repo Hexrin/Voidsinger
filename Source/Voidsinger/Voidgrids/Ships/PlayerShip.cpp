@@ -257,7 +257,7 @@ void APlayerShip::ParseSequenceIntoMotifData(TArray<int32> Sequence, TSet<UBaseF
 		TArray<int32> TrimmedSequence = Sequence;
 		TrimmedSequence.SetNum(EachPlayableMotif->ActivationSequence.Num());
 
-		if (TrimmedSequence == EachPlayableMotif->ActivationSequence)
+		if (TrimmedSequence == EachPlayableMotif->ActivationSequence && EachPlayableMotif->ActivationSequence.Num() != 0)
 		{
 
 			if (IsValid(Cast<UBaseFactionMotif>(EachPlayableMotif)))
