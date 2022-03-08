@@ -725,6 +725,9 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 	//Debugggg -Mabel Suggestion
 	DrawDebugCircle(WorldContext->GetWorld(), FTransform(FRotator(90, 0, 0), WorldLocation + FVector(0, 0, 0.5), FVector(1)).ToMatrixWithScale(), Radius, 50, FColor::White, false, 2, 0U, .05);
 
+	//Enusure radius is valid.
+	Radius = abs(Radius);
+
 	//Get all actors in radius
 	TArray<FOverlapResult> Results = TArray<FOverlapResult>();
 	WorldContext->GetWorld()->OverlapMultiByChannel(Results, WorldLocation, FQuat::Identity, ECollisionChannel::ECC_Pawn, FCollisionShape::MakeSphere(Radius));
@@ -767,7 +770,7 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRel
 	//Shrink radius based on part strength.
 	if (LocationsToPixelState.Contains(PixelLocation) && LocationsToPixelState.Find(PixelLocation)->IsIntact())
 	{
-		Radius -= LocationsToPixelState.Find(PixelLocation)->GetCurrentPart()->GetData()->Strength - 1;
+		Radius -= FMath::Min(LocationsToPixelState.Find(PixelLocation)->GetCurrentPart()->GetData()->Strength - 1, Radius);
 	}
 
 	//If in new explosion radius
