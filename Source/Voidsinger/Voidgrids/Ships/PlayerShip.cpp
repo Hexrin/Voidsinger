@@ -188,7 +188,7 @@ void APlayerShip::RecordVoidsongInput(int32 Input)
 
 	if (IsValid(VoidsongInstrument))
 	{
-		VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(Input)));
+		//VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(Input)));
 	}
 	else
 	{
