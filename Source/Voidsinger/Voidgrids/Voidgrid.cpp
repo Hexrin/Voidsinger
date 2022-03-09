@@ -226,12 +226,21 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 {
 	if (DeltaMass != 0)
 	{
-		CenterOfMass = DeltaMass / (Mass + DeltaMass)  * MassLocation + Mass / (Mass + DeltaMass) * CenterOfMass;
-		Mass += DeltaMass;
+		if (Mass + DeltaMass != 0)
+		{
+			CenterOfMass = DeltaMass / (Mass + DeltaMass) * MassLocation + Mass / (Mass + DeltaMass) * CenterOfMass;
+			Mass += DeltaMass;
+			MomentOfInertia += (1 / 12) + DeltaMass * (MassLocation).SizeSquared();//This doesn't work for negative delta mass.
+		}
+		else
+		{
+			CenterOfMass = FVector2D::ZeroVector;
+			Mass = 0;
+			MomentOfInertia = 0;
+		}
+		OnMassChanged.Broadcast(Mass, CenterOfMass, MomentOfInertia);
 		AddActorLocalOffset(PixelMeshComponent->GetRelativeLocation() + FVector(CenterOfMass, 0));
 		PixelMeshComponent->SetRelativeLocation(FVector(-1 * CenterOfMass, 0));
-		MomentOfInertia += (1 / 12) + DeltaMass * (MassLocation).SizeSquared();
-		OnMassChanged.Broadcast(Mass, CenterOfMass, MomentOfInertia);
 	}
 }
 
@@ -871,6 +880,7 @@ TSet<FIntPoint> AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPo
 				//The sign of X & Y in a tri-bit format
 				int32 NextExplosionSignedDirection = (FMath::Sign(AdjacentPixelExplosionRelativeLocation.X) + 1) + 3 * (FMath::Sign(AdjacentPixelExplosionRelativeLocation.Y) + 1);
 				
+				bool bBoundedByGrid;
 				// \/ Sets PixelArcBounds based on sign \/ //
 				switch (NextExplosionSignedDirection)
 				{
@@ -878,52 +888,61 @@ TSet<FIntPoint> AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPo
 				case 0:
 					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, -0.5);
 					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, 0.5);
+					bBoundedByGrid = PixelLocation.X > LowerGridBound.X || PixelLocation.Y > LowerGridBound.Y;
 					break;
 
 					// X = 0 && Y < 0
 				case 1:
 					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, 0.5);
 					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, 0.5);
+					bBoundedByGrid = PixelLocation.Y > LowerGridBound.Y;
 					break;
 
 					// X > 0 && Y < 0
 				case 2:
 					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, 0.5);
 					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, -0.5);
+					bBoundedByGrid = PixelLocation.X < UpperGridBound.X || PixelLocation.Y > LowerGridBound.Y;
 					break;
 
 					// X < 0 && Y = 0
 				case 3:
 					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, -0.5);
 					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, 0.5);
+					bBoundedByGrid = PixelLocation.X > LowerGridBound.X;
 					break;
 
 					// X = 0 && Y = 0
 				case 4:
+					bBoundedByGrid = false;
 					break;
 
 					// X > 0 && Y = 0
 				case 5:
 					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, 0.5);
 					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, -0.5);
+					bBoundedByGrid = PixelLocation.X < UpperGridBound.X;
 					break;
 
 					// X < 0 && Y > 0
 				case 6:
 					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, -0.5);
 					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, 0.5);
+					bBoundedByGrid = PixelLocation.X > LowerGridBound.X || PixelLocation.Y < UpperGridBound.Y;
 					break;
 
 					// X = 0 && Y > 0
 				case 7:
 					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, -0.5);
 					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, -0.5);
+					bBoundedByGrid = PixelLocation.Y < UpperGridBound.Y;
 					break;
 
 					// X > 0 && Y > 0
 				case 8:
 					PixelLowerArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(-0.5, 0.5);
 					PixelUpperArcBound = AdjacentPixelExplosionRelativeLocation + FVector2D(0.5, -0.5);
+					bBoundedByGrid = PixelLocation.X < UpperGridBound.X || PixelLocation.Y < UpperGridBound.Y;
 					break;
 
 				default:
@@ -932,13 +951,14 @@ TSet<FIntPoint> AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPo
 				}
 				// /\ Sets PixelArcBounds based on sign /\ //
 
-				//  | ------------------------------------ In radius ------------------------- |    | ----------------------------- In arc ------------------------------- |
+				//                    | ------------------------------------ In radius ------------------------- |    | ----------------------------- In arc ------------------------------- |
 				if (AdjacentPixelExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius) && Arc.DoesLinePassThoughArc(PixelLowerArcBound, PixelUpperArcBound, false))
 				{
 					FVectorArc NewArc = Arc;
 					NewArc.ShrinkArcBounds(PixelLowerArcBound, PixelUpperArcBound);
 
 					TSet<FIntPoint> NewExplodedPixels = StartExplosionAtPixel(AdjacentPixelLocation, GridRelativeExplosionLocation, Radius, NewArc);
+					DrawDebugDirectionalArrow(GetWorld(), FVector(0,0,.2) + TransformGridToWorld(PixelLocation), FVector(0, 0, .2) + TransformGridToWorld(AdjacentPixelLocation), .02, FColor::Green, true);
 					for (FIntPoint EachNewExplodedPixel : NewExplodedPixels)
 					{
 						ExplodedPixels.Emplace(EachNewExplodedPixel);
