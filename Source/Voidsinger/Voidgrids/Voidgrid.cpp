@@ -60,10 +60,10 @@ void AVoidgrid::Tick(float DeltaTime)
 		SpreadHeat();
 	}
 	
-
-
 	DeltaHeatTime += DeltaTime;
 
+	DrawDebugPoint(GetWorld(), TransformGridToWorld(UpperGridBound), 20, FColor::Red);
+	DrawDebugPoint(GetWorld(), TransformGridToWorld(LowerGridBound), 20, FColor::Green);
 }
 
 /* ------------- *\
@@ -73,7 +73,7 @@ void AVoidgrid::Tick(float DeltaTime)
 /**
  * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
  *
- * @param RelativeImpulse - The impluse to apply to this voidgrid in relative space.
+ * @param RelativeImpulse - The impulse to apply to this voidgrid in relative space.
  * @param GridImpulseLocation - The location on the part grid to apply the impulse at.
  */
 void AVoidgrid::AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpulseLocation)
@@ -391,7 +391,7 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 	TargetParts = NewPixelMold;
 	TSet<FMinimalPartInstanceData> DataOfPartsToCreate = NewPixelMold;
 
-	//Remove Unneccesary Parts
+	//Remove Unnecessary Parts
 	TSet<UPart*> PartsCopy = Parts;
 	for (UPart* Part : PartsCopy)
 	{
@@ -410,7 +410,7 @@ void AVoidgrid::SetPixelMold(TSet<FMinimalPartInstanceData> NewPixelMold)
 		}
 	}
 
-	//Re-add temprary parts if inlcuded in a new mold
+	//Re-add temporary parts if included in a new mold
 	TSet<UPart*> TemporaryPartsCopy = TemporaryParts;
 	for (UPart* Part : TemporaryPartsCopy)
 	{
@@ -568,7 +568,7 @@ void AVoidgrid::RepairPixel(GridLocationType Location)
 }
 
 /**
- * Repairs a random pixel pixel.
+ * Repairs a random pixel.
  */
 void AVoidgrid::RepairPixel()
 {
@@ -598,6 +598,7 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
 				{
 					MutablePixels.Remove(Location);
 					LocationsToPixelState.Remove(Location);
+					ShrinkBounds(Location);
 				}
 				else
 				{
@@ -672,7 +673,7 @@ void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 				Parts.Remove(LocationsToPixelState.Find(Location)->GetCurrentPart());
 				LocationsToPixelState.Find(Location)->SetTargetPart(NewTarget);
 			}
-			//Edge case for removeing uneeded NullPart pixels
+			//Edge case for removing unneeded NullPart pixels
 			else
 			{
 				if (LocationsToPixelState.Find(Location)->GetCurrentPart()->GetShape().IsEmpty())
@@ -683,6 +684,7 @@ void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 				MutablePixels.Remove(Location);
 				Parts.Remove(LocationsToPixelState.Find(Location)->GetCurrentPart());
 				LocationsToPixelState.Remove(Location);
+				ShrinkBounds(Location);
 			}
 		}
 	}
@@ -717,16 +719,34 @@ void AVoidgrid::ClearVoidgrid()
  */
 void AVoidgrid::ShrinkBounds(FIntPoint RemovedPixelLocation)
 {
-	FIntPoint PossibleChangeSign = FIntPoint(((RemovedPixelLocation.X == LowerGridBound.X) * -1) + (RemovedPixelLocation.X == UpperGridBound.X), ((RemovedPixelLocation.Y == LowerGridBound.Y) * -1) + (RemovedPixelLocation.Y == UpperGridBound.Y));
-	for (int var : )
+	//Iterate through IntPoint elements
+	for (bool bUseYValue = false; !bUseYValue ; bUseYValue = !bUseYValue)
 	{
+		bool bUpperboundChangePossible = RemovedPixelLocation[bUseYValue] == UpperGridBound[bUseYValue];
+		bool bLowerboundChangePossible = RemovedPixelLocation[bUseYValue] == LowerGridBound[bUseYValue];
 
-	}
-	if (PossibleChangeSign.X != 0)
-	{
-		for (int32 PosibleBoundLocation = LowerGridBound.Y; PosibleBoundLocation < UpperGridBound.Y; )
+		//If voidgrid may be bounded by RemovedPixelLocation
+		if (bLowerboundChangePossible || bUpperboundChangePossible)
 		{
+			bool bOtherBorderPixelFound = false;
+			int32 TestXLocation = RemovedPixelLocation[bUseYValue];
 
+			//Find next bounding pixel
+			while (!bOtherBorderPixelFound && (TestXLocation != (bLowerboundChangePossible ? UpperGridBound[bUseYValue] : LowerGridBound[bUseYValue])))
+			{
+				for (int32 PosibleBoundLocation = LowerGridBound[!bUseYValue]; PosibleBoundLocation < UpperGridBound[!bUseYValue]; PosibleBoundLocation++)
+				{
+					if (LocationsToPixelState.Contains(FIntPoint(TestXLocation, PosibleBoundLocation)) && PosibleBoundLocation != RemovedPixelLocation[!bUseYValue])
+					{
+						bOtherBorderPixelFound = true;
+						TestXLocation--;
+						break;
+					}
+				}
+			}
+
+			//Update bounds accordingly
+			bUpperboundChangePossible ? UpperGridBound[bUseYValue] : LowerGridBound[bUseYValue] = TestXLocation;
 		}
 	}
 }
@@ -748,7 +768,7 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 {
 	DrawDebugCircle(WorldContext->GetWorld(), FTransform(FRotator(90, 0, 0), WorldLocation + FVector(0, 0, 0.5), FVector(1)).ToMatrixWithScale(), Radius, 50, FColor::White, false, 2, 0U, .05);
 
-	//Enusure radius is valid.
+	//Ensure radius is valid.
 	Radius = abs(Radius);
 
 	//Get all actors in radius
@@ -782,7 +802,7 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
  */
 TSet<FIntPoint> AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRelativeExplosionLocation, float Radius, FVectorArc Arc)
 {
-	//Array of all adjacent pixel offests
+	//Array of all adjacent pixel offsets
 	static TArray<FIntPoint> AdjacentPixelOffests{ TArray<FIntPoint>() };
 	if (AdjacentPixelOffests.IsEmpty())
 	{
