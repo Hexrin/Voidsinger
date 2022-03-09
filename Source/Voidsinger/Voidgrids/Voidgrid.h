@@ -592,6 +592,13 @@ private:
 	 */
 	void ClearVoidgrid();
 
+	/**
+	 * Attempts to shrink the bounds of this voidgrid given the removed pixel location.
+	 * 
+	 * @param RemovedPixelLocation - the location of the pixel removed.
+	 */
+	void ShrinkBounds(FIntPoint RemovedPixelLocation);
+
 	//Stores the Pixel Mold of this.
 	PixelMoldType LocationsToPixelState;
 
@@ -600,6 +607,12 @@ private:
 
 	//Stores the Locations of all damaged and temporary part Pixels.
 	TSet<GridLocationType> MutablePixels;
+
+	//The lower left corner of this voidgrid in grid space.
+	FIntPoint LowerGridBound;
+
+	//The upper right corner of this voidgrid in grid space.
+	FIntPoint UpperGridBound;
 
 	//Stores a referce to all permanent parts on this.
 	UPROPERTY()

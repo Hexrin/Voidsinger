@@ -483,6 +483,8 @@ void AVoidgrid::SetState(FVoidgridState NewState)
 					if (!LocationsToPixelState.Contains(NewPixelLocation))
 					{
 						LocationsToPixelState.Emplace(NewPixelLocation, FGridPixelData(CurrentPart, UPart::GetNullPart()));
+						LowerGridBound = LowerGridBound.ComponentMin(NewPixelLocation);
+						UpperGridBound = UpperGridBound.ComponentMax(NewPixelLocation);
 					}
 					else
 					{
@@ -595,7 +597,6 @@ void AVoidgrid::SetPixelIntact(GridLocationType Location, bool bNewIntact, bool 
 				if (LocationsToPixelState.Find(Location)->GetTargetPart() == UPart::GetNullPart())
 				{
 					MutablePixels.Remove(Location);
-
 					LocationsToPixelState.Remove(Location);
 				}
 				else
@@ -689,6 +690,8 @@ void AVoidgrid::SetPixelTarget(GridLocationType Location, UPart* NewTarget)
 	else if (NewTarget != UPart::GetNullPart())
 	{
 		LocationsToPixelState.Emplace(Location, FGridPixelData(NewTarget));
+		LowerGridBound = LowerGridBound.ComponentMin(Location);
+		UpperGridBound = UpperGridBound.ComponentMax(Location);
 		MutablePixels.Add(Location);
 	}
 }
@@ -703,6 +706,28 @@ void AVoidgrid::ClearVoidgrid()
 	for (TPair<GridLocationType, PixelType> Pair : GridPairs)
 	{
 		SetPixelIntact(Pair.Key, false, false);
+	}
+}
+
+
+/**
+ * Attempts to shrink the bounds of this voidgrid given the removed pixel location.
+ *
+ * @param RemovedPixelLocation - the location of the pixel removed.
+ */
+void AVoidgrid::ShrinkBounds(FIntPoint RemovedPixelLocation)
+{
+	FIntPoint PossibleChangeSign = FIntPoint(((RemovedPixelLocation.X == LowerGridBound.X) * -1) + (RemovedPixelLocation.X == UpperGridBound.X), ((RemovedPixelLocation.Y == LowerGridBound.Y) * -1) + (RemovedPixelLocation.Y == UpperGridBound.Y));
+	for (int var : )
+	{
+
+	}
+	if (PossibleChangeSign.X != 0)
+	{
+		for (int32 PosibleBoundLocation = LowerGridBound.Y; PosibleBoundLocation < UpperGridBound.Y; )
+		{
+
+		}
 	}
 }
 
