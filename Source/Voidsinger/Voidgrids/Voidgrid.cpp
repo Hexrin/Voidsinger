@@ -720,7 +720,7 @@ void AVoidgrid::ShrinkBounds(const FIntPoint RemovedPixelLocation)
 	for (int32 EachIntPointElement = 0; EachIntPointElement < FIntPoint::Num(); EachIntPointElement++)
 	{
 		//Whether or not to check the Y element of the bounds
-		bool bUseYValue = EachIntPointElement;
+		bool bUseYValue = (bool)EachIntPointElement;
 		//Whether or not it is possible that the upper bound has changed.
 		bool bUpperboundChangePossible = RemovedPixelLocation[bUseYValue] == UpperGridBound[bUseYValue];
 		//Whether or not it is possible that the lower bound has changed.
