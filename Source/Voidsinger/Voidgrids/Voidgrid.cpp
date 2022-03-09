@@ -62,8 +62,8 @@ void AVoidgrid::Tick(float DeltaTime)
 	
 	DeltaHeatTime += DeltaTime;
 
-	DrawDebugPoint(GetWorld(), TransformGridToWorld(UpperGridBound), 20, FColor::Red);
-	DrawDebugPoint(GetWorld(), TransformGridToWorld(LowerGridBound), 20, FColor::Green);
+	DrawDebugPoint(GetWorld(), TransformGridToWorld(UpperGridBound) + FVector(0, 0, .2), 20, FColor::Red);
+	DrawDebugPoint(GetWorld(), TransformGridToWorld(LowerGridBound) + FVector(0, 0, .2), 20, FColor::Green);
 }
 
 /* ------------- *\
@@ -717,11 +717,13 @@ void AVoidgrid::ClearVoidgrid()
  *
  * @param RemovedPixelLocation - the location of the pixel removed.
  */
-void AVoidgrid::ShrinkBounds(FIntPoint RemovedPixelLocation)
+void AVoidgrid::ShrinkBounds(const FIntPoint RemovedPixelLocation)
 {
+	bool bUseYValue = false;
 	//Iterate through IntPoint elements
-	for (bool bUseYValue = false; !bUseYValue ; bUseYValue = !bUseYValue)
+	for (int32 EachIntPointIndex = 0; EachIntPointIndex < FIntPoint::Num(); EachIntPointIndex++)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Removed = %i, Upper = %i, Is Y %i"), RemovedPixelLocation[bUseYValue], UpperGridBound[bUseYValue], bUseYValue);
 		bool bUpperboundChangePossible = RemovedPixelLocation[bUseYValue] == UpperGridBound[bUseYValue];
 		bool bLowerboundChangePossible = RemovedPixelLocation[bUseYValue] == LowerGridBound[bUseYValue];
 
@@ -734,20 +736,50 @@ void AVoidgrid::ShrinkBounds(FIntPoint RemovedPixelLocation)
 			//Find next bounding pixel
 			while (!bOtherBorderPixelFound && (TestXLocation != (bLowerboundChangePossible ? UpperGridBound[bUseYValue] : LowerGridBound[bUseYValue])))
 			{
-				for (int32 PosibleBoundLocation = LowerGridBound[!bUseYValue]; PosibleBoundLocation < UpperGridBound[!bUseYValue]; PosibleBoundLocation++)
+				bOtherBorderPixelFound = false;
+				UE_LOG(LogTemp, Warning, TEXT("Search for other pixel"));
+				for (int32 PosibleBoundLocation = LowerGridBound[!bUseYValue]; PosibleBoundLocation <= UpperGridBound[!bUseYValue] && !bOtherBorderPixelFound; PosibleBoundLocation++)
 				{
-					if (LocationsToPixelState.Contains(FIntPoint(TestXLocation, PosibleBoundLocation)) && PosibleBoundLocation != RemovedPixelLocation[!bUseYValue])
+					if (LocationsToPixelState.Contains(bUseYValue ? FIntPoint(PosibleBoundLocation, TestXLocation) : FIntPoint(TestXLocation, PosibleBoundLocation)) && PosibleBoundLocation != RemovedPixelLocation[!bUseYValue])
 					{
+						UE_LOG(LogTemp, Warning, TEXT("Other Pixel Found at %s"), *(bUseYValue ? FIntPoint(PosibleBoundLocation, TestXLocation) : FIntPoint(TestXLocation, PosibleBoundLocation)).ToString());
 						bOtherBorderPixelFound = true;
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Other Pixel not Found at %s"), *(bUseYValue ? FIntPoint(PosibleBoundLocation, TestXLocation) : FIntPoint(TestXLocation, PosibleBoundLocation)).ToString());
+					}
+				}
+
+				if (!bOtherBorderPixelFound)
+				{
+					if (bUpperboundChangePossible)
+					{
 						TestXLocation--;
-						break;
+					}
+					else
+					{
+						TestXLocation++;
 					}
 				}
 			}
 
 			//Update bounds accordingly
-			bUpperboundChangePossible ? UpperGridBound[bUseYValue] : LowerGridBound[bUseYValue] = TestXLocation;
+			if (bUpperboundChangePossible)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Assign upper %s to %i"), *(FString(bUseYValue?"Y" : "X")), TestXLocation);
+
+				UpperGridBound[bUseYValue] = TestXLocation;
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Assign lower %s to %i"), *(FString(bUseYValue ? "Y" : "X")), TestXLocation);
+
+				LowerGridBound[bUseYValue] = TestXLocation;
+			}
 		}
+
+		bUseYValue = !bUseYValue;
 	}
 }
 

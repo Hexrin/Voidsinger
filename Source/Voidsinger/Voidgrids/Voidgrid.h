@@ -597,7 +597,7 @@ private:
 	 * 
 	 * @param RemovedPixelLocation - the location of the pixel removed.
 	 */
-	void ShrinkBounds(FIntPoint RemovedPixelLocation);
+	void ShrinkBounds(const FIntPoint RemovedPixelLocation);
 
 	//Stores the Pixel Mold of this.
 	PixelMoldType LocationsToPixelState;
