@@ -12,6 +12,7 @@ TArray<FIntPoint> UPartEditorBase::GetPartShape()
 {
 	if (IsValid(PartBeingEdited))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("part being edited shape num %i"), PartBeingEdited->Shape.Num());
 		return PartBeingEdited->Shape.Array();
 	}
 	return TArray<FIntPoint>();
@@ -24,7 +25,7 @@ TArray<FIntPoint> UPartEditorBase::GetPartShape()
  */
 void UPartEditorBase::SetPartShape(TArray<FIntPoint> NewShape)
 {
-	if (IsValid(PartBeingEdited))
+	if (IsValid(PartBeingEdited) && IsValid(this))
 	{
 		PartBeingEdited->Shape = TSet<FIntPoint>(NewShape);
 	}
