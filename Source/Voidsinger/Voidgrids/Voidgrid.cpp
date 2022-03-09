@@ -721,8 +721,6 @@ void AVoidgrid::ClearVoidgrid()
  */
 void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, float Radius)
 {
-
-	//Debugggg -Mabel Suggestion
 	DrawDebugCircle(WorldContext->GetWorld(), FTransform(FRotator(90, 0, 0), WorldLocation + FVector(0, 0, 0.5), FVector(1)).ToMatrixWithScale(), Radius, 50, FColor::White, false, 2, 0U, .05);
 
 	//Enusure radius is valid.
@@ -731,15 +729,19 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
 	//Get all actors in radius
 	TArray<FOverlapResult> Results = TArray<FOverlapResult>();
 	WorldContext->GetWorld()->OverlapMultiByChannel(Results, WorldLocation, FQuat::Identity, ECollisionChannel::ECC_Pawn, FCollisionShape::MakeSphere(Radius));
-
-	FlushPersistentDebugLines(WorldContext->GetWorld());
+	
 	//Start explosion at WorldLocation for each voidgrid found
 	for (FOverlapResult EachResult : Results)
 	{
 		if (AVoidgrid* OtherVoidgrid = Cast<AVoidgrid>(EachResult.GetActor()))
 		{
 			FIntPoint GridRelativeExplosionLocation = OtherVoidgrid->TransformWorldToGrid(WorldLocation).IntPoint();
-			OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation, GridRelativeExplosionLocation, Radius);
+			TSet<FIntPoint> ExplodedPixels = OtherVoidgrid->StartExplosionAtPixel(GridRelativeExplosionLocation, GridRelativeExplosionLocation, Radius);
+
+			for (FIntPoint EachExplodedPixel : ExplodedPixels)
+			{
+				OtherVoidgrid->RemovePixel(EachExplodedPixel);
+			}
 		}
 	}
 }
@@ -751,8 +753,9 @@ void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, 
  * @param GridRelativeExplosionLocation -  The location of the center of the explosion relative to the pixel grid.
  * @param Radius - The radius of the explosion.
  * @param Arc - The arc to apply the explosion in. Only pixels inside the arc will be destroyed.
+ * @return All pixels that would be destroyed by the explosion.
  */
-void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRelativeExplosionLocation, float Radius, FVectorArc Arc)
+TSet<FIntPoint> AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRelativeExplosionLocation, float Radius, FVectorArc Arc)
 {
 	//Array of all adjacent pixel offests
 	static TArray<FIntPoint> AdjacentPixelOffests{ TArray<FIntPoint>() };
@@ -763,6 +766,8 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRel
 		AdjacentPixelOffests.Emplace(FIntPoint(0, -1));
 		AdjacentPixelOffests.Emplace(FIntPoint(-1, 0));
 	}
+
+	TSet<FIntPoint> ExplodedPixels = TSet<FIntPoint>();
 
 	//The location of the pixel relative to the explosion's center.
 	FIntPoint ExplosionRelativeLocation = PixelLocation - GridRelativeExplosionLocation;
@@ -776,7 +781,8 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRel
 	//If in new explosion radius
 	if (ExplosionRelativeLocation.SizeSquared() < FMath::Square(Radius))
 	{
-		FVector DebugOffset = FVector(0, 0, .5 * FMath::FRand() + .1);
+		ExplodedPixels.Emplace(PixelLocation);
+
 		// \/ For each adjacent pixel start an explosion if in Arc \/ //
 		for (FIntPoint EachAdjacentPixelOffest : AdjacentPixelOffests)
 		{
@@ -794,6 +800,7 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRel
 				FVector2D PixelUpperArcBound = FVector2D();
 				//The sign of X & Y in a tri-bit format
 				int32 NextExplosionSignedDirection = (FMath::Sign(AdjacentPixelExplosionRelativeLocation.X) + 1) + 3 * (FMath::Sign(AdjacentPixelExplosionRelativeLocation.Y) + 1);
+				
 				// \/ Sets PixelArcBounds based on sign \/ //
 				switch (NextExplosionSignedDirection)
 				{
@@ -860,14 +867,19 @@ void AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRel
 				{
 					FVectorArc NewArc = Arc;
 					NewArc.ShrinkArcBounds(PixelLowerArcBound, PixelUpperArcBound);
-					StartExplosionAtPixel(AdjacentPixelLocation, GridRelativeExplosionLocation, Radius, NewArc);
+
+					TSet<FIntPoint> NewExplodedPixels = StartExplosionAtPixel(AdjacentPixelLocation, GridRelativeExplosionLocation, Radius, NewArc);
+					for (FIntPoint EachNewExplodedPixel : NewExplodedPixels)
+					{
+						ExplodedPixels.Emplace(EachNewExplodedPixel);
+					}
 				}
 			}
 		}
 		// /\ For each adjacent pixel start an explosion if in Arc /\ //
-
-		RemovePixel(PixelLocation);
 	}
+
+	return ExplodedPixels;
 }
 
 /* /\ Explosion /\ *\

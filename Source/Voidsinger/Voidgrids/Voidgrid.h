@@ -633,9 +633,10 @@ private:
 	 * @param GridRelativeExplosionLocation - The location of the center of the explosion relative to the pixel grid.
 	 * @param Radius - The radius of the explosion.
 	 * @param Arc - The arc to apply the explosion in. Only pixels inside the arc will be destroyed.
+	 * @return All pixels that would be destroyed by the explosion.
 	 */
 	UFUNCTION()
-	void StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRelativeExplosionLocation, float Radius, FVectorArc Arc = FVectorArc());
+	TSet<FIntPoint> StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRelativeExplosionLocation, float Radius, FVectorArc Arc = FVectorArc());
 
 	/* /\ Explosion /\ *\
 	\* --------------- */
