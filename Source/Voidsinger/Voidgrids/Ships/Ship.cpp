@@ -173,6 +173,7 @@ void AShip::SaveState()
 	{
 		SaveGameInstance->VoidgridState = GetState();
 		SaveGameInstance->Location = FVector2D(GetActorLocation());
+		SaveGameInstance->Resources = GetResources();
 
 		UGameplayStatics::SaveGameToSlot(SaveGameInstance, GetSaveStateSlotName(), 0);
 	}
@@ -186,6 +187,8 @@ void AShip::LoadState()
 	if (UShipSaveState* SaveGameInstance = Cast<UShipSaveState>(UGameplayStatics::LoadGameFromSlot(GetSaveStateSlotName(), 0)))
 	{
 		SetState(SaveGameInstance->VoidgridState);
+		SetActorLocation(FVector(SaveGameInstance->Location, 0));
+		AddResources(SaveGameInstance->Resources);
 	}
 }
 
