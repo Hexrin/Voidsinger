@@ -716,41 +716,49 @@ void AVoidgrid::ClearVoidgrid()
  */
 void AVoidgrid::ShrinkBounds(const FIntPoint RemovedPixelLocation)
 {
-	bool bUseYValue = false;
 	//Iterate through IntPoint elements
-	for (int32 EachIntPointIndex = 0; EachIntPointIndex < FIntPoint::Num(); EachIntPointIndex++)
+	for (int32 EachIntPointElement = 0; EachIntPointElement < FIntPoint::Num(); EachIntPointElement++)
 	{
+		//Whether or not to check the Y element of the bounds
+		bool bUseYValue = EachIntPointElement;
+		//Whether or not it is possible that the upper bound has changed.
 		bool bUpperboundChangePossible = RemovedPixelLocation[bUseYValue] == UpperGridBound[bUseYValue];
+		//Whether or not it is possible that the lower bound has changed.
 		bool bLowerboundChangePossible = RemovedPixelLocation[bUseYValue] == LowerGridBound[bUseYValue];
 
 		//If voidgrid may be bounded by RemovedPixelLocation
 		if (bLowerboundChangePossible || bUpperboundChangePossible)
 		{
+			//Whether or not another pixel is found that could be defining the bounds of this voidgrid.
 			bool bOtherBorderPixelFound = false;
-			int32 TestXLocation = RemovedPixelLocation[bUseYValue];
+			//The new location for the bounds.
+			int32 NewBoundLocation = RemovedPixelLocation[bUseYValue];
 
 			//Find next bounding pixel
-			while (!bOtherBorderPixelFound && (TestXLocation != (bLowerboundChangePossible ? UpperGridBound[bUseYValue] : LowerGridBound[bUseYValue])))
+			while (!bOtherBorderPixelFound && (NewBoundLocation != (bLowerboundChangePossible ? UpperGridBound[bUseYValue] : LowerGridBound[bUseYValue])))
 			{
+				//Whether or not another pixel has been found in this row that defines the bounds of this voidgrid.
 				bOtherBorderPixelFound = false;
 				
+				//Search this row for other pixels that could bound this voidgrid.
 				for (int32 PosibleBoundLocation = LowerGridBound[!bUseYValue]; PosibleBoundLocation <= UpperGridBound[!bUseYValue] && !bOtherBorderPixelFound; PosibleBoundLocation++)
 				{
-					if (LocationsToPixelState.Contains(bUseYValue ? FIntPoint(PosibleBoundLocation, TestXLocation) : FIntPoint(TestXLocation, PosibleBoundLocation)) && PosibleBoundLocation != RemovedPixelLocation[!bUseYValue])
+					if (LocationsToPixelState.Contains(bUseYValue ? FIntPoint(PosibleBoundLocation, NewBoundLocation) : FIntPoint(NewBoundLocation, PosibleBoundLocation)) && PosibleBoundLocation != RemovedPixelLocation[!bUseYValue])
 					{
 						bOtherBorderPixelFound = true;
 					}
 				}
 
+				//Update NewBoundLocation
 				if (!bOtherBorderPixelFound)
 				{
 					if (bUpperboundChangePossible)
 					{
-						TestXLocation--;
+						NewBoundLocation--;
 					}
 					else
 					{
-						TestXLocation++;
+						NewBoundLocation++;
 					}
 				}
 			}
@@ -758,15 +766,13 @@ void AVoidgrid::ShrinkBounds(const FIntPoint RemovedPixelLocation)
 			//Update bounds accordingly
 			if (bUpperboundChangePossible)
 			{
-				UpperGridBound[bUseYValue] = TestXLocation;
+				UpperGridBound[bUseYValue] = NewBoundLocation;
 			}
 			else
 			{
-				LowerGridBound[bUseYValue] = TestXLocation;
+				LowerGridBound[bUseYValue] = NewBoundLocation;
 			}
 		}
-
-		bUseYValue = !bUseYValue;
 	}
 }
 
