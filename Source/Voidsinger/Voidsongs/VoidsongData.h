@@ -226,7 +226,7 @@ public:
 	/**
 	 * Gets a copy of all the Motifs in the Voidsong
 	 * 
-	 * @return - Copy of Motifs
+	 * @return Copy of Motifs
 	 */
 	TArray<UBaseMotif*> GetMotifs() const
 	{
@@ -236,7 +236,7 @@ public:
 	/**
 	 * Gets a copy of the Faction Motifs in the Voidsong
 	 *
-	 * @return - Copy of FactionMotifs
+	 * @return Copy of FactionMotifs
 	 */
 	TSet<UBaseFactionMotif*> GetFactionMotifs() const
 	{
@@ -246,7 +246,7 @@ public:
 	/**
 	 * Gets a copy of the Noun Motifs in the Voidsong
 	 *
-	 * @return - Copy of NounMotifs
+	 * @return Copy of NounMotifs
 	 */
 	TSet<UBaseNounMotif*> GetNounMotifs() const
 	{
@@ -256,7 +256,7 @@ public:
 	/**
 	 * Gets a copy of all the Verb Motifs in the Voidsong
 	 *
-	 * @return - Copy of VerbMotifs
+	 * @return Copy of VerbMotifs
 	 */
 	TArray<UBaseVerbMotif*> GetVerbMotifs() const
 	{
@@ -266,7 +266,7 @@ public:
 	/**
 	 * Gets a copy of the Factions (enum) in the Voidsong
 	 *
-	 * @return - Copy of Factions
+	 * @return Copy of Factions
 	 */
 	TSet<EFaction> GetFactions() const
 	{
@@ -276,7 +276,7 @@ public:
 	/**
 	 * Gets a copy of the Nouns (enum) in the Voidsong
 	 *
-	 * @return - Copy of Nouns
+	 * @return Copy of Nouns
 	 */
 	TSet<ENoun> GetNouns() const
 	{
@@ -286,7 +286,7 @@ public:
 	/*
 	 * Gets the duration of this Voidsong
 	 * 
-	 * @return - The duration of the Voidsong
+	 * @return The duration of the Voidsong
 	 */
 	float GetDuration() const
 	{

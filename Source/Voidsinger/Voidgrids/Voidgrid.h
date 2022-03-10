@@ -11,12 +11,12 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Voidsinger/VoidsingerTypes.h"
 #include "ResourceType.h"
+#include "VectorArc.h"
 #include "Voidgrid.generated.h"
 
 
 
 class UThrustManager;
-
 
 //The type used for storing pixel data
 typedef FGridPixelData PixelType;
@@ -130,7 +130,7 @@ public:
 	/**
 	 * Gets the temperature of this pixel.
 	 * 
-	 * @return - The temperature of this pixel
+	 * @return The temperature of this pixel
 	 */
 	float GetTemperature()
 	{
@@ -509,22 +509,22 @@ public:
 	FGridLocationDelegate OnPixelAdded;
 
 	/**
-	 * Gets the grid loction of a world loction.
+	 * Gets the grid location of a world location.
 	 *
 	 * @param WorldLocation - The world location to transform.
-	 * @return The grid loction of WorldLocation;
+	 * @return The grid location of WorldLocation.
 	 */
 	UFUNCTION(BlueprintPure)
-	FIntPoint TransformWorldToGrid(FVector WorldLocation) const;
+	FVector2D TransformWorldToGrid(FVector WorldLocation) const;
 
 	/**
-	 * Gets the world location of a grid loction.
+	 * Gets the world location of a grid location.
 	 *
 	 * @param GridLoction - The grid location to transform.
-	 * @return The world loction of GridLoction;
+	 * @return The world location of GridLocation.
 	 */
 	UFUNCTION(BlueprintPure)
-	FVector TransformGridToWorld(FIntPoint GridLocation) const;
+	FVector TransformGridToWorld(FVector2D GridLocation) const;
 
 	/**
 	 * Sets the pixel mold of the voidgrid
@@ -604,6 +604,13 @@ private:
 	 */
 	void ClearVoidgrid();
 
+	/**
+	 * Attempts to shrink the bounds of this voidgrid given the removed pixel location.
+	 * 
+	 * @param RemovedPixelLocation - the location of the pixel removed.
+	 */
+	void ShrinkBounds(const FIntPoint RemovedPixelLocation);
+
 	//Stores the Pixel Mold of this.
 	PixelMoldType LocationsToPixelState;
 
@@ -612,6 +619,12 @@ private:
 
 	//Stores the Locations of all damaged and temporary part Pixels.
 	TSet<GridLocationType> MutablePixels;
+
+	//The lower left corner of this voidgrid in grid space.
+	FIntPoint LowerGridBound;
+
+	//The upper right corner of this voidgrid in grid space.
+	FIntPoint UpperGridBound;
 
 	//Stores a referce to all permanent parts on this.
 	UPROPERTY()
@@ -624,11 +637,41 @@ private:
 	/* /\ Pixel Mold /\ *\
 	\* ---------------- */
 
+	/* --------------- *\
+	\* \/ Explosion \/ */
+public:
+	/**
+	 * Causes an explosion at a world location. This will try to remove all pixels within the explosion radius, but pixel strength may reduce the radius.
+	 * 
+	 * @param WorldContext - An object used to get the world that the explosion will occur in.
+	 * @param WorldLocation - The location of the center of the explosion.
+	 * @param Radius - The distance from the center within which pixels will be destroyed.
+	 */
+	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContext"))
+	static void ExplodeVoidgrids(UObject* WorldContext, FVector WorldLocation, float Radius);
+
+private:
+	/**
+	 * Recursive function that will explode all pixels in a given arc that are not blocked by high strength parts.
+	 *
+	 * @param GridLocation - The pixel to remove.
+	 * @param GridRelativeExplosionLocation - The location of the center of the explosion relative to the pixel grid.
+	 * @param Radius - The radius of the explosion.
+	 * @param Arc - The arc to apply the explosion in. Only pixels inside the arc will be destroyed.
+	 * @return All pixels that would be destroyed by the explosion.
+	 */
+	UFUNCTION()
+	TSet<FIntPoint> StartExplosionAtPixel(FIntPoint PixelLocation, FIntPoint GridRelativeExplosionLocation, float Radius, FVectorArc Arc = FVectorArc());
+
+	/* /\ Explosion /\ *\
+	\* --------------- */
+
 	/* ---------------- *\
 	\* \/ Pixel Mesh \/ */
 
 public:
-	//A procedural mesh component for physicaly representing all pixels on this.
+
+	//A procedural mesh component for physically representing all pixels on this.
 	UPROPERTY(VisibleAnywhere)
 	class UProceduralMeshComponent* PixelMeshComponent;
 
@@ -773,4 +816,3 @@ private:
 /* /\ ========= /\ *\
 |  /\ AVoidgrid /\  |
 \* /\ ========= /\ */
-
