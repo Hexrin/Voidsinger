@@ -138,7 +138,7 @@ public:
 	}
 
 	/**
-	 * Gets whether or not this is curently the target part.
+	 * Gets whether or not this is currently the target part.
 	 */
 	bool IsTargetPart()
 	{
@@ -159,7 +159,7 @@ public:
 	 * Sets the part of this pixel.
 	 * 
 	 * @param NewPart - The new value of part.
-	 * @return A refernce to this.
+	 * @return A reference to this.
 	 */
 	void SetCurrentPart(UPart* NewPart)
 	{
@@ -193,7 +193,7 @@ public:
 	 * Sets the new target part of this pixel.
 	 *
 	 * @param NewPart - The new target part of this pixel.
-	 * @return A refernce to this.
+	 * @return A reference to this.
 	 */
 	void SetTargetPart(UPart* NewPart)
 	{
@@ -286,7 +286,7 @@ public:
 	TSet<FPartInstanceData> State = TSet<FPartInstanceData>();
 
 	/**
-	 * Initilizes a voidgrid state using its mold and pixel state.
+	 * Initializes a voidgrid state using its mold and pixel state.
 	 */
 	FVoidgridState(MinimalPixelMoldDataType VoidgridMold = MinimalPixelMoldDataType(), TSet<FPartInstanceData> VoidgridPixelState = TSet<FPartInstanceData>())
 	{
@@ -320,9 +320,9 @@ FORCEINLINE uint32 GetTypeHash(const FVoidgridState& Thing)
 |  \/ AVoidgrid \/  |
 \* \/ ========= \/ */
 
-//Used for dispatching events requireing a grid locaiton.
+//Used for dispatching events requiring a grid location.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FGridLocationDelegate, FIntPoint, GridLocaction, bool, bApplyChangeEffect, UPart*, Part);
-//Used for dispatching events requireing mass information.
+//Used for dispatching events requiring mass information.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMassDelegate, float, Mass, FVector2D, CenterOfMass, float, MomentOfInertia);
 //Used for dispatching simple events with no data.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGeneralDelegate);
@@ -353,7 +353,7 @@ public:
 	/**
 	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
 	 *
-	 * @param RelativeImpulse - The impluse to apply to this voidgrid in relative space.
+	 * @param RelativeImpulse - The impulse to apply to this voidgrid in relative space.
 	 * @param GridImpulseLocation - The location on the part grid to apply the impulse at.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -361,7 +361,7 @@ public:
 	/**
 	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
 	 *
-	 * @param Impulse - The impluse to apply to this voidgrid in world space.
+	 * @param Impulse - The impulse to apply to this voidgrid in world space.
 	 * @param WorldImpulseLocation - The location in world space to apply the impulse at.
 	 */
 	void AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpulseLocation = GridLocationType::ZeroValue);
@@ -382,7 +382,7 @@ private:
 	void UpdateTransform(float DeltaTime);
 
 	/**
-	 * Checks for collisions along this ships path to a new transfrom.
+	 * Checks for collisions along this ships path to a new transform.
 	 *
 	 * @param DeltaTransform - The change in transform needed to get to the new transform.
 	 * @param Hit - The first blocking hit from this voidgrid colliding with another voidgrid.
@@ -394,7 +394,7 @@ private:
 	 * Updates Mass, CenterOfMass, MomentOfInertia because of a change in mass.
 	 * 
 	 * @param DeltaMass - The change in mass of this.
-	 * @param MassLocation - The location of the mass that changned on this.
+	 * @param MassLocation - The location of the mass that changed on this.
 	 */
 	UFUNCTION()
 	void UpdateMassProperties(float DeltaMass, FVector2D MassLocation);
@@ -403,7 +403,7 @@ private:
 	UPROPERTY(VisibleInstanceOnly)
 	FVector2D LinearVelocity;
 
-	//Stores the angular velocity of this voidgrid. Mesured in Radians/Second.
+	//Stores the angular velocity of this voidgrid. Measured in Radians/Second.
 	UPROPERTY(VisibleInstanceOnly)
 	float AngularVelocity;
 
@@ -427,7 +427,7 @@ private:
 	UPROPERTY(Config)
 	float MaxAngularVelocity{ PI * 6 };
 
-	//Stores the percent of energy conserved when coliding
+	//Stores the percent of energy conserved when colliding
 	UPROPERTY(Config, meta=(ClampMin = "0", ClampMax = "1"))
 	float CollisionElasticity{ 1 };
 
@@ -446,7 +446,7 @@ public:
 	// \/ Add temperature \/ /
 
 	/**
-	 * Applys the temperature given at the world location given
+	 * Applies the temperature given at the world location given
 	 * 
 	 * @param Location - The world location to apply the temperature
 	 * @param Temperature - The temperature to add
@@ -455,7 +455,7 @@ public:
 	void AddTemperatureAtLocation(FVector WorldLocation, float Temperature);
 
 	/**
-	 * Applys the temperature given at the location given on this Voidgrid
+	 * Applies the temperature given at the location given on this Voidgrid
 	 * 
 	 * @param Location - The location to apply the temperature
 	 * @param Temperature - The temperature to add
@@ -482,7 +482,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float TemperaturePropagationFactor = 0.5;
 
-	//The amount of temperature that is small enought that it's negligable
+	//The amount of temperature that is small enough that it's negligible
 	UPROPERTY(EditDefaultsOnly)
 	float NegligableTemperatureAmount{ 0.5 };
 
@@ -509,19 +509,19 @@ public:
 	FGridLocationDelegate OnPixelAdded;
 
 	/**
-	 * Gets the grid loction of a world loction.
+	 * Gets the grid location of a world location.
 	 *
 	 * @param WorldLocation - The world location to transform.
-	 * @return The grid loction of WorldLocation;
+	 * @return The grid location of WorldLocation;
 	 */
 	UFUNCTION(BlueprintPure)
 	FIntPoint TransformWorldToGrid(FVector WorldLocation) const;
 
 	/**
-	 * Gets the world location of a grid loction.
+	 * Gets the world location of a grid location.
 	 *
 	 * @param GridLoction - The grid location to transform.
-	 * @return The world loction of GridLoction;
+	 * @return The world location of GridLoction;
 	 */
 	UFUNCTION(BlueprintPure)
 	FVector TransformGridToWorld(FIntPoint GridLocation) const;
@@ -613,11 +613,11 @@ private:
 	//Stores the Locations of all damaged and temporary part Pixels.
 	TSet<GridLocationType> MutablePixels;
 
-	//Stores a referce to all permanent parts on this.
+	//Stores a reference to all permanent parts on this.
 	UPROPERTY()
 	TSet<UPart*> Parts;
 
-	//Stores a referce to all parts marked for removal on this.
+	//Stores a reference to all parts marked for removal on this.
 	UPROPERTY()
 	TSet<UPart*> TemporaryParts;
 
@@ -628,7 +628,7 @@ private:
 	\* \/ Pixel Mesh \/ */
 
 public:
-	//A procedural mesh component for physicaly representing all pixels on this.
+	//A procedural mesh component for physically representing all pixels on this.
 	UPROPERTY(VisibleAnywhere)
 	class UProceduralMeshComponent* PixelMeshComponent;
 
@@ -657,8 +657,8 @@ private:
 	/**
 	 * Sets the visible a mesh segment for a pixel.
 	 *
-	 * @param Location - The location of the pixel set the visablilty of.
-	 * @param bNewVisibility - The visablity to set the pixel mesh to.
+	 * @param Location - The location of the pixel set the visibility of.
+	 * @param bNewVisibility - The visibility to set the pixel mesh to.
 	 */
 	void SetPixelMeshVisibility(GridLocationType Location, bool bNewVisibility);
 
@@ -671,7 +671,7 @@ private:
 	TArray<FVector> GetPixelVertices(GridLocationType Location);
 
 	/**
-	 * Generates 2 triangles that conect the four specified vertices.
+	 * Generates 2 triangles that connect the four specified vertices.
 	 * 
 	 * @param UpperRight - The vertex index of the upper right corner of the square.
 	 * @param UpperLeft - The vertex index of the upper left corner of the square.
@@ -682,7 +682,7 @@ private:
 	UFUNCTION()
 	TArray<int32> CreateTrianglesForPixelMeshFace(int32 UpperRight = 0, int32 UpperLeft = 1, int32 LowerRight = 2, int32 LowerLeft =3);
 
-	//Stores the mesh segment incisces coresponding to each pixel
+	//Stores the mesh segment indices corresponding to each pixel
 	TMap<GridLocationType, int32> PixelMeshSegmentIndices;
 
 	//Stores the default UVs of a single pixel mesh

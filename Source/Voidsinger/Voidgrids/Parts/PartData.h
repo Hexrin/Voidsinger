@@ -8,7 +8,7 @@
 #include "PartData.generated.h"
 
 /**
- * Stores information realating to a part type
+ * Stores information relating to a part type
  */
 UCLASS()
 class VOIDSINGER_API UPartData : public UDataAsset
@@ -48,7 +48,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float HeatResistance{ 1 };
 
-	//Stores whether or not this part is placable by the player.
+	//Stores whether or not this part is placeable by the player.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bPlaceable{ true };
 
@@ -56,7 +56,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bRemovable{ true };
 
-	//Stores whether this part can be ovrriden when editing the mold.
+	//Stores whether this part can be overridden when editing the mold.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bOverridable{ true };
 
@@ -64,6 +64,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bRotatable{ true };
 
-	//Gets the primar asset Id for the asset mager and build UI.
+	//Gets the primary asset Id for the asset manger and build UI.
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
 };

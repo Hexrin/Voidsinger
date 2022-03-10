@@ -7,7 +7,7 @@
 #include "BaseVerbMotif.generated.h"
 
 /**
- * The BaseVerbVoidsong stores an overridable fuction on it. It is the base class for all Verb Voidsongs. When this type of Voidsong is performed, an action will be executed when the parts that were activated
+ * The BaseVerbVoidsong stores an overridable function on it. It is the base class for all Verb Voidsongs. When this type of Voidsong is performed, an action will be executed when the parts that were activated
  * interact with something. For example, if the Verb Voidsong "Hot" was played along with the "Laser" noun, all lasers would fire with an extra hot laser. Whatever these lasers hit will be heated up.
  */
 UCLASS(Abstract, Blueprintable, config = VoidSettings)

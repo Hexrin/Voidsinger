@@ -4,7 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 
 
-//Initilize the save game.
+//Initialize the save game.
 void UPixelMoldEditorBase::NativeOnInitialized()
 {
 	MoldNamesSave = Cast<USlotNamesSave>(UGameplayStatics::LoadGameFromSlot(MoldNamesSaveSlotName, 0));
@@ -49,7 +49,7 @@ void UPixelMoldEditorBase::SetMold(MinimalPixelMoldDataType NewMold)
 }
 
 /**
- * Sets the the mold of this to be the same as target's mold.
+ * Sets the mold of this to be the same as target's mold.
  */
 void UPixelMoldEditorBase::LoadMoldFromTarget()
 {
@@ -70,7 +70,7 @@ void UPixelMoldEditorBase::SaveMold(FString MoldName)
 	MoldSave->Data = Mold;
 	UGameplayStatics::SaveGameToSlot(MoldSave, MoldSaveSlotNamePrefix.Append(MoldName), 0);
 
-	//Saves the mold's existance
+	//Saves the mold's existence
 	MoldNamesSave->Names.Add(MoldName);
 	UGameplayStatics::SaveGameToSlot(MoldNamesSave, MoldNamesSaveSlotName, 0);
 }
@@ -79,7 +79,7 @@ void UPixelMoldEditorBase::SaveMold(FString MoldName)
  * Loads the mold of a given name.
  *
  * @param MoldName - The name of the mold you want to load and its save slot.
- * @return Whether or not the mold was succesfuly loaded.
+ * @return Whether or not the mold was successfully loaded.
  */
 bool UPixelMoldEditorBase::LoadMold(FString MoldName)
 {
@@ -126,7 +126,7 @@ bool UPixelMoldEditorBase::PlacePart(UPartData* Part, FPartTransform Transform, 
 {
 	if (IsValid(Part) && Part->Shape.Num() != 0)
 	{
-		//Search for overlaping parts.
+		//Search for overlapping parts.
 		TSet<FMinimalPartInstanceData> PartsToRemove = TSet<FMinimalPartInstanceData>();
 		for (GridLocationType ShapeComponent : Part->Shape)
 		{
@@ -135,7 +135,7 @@ bool UPixelMoldEditorBase::PlacePart(UPartData* Part, FPartTransform Transform, 
 			if (PartLocations.Contains(ShapeComonentGirdLocation))
 			{
 				FMinimalPartInstanceData OverLapingPart = PartLocations.FindRef(ShapeComonentGirdLocation);
-				//Mark ovrridable parts for removal.
+				//Mark overridable parts for removal.
 				if (bOverrridePriorParts && OverLapingPart.Data->bOverridable && OverLapingPart.Data->bRemovable)
 				{
 					PartsToRemove.Add(PartLocations.FindRef(ShapeComonentGirdLocation));
@@ -174,7 +174,7 @@ bool UPixelMoldEditorBase::PlacePart(UPartData* Part, FPartTransform Transform, 
  * Removes a part from the mold of this.
  *
  * @param Location - The location to remove a part from.
- * @return Wether or not a part was removed.
+ * @return Whether or not a part was removed.
  */
 bool UPixelMoldEditorBase::RemovePart(FIntPoint Location)
 {
@@ -187,7 +187,7 @@ bool UPixelMoldEditorBase::RemovePart(FIntPoint Location)
  *
  * @param Location - The location to remove a part from.
  * @param bCallUpdateEvent - Whether or not to call OnMoldUpdated() in this function.
- * @return Wether or not a part was removed.
+ * @return Whether or not a part was removed.
  */
 bool UPixelMoldEditorBase::RemovePart(FIntPoint Location, bool bCallUpdatedEvent)
 {
@@ -198,7 +198,7 @@ bool UPixelMoldEditorBase::RemovePart(FIntPoint Location, bool bCallUpdatedEvent
 
 
 	FMinimalPartInstanceData PartToRemove = PartLocations.FindRef(Location);
-	if (ensureMsgf(Mold.Contains(PartToRemove), TEXT("--- Removing of %s, %s, %i Faild ---\n\t\tSet hashing failed."), *PartToRemove.Data->GetFName().ToString(), *(PartToRemove.Transform.GetGridLocation().ToString()), (int32)PartToRemove.Transform.Rotation))
+	if (ensureMsgf(Mold.Contains(PartToRemove), TEXT("--- Removing of %s, %s, %i Failed ---\n\t\tSet hashing failed."), *PartToRemove.Data->GetFName().ToString(), *(PartToRemove.Transform.GetGridLocation().ToString()), (int32)PartToRemove.Transform.Rotation))
 	{
 		Mold.Remove(PartToRemove);
 	}
@@ -225,7 +225,7 @@ bool UPixelMoldEditorBase::RemovePart(FIntPoint Location, bool bCallUpdatedEvent
  *
  * @param Location - The location to remove a part from.
  * @param PartData - Is set to the part data at Location.
- * @return Wether or not a part exists at Location.
+ * @return Whether or not a part exists at Location.
  */
 bool UPixelMoldEditorBase::GetPart(FIntPoint Location, FMinimalPartInstanceData& PartData)
 {

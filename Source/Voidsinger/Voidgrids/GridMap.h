@@ -42,7 +42,7 @@ private:
 	//The type used for storing a Values and its Location
 	typedef TPair<GridLocationType, ValueType> LocationValuePairType;
 
-	//The type used for storing Values and thier Locations
+	//The type used for storing Values and their Locations
 	typedef TMap<GridLocationType, ValueType> GridInfoType;
 
 	/* /\ typedefs /\ *\
@@ -52,7 +52,7 @@ private:
 	\* \/ Variables \/ */
 
 private:
-	//Stores all values and thier locations
+	//Stores all values and their locations
 	GridInfoType GridInfo;
 
 	//Stores the size of the grid
@@ -72,7 +72,7 @@ public:
 		GridSize = GridDimensions;
 	}
 
-	//Constructs a GridMap with the given dimensions and Values initilized using the default constuctor at all Locations.
+	//Constructs a GridMap with the given dimensions and Values initialized using the default constructor at all Locations.
 	TGridMap(TSet<GridLocationType> Locations, GridLocationType GridDimensions = GridLocationType(500))
 	{
 		TGridMap(Locations, ValueType(), GridDimensions);
@@ -89,7 +89,7 @@ public:
 		}
 	}
 
-	//Constucts a GridMap with the given Values and dimensions.
+	//Constructs a GridMap with the given Values and dimensions.
 	TGridMap(GridInfoType Values, GridLocationType GridDimensions = GridLocationType(250))
 	{
 		GridInfo = Values;
@@ -137,7 +137,7 @@ public:
 	/**
 	 * Checks if there is a value at a given location.
 	 *
-	 * @param Location - The location to seach for.
+	 * @param Location - The location to search for.
 	 * @return Whether or not the location has a value.
 	 */
 	bool Contains(GridLocationType Location)
@@ -148,7 +148,7 @@ public:
 	/**
 	 * Checks if there is a value at a given location.
 	 *
-	 * @param Location - The location to seach for.
+	 * @param Location - The location to search for.
 	 * @param Pred - The predicate that the value must satisfy for this to contain that value.
 	 * @return Whether or not the location has a value.
 	 */
@@ -164,7 +164,7 @@ public:
 	/**
 	 * Finds the value at a given location.
 	 *
-	 * @param Location - The location to seach at.
+	 * @param Location - The location to search at.
 	 * @return The value at Location.
 	 */
 	ValueType* Find(GridLocationType Location)
@@ -180,8 +180,8 @@ public:
 	/**
 	 * Finds the value at a given location.
 	 *
-	 * @param Location - The location to seach at.
-	 * @return A referce to the value at Location.
+	 * @param Location - The location to search at.
+	 * @return A reference to the value at Location.
 	 */
 	ValueType FindRef(GridLocationType Location)
 	{
@@ -279,10 +279,10 @@ public:
 	}
 
 	/**
-	 * Checks if StartLocation is connected connected to EndLocation in the grid.
+	 * Checks if StartLocation is connected to EndLocation in the grid.
 	 * 
-	 * @param StartLocation - The location in gridspace to begin the connectivty search.
-	 * @param EndLocation -  The target location in gridspace for the connectivty search.
+	 * @param StartLocation - The location in grid space to begin the connectivity search.
+	 * @param EndLocation -  The target location in grid space for the connectivity search.
 	 * @return Whether or not StartLocation is connected to EndLocation.
 	 */
 	bool PointsConnected(GridLocationType StartLocation, GridLocationType EndLocation)
@@ -291,27 +291,27 @@ public:
 	}
 
 	/**
-	 * Checks if StartLocation is connected connected to EndLocation in the grid by Location Value Pairs that satisfy the given predicate.
+	 * Checks if StartLocation is connected to EndLocation in the grid by Location Value Pairs that satisfy the given predicate.
 	 *
-	 * @param StartLocation - The location in gridspace to begin the connectivty search.
-	 * @param EndLocation - The target location in gridspace for the connectivty search.
-	 * @param ConectivityCondition - If ConectivityCondition(LocationValuePairType) is false than that location is not considered when searching for valid conections.
+	 * @param StartLocation - The location in grid space to begin the connectivity search.
+	 * @param EndLocation - The target location in grid space for the connectivity search.
+	 * @param ConectivityCondition - If ConectivityCondition(LocationValuePairType) is false than that location is not considered when searching for valid connections.
 	 * @return Whether or not StartLocation is connected to EndLocation by Location Value Pairs that satisfy the given predicate.
 	 */
 	template<typename Predicate>
 	bool PointsConnected(GridLocationType StartLocation, GridLocationType EndLocation, Predicate ConectivityCondition)
 	{
-		//Initate Conectiveity Array
+		//Initialize Connectivity Array
 		TArray<GridLocationType> ConectivityArray = TArray<GridLocationType>();
 		return PointsConnected(StartLocation, EndLocation, ConectivityArray, ConectivityCondition);
 	}
 
 private:
 	/**
-	 * Checks if StartLocation is connected connected to EndLocation in the grid.
+	 * Checks if StartLocation is connected to EndLocation in the grid.
 	 *
-	 * @param StartLocation - The location in gridspace to begin the connectivty search.
-	 * @param EndLocation -  The target location in gridspace for the connectivty search.
+	 * @param StartLocation - The location in grid space to begin the connectivity search.
+	 * @param EndLocation -  The target location in grid space for the connectivity search.
 	 * @param SeachedLocations - An array storing locations already searched.
 	 * @return Whether or not StartLocation is connected to EndLocation.
 	 */
@@ -321,39 +321,39 @@ private:
 	}
 
 	/**
-	 * Checks if StartLocation is connected connected to EndLocation in the grid.
+	 * Checks if StartLocation is connected to EndLocation in the grid.
 	 *
-	 * @param StartLocation - The location in gridspace to begin the connectivty search.
-	 * @param EndLocation -  The target location in gridspace for the connectivty search.
+	 * @param StartLocation - The location in grid space to begin the connectivity search.
+	 * @param EndLocation -  The target location in grid space for the connectivity search.
 	 * @param SeachedLocations - An array storing locations already searched.
-	 * @param ConectivityCondition - If ConectivityCondition(LocationValuePairType) is false than that location is not considered when searching for valid conections.
+	 * @param ConectivityCondition - If ConectivityCondition(LocationValuePairType) is false than that location is not considered when searching for valid connections.
 	 * @return Whether or not StartLocation is connected to EndLocation.
 	 */
 	template<typename Predicate>
 	bool PointsConnected(GridLocationType StartLocation, GridLocationType EndLocation, TArray<GridLocationType>& SeachedLocations, Predicate ConectivityCondition)
 	{
-		//Detect if funtion has reached target
+		//Detect if function has reached target
 		if (StartLocation == EndLocation)
 		{
 			return true;
 		}
 
-		//Prevent Infinte Loops
+		//Prevent Infinite Loops
 		SeachedLocations.Emplace(StartLocation);
 
-		//Initate Variables
+		//Initiate Variables
 		bool ReturnValue = false;
 		const bool IsXCloser = abs((EndLocation - StartLocation).X) < abs((EndLocation - StartLocation).Y);
 		bool XIsPosive = (EndLocation - StartLocation).X > 0;
 		bool YIsPosive = (EndLocation - StartLocation).Y > 0;
 
-		//Iterate though and run recursive function for all adjecent pixels
+		//Iterate though and run recursive function for all adjacent pixels
 		for (int i = 0; i < 4; i++)
 		{
-			//Select next pixel to scan based of of direction to EndLocation
+			//Select next pixel to scan based of direction to EndLocation
 			GridLocationType TargetLocation = StartLocation + ((!IsXCloser ^ (i % 2 == 1)) ? GridLocationType((XIsPosive ^ (i > 1)) ? 1 : -1, 0) : GridLocationType(0, (YIsPosive ^ (i > 1)) ? 1 : -1));
 			
-			//Check to see if TargetLocation contains a value and satisfies the Conectivity Condition.
+			//Check to see if TargetLocation contains a value and satisfies the Connectivity Condition.
 			if (!SeachedLocations.Contains(TargetLocation) && Contains(TargetLocation) && ConectivityCondition(LocationValuePairType(TargetLocation, FindRef(TargetLocation))))
 			{
 				ReturnValue = PointsConnected(TargetLocation, EndLocation, SeachedLocations, ConectivityCondition);
@@ -369,7 +369,7 @@ private:
 	}
 
 	/**
-	 * Helper Function for PointsConnected. Allways returns true.
+	 * Helper Function for PointsConnected. Always returns true.
 	 * 
 	 * @return true
 	 */

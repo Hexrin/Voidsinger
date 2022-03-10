@@ -42,7 +42,7 @@ void UVoidsong::Tick(float DeltaTime)
 
 	if (TimeSincePlayed >= VoidsongData.GetDuration())
 	{
-		Deconstruct();
+		Destruct();
 	}
 
 	// /\ Check if the Voidsong has played for the correct Duration, if so, Deactivate /\ /
@@ -78,7 +78,7 @@ TStatId UVoidsong::GetStatId() const
 /**
  * Deactivates the Voidsong
  */
-void UVoidsong::Deconstruct()
+void UVoidsong::Destruct()
 {
 	//Unbind the delegates
 	ForDuration.Clear();

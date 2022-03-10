@@ -22,7 +22,7 @@ public:
 	\* \/ Initializers \/ */
 
 	/**
-	 * Initializes the camera and posesses the player.
+	 * Initializes the camera and possesses the player.
 	 */
 	APlayerShip();
 
@@ -89,7 +89,7 @@ public:
 	/**
 	 * Updates the zoom percent by the given scaled input.
 	 * 
-	 * @param AxisValue - The the input axis value that will be used to update the zoom percent.
+	 * @param AxisValue - The input axis value that will be used to update the zoom percent.
 	 */
 	UFUNCTION()
 	void ZoomAxisInput(float AxisValue);
@@ -108,7 +108,7 @@ protected:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "1"))
 	float CameraZoomAxisScaling{ 0.01 };
 
-	//The power of the zoom funtion. The higher the number the faster it zooms out at large zooms.
+	//The power of the zoom function. The higher the number the faster it zooms out at large zooms.
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float CameraZoomPower{ 2 };
 

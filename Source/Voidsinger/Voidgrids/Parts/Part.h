@@ -26,7 +26,7 @@ enum class EPartRotation : uint8
 };
 
 /**
- * Handels Base Part Type operations.
+ * Handles Base Part Type operations.
  */
 class VOIDSINGER_API UPartRotationFunctions
 {
@@ -88,7 +88,7 @@ public:
 	EPartRotation Rotation;
 
 //protected:
-	//Stores the Location in IntPoint form for accessablity in blueprints.
+	//Stores the Location in IntPoint form for accessibility in blueprints.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FIntPoint Location;
 
@@ -100,14 +100,14 @@ public:
 		return Location;
 	}
 
-	//Constucts a part transform with the given location and a part rotation.
+	//Constructs a part transform with the given location and a part rotation.
 	FPartTransform(GridLocationType Loc = GridLocationType(0, 0), EPartRotation Rot = EPartRotation::PR_0Degrees)
 	{
 		Location = Loc;
 		Rotation = Rot;
 	}
 
-	//Constucts a part transform with the given location and a rotation that will be snaped to 90 degree intervals.
+	//Constructs a part transform with the given location and a rotation that will be snapped to 90 degree intervals.
 	FPartTransform(GridLocationType Loc, float Rot)
 	{
 		Location = Loc;
@@ -173,7 +173,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartTransform& Thing)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPartStateChangeCue, bool, bApplyChangeEffect);
 
 /**
- * The physical reprsentation of a part.
+ * The physical representation of a part.
  * Handles instanced functionality.
  */
 UCLASS(BlueprintType, Blueprintable, config=PartDefaults, defaultconfig)
@@ -185,10 +185,10 @@ class VOIDSINGER_API UPart : public UObject
 	\* \/ Part Data \/ */
 public:
 	/**
-	 * Creates and initilizes a new part.
+	 * Creates and initializes a new part.
 	 * 
 	 * @param OwningVoidgrid - The Voidgrid the new part is a part of.
-	 * @param PartData - The data pased to the new part.
+	 * @param PartData - The data passed to the new part.
 	 * @return A pointer to the newly created part.
 	 */
 	static UPart* CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData InstanceData);
@@ -218,7 +218,7 @@ public:
 	/**
 	 * Gets information required to replicate but not its state.
 	 *
-	 * @return The minimnal instance part data for this part.
+	 * @return The minimal instance part data for this part.
 	 */
 	FMinimalPartInstanceData GetMinimalPartInstanceData();
 
@@ -274,7 +274,7 @@ public:
 	/**
 	 * Gets whether or not this part is functional.
 	 * 
-	 * @return Wheather or not this is functional.
+	 * @return Whether or not this is functional.
 	 */
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE  bool IsFunctional() { return bFunctional; };
@@ -299,7 +299,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FPartStateChangeCue OnRepaired;
 
-	//Called when this part is damaged and becomes unfunctional.
+	//Called when this part is damaged and becomes nonfunctional.
 	UPROPERTY(BlueprintAssignable)
 	FPartStateChangeCue OnFunctionalityLost;
 
@@ -307,11 +307,11 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FPartStateChangeCue OnFunctionalityRestored;
 
-	//Called when this part is damaged and compleatly destroyed.
+	//Called when this part is damaged and completely destroyed.
 	UPROPERTY(BlueprintAssignable)
 	FPartStateChangeCue OnDestroyed;
 
-	//Called when this part is repaired and compleatly healed.
+	//Called when this part is repaired and completely healed.
 	UPROPERTY(BlueprintAssignable)
 	FPartStateChangeCue OnFullyRepaired;
 
@@ -528,19 +528,19 @@ FORCEINLINE uint32 GetTypeHash(const FPartInstanceData& Thing)
 	
 	//Used to initialize variables. Called before part is placed onto the part grid
 	//Should this be in the constructor then? Hmm except you can't have arguments to the constructor. Might be worth looking into
-	//the c++ equivilent of "expose on spawn". 
+	//the c++ equivalent of "expose on spawn". 
 	//Why is this needed? wouldn't you only need the location/rotation/etc when you're placing the part anyway, in which case
 	// you can use whatever the "place part" function is? or is this the "place part" function? If this is only
 	////for internal use, then this should be a private function. -Mabel Suggestion
 
 	//void InitializeVariables(FIntPoint Loc, float Rot, AVoidGrid* VoidGrid, TSubclassOf<UPart> PartType, PartShapeType Shape);
 
-	//Used to initize funtionality once the part has been placed onto the part grid
+	//Used to initialize functionality once the part has been placed onto the part grid
 	//This is called from part grid then, after it's placed? asking for clarification -Mabel Suggestion
 	/*UFUNCTION()
 	void InitializeFunctionality();*/
 	
-	//Used to get world. Also gives child BPs acces to the Kismet Systems Library
+	//Used to get world. Also gives child BPs access to the Kismet Systems Library
 	//"Comment not helpful. What does the GetWorld() functionality mean? - Liam Suggestion" -Mabel Suggestion
 	//UWorld* GetWorld() const;
 
@@ -583,7 +583,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartInstanceData& Thing)
 //	//Determines if this part will tick
 //	virtual bool IsTickable() const override;
 //
-//	//Is a nesseary part of tick component
+//	//Is a necessary part of tick component
 //	virtual TStatId GetStatId() const override;
 //
 //	/*
@@ -591,8 +591,8 @@ FORCEINLINE uint32 GetTypeHash(const FPartInstanceData& Thing)
 //	* What does it do?
 //	* When is it called?
 //	* 
-//	* Inconsitant name.
-//	* All other blueprint implementable events do not have blueprint in thier name.
+//	* Inconsistent name.
+//	* All other blueprint implementable events do not have blueprint in their name.
 //	* - Liam Suggestion
 //	*/ 
 //	//Blueprint activate
@@ -643,7 +643,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartInstanceData& Thing)
 //	UFUNCTION(BlueprintPure)
 //	const FVector GetPartRelativeLocation();
 //
-//	//Gets the rotaion of the part relative to the part grid
+//	//Gets the rotation of the part relative to the part grid
 //	//These rotation getters are not consistent with the location getters because they don't have the word "part" in them. 
 //	//Either the location getters or these rotation getters should be renamed for consistency. -Mabel Suggestion
 //	UFUNCTION(BlueprintPure)
@@ -675,12 +675,12 @@ FORCEINLINE uint32 GetTypeHash(const FPartInstanceData& Thing)
 //	UFUNCTION(BlueprintPure)
 //	TArray<UBaseResourceSystem*>& GetSystems();
 //
-//	//Comment technicaly false. It finds the *first* resource system ... - Liam suggestion
+//	//Comment technically false. It finds the *first* resource system ... - Liam suggestion
 //	//Returns the resource system that the part is a part of with a given type, returns null if there is no system with that resource type
 //	UFUNCTION(BlueprintPure)
 //	UBaseResourceSystem* GetSystemByType(TEnumAsByte<EResourceType> Type);
 //
-//	//Confuseing name. The function gets more than just the resource types. Consider renaming to GetResourceInterfaceLocations()? - Liam Suggestion
+//	//Confusing name. The function gets more than just the resource types. Consider renaming to GetResourceInterfaceLocations()? - Liam Suggestion
 //	//Gets the locations and resource types of pixels of the part
 //	UFUNCTION(BlueprintPure)
 //	TMap<TEnumAsByte<EResourceType>, FIntPointArray> GetResourceTypes();
@@ -700,7 +700,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartInstanceData& Thing)
 //	UFUNCTION(BlueprintPure)
 //	UMaterialInterface* GetPixelMaterial();
 //
-//	/*Condtional  Checkers*\
+//	/*Conditional  Checkers*\
 //	\*--------------------*/
 //public:
 //
@@ -737,7 +737,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartInstanceData& Thing)
 //	* Needs comment. What does it do? 
 //	* 
 //	* Confusing Name.
-//	* How is it differnt from AddToSystem?
+//	* How is it different from AddToSystem?
 //	* Consider renaming to InitializeSytems()
 //	* - Liam Suggestion
 //	*/
@@ -757,7 +757,7 @@ FORCEINLINE uint32 GetTypeHash(const FPartInstanceData& Thing)
 //	/*
 //	* Function name bad?
 //	* DelegateCalled too broad a term.
-//	* What delagate is being called?
+//	* What delegate is being called?
 //	* What is the function doing?
 //	* When is it being called?
 //	* 

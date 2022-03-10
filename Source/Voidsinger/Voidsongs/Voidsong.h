@@ -105,9 +105,9 @@ public:
 private:
 
 	/**
-	 * Deconstructs the Voidsong
+	 * Destructs the Voidsong
 	 */
-	void Deconstruct();
+	void Destruct();
 
 	//Time since the Voidsong was activated
 	float TimeSincePlayed;

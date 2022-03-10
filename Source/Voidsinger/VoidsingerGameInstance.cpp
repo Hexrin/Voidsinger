@@ -42,7 +42,7 @@ void UVoidsingerGameInstance::DepositPixels(int32 Amount)
  * Withdraw the given number of pixels from the player's bank.
  *
  * @param Amount - The number of pixels to withdraw.
- * @return Wether or not the player has enough pixels.
+ * @return Whether or not the player has enough pixels.
  */
 bool UVoidsingerGameInstance::WithdrawPixels(int32 Amount)
 {
