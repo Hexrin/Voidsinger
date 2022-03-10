@@ -803,7 +803,6 @@ void AVoidgrid::ShrinkBounds(const FIntPoint RemovedPixelLocation)
 void AVoidgrid::ExplodeVoidgrids(UObject* WorldContext,  FVector WorldLocation, float Radius)
 {
 	DrawDebugCircle(WorldContext->GetWorld(), FTransform(FRotator(90, 0, 0), WorldLocation + FVector(0, 0, 0.5), FVector(1)).ToMatrixWithScale(), Radius, 50, FColor::White, false, 2, 0U, .05);
-	FlushPersistentDebugLines(WorldContext->GetWorld());
 
 	//Ensure radius is valid.
 	Radius = abs(Radius);
@@ -955,7 +954,6 @@ TSet<FIntPoint> AVoidgrid::StartExplosionAtPixel(FIntPoint PixelLocation, FIntPo
 					NewArc.ShrinkArcBounds(PixelLowerArcBound, PixelUpperArcBound);
 
 					TSet<FIntPoint> NewExplodedPixels = StartExplosionAtPixel(AdjacentPixelLocation, GridRelativeExplosionLocation, Radius, NewArc);
-					DrawDebugDirectionalArrow(GetWorld(), FVector(0,0,.2) + TransformGridToWorld(PixelLocation), FVector(0, 0, .2) + TransformGridToWorld(AdjacentPixelLocation), .02, FColor::Green, true);
 					for (FIntPoint EachNewExplodedPixel : NewExplodedPixels)
 					{
 						ExplodedPixels.Emplace(EachNewExplodedPixel);
