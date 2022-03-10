@@ -124,6 +124,14 @@ protected:
 	bool GetPart(FIntPoint Location, FMinimalPartInstanceData& PartData);
 
 	/**
+	 * Gets the current mold of this editor
+	 * 
+	 * @return The current mold
+	 */
+	UFUNCTION(BlueprintPure)
+	const TSet<FMinimalPartInstanceData>& GetMold() const;
+
+	/**
 	 * Called when the mold of this is changed in any way.
 	 * 
 	 * @param NewMold - The mold of this.
@@ -133,7 +141,7 @@ protected:
 
 private:
 	//Stores the mold of this.
-	MinimalPixelMoldDataType Mold;
+	TSet<FMinimalPartInstanceData> Mold;
 
 	//Stores the locations of all parts in the mold of this.
 	TGridMap<FMinimalPartInstanceData> PartLocations;
