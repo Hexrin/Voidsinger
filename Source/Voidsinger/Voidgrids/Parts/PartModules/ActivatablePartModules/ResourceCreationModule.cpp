@@ -15,7 +15,7 @@
 /**
  * Override of OnActivate to create resources
  *
- * @param Data - The data of this activation
+ * @param Data - The data of this activation. Effectiveness will affect the amount of resources created.
  */
 void UResourceCreationModule::OnActivate_Implementation(const FPartActivationData Data)
 {
