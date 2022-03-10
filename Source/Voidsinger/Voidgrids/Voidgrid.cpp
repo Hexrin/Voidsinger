@@ -97,7 +97,7 @@ void AVoidgrid::AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpul
 /**
  * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
  *
- * @param Impulse - The impluse to apply to this voidgrid in world space.
+ * @param Impulse - The impulse to apply to this voidgrid in world space.
  * @param WorldImpulseLocation - The location in world space to apply the impulse at.
  */
 void AVoidgrid::AddImpulse(FVector2D Impulse, FVector WorldImpulseLocation)
@@ -128,19 +128,19 @@ FVector2D AVoidgrid::GetVelocityOfPoint(FVector2D Location)
 */
 void AVoidgrid::UpdateTransform(float DeltaTime)
 {
-	//                                     | -------------- Get Delta Roatation -------------- | | ------------------ Get Delta Location ------------------ |
+	//                                     | -------------- Get Delta Rotation -------------- | | ------------------ Get Delta Location ------------------ |
 	FTransform DeltaTransform = FTransform(FQuat(FVector(0, 0, 1), AngularVelocity * DeltaTime), FVector(LinearVelocity * DeltaTime, 0), FVector::ZeroVector);
 
 	FHitResult SweepHitResult = FHitResult();
 
-	// \/ Detect collsion and update velocity acordingly \/ //
+	// \/ Detect collision and update velocity accordingly \/ //
 	if (SweepShip(DeltaTransform, SweepHitResult))
 	{
 		FVector2D RelativeHitLocation = FVector2D(SweepHitResult.Location - GetActorLocation());
 
 		FVector2D ImpactNormal = FVector2D(SweepHitResult.ImpactNormal);
 
-		//Prevent collisions from occuring between already overlaping ships. Done by checking to see if the impact direction is in a oposite direction to the normal.
+		//Prevent collisions from occurring between already overlapping ships. Done by checking to see if the impact direction is in a opposite direction to the normal.
 		if ((GetVelocityOfPoint(RelativeHitLocation) | ImpactNormal) < 0)
 		{
 			AVoidgrid* OtherVoidgrid = Cast<AVoidgrid>(SweepHitResult.GetActor());
@@ -164,16 +164,16 @@ void AVoidgrid::UpdateTransform(float DeltaTime)
 
 			AddImpulse(CollsionForce * ImpactNormal, FVector(RelativeHitLocation, 0));
 			//DrawDebugDirectionalArrow(GetWorld(), GetOwner()->GetActorLocation() + FVector(RelativeHitLocation, 0), GetOwner()->GetActorLocation() + FVector(RelativeHitLocation, 0) + FVector(CollisionImpulseFactor * ImpactNormal, 0), 5, FColor::Blue, false, 5, 0U, 0.3f);
-			////UE_LOG(LogTemp, Warning, TEXT("%s Applyed an impules of %s at %s to itself when colideing with %s"), *GetOwner()->GetName(), *(CollisionImpulseFactor * ImpactNormal).ToString(), *RelativeHitLocation.ToString(), *Result.GetActor()->GetName());
+			////UE_LOG(LogTemp, Warning, TEXT("%s Applied an impulse of %s at %s to itself when colliding with %s"), *GetOwner()->GetName(), *(CollisionImpulseFactor * ImpactNormal).ToString(), *RelativeHitLocation.ToString(), *Result.GetActor()->GetName());
 		}
 	}
-	// /\ Detect collsion and update velocity acordingly /\ //
+	// /\ Detect collision and update velocity accordingly /\ //
 
 	AddActorWorldTransform(DeltaTransform);
 }
 
 /**
- * Checks for collisions along this ships path to a new transfrom.
+ * Checks for collisions along this ships path to a new transform.
  * 
  * @param DeltaTransform - The change in transform needed to get to the new transform.
  * @param Hit - The first blocking hit from this voidgrid colliding with another voidgrid.
@@ -189,7 +189,7 @@ bool AVoidgrid::SweepShip(const FTransform & DeltaTransform, FHitResult & Hit)
 	FTransform StartingTransform = GetActorTransform();
 	FTransform TargetTransfrom = GetActorTransform() + DeltaTransform;
 
-	//Set up convex sweep querry
+	//Set up convex sweep query
 	FVector BoundsExtent = PixelMeshComponent->Bounds.BoxExtent;
 	FVector BoundsCenterLocation = PixelMeshComponent->GetRelativeLocation();
 
@@ -199,10 +199,10 @@ bool AVoidgrid::SweepShip(const FTransform & DeltaTransform, FHitResult & Hit)
 
 	FCollisionObjectQueryParams ObjectQueryParams = FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody);
 
-	//Sweeps the convex bounds of this shape to determin if a hit is possible.
+	//Sweeps the convex bounds of this shape to determine if a hit is possible.
 	if (GetWorld()->SweepSingleByObjectType(Hit, StartingTransform.GetTranslation() + BoundsCenterLocation, TargetTransfrom.GetTranslation() + BoundsCenterLocation, TargetTransfrom.GetRotation(), ObjectQueryParams, FCollisionShape::MakeBox(BoundsExtent), QueryParams))
 	{
-		//Iterates though all pixels and sweeps them for a collsion.
+		//Iterates though all pixels and sweeps them for a collision.
 		for (TPair<GridLocationType, PixelType> PixelData : LocationsToPixelState.GetGridPairs())
 		{
 			FVector PixelRelativeLocation = FVector(FVector2D(PixelData.Key), 0);
@@ -262,7 +262,7 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
 // \/ Add temperature \/ /
 
 /**
- * Applys the temperature given at the world location given
+ * Applies the temperature given at the world location given
  *
  * @param Location - The world location to apply the temperature
  * @param Temperature - The temperature to add
@@ -274,7 +274,7 @@ void AVoidgrid::AddTemperatureAtLocation(FVector WorldLocation, float Temperatur
 }
 
 /**
- * Applys the temperature given at the location given on this Voidgrid
+ * Applies the temperature given at the location given on this Voidgrid
  *
  * @param Location - The location to apply the temperature
  * @param Temperature - The temperature to add
@@ -358,7 +358,7 @@ void AVoidgrid::SpreadHeat()
 		//									     	|-- If the new heat map contains this location then add that temperature in too --|
 		float NewHeat = RemainingHeat + AddedHeat + (NewHeatMap.Contains(EachPixel.Key) ? NewHeatMap.FindRef(EachPixel.Key) : 0);
 
-		//If the amount of heat is within the negligable temperature amount, then it's negligable. 
+		//If the amount of heat is within the negligible temperature amount, then it's negligible. 
 		NewHeatMap.Emplace(EachPixel.Key, ((NewHeat > NegligableTemperatureAmount) || (NewHeat < -NegligableTemperatureAmount)) ? NewHeat : 0);
 
 	}
@@ -1110,7 +1110,7 @@ TArray<FVector> AVoidgrid::GetPixelVertices(GridLocationType Location)
 }
 
 /**
- * Generates 2 triangles that conect the four specified vertices.
+ * Generates 2 triangles that connect the four specified vertices.
  *
  * @param UpperRight - The vertex index of the upper right corner of the square.
  * @param UpperLeft - The vertex index of the upper left corner of the square.

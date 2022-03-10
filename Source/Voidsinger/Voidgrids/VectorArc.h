@@ -101,7 +101,7 @@ struct VOIDSINGER_API FVectorArc
 	 */
 	bool DoesLinePassThoughArc(FVector2D LineStart, FVector2D LineEnd, bool bInclusiveBounds = true) const
 	{
-		//     | ----------------------- Get whether line enpoints are in bounds ---------------------- |    | --------------------------------------------------------------------------- Get whether line crosses bounds ----------------------------------------------------------------------------- |                                                                               
+		//     | ----------------------- Get whether line endpoints are in bounds ---------------------- |    | --------------------------------------------------------------------------- Get whether line crosses bounds ----------------------------------------------------------------------------- |                                                                               
 		return IsLocationInArc(LineStart, bInclusiveBounds) || IsLocationInArc(LineEnd, bInclusiveBounds) || FVectorArc(LineStart, LineEnd).IsLocationInArc(GetUpperBound(), bInclusiveBounds) || (!bInclusiveBounds && FVectorArc(LineStart, LineEnd).IsLocationInArc(GetLowerBound(), bInclusiveBounds));
 	}
 
