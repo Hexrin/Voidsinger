@@ -890,7 +890,7 @@ private:
 
 	//Stores the amount of time that production and consumption rates refresh after
 	UPROPERTY()
-	float ResourceRatesRefreshRate{ 5 };
+	float ResourceRatesRefreshRate{ 3 };
 
 	//Stores the amount of time since the last resource rate refresh
 	UPROPERTY()
