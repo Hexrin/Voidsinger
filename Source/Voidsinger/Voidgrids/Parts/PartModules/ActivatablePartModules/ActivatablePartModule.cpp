@@ -28,6 +28,8 @@ void UActivatablePartModule::InitializeVariables(UPart* OwningPart)
 
 /**
  * Called when the owning part is activated and calls the functionality of this part.
+ * 
+ * @param Data - The data of this actiation
  */
 void UActivatablePartModule::OnActivate_Implementation(const FPartActivationData Data)
 {

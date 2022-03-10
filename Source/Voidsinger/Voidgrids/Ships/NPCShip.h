@@ -6,8 +6,8 @@
 #include "NPCShip.generated.h"
 
 /**
- * A ship controlable by an AI.
- * Handels ship type and AI input.
+ * A ship controllable by an AI.
+ * Handles ship type and AI input.
  */
 UCLASS()
 class VOIDSINGER_API ANPCShip : public AShip
@@ -17,7 +17,7 @@ class VOIDSINGER_API ANPCShip : public AShip
 
 public:
 	/**
-	 * Initilizes this using ShipTypeData.
+	 * Initializes this using ShipTypeData.
 	 */
 	ANPCShip();
 

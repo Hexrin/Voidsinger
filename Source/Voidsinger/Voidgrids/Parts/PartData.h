@@ -8,7 +8,7 @@
 #include "PartData.generated.h"
 
 /**
- * Stores information realating to a part type
+ * Stores information relating to a part type
  */
 UCLASS()
 class VOIDSINGER_API UPartData : public UDataAsset
@@ -44,11 +44,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 Cost;
 
-	//Stores the heat resistance of this part
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	//Heat Resistance is this part's ability to resist melting or freezing. If a part reaches a temperature that's absolute value is above its heat resistance then it will either melt or freeze.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (ClampMin = "1", ClampMax = "10"))
 	float HeatResistance{ 1 };
 
-	//Stores whether or not this part is placable by the player.
+	//Strength is this parts ability to resist explosions and impacts. The explosion radius of any explosions affecting this part will be divided by the strength.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ClampMin="1", ClampMax="10"))
+	float Strength{ 1 };
+
+	//Stores whether or not this part is placeable by the player.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bPlaceable{ true };
 
@@ -56,7 +60,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bRemovable{ true };
 
-	//Stores whether this part can be ovrriden when editing the mold.
+	//Stores whether this part can be overridden when editing the mold.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bOverridable{ true };
 
@@ -64,6 +68,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bRotatable{ true };
 
-	//Gets the primar asset Id for the asset mager and build UI.
+	//Gets the primary asset Id for the asset manger and build UI.
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
 };

@@ -69,14 +69,14 @@ private:
 	/** 
 	 * Determines if this object is tickable
 	 * 
-	 * @return - Whether this object is tickable or not
+	 * @return Whether this object is tickable or not
 	 */
 	virtual bool IsTickable() const override;
 
 	/**
 	 * Returns this object's StatId
 	 * 
-	 * @return - This object's StatId
+	 * @return This object's StatId
 	 */
 	virtual TStatId GetStatId() const override;
 
@@ -105,9 +105,9 @@ public:
 private:
 
 	/**
-	 * Deconstructs the Voidsong
+	 * Destructs the Voidsong
 	 */
-	void Deconstruct();
+	void Destruct();
 
 	//Time since the Voidsong was activated
 	float TimeSincePlayed;
@@ -123,7 +123,7 @@ public:
 	/**
 	 * Returns a copy of the Voidsong data
 	 * 
-	 * @return - Copy of VoidsongData
+	 * @return Copy of VoidsongData
 	 */
 	FVoidsongData GetVoidsongData();
 
