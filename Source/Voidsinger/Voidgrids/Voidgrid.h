@@ -765,16 +765,40 @@ public:
 public:
 
 	/**
+	 * Gets the resources stored on this Voidgrid
+	 *
+	 * @return The resources
+	 */
+	UFUNCTION(BlueprintPure, Category = "Resource Management")
+	const TMap<EResourceType, float> GetResources() const;
+
+	/**
+	 * Adds resources to the Voidgrid
+	 *
+	 * @param AddedResources - The resources added and how much of each is added
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Resource Management")
+	void AddResources(TMap<EResourceType, float> AddedResources);
+
+private:
+
+	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
+	UPROPERTY()
+	TMap<EResourceType, float> Resources;
+
+	/* -------------- *\
+	\* \/ Requests \/ */
+
+public:
+
+	/**
 	 * Adds a resource request to the list of resource requests sorted by priority
 	 *
 	 * @param ResourceRequest - The new resource request
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Resource Management")
+	UFUNCTION(BlueprintCallable, Category = "Resource Management|Requests")
 	void AddResourceRequest(FResourceRequest ResourceRequest);
-	
-	UFUNCTION(BlueprintCallable, Category = "Resource Management")
-	const TMap<EResourceType, float> GetResources() const;
-	
+		
 private:
 
 	/**
@@ -784,19 +808,11 @@ private:
 	void HandleResourceRequests();
 
 	/**
-	 * Adds resources to the Voidgrid
-	 * 
-	 * @param AddedResources - The resources added and how much of each is added
-	 */
-	UFUNCTION()
-	void AddResources(TMap<EResourceType, float> AddedResources);
-
-	/**
 	 * Uses resources on the Voidgrid. Will not use up resources if not all the resources can be used.
-	 * 
+	 *
 	 * @param UsedResources - The resources used and how much of each is used
-	 * 
-	 * @return - Whether the resources were successfully used or not
+	 *
+	 * @return Whether the resources were successfully used or not
 	 */
 	UFUNCTION()
 	const bool UseResources(TMap<EResourceType, float> UsedResources);
@@ -805,9 +821,144 @@ private:
 	UPROPERTY()
 	TArray<FResourceRequest> ResourceRequests;
 
-	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
+	/* /\ Requests /\ *\
+	\* -------------- */
+
+	/* -------------- *\
+	\* \/ Capacity \/ */
+
+public:
+
+	/**
+	 * Gets the storage capacities for each resource on this Voidgrid
+	 *
+	 * @return The storage capacities
+	 */
+	UFUNCTION(BlueprintPure, Category = "Resource Management|Capacity")
+	const TMap<EResourceType, float> GetResourceStorageCapacities() const;
+
+	/**
+	 * Adds storage capacity for each resource type specified, and increase them by the amount specified
+	 *
+	 * @param ResourceTypesToAmountToIncreaseCapacities - The resource types to the amount of increased capacity
+	 */
+	UFUNCTION()
+	void AddResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToIncreaseCapacities);
+
+	/**
+	 * Removes storage capacity for each resource type specified, and decreases them by the amount specified
+	 *
+	 * @param ResourceTypesToAmountToDecreaseCapacities - The resource types to the amount of decreased capacity
+	 */
+	UFUNCTION()
+	void RemoveResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToDecreaseCapacities);
+
+private:
+
+	//A map of all the resource types to how much of each resource the Voidgrid can store
 	UPROPERTY()
-	TMap<EResourceType, float> Resources;
+	TMap<EResourceType, float> ResourceTypesToStorageCapacities;
+
+	/* /\ Capacity /\ *\
+	\* -------------- */
+
+	/* ----------- *\
+	\* \/ Rates \/ */
+
+public:
+
+	/**
+	 * Gets the production rates of each resource type
+	 * 
+	 * @return A map of each resource type to how much of each is being produced
+	 */
+	UFUNCTION(BlueprintPure, Category = "Resource Management|Rates")
+	const TMap<EResourceType, float> GetResourceProductionRates() const;
+
+	/**
+	 * Gets the attempted production rates of each resource type. This means it will return what was actually created + what was failed to be created (because there wasn't enough capacity).
+	 * 
+	 * @return A map of each resource type to how much of each is being attempted to be produced
+	 */
+	UFUNCTION(BlueprintPure, Category = "Resource Management|Rates")
+	const TMap<EResourceType, float> GetResourceAttemptedProductionRates() const;
+
+	/**
+	 * Gets the consumption rates of each resource type
+	 * 
+	 * @return A map of each resource type to how much of each is being consumed
+	 */
+	UFUNCTION(BlueprintPure, Category = "Resource Management|Rates")
+	const TMap<EResourceType, float> GetResourceConsumptionRates() const;
+
+	/**
+	 * Gets the attempted consumption rates of each resource type. This means it will return what was actually used + what was failed to be used (because there wasn't enough resources).
+	 * 
+	 * @return A map of each resource type to the attempted consumption rate of each
+	 */
+	UFUNCTION(BlueprintPure, Category = "Resource Management|Rates")
+	const TMap<EResourceType, float> GetResourceAttemptedConsumptionRates() const;
+
+private:
+
+	/**
+	 * Calculates the resources created and consumed over a given time period
+	 *
+	 * @param OutResourceTypesToProductionRates - The production rates of each resource type
+	 * @param OutResourceTypesToAttemptedProductionRates - The attempted production rates of each resource type
+	 * @param OutResourceTypesToConsumptionRates - The consumption rates of each resource type
+	 * @param OutResourceTypesToAttemptedConsumptionRates - The attempted consumption rates of each resource type
+	 * @param ResourcesProduced - The resources produced over the given time period
+	 * @param ResourceAttemptedProduced - The resources attempted to be produced over the given time period
+	 * @param ResourcesConsumed - The resources consumed over the given time period
+	 * @param ResourcesAttemptedConsumed - The resources that were attempted to be consumed over the given time period
+	 * @param Time - The time period over which resources were created and used
+	 */
+	UFUNCTION()
+	void CalculateResourceRates(TMap<EResourceType, float>& OutResourceTypesToProductionRates, TMap<EResourceType, float>& OutResourceTypesToAttemptedProductionRates, TMap<EResourceType, float>& OutResourceTypesToConsumptionRates, TMap<EResourceType, float>& OutResourceTypesToAtteptedConsumptionRates, TMap<EResourceType, float> ResourcesProduced, TMap<EResourceType, float> ResourcesAttemptedProduced, TMap<EResourceType, float> ResourcesConsumed, TMap<EResourceType, float> ResourcesAttemptedConsumed, float Time);
+
+	//Stores the production rates of each resource type from the last refresh
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToProductionRates;
+
+	//Stores the amount of resources that have been produced since the last refresh
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToAmountsProducedSinceLastRefresh;
+
+	//Stores the attempted production rates of each resource type from the last refresh. "Attempted" in this context means that there may be resources that could not fit into the storage companies. This will store the actually produced resources + the resources that failed to be produced.
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToAttemptedProductionRates;
+
+	//Stores the amount of resources that have been attempted to be produced since the last refresh
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToAmountsAttemptedProducedSinceLastRefresh;
+
+	//Stores the consumption rates of each resource type from the last refresh
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToConsumptionRates;
+
+	//Stores the amount of resources that have been consumed since the last refresh
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToAmountsConsumedSinceLastRefresh;
+
+	//Stores the attempted consumption rates of each resource type from the last refresh. "Attempted" in this context means that there wasn't enough resources to fulfill the request. This will store the actually used amount + the failed to use amount.
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToAttemptedConsumptionRates;
+
+	//Stores the amount of resources that have been attempted to be consumed since the last refresh
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToAmountsAttemptedConsumedSinceLastRefresh;
+
+	//Stores the amount of time that production and consumption rates refresh after
+	UPROPERTY()
+	float ResourceRatesRefreshRate{ 3 };
+
+	//Stores the amount of time since the last resource rate refresh
+	UPROPERTY()
+	float TimeSinceLastResourceRateRefresh;
+
+	/* /\ Rates /\ *\
+	\* ----------- */
 
 	/* /\ Resource Management /\ *\
 	\* ------------------------- */

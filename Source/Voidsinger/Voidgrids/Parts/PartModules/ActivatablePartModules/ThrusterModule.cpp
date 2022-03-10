@@ -30,16 +30,20 @@ void UThrusterModule::OnActivate_Implementation(const FPartActivationData Data)
 
 /**
  * Updates voidgrid thrust capabilities.
+ * 
+ * @param bApplyChangeEffect - Whether to apply the effects of this change
  */
-void UThrusterModule::FunctionalityRestored()
+void UThrusterModule::FunctionalityRestored(bool bApplyChangeEffect)
 {
 
 }
 
 /**
  * Updates voidgrid thrust capabilities.
+ * 
+ * @param bApplyChangeEffect - Whether to apply the effects of this change
  */
-void UThrusterModule::FunctionalityLost()
+void UThrusterModule::FunctionalityLost(bool bApplyChangeEffect)
 {
 
 }
