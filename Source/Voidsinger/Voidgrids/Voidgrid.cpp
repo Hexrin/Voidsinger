@@ -1137,6 +1137,11 @@ void AVoidgrid::RemoveResourceStorageCapacity(TMap<EResourceType, float> Resourc
 			float NewStorageCapacity = CurrentCapacityMinusDecreasedAmount < 0 ? 0 : CurrentCapacityMinusDecreasedAmount;
 
 			ResourceTypesToStorageCapacities.Emplace(EachResourceTypeToAmountToDecreaseCapacity.Key, NewStorageCapacity);
+
+			if (Resources.Contains(EachResourceTypeToAmountToDecreaseCapacity.Key) && Resources.FindRef(EachResourceTypeToAmountToDecreaseCapacity.Key) > NewStorageCapacity)
+			{
+				Resources.Emplace(EachResourceTypeToAmountToDecreaseCapacity.Key, NewStorageCapacity);
+			}
 		}
 	}
 }
