@@ -269,7 +269,7 @@ void AVoidgrid::UpdateMassProperties(float DeltaMass, FVector2D MassLocation)
  */
 void AVoidgrid::AddTemperatureAtLocation(FVector WorldLocation, float Temperature)
 {
-	FIntPoint RelativeLocation = TransformWorldToGrid(WorldLocation);
+	FIntPoint RelativeLocation = TransformWorldToGrid(WorldLocation).IntPoint();
 	AddTemperatureAtLocation(RelativeLocation, Temperature);
 }
 
