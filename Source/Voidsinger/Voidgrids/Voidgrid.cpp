@@ -587,7 +587,10 @@ FVoidgridState AVoidgrid::GetState()
  */
 void AVoidgrid::RemovePixel(GridLocationType Location)
 {
-	LocationsToTemperaturesPendingHeatTransfer.Emplace(Location, LocationsToPixelState.Find(Location)->GetTemperature());
+	if (LocationsToPixelState.Contains(Location))
+	{
+		LocationsToTemperaturesPendingHeatTransfer.Emplace(Location, LocationsToPixelState.Find(Location)->GetTemperature());
+	}
 
 	SetPixelIntact(Location, false);
 }
