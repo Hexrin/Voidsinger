@@ -72,8 +72,6 @@ void AVoidgrid::Tick(float DeltaTime)
 
 	HandleResourceRequests();
 
-	TimeSinceLastResourceRateRefresh += DeltaTime;
-
 	if (TimeSinceLastResourceRateRefresh >= ResourceRatesRefreshRate)
 	{
 		CalculateResourceRates(ResourceTypesToProductionRates, ResourceTypesToConsumptionRates, ResourceTypesToAttemptedConsumptionRates, ResourceTypesToAmountsProducedSinceLastRefresh, ResourceTypesToAmountsConsumedSinceLastRefresh, ResourceTypesToAmountsAttemptedConsumedSinceLastRefresh, TimeSinceLastResourceRateRefresh);
@@ -945,7 +943,7 @@ void AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
 			Resources.Emplace(EachAddedResource.Key, AddedAmount);
 
 			//Stores the amount of resource that has been created since the last refresh
-			float TotalResourceCreatedSinceLastRefresh = AddedAmount + (ResourceTypesToAmountsProducedSinceLastRefresh.Contains(EachAddedResource.Key) ? ResourceTypesToAmountsProducedSinceLastRefresh.FindRef(EachAddedResource.Key) : 0);
+			float TotalResourceCreatedSinceLastRefresh = EachAddedResource.Value + (ResourceTypesToAmountsProducedSinceLastRefresh.Contains(EachAddedResource.Key) ? ResourceTypesToAmountsProducedSinceLastRefresh.FindRef(EachAddedResource.Key) : 0);
 			
 			ResourceTypesToAmountsProducedSinceLastRefresh.Emplace(EachAddedResource.Key, TotalResourceCreatedSinceLastRefresh);
 		}
