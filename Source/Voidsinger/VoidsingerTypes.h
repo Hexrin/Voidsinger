@@ -29,7 +29,7 @@
 //	Fuel			UMETA(DisplayName = "Fuel"),
 //	Hydrogen		UMETA(DisplayName = "Hydrogen"),
 //	InertGas		UMETA(DisplayName = "InertGas"),
-//	Coolent			UMETA(DisplayName = "Coolent"),
+//	Coolant			UMETA(DisplayName = "Coolant"),
 //	Electricity		UMETA(DisplayName = "Electricity"),
 //	Ammo			UMETA(DisplayName = "Ammo"),
 //};
@@ -74,12 +74,12 @@ struct FIntArray
 	GENERATED_BODY()
 
 
-	//Stores an aray of integers
+	//Stores an array of integers
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<int32> IntArray;
 
 	/**
-	 * Constucts an IntArray using a TArray.
+	 * Constructs an IntArray using a TArray.
 	 */
 	FIntArray(TArray<int32> Array = TArray<int32>())
 	{

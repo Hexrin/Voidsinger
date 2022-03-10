@@ -42,7 +42,7 @@ void UVoidsong::Tick(float DeltaTime)
 
 	if (TimeSincePlayed >= VoidsongData.GetDuration())
 	{
-		Deconstruct();
+		Destruct();
 	}
 
 	// /\ Check if the Voidsong has played for the correct Duration, if so, Deactivate /\ /
@@ -52,7 +52,7 @@ void UVoidsong::Tick(float DeltaTime)
 /**
  * Determines if this object is tickable
  *
- * @return - Whether this object is tickable or not
+ * @return Whether this object is tickable or not
  */
 bool UVoidsong::IsTickable() const
 {
@@ -62,7 +62,7 @@ bool UVoidsong::IsTickable() const
 /**
  * Returns this object's StatId
  *
- * @return - This object's StatId
+ * @return This object's StatId
  */
 TStatId UVoidsong::GetStatId() const
 {
@@ -78,7 +78,7 @@ TStatId UVoidsong::GetStatId() const
 /**
  * Deactivates the Voidsong
  */
-void UVoidsong::Deconstruct()
+void UVoidsong::Destruct()
 {
 	//Unbind the delegates
 	ForDuration.Clear();
@@ -97,7 +97,7 @@ void UVoidsong::Deconstruct()
 /**
  * Returns a copy of the Voidsong data
  *
- * @return - Copy of VoidsongData
+ * @return Copy of VoidsongData
  */
 FVoidsongData UVoidsong::GetVoidsongData()
 {

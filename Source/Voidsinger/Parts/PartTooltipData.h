@@ -9,7 +9,7 @@
 #include "PartTooltipData.generated.h"
 
 /**
- * Stores information realating to part tooltips.
+ * Stores information relating to part tooltips.
  */
 UCLASS()
 class VOIDSINGER_API UPartTooltipData : public UDataAsset
@@ -26,7 +26,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FText Description;
 
-	//The image used to show the conectivity points of this part.
+	//The image used to show the connectivity points of this part.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UTexture2D* ConectivityPointImage = nullptr;
 };

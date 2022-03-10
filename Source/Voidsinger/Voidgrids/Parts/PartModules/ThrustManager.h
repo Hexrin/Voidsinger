@@ -14,15 +14,15 @@ struct VOIDSINGER_API FThrustSource
 {
 	GENERATED_BODY()
 
-	//The maximum inpulse force that can be applied by a thrust source.
+	//The maximum impulse force that can be applied by a thrust source.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(ClampMin="0"))
 	float Force{ 0 };
 
-	//The direction of the impulse applyed by a thrust source.
+	//The direction of the impulse applied by a thrust source.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPreserveRatio))
 	FVector2D Direction{ FVector2D(1,0) };
 
-	//The location of the impulse applyed by a thrust source.
+	//The location of the impulse applied by a thrust source.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector2D Location{ FIntPoint::ZeroValue };
 

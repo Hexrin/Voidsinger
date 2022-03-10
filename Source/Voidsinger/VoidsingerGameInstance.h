@@ -51,19 +51,16 @@ public:
 	 * Withdraw the given number of pixels from the player's bank.
 	 *
 	 * @param Amount - The number of pixels to withdraw.
-	 * @return Wether or not the player has enough pixels.
+	 * @return Whether or not the player has enough pixels.
 	 */
 	UFUNCTION(BlueprintCallable)
 	bool WithdrawPixels(int32 Amount);
 
 	/**
-	 * Called When the pixel balence of the player changes.
+	 * Called When the pixel balance of the player changes.
 	 */
 	UPROPERTY(BlueprintAssignable)
 	FPixelBalanceChangedDelegate OnPixelBalenceChanged;
-
-	UPROPERTY(BlueprintAssignable)
-	FExplodeDelegate OnExplodeDelegate;
 
 protected:
 	//Comment -Mabel Suggestion

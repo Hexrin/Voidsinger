@@ -24,7 +24,7 @@ public:
 	UPartData* PartBeingEdited;
 
 	/**
-	 * Gets the shape of the part this is curently editing.
+	 * Gets the shape of the part this is currently editing.
 	 * 
 	 * @return The locations of all the pixels of the shape.
 	 */
@@ -32,7 +32,7 @@ public:
 	TArray<FIntPoint> GetPartShape();
 
 	/**
-	 * Sets the shape of the part this is curently editing.
+	 * Sets the shape of the part this is currently editing.
 	 *
 	 * @param NewShape - The locations of all the pixels of the shape.
 	 */
@@ -40,7 +40,7 @@ public:
 	void SetPartShape(TArray<FIntPoint> NewShape);
 
 	/**
-	 * Adds a pixel to the shape of the part this is curently editing.
+	 * Adds a pixel to the shape of the part this is currently editing.
 	 * 
 	 * @param PixelLocation - The location of the pixel to add.
 	 */
@@ -48,7 +48,7 @@ public:
 	void AddPixelToPartShape(FIntPoint PixelLocation);
 
 	/**
-	 * Removes a pixel from the shape of the part this is curently editing.
+	 * Removes a pixel from the shape of the part this is currently editing.
 	 *
 	 * @param PixelLocation - The location of the pixel to remove.
 	 */
@@ -58,7 +58,7 @@ public:
 	/**
 	 * Saves the part this is editing
 	 * 
-	 * @return Whether or not the part was succesfuly saved.
+	 * @return Whether or not the part was successfully saved.
 	 */
 	UFUNCTION(BlueprintCallable)
 	bool SavePart();

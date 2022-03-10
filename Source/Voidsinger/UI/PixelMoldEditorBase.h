@@ -9,7 +9,7 @@
 #include "PixelMoldEditorBase.generated.h"
 
 /**
- * A widget to editing, saveing and loading pixel molds
+ * A widget to editing, saving and loading pixel molds
  */
 UCLASS()
 class VOIDSINGER_API UPixelMoldEditorBase : public UUserWidget
@@ -17,7 +17,7 @@ class VOIDSINGER_API UPixelMoldEditorBase : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	//Initilize the save game 
+	//Initialize the save game 
 	virtual void NativeOnInitialized() override;
 protected:
 	//Stores the Voidgrid this is editing.
@@ -40,7 +40,7 @@ protected:
 	void SetMold(MinimalPixelMoldDataType NewMold);
 
 	/**
-	 * Sets the the mold of this to be the same as target's mold.
+	 * Sets the mold of this to be the same as target's mold.
 	 */
 	UFUNCTION(BlueprintCallable)
 	void LoadMoldFromTarget();
@@ -57,7 +57,7 @@ protected:
 	 * Loads the mold of a given name.
 	 *
 	 * @param MoldName - The name of the mold you want to load and its save slot.
-	 * @return Whether or not the mold was succesfuly loaded.
+	 * @return Whether or not the mold was successfully loaded.
 	 */
 	UFUNCTION(BlueprintCallable)
 	bool LoadMold(FString MoldName);
@@ -97,7 +97,7 @@ protected:
 	 * Removes a part from the mold of this.
 	 * 
 	 * @param Location - The location to remove a part from.
-	 * @return Wether or not a part was removed.
+	 * @return Whether or not a part was removed.
 	 */
 	UFUNCTION(BlueprintCallable)
 	bool RemovePart(FIntPoint Location);
@@ -107,7 +107,7 @@ protected:
 	 *
 	 * @param Location - The location to remove a part from.
 	 * @param bCallUpdateEvent - Whether or not to call OnMoldUpdated() in this function.
-	 * @return Wether or not a part was removed.
+	 * @return Whether or not a part was removed.
 	 */
 	bool RemovePart(FIntPoint Location, bool bCallUpdateEvent);
 
@@ -118,7 +118,7 @@ protected:
 	 *
 	 * @param Location - The location to remove a part from.
 	 * @param PartData - Is set to the part data at Location.
-	 * @return Wether or not a part exists at Location.
+	 * @return Whether or not a part exists at Location.
 	 */
 	UFUNCTION(BlueprintCallable)
 	bool GetPart(FIntPoint Location, FMinimalPartInstanceData& PartData);

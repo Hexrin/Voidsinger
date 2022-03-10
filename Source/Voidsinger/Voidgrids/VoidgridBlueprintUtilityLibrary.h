@@ -34,7 +34,7 @@ public:
 	 * Undoes a given rotation on a given IntPoint.
 	 *
 	 * @param GridLocation - The IntPoint to rotate.
-	 * @param Rotation - The rotation to Undos.
+	 * @param Rotation - The rotation to Undoes.
 	 * @return The unrotated IntPoint.
 	 */
 	UFUNCTION(BlueprintPure)

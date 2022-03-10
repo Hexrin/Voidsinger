@@ -4,7 +4,7 @@
 #include "Factories/DataAssetFactory.h"
 
 /**
- * Gets the shape of the part this is curently editing.
+ * Gets the shape of the part this is currently editing.
  *
  * @return The locations of all the pixels of the shape.
  */
@@ -19,7 +19,7 @@ TArray<FIntPoint> UPartEditorBase::GetPartShape()
 }
 
 /**
- * Sets the shape of the part this is curently editing.
+ * Sets the shape of the part this is currently editing.
  *
  * @param NewShape - The locations of all the pixels of the shape.
  */
@@ -32,7 +32,7 @@ void UPartEditorBase::SetPartShape(TArray<FIntPoint> NewShape)
 }
 
 /**
- * Adds a pixel to the shape of the part this is curently editing.
+ * Adds a pixel to the shape of the part this is currently editing.
  *
  * @param PixelLocation - The location of the pixel to add.
  */
@@ -45,7 +45,7 @@ void UPartEditorBase::AddPixelToPartShape(FIntPoint PixelLocation)
 }
 
 /**
- * Removes a pixel from the shape of the part this is curently editing.
+ * Removes a pixel from the shape of the part this is currently editing.
  *
  * @param PixelLocation - The location of the pixel to remove.
  */
@@ -68,7 +68,7 @@ UFactory* UPartEditorBase::CreatePartFactory()
 /**
  * Saves the part this is editing
  * 
- * @return Whether or not the part was succesfuly saved.
+ * @return Whether or not the part was successfully saved.
  */
 bool UPartEditorBase::SavePart()
 {
