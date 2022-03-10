@@ -62,9 +62,6 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FPixelBalanceChangedDelegate OnPixelBalenceChanged;
 
-	UPROPERTY(BlueprintAssignable)
-	FExplodeDelegate OnExplodeDelegate;
-
 protected:
 	//Comment -Mabel Suggestion
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
