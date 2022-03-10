@@ -833,6 +833,14 @@ public:
 	const TMap<EResourceType, float> GetResourceProductionRates() const;
 
 	/**
+	 * Gets the attempted production rates of each resource type. This means it will return what was actually created + what was failed to be created (because there wasn't enough capacity).
+	 * 
+	 * @return A map of each resource type to how much of each is being attempted to be produced
+	 */
+	UFUNCTION(BlueprintPure, Category = "Resource Management|Rates")
+	const TMap<EResourceType, float> GetResourceAttemptedProductionRates() const;
+
+	/**
 	 * Gets the consumption rates of each resource type
 	 * 
 	 * @return A map of each resource type to how much of each is being consumed
@@ -841,7 +849,7 @@ public:
 	const TMap<EResourceType, float> GetResourceConsumptionRates() const;
 
 	/**
-	 * Gets the attempted consumption rates of each resource type. This means it will show what was actually used + what was failed to be used (because there wasn't enough resources).
+	 * Gets the attempted consumption rates of each resource type. This means it will return what was actually used + what was failed to be used (because there wasn't enough resources).
 	 * 
 	 * @return A map of each resource type to the attempted consumption rate of each
 	 */
@@ -854,15 +862,17 @@ private:
 	 * Calculates the resources created and consumed over a given time period
 	 *
 	 * @param OutResourceTypesToProductionRates - The production rates of each resource type
+	 * @param OutResourceTypesToAttemptedProductionRates - The attempted production rates of each resource type
 	 * @param OutResourceTypesToConsumptionRates - The consumption rates of each resource type
 	 * @param OutResourceTypesToAttemptedConsumptionRates - The attempted consumption rates of each resource type
 	 * @param ResourcesProduced - The resources produced over the given time period
+	 * @param ResourceAttemptedProduced - The resources attempted to be produced over the given time period
 	 * @param ResourcesConsumed - The resources consumed over the given time period
 	 * @param ResourcesAttemptedConsumed - The resources that were attempted to be consumed over the given time period
 	 * @param Time - The time period over which resources were created and used
 	 */
 	UFUNCTION()
-	void CalculateResourceRates(TMap<EResourceType, float>& OutResourceTypesToProductionRates, TMap<EResourceType, float>& OutResourceTypesToConsumptionRates, TMap<EResourceType, float>& OutResourceTypesToAtteptedConsumptionRates, TMap<EResourceType, float> ResourcesProduced, TMap<EResourceType, float> ResourcesConsumed, TMap<EResourceType, float> ResourcesAttemptedConsumed, float Time);
+	void CalculateResourceRates(TMap<EResourceType, float>& OutResourceTypesToProductionRates, TMap<EResourceType, float>& OutResourceTypesToAttemptedProductionRates, TMap<EResourceType, float>& OutResourceTypesToConsumptionRates, TMap<EResourceType, float>& OutResourceTypesToAtteptedConsumptionRates, TMap<EResourceType, float> ResourcesProduced, TMap<EResourceType, float> ResourcesAttemptedProduced, TMap<EResourceType, float> ResourcesConsumed, TMap<EResourceType, float> ResourcesAttemptedConsumed, float Time);
 
 	//Stores the production rates of each resource type from the last refresh
 	UPROPERTY()
@@ -871,6 +881,14 @@ private:
 	//Stores the amount of resources that have been produced since the last refresh
 	UPROPERTY()
 	TMap<EResourceType, float> ResourceTypesToAmountsProducedSinceLastRefresh;
+
+	//Stores the attempted production rates of each resource type from the last refresh. "Attempted" in this context means that there may be resources that could not fit into the storage companies. This will store the actually produced resources + the resources that failed to be produced.
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToAttemptedProductionRates;
+
+	//Stores the amount of resources that have been attempted to be produced since the last refresh
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToAmountsAttemptedProducedSinceLastRefresh;
 
 	//Stores the consumption rates of each resource type from the last refresh
 	UPROPERTY()

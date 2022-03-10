@@ -72,11 +72,14 @@ void AVoidgrid::Tick(float DeltaTime)
 
 	HandleResourceRequests();
 
+	TimeSinceLastResourceRateRefresh += DeltaTime;
+
 	if (TimeSinceLastResourceRateRefresh >= ResourceRatesRefreshRate)
 	{
-		CalculateResourceRates(ResourceTypesToProductionRates, ResourceTypesToConsumptionRates, ResourceTypesToAttemptedConsumptionRates, ResourceTypesToAmountsProducedSinceLastRefresh, ResourceTypesToAmountsConsumedSinceLastRefresh, ResourceTypesToAmountsAttemptedConsumedSinceLastRefresh, TimeSinceLastResourceRateRefresh);
+		CalculateResourceRates(ResourceTypesToProductionRates, ResourceTypesToAttemptedProductionRates, ResourceTypesToConsumptionRates, ResourceTypesToAttemptedConsumptionRates, ResourceTypesToAmountsProducedSinceLastRefresh, ResourceTypesToAmountsAttemptedProducedSinceLastRefresh, ResourceTypesToAmountsConsumedSinceLastRefresh, ResourceTypesToAmountsAttemptedConsumedSinceLastRefresh, TimeSinceLastResourceRateRefresh);
 
 		ResourceTypesToAmountsProducedSinceLastRefresh.Empty();
+		ResourceTypesToAmountsAttemptedProducedSinceLastRefresh.Empty();
 		ResourceTypesToAmountsConsumedSinceLastRefresh.Empty();
 		ResourceTypesToAmountsAttemptedConsumedSinceLastRefresh.Empty();
 		TimeSinceLastResourceRateRefresh = 0;
@@ -931,21 +934,30 @@ void AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
 		}
 		else
 		{
-
 			//Stores the storage capacity of this resource type
 			float Capacity = ResourceTypesToStorageCapacities.FindRef(EachAddedResource.Key);
+
 			//Stores the amount of this resource that this voidgrid already has
 			float CurrentAmount = Resources.Contains(EachAddedResource.Key) ? Resources.FindRef(EachAddedResource.Key) : 0;
-			//Stores the amount of resource that is actually added
-			float AddedAmount = CurrentAmount + EachAddedResource.Value > Capacity ? Capacity : Resources.FindRef(EachAddedResource.Key) + EachAddedResource.Value;
+
+			//Stores the new amount of resource
+			float NewAmount = (CurrentAmount + EachAddedResource.Value) > Capacity ? Capacity : (CurrentAmount + EachAddedResource.Value);
 				
 			//Emplace will override the previous key value pair.
-			Resources.Emplace(EachAddedResource.Key, AddedAmount);
+			Resources.Emplace(EachAddedResource.Key, NewAmount);
+
+			//Stores the amount of resource that is actually added
+			float AddedAmount = NewAmount - CurrentAmount;
 
 			//Stores the amount of resource that has been created since the last refresh
-			float TotalResourceCreatedSinceLastRefresh = EachAddedResource.Value + (ResourceTypesToAmountsProducedSinceLastRefresh.Contains(EachAddedResource.Key) ? ResourceTypesToAmountsProducedSinceLastRefresh.FindRef(EachAddedResource.Key) : 0);
+			float TotalResourceCreated = AddedAmount + (ResourceTypesToAmountsProducedSinceLastRefresh.Contains(EachAddedResource.Key) ? ResourceTypesToAmountsProducedSinceLastRefresh.FindRef(EachAddedResource.Key) : 0);
+
+			ResourceTypesToAmountsProducedSinceLastRefresh.Emplace(EachAddedResource.Key, TotalResourceCreated);
+
+			//Stores the amount of resource that has been attempted to be created since the last refresh
+			float TotalResourceAttemptedCreated = EachAddedResource.Value + (ResourceTypesToAmountsAttemptedProducedSinceLastRefresh.Contains(EachAddedResource.Key) ? ResourceTypesToAmountsAttemptedProducedSinceLastRefresh.FindRef(EachAddedResource.Key) : 0);
 			
-			ResourceTypesToAmountsProducedSinceLastRefresh.Emplace(EachAddedResource.Key, TotalResourceCreatedSinceLastRefresh);
+			ResourceTypesToAmountsAttemptedProducedSinceLastRefresh.Emplace(EachAddedResource.Key, TotalResourceAttemptedCreated);
 		}
 	}
 
@@ -1146,6 +1158,16 @@ const TMap<EResourceType, float> AVoidgrid::GetResourceProductionRates() const
 }
 
 /**
+ * Gets the attempted production rates of each resource type. This means it will return what was actually created + what was failed to be created (because there wasn't enough capacity).
+ *
+ * @return A map of each resource type to how much of each is being attempted to be produced
+ */
+const TMap<EResourceType, float> AVoidgrid::GetResourceAttemptedProductionRates() const
+{
+	return ResourceTypesToAttemptedProductionRates;
+}
+
+/**
  * Gets the consumption rates of each resource type
  *
  * @return A map of each resource type to how much of each is being consumed
@@ -1169,22 +1191,30 @@ const TMap<EResourceType, float> AVoidgrid::GetResourceAttemptedConsumptionRates
  * Calculates the resources created and consumed over a given time period
  *
  * @param OutResourceTypesToProductionRates - The production rates of each resource type
+ * @param OutResourceTypesToAttemptedProductionRates - The attempted production rates of each resource type
  * @param OutResourceTypesToConsumptionRates - The consumption rates of each resource type
  * @param OutResourceTypesToAttemptedConsumptionRates - The attempted consumption rates of each resource type
  * @param ResourcesProduced - The resources produced over the given time period
+ * @param ResourceAttemptedProduced - The resources attempted to be produced over the given time period
  * @param ResourcesConsumed - The resources consumed over the given time period
  * @param ResourcesAttemptedConsumed - The resources that were attempted to be consumed over the given time period
  * @param Time - The time period over which resources were created and used
  */
-void AVoidgrid::CalculateResourceRates(TMap<EResourceType, float>& OutResourceTypesToProductionRates, TMap<EResourceType, float>& OutResourceTypesToConsumptionRates, TMap<EResourceType, float>& OutResourceTypesToAtteptedConsumptionRates, TMap<EResourceType, float> ResourcesProduced, TMap<EResourceType, float> ResourcesConsumed, TMap<EResourceType, float> ResourcesAttemptedConsumed, float Time)
+void AVoidgrid::CalculateResourceRates(TMap<EResourceType, float>& OutResourceTypesToProductionRates, TMap<EResourceType, float>& OutResourceTypesToAttemptedProductionRates, TMap<EResourceType, float>& OutResourceTypesToConsumptionRates, TMap<EResourceType, float>& OutResourceTypesToAtteptedConsumptionRates, TMap<EResourceType, float> ResourcesProduced, TMap<EResourceType, float> ResourcesAttemptedProduced, TMap<EResourceType, float> ResourcesConsumed, TMap<EResourceType, float> ResourcesAttemptedConsumed, float Time)
 {
 	OutResourceTypesToProductionRates.Empty();
+	OutResourceTypesToAttemptedProductionRates.Empty();
 	OutResourceTypesToConsumptionRates.Empty();
 	OutResourceTypesToAtteptedConsumptionRates.Empty();
 
 	for (TPair<EResourceType, float> EachResourceProduced : ResourcesProduced)
 	{
 		OutResourceTypesToProductionRates.Emplace(EachResourceProduced.Key, EachResourceProduced.Value / Time);
+	}
+
+	for (TPair<EResourceType, float> EachResourceAttemptedProduced : ResourcesAttemptedProduced)
+	{
+		OutResourceTypesToAttemptedProductionRates.Emplace(EachResourceAttemptedProduced.Key, EachResourceAttemptedProduced.Value / Time);
 	}
 
 	for (TPair<EResourceType, float> EachResourceConsumed : ResourcesConsumed)
