@@ -11,7 +11,7 @@
 *
 * @param VoidsongData - The Voidsong data played
 *
-* @return - The Voidsong played
+* @return The Voidsong played
 */
 UVoidsong* UVoidsongManager::PlayVoidsong(FVoidsongData VoidsongData)
 {
