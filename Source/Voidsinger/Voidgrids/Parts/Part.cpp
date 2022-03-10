@@ -120,10 +120,10 @@ FVector2D UPartRotationFunctions::UnrotateLocation(FVector2D Location, EPartRota
 }
 
 /**
- * Creates and initilizes a new part.
+ * Creates and initializes a new part.
  *
  * @param OwningVoidgrid - The Voidgrid the new part is a part of.
- * @param PartData - The data pased to the new part.
+ * @param PartData - The data passed to the new part.
  * @return A pointer to the newly created part.
  */
 UPart* UPart::CreatePart(AVoidgrid* OwningVoidgrid, FPartInstanceData PartData)
@@ -176,9 +176,9 @@ FPartInstanceData UPart::GetPartInstanceData()
 }
 
 /**
- * Gets the minimnal part data for this part.
+ * Gets the minimal part data for this part.
  *
- * @return The minimnal part data for this part.
+ * @return The minimal part data for this part.
  */
 FMinimalPartInstanceData UPart::GetMinimalPartInstanceData()
 {
@@ -313,7 +313,7 @@ FPartTransform UPart::GetTransform()
 ////Copy comment from .h -Mabel Suggestion
 //void UPart::InitializeVariables(FIntPoint Loc, float Rot, UPartGridComponent* PartGrid, TSubclassOf<UPart> PartType, PartShapeType Shape)
 //{
-//	//Initalize Variables
+//	//Initialize Variables
 //	Rotation = FMath::GridSnap<float>(Rot, 90);
 //	Location = Loc;
 //	PartGridComponent = PartGrid;
@@ -372,7 +372,7 @@ FPartTransform UPart::GetTransform()
 //* Function comments from the .h should be copied to the .cpp
 //*
 //* Why are activate and blueprint activate separate functions?
-//* You should(?) be able to make the interface function as bluepritn implementable
+//* You should(?) be able to make the interface function as blueprint implementable
 //* - Liam Suggestion
 //*/
 //void UPart::Activate(float Duration)
@@ -506,7 +506,7 @@ FPartTransform UPart::GetTransform()
 ////Copy comment from .h -Mabel Suggestion
 //float UPart::GetMass()
 //{
-//	////UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Grr = %i"), TotalPartMass / GetDesiredShape().Num(), GetDesiredShape().Num());
+//	////UE_LOG(LogTemp, Warning, TEXT("MASS = %f, Gr = %i"), TotalPartMass / GetDesiredShape().Num(), GetDesiredShape().Num());
 //	return TotalPartMass / GetDesiredShape().Num();
 //}
 //
@@ -533,7 +533,7 @@ FPartTransform UPart::GetTransform()
 //UBaseResourceSystem* UPart::GetSystemByType(TEnumAsByte<EResourceType> Type)
 //{
 //	UBaseResourceSystem* FoundResourceSystem = nullptr;
-//	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
+//	//Iterator should have a name that tells what it actually is and what its iterating through - Liam Suggestion
 //	for (auto& i : GetSystems())
 //	{
 //		//const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
@@ -579,7 +579,7 @@ FPartTransform UPart::GetTransform()
 //	return PixelMaterial;
 //}
 //
-///*Condtional  Checkers*\
+///*Conditional  Checkers*\
 //\*--------------------*/
 //
 ////Copy comment from .h -Mabel Suggestion
@@ -668,7 +668,7 @@ FPartTransform UPart::GetTransform()
 //	//Basic description: for each pixel on this part that has a resource type, check around that location for another part that has a pixel with that resource type next to the
 //	// pixel currently being checked. If there is no adjacent resource system create a new one.
 //
-//	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
+//	//Iterator should have a name that tells what it actually is and what its iterating through - Liam Suggestion
 //	//This needs to be called for each resource type so a resource system for each type is created.
 //	for (auto& i : GetResourceTypes())
 //	{
@@ -676,7 +676,7 @@ FPartTransform UPart::GetTransform()
 //		//System found will be useful later to determine if the part should be added to an existing or the part should make a new system.
 //		bool SystemFound = false;
 //
-//		//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
+//		//Iterator should have a name that tells what it actually is and what its iterating through - Liam Suggestion
 //		//For each pixel location that has this resource type applied to it
 //		for (auto& j : i.Value.IntPointArray)
 //		{
@@ -783,15 +783,15 @@ FPartTransform UPart::GetTransform()
 //
 //* Function comments from the .h should be copied to the .cpp
 //* 
-//* Consider coverting avalable voisongs to a stuct containg avalable Verbs, Nouns, and Factions or just Nouns and Factions
+//* Consider converting available voidsongs to a struct containing available Verbs, Nouns, and Factions or just Nouns and Factions
 //* 
-//* Logic for weather or not a delegate is cabale of being called should be done before it is brodcast.
-//* In otherwords AvalableVoidsongs should be handeled in UShip::DecideVoidsongsPlayed()
+//* Logic for weather or not a delegate is capable of being called should be done before it is broadcast.
+//* In other words AvalableVoidsongs should be handled in UShip::DecideVoidsongsPlayed()
 //* 
 //* Confusing parameter names.
 //* Factions for what?
-//* Nounclasses for what?
-//* Inconsitant names. To fix either: rename Factions to FactionNames or FactionTypes, or rename NounClasses to Nouns
+//* Noun classes for what?
+//* Inconsistent names. To fix either: rename Factions to FactionNames or FactionTypes, or rename NounClasses to Nouns
 //* 
 //* Shouldn't NounClasses have the type: const TArray<TSubclassOf<UPart>>&
 //* - Liam Suggestion
@@ -809,11 +809,11 @@ FPartTransform UPart::GetTransform()
 //	// didn't play any nouns even though they shouldn't.
 //
 //	
-//	// Variable sould be global and updated on AddNewVoidsong()	 
+//	// Variable should be global and updated on AddNewVoidsong()	 
 //	TArray<TEnumAsByte<EFaction>> AvailableFactions;
 //	TArray<TSubclassOf<UObject>> AvailableNouns;
 //
-//	//Iterator should have a name that tells what it actualy is and what its iterating through - Liam Suggestion
+//	//Iterator should have a name that tells what it actually is and what its iterating through - Liam Suggestion
 //	for (auto& i : AvailableVoidsongs)
 //	{
 //		if (IsValid(Cast<UBaseFactionVoidsong>(i)))

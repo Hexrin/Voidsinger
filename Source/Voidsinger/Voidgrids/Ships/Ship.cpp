@@ -80,7 +80,7 @@ UVoidsong* AShip::PlayVoidsong(const TSet<UBaseFactionMotif*>& Factions, const T
 			}
 		}
 
-	// /\ Check if the Motifs played are playable, and reove those that aren't /\ /
+	// /\ Check if the Motifs played are playable, and remove those that aren't /\ /
 	
 	// \/ Check if Factions is empty, if so play every playable Faction \/ /
 

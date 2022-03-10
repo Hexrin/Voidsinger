@@ -29,6 +29,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EFaction Faction;
 
-	//Gets the primar asset Id for the asset mager and build UI.
+	//Gets the primary asset Id for the asset manger and build UI.
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
 };

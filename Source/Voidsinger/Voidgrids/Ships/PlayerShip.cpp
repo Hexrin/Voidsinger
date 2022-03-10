@@ -2,11 +2,11 @@
 #include "Kismet/GameplayStatics.h"
 
 /**
- * Initializes the camera and posesses the player.
+ * Initializes the camera and possesses the player.
  */
 APlayerShip::APlayerShip()
 {	
-	//Inilize Camera
+	//Initialize Camera
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->AttachToComponent(PixelMeshComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	Camera->SetUsingAbsoluteRotation(true);					//Make camera point down
@@ -89,7 +89,7 @@ void APlayerShip::Repair()
  */
 void APlayerShip::SetCameraZoom(float Percent)
 {
-	//Prevents the player from execeding min/max zoom.
+	//Prevents the player from exceeding min/max zoom.
 	CameraZoomPercent = FMath::Clamp(Percent, 0.f, 1.f);
 	Camera->SetRelativeLocation(FVector(0, 0, (CameraMaxHeight - CameraMinHeight) * powf(CameraZoomPercent, CameraZoomPower) + CameraMinHeight));
 }
@@ -107,7 +107,7 @@ float APlayerShip::GetCameraZoom() const
 /**
  * Updates the zoom percent by the given scaled input.
  *
- * @param AxisValue - The the input axis value that will be used to update the zoom percent.
+ * @param AxisValue - The input axis value that will be used to update the zoom percent.
  */
 void APlayerShip::ZoomAxisInput(float AxisValue)
 {
@@ -188,7 +188,7 @@ void APlayerShip::RecordVoidsongInput(int32 Input)
 
 	if (IsValid(VoidsongInstrument))
 	{
-		VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(Input)));
+		//VoidsongInstrument->GetParameterInterface()->Trigger(FName(FString::FromInt(Input)));
 	}
 	else
 	{
