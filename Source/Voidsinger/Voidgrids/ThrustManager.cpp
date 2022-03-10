@@ -29,47 +29,30 @@ void UThrustManager::PredictThrustToLinearVelocity(float& TimeToVelocity, FVecto
 }
 
 /**
- * Predicts the time it will take to reach a certain location given the Voidgrid's thrusters.
+ * Predicts the time it will take to reach a certain location. Assumes the Voidgrid is not accelerating.
  *
- * @param Target - The voidgrid to predict the motion of.
- * @param Location - The target location to predict the time to reach.
- * @return The time it will take to reach a certain location. Returns -1 if it is impossible to reach the target location.
+ * @param TargetLocation - The location to predict the time to arrival.
+ * @param ErrorRadius - The radius around the target location that count as being at.
+ * @return The time to reach the given location. -1 if location is unachievable.
  */
-float UThrustManager::TimeToLocation(const FVector2D Location, const bool bAccelerating) const
+float UThrustManager::PredictTimeToLocation(const FVector2D TargetLocation, const float ErrorRadius = 0.f) const
 {
-	float c = (Voidgrid->GetActorLocation().Size() - (Location).Size());
-	float b = (Voidgrid->LinearVelocity.Size());
-	float a = 1;
-	float timetoVelocity = 0;
+	FVector2D DeltaPosition = TargetLocation - FVector2D(Voidgrid->GetActorLocation());
 
-	if (bAccelerating) 
+	//The speed at which the voidgrid is moving
+	float VoidgridSpeed = Voidgrid->LinearVelocity.Size();
+
+	//If voidgrid will arrive within the error radius of the target location.
+	if ((DeltaPosition ^ Voidgrid->LinearVelocity) / VoidgridSpeed <= ErrorRadius)
 	{
-		a = (GetMaximumAccelerationInDirection((Location)-FVector2D(Voidgrid->GetActorLocation())));	
-		if ((FVector(Voidgrid->LinearVelocity.GetSafeNormal(), 0) - (UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0)))).Size() != 0)
-		{
-
-			if (GetMaximumAccelerationInDirection(FVector2D((FVector(Voidgrid->LinearVelocity, 0)) - (((UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0))))))) != 0)
-			{
-				return -1;
-			}
-			else
-			{
-				timetoVelocity = (((FVector(Voidgrid->LinearVelocity, 0)) - (((UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0)))))) / (a)).Size();
-				b = ((Voidgrid->LinearVelocity) - (Location)).Size();
-			}
-		}
+		return (DeltaPosition | Voidgrid->LinearVelocity) / FMath::Square(VoidgridSpeed);
 	}
 	else
 	{
-		if ((FVector(Voidgrid->LinearVelocity.GetSafeNormal(), 0) - (UKismetMathLibrary::GetDirectionUnitVector(Voidgrid->GetActorLocation(), FVector(Location, 0)))).Size() != 0)
-		{
-			return -1;
-
-		}
+		return -1;
 	}
-	float timeToLocation = (((-1 * b) + (sqrt((b * b) - (4 * a * c)))) / (2 * a));
-	return (timetoVelocity + timeToLocation);
 }
+
 /**
  * Predicts the time it will take to reach a certain angular velocity given the Voidgrid's thrusters.
  *
