@@ -16,17 +16,16 @@ UThrustManager::UThrustManager()
 \* \/ Thrust Predictions \/ */
 
 /**
- * Predicts the time it will take to reach a certain linear velocity given the Voidgrid's thrusters.
+ * Predicts the direction of thrust and the time it will take to reach a certain linear velocity given the available thrust sources.
  *
- * @param Target - The voidgrid to predict the motion of.
- * @param Velocity - The target velocity to predict the time to reach.
- * @return The time it will take to reach a certain linear velocity. Returns -1 if it is impossible to reach the target velocity.
+ * @param TimeToVelocity -  Will be set to the time to reach the given velocity. Set to -1 if velocity is unachievable.
+ * @param DirectionToVelocity - Set to the direction acceleration is needed in.
+ * @param TargetVelocity - The velocity to predict the thrust needed to achieve.
  */
-float UThrustManager::TimeToLinearVelocity(const FVector2D Velocity) const
+void UThrustManager::PredictThrustToLinearVelocity(float& TimeToVelocity, FVector2D& DirectionToVelocity, const FVector2D TargetVelocity) const
 {
-	FVector2D AccelerationDirection = (Velocity - (Voidgrid->LinearVelocity));
-	float timetoAcceleration = ((AccelerationDirection) / (GetMaximumAccelerationInDirection(AccelerationDirection))).Size();
-	return timetoAcceleration;
+	FVector2D DeltaVelocity = (TargetVelocity - (Voidgrid->LinearVelocity));
+	TimeToVelocity = (DeltaVelocity).Size() / GetMaximumAccelerationInDirection(DeltaVelocity);
 }
 
 /**
@@ -90,7 +89,7 @@ float UThrustManager::TimeToAngularVelocity(const float Velocity) const
  * Predicts the time it will take to reach a certain orientation given the Voidgrid's thrusters.
  *
  * @param Orientation - The target orientation to predict the time to reach.
- * @param bAccelerating - Whether or not to factor in the voidgrids acceleration capabilites into the calculations
+ * @param bAccelerating - Whether or not to factor in the voidgrids acceleration capabilities into the calculations
  * @return The time it will take to reach a certain orientation. Returns -1 if it is impossible to reach the target orientation.
  */
 float UThrustManager::TimeToOrientation(const float Orientation, const bool bAccelerating) const
@@ -158,7 +157,8 @@ void UThrustManager::RemoveManagedThrustSource(FThrustSource ThrustSource)
 
 float UThrustManager::GetMaximumAccelerationInDirection(const FVector2D Direction) const
 {
-	return (Direction.X > 0 ? ForwardThrust : BackwardThrust) * Direction.X + (Direction.Y > 0 ? RightThrust : LeftThrust) * Direction.Y;
+	const FVector2D NormailizedDirection = Direction.GetSafeNormal();
+	return (NormailizedDirection.X > 0 ? ForwardThrust : BackwardThrust) * NormailizedDirection.X + (NormailizedDirection.Y > 0 ? RightThrust : LeftThrust) * NormailizedDirection.Y;
 }
 
 float UThrustManager::GetMaximumAccelerationInDirection(const float DirectionAngle) const
