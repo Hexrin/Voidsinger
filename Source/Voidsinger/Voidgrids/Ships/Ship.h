@@ -154,6 +154,11 @@ public:
 	//Stores the Location of the ship saved by this.
 	UPROPERTY()
 	FVector2D Location;
+
+	//Stores the resources on the Voidgrid of the ship saved by this.
+	UPROPERTY()
+	TMap<EResourceType, float> Resources;
+
 };
 
 
