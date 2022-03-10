@@ -68,7 +68,23 @@ void AVoidgrid::Tick(float DeltaTime)
 	}	
 	DeltaHeatTime += DeltaTime;
 
+	// \/ Handle resource requests and production/consumption rates \/ //
+
 	HandleResourceRequests();
+
+	TimeSinceLastResourceRateRefresh += DeltaTime;
+
+	if (TimeSinceLastResourceRateRefresh >= ResourceRatesRefreshRate)
+	{
+		CalculateResourceRates(ResourceTypesToProductionRates, ResourceTypesToConsumptionRates, ResourceTypesToAttemptedConsumptionRates, ResourceTypesToAmountsProducedSinceLastRefresh, ResourceTypesToAmountsConsumedSinceLastRefresh, ResourceTypesToAmountsAttemptedConsumedSinceLastRefresh, TimeSinceLastResourceRateRefresh);
+
+		ResourceTypesToAmountsProducedSinceLastRefresh.Empty();
+		ResourceTypesToAmountsConsumedSinceLastRefresh.Empty();
+		ResourceTypesToAmountsAttemptedConsumedSinceLastRefresh.Empty();
+		TimeSinceLastResourceRateRefresh = 0;
+	}
+
+	// /\ Handle resource requests and production/consumption rates /\ //
 }
 
 /* ------------- *\
@@ -927,6 +943,11 @@ void AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
 				
 			//Emplace will override the previous key value pair.
 			Resources.Emplace(EachAddedResource.Key, AddedAmount);
+
+			//Stores the amount of resource that has been created since the last refresh
+			float TotalResourceCreatedSinceLastRefresh = AddedAmount + (ResourceTypesToAmountsProducedSinceLastRefresh.Contains(EachAddedResource.Key) ? ResourceTypesToAmountsProducedSinceLastRefresh.FindRef(EachAddedResource.Key) : 0);
+			
+			ResourceTypesToAmountsProducedSinceLastRefresh.Emplace(EachAddedResource.Key, TotalResourceCreatedSinceLastRefresh);
 		}
 	}
 
@@ -1014,22 +1035,40 @@ void AVoidgrid::HandleResourceRequests()
 const bool AVoidgrid::UseResources(TMap<EResourceType, float> UsedResources)
 {
 
+	//Stores whether all resources can be used or not
+	bool bResourcesCanBeUsed = true;
+
 	// \/ Check if all resources can be used \/ //
 	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
 	{
 		if ((!Resources.Contains(EachUsedResource.Key)) || (Resources.FindRef(EachUsedResource.Key) < EachUsedResource.Value))
 		{
-			//Return if not all resources can be used.
-			return false;
+			bResourcesCanBeUsed = false;
 		}
+
+		//Stores the total amount of resources attempted to be consumed since the last refresh
+		float TotalResourceAttemptedConsumed = EachUsedResource.Value + (ResourceTypesToAmountsAttemptedConsumedSinceLastRefresh.Contains(EachUsedResource.Key) ? ResourceTypesToAmountsAttemptedConsumedSinceLastRefresh.FindRef(EachUsedResource.Key) : 0);
+		
+		ResourceTypesToAmountsAttemptedConsumedSinceLastRefresh.Emplace(EachUsedResource.Key, TotalResourceAttemptedConsumed);
 	}
 	// /\ Check if all resources can be used /\ //
+
+	//Return if not all resources can be used.
+	if (!bResourcesCanBeUsed)
+	{
+		return false;
+	}
 
 	// \/ Use the resources \/ //
 	for (TPair<EResourceType, float> EachUsedResource : UsedResources)
 	{
 		//Emplace will override the previous key value pair
 		Resources.Emplace(EachUsedResource.Key, Resources.FindRef(EachUsedResource.Key) - EachUsedResource.Value);
+
+		//Stores the total amount of resources consumed since the last refresh
+		float TotalResourceConsumed = EachUsedResource.Value + (ResourceTypesToAmountsConsumedSinceLastRefresh.Contains(EachUsedResource.Key) ? ResourceTypesToAmountsConsumedSinceLastRefresh.FindRef(EachUsedResource.Key) : 0);
+		
+		ResourceTypesToAmountsConsumedSinceLastRefresh.Emplace(EachUsedResource.Key, TotalResourceConsumed);
 	}
 	// /\ Use the resources /\ //
 
@@ -1119,18 +1158,31 @@ const TMap<EResourceType, float> AVoidgrid::GetResourceConsumptionRates() const
 }
 
 /**
+ * Gets the attempted consumption rates of each resource type. This means it will show what was actually used + what was failed to be used (because there wasn't enough resources).
+ *
+ * @return A map of each resource type to the attempted consumption rate of each
+ */
+const TMap<EResourceType, float> AVoidgrid::GetResourceAttemptedConsumptionRates() const
+{
+	return ResourceTypesToAttemptedConsumptionRates;
+}
+
+/**
  * Calculates the resources created and consumed over a given time period
  *
  * @param OutResourceTypesToProductionRates - The production rates of each resource type
  * @param OutResourceTypesToConsumptionRates - The consumption rates of each resource type
+ * @param OutResourceTypesToAttemptedConsumptionRates - The attempted consumption rates of each resource type
  * @param ResourcesProduced - The resources produced over the given time period
  * @param ResourcesConsumed - The resources consumed over the given time period
+ * @param ResourcesAttemptedConsumed - The resources that were attempted to be consumed over the given time period
  * @param Time - The time period over which resources were created and used
  */
-void AVoidgrid::CalculateResourceRates(TMap<EResourceType, float>& OutResourceTypesToProductionRates, TMap<EResourceType, float>& OutResourceTypesToConsumptionRates, TMap<EResourceType, float> ResourcesProduced, TMap<EResourceType, float> ResourcesConsumed, float Time)
+void AVoidgrid::CalculateResourceRates(TMap<EResourceType, float>& OutResourceTypesToProductionRates, TMap<EResourceType, float>& OutResourceTypesToConsumptionRates, TMap<EResourceType, float>& OutResourceTypesToAtteptedConsumptionRates, TMap<EResourceType, float> ResourcesProduced, TMap<EResourceType, float> ResourcesConsumed, TMap<EResourceType, float> ResourcesAttemptedConsumed, float Time)
 {
 	OutResourceTypesToProductionRates.Empty();
 	OutResourceTypesToConsumptionRates.Empty();
+	OutResourceTypesToAtteptedConsumptionRates.Empty();
 
 	for (TPair<EResourceType, float> EachResourceProduced : ResourcesProduced)
 	{
@@ -1140,6 +1192,11 @@ void AVoidgrid::CalculateResourceRates(TMap<EResourceType, float>& OutResourceTy
 	for (TPair<EResourceType, float> EachResourceConsumed : ResourcesConsumed)
 	{
 		OutResourceTypesToConsumptionRates.Emplace(EachResourceConsumed.Key, EachResourceConsumed.Value / Time);
+	}
+
+	for (TPair<EResourceType, float> EachResourceAttemptedConsumed : ResourcesAttemptedConsumed)
+	{
+		OutResourceTypesToAtteptedConsumptionRates.Emplace(EachResourceAttemptedConsumed.Key, EachResourceAttemptedConsumed.Value / Time);
 	}
 }
 

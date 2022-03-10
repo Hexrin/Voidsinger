@@ -840,6 +840,14 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Resource Management|Rates")
 	const TMap<EResourceType, float> GetResourceConsumptionRates() const;
 
+	/**
+	 * Gets the attempted consumption rates of each resource type. This means it will show what was actually used + what was failed to be used (because there wasn't enough resources).
+	 * 
+	 * @return A map of each resource type to the attempted consumption rate of each
+	 */
+	UFUNCTION(BlueprintPure, Category = "Resource Management|Rates")
+	const TMap<EResourceType, float> GetResourceAttemptedConsumptionRates() const;
+
 private:
 
 	/**
@@ -847,12 +855,14 @@ private:
 	 *
 	 * @param OutResourceTypesToProductionRates - The production rates of each resource type
 	 * @param OutResourceTypesToConsumptionRates - The consumption rates of each resource type
+	 * @param OutResourceTypesToAttemptedConsumptionRates - The attempted consumption rates of each resource type
 	 * @param ResourcesProduced - The resources produced over the given time period
 	 * @param ResourcesConsumed - The resources consumed over the given time period
+	 * @param ResourcesAttemptedConsumed - The resources that were attempted to be consumed over the given time period
 	 * @param Time - The time period over which resources were created and used
 	 */
 	UFUNCTION()
-	void CalculateResourceRates(TMap<EResourceType, float>& OutResourceTypesToProductionRates, TMap<EResourceType, float>& OutResourceTypesToConsumptionRates, TMap<EResourceType, float> ResourcesProduced, TMap<EResourceType, float> ResourcesConsumed, float Time);
+	void CalculateResourceRates(TMap<EResourceType, float>& OutResourceTypesToProductionRates, TMap<EResourceType, float>& OutResourceTypesToConsumptionRates, TMap<EResourceType, float>& OutResourceTypesToAtteptedConsumptionRates, TMap<EResourceType, float> ResourcesProduced, TMap<EResourceType, float> ResourcesConsumed, TMap<EResourceType, float> ResourcesAttemptedConsumed, float Time);
 
 	//Stores the production rates of each resource type from the last refresh
 	UPROPERTY()
@@ -866,9 +876,17 @@ private:
 	UPROPERTY()
 	TMap<EResourceType, float> ResourceTypesToConsumptionRates;
 
-	//Stores the currently being calculated consumption rates of each resource type
+	//Stores the amount of resources that have been consumed since the last refresh
 	UPROPERTY()
 	TMap<EResourceType, float> ResourceTypesToAmountsConsumedSinceLastRefresh;
+
+	//Stores the attempted consumption rates of each resource type from the last refresh. "Attempted" in this context means that there wasn't enough resources to fulfill the request. This will store the actually used amount + the failed to use amount.
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToAttemptedConsumptionRates;
+
+	//Stores the amount of resources that have been attempted to be consumed since the last refresh
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToAmountsAttemptedConsumedSinceLastRefresh;
 
 	//Stores the amount of time that production and consumption rates refresh after
 	UPROPERTY()
