@@ -17,7 +17,7 @@ void UThrusterModule::InitializeVariables(UPart* OwningPart)
 
 /**
  * Called when the owning part is activated and calls the functionality of this part.
- * Applies an impulse to the voidgrid in an atempt to get it to move in teh vector dirction and face in the roatation direction.
+ * Applies an impulse to the voidgrid in an attempt to get it to move in the vector direction and face in the rotation direction.
  */
 void UThrusterModule::OnActivate_Implementation(const FPartActivationData Data)
 {

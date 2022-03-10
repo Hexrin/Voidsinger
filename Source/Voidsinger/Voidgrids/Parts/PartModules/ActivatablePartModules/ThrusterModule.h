@@ -32,11 +32,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ClampMin="0"))
 	float ThrustForce{ 100 };
 
-	//The direction of the impulse applyed by this.
+	//The direction of the impulse applied by this.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPreserveRatio))
 	FVector2D ThrustDirection{ FVector2D(1,0) };
 
-	//The location of the impulse applyed by this.
+	//The location of the impulse applied by this.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FIntPoint ThrustLocation{ FIntPoint::ZeroValue };
 
@@ -48,7 +48,7 @@ protected:
 protected:
 	/**
 	 * Called when the owning part is activated and calls the functionality of this part.
-	 * Applies an impulse to the voidgrid in an atempt to get it to move in teh vector dirction and face in the roatation direction.
+	 * Applies an impulse to the voidgrid in an attempt to get it to move in the vector direction and face in the rotation direction.
 	 */
 	virtual void OnActivate_Implementation(const FPartActivationData Data) override;
 
