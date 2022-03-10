@@ -722,13 +722,13 @@ public:
 public:
 
 	/**
-	 * Adds a resource request to the list of resource requests sorted by priority
+	 * Gets the resources stored on this Voidgrid
 	 *
-	 * @param ResourceRequest - The new resource request
+	 * @return The resources
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Resource Management")
-	void AddResourceRequest(FResourceRequest ResourceRequest);
-	
+	UFUNCTION(BlueprintPure, Category = "Resource Management")
+	const TMap<EResourceType, float> GetResources() const;
+
 	/**
 	 * Adds resources to the Voidgrid
 	 *
@@ -737,38 +737,25 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Resource Management")
 	void AddResources(TMap<EResourceType, float> AddedResources);
 
-	/**
-	 * Gets the resources stored on this Voidgrid
-	 * 
-	 * @return The resources
-	 */
-	UFUNCTION(BlueprintCallable, Category = "Resource Management")
-	const TMap<EResourceType, float> GetResources() const;
-	
-	/**
-	 * Gets the storage capacities for each resource on this Voidgrid
-	 * 
-	 * @return The storage capacities
-	 */
-	UFUNCTION(BlueprintCallable, Category = "Resource Management")
-	const TMap<EResourceType, float> GetResourceStorageCapacities() const;
+private:
+
+	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
+	UPROPERTY()
+	TMap<EResourceType, float> Resources;
+
+	/* -------------- *\
+	\* \/ Requests \/ */
+
+public:
 
 	/**
-	 * Adds storage capacity for each resource type specified, and increase them by the amount specified
-	 * 
-	 * @param ResourceTypesToAmountToIncreaseCapacities - The resource types to the amount of increased capacity 
+	 * Adds a resource request to the list of resource requests sorted by priority
+	 *
+	 * @param ResourceRequest - The new resource request
 	 */
-	UFUNCTION()
-	void AddResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToIncreaseCapacities);
-
-	/**
-	 * Removes storage capacity for each resource type specified, and decreases them by the amount specified
-	 * 
-	 * @param ResourceTypesToAmountToDecreaseCapacities - The resource types to the amount of decreased capacity
-	 */
-	UFUNCTION()
-	void RemoveResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToDecreaseCapacities);
-
+	UFUNCTION(BlueprintCallable, Category = "Resource Management|Requests")
+	void AddResourceRequest(FResourceRequest ResourceRequest);
+		
 private:
 
 	/**
@@ -779,9 +766,9 @@ private:
 
 	/**
 	 * Uses resources on the Voidgrid. Will not use up resources if not all the resources can be used.
-	 * 
+	 *
 	 * @param UsedResources - The resources used and how much of each is used
-	 * 
+	 *
 	 * @return Whether the resources were successfully used or not
 	 */
 	UFUNCTION()
@@ -791,13 +778,108 @@ private:
 	UPROPERTY()
 	TArray<FResourceRequest> ResourceRequests;
 
-	//A map of all the resources on the Voidgrid to how much of each resource the Voidgrid currently has
-	UPROPERTY()
-	TMap<EResourceType, float> Resources;
+	/* /\ Requests /\ *\
+	\* -------------- */
+
+	/* -------------- *\
+	\* \/ Capacity \/ */
+
+public:
+
+	/**
+	 * Gets the storage capacities for each resource on this Voidgrid
+	 *
+	 * @return The storage capacities
+	 */
+	UFUNCTION(BlueprintPure, Category = "Resource Management|Capacity")
+	const TMap<EResourceType, float> GetResourceStorageCapacities() const;
+
+	/**
+	 * Adds storage capacity for each resource type specified, and increase them by the amount specified
+	 *
+	 * @param ResourceTypesToAmountToIncreaseCapacities - The resource types to the amount of increased capacity
+	 */
+	UFUNCTION()
+	void AddResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToIncreaseCapacities);
+
+	/**
+	 * Removes storage capacity for each resource type specified, and decreases them by the amount specified
+	 *
+	 * @param ResourceTypesToAmountToDecreaseCapacities - The resource types to the amount of decreased capacity
+	 */
+	UFUNCTION()
+	void RemoveResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToDecreaseCapacities);
+
+private:
 
 	//A map of all the resource types to how much of each resource the Voidgrid can store
 	UPROPERTY()
 	TMap<EResourceType, float> ResourceTypesToStorageCapacities;
+
+	/* /\ Capacity /\ *\
+	\* -------------- */
+
+	/* ----------- *\
+	\* \/ Rates \/ */
+
+public:
+
+	/**
+	 * Gets the production rates of each resource type
+	 * 
+	 * @return A map of each resource type to how much of each is being produced
+	 */
+	UFUNCTION(BlueprintPure, Category = "Resource Management|Rates")
+	const TMap<EResourceType, float> GetResourceProductionRates() const;
+
+	/**
+	 * Gets the consumption rates of each resource type
+	 * 
+	 * @return A map of each resource type to how much of each is being consumed
+	 */
+	UFUNCTION(BlueprintPure, Category = "Resource Management|Rates")
+	const TMap<EResourceType, float> GetResourceConsumptionRates() const;
+
+private:
+
+	/**
+	 * Calculates the resources created and consumed over a given time period
+	 *
+	 * @param OutResourceTypesToProductionRates - The production rates of each resource type
+	 * @param OutResourceTypesToConsumptionRates - The consumption rates of each resource type
+	 * @param ResourcesProduced - The resources produced over the given time period
+	 * @param ResourcesConsumed - The resources consumed over the given time period
+	 * @param Time - The time period over which resources were created and used
+	 */
+	UFUNCTION()
+	void CalculateResourceRates(TMap<EResourceType, float>& OutResourceTypesToProductionRates, TMap<EResourceType, float>& OutResourceTypesToConsumptionRates, TMap<EResourceType, float> ResourcesProduced, TMap<EResourceType, float> ResourcesConsumed, float Time);
+
+	//Stores the production rates of each resource type from the last refresh
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToProductionRates;
+
+	//Stores the amount of resources that have been produced since the last refresh
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToAmountsProducedSinceLastRefresh;
+
+	//Stores the consumption rates of each resource type from the last refresh
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToConsumptionRates;
+
+	//Stores the currently being calculated consumption rates of each resource type
+	UPROPERTY()
+	TMap<EResourceType, float> ResourceTypesToAmountsConsumedSinceLastRefresh;
+
+	//Stores the amount of time that production and consumption rates refresh after
+	UPROPERTY()
+	float ResourceRatesRefreshRate{ 5 };
+
+	//Stores the amount of time since the last resource rate refresh
+	UPROPERTY()
+	float TimeSinceLastResourceRateRefresh;
+
+	/* /\ Rates /\ *\
+	\* ----------- */
 
 	/* /\ Resource Management /\ *\
 	\* ------------------------- */

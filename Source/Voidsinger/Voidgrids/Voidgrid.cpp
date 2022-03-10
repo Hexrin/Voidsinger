@@ -893,6 +893,49 @@ EFaction AVoidgrid::GetFaction() const
 \* \/ Resource Management \/ */
 
 /**
+ * Gets the resources stored on this Voidgrid
+ *
+ * @return - The resources
+ */
+const TMap<EResourceType, float> AVoidgrid::GetResources() const
+{
+	return Resources;
+}
+
+/**
+ * Adds resources to the Voidgrid
+ *
+ * @param AddedResources - The resources added and how much of each is added
+ */
+void AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
+{
+	for (TPair<EResourceType, float> EachAddedResource : AddedResources)
+	{
+		if (EachAddedResource.Value < 0)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Attempted to add a negative amount of resource. Use 'UseResources' instead."));
+		}
+		else
+		{
+
+			//Stores the storage capacity of this resource type
+			float Capacity = ResourceTypesToStorageCapacities.FindRef(EachAddedResource.Key);
+			//Stores the amount of this resource that this voidgrid already has
+			float CurrentAmount = Resources.Contains(EachAddedResource.Key) ? Resources.FindRef(EachAddedResource.Key) : 0;
+			//Stores the amount of resource that is actually added
+			float AddedAmount = CurrentAmount + EachAddedResource.Value > Capacity ? Capacity : Resources.FindRef(EachAddedResource.Key) + EachAddedResource.Value;
+				
+			//Emplace will override the previous key value pair.
+			Resources.Emplace(EachAddedResource.Key, AddedAmount);
+		}
+	}
+
+}
+
+/* -------------- *\
+\* \/ Requests \/ */
+
+/**
  * Adds a resource request to the list of resource requests sorted by priority
  *
  * @param ResourceRequest - The new resource request
@@ -938,99 +981,9 @@ void AVoidgrid::AddResourceRequest(FResourceRequest ResourceRequest)
 		{
 			UpperIndex = MiddleIndex - 1;
 		}
-		else 
-		{
-			LowerIndex = MiddleIndex + 1;
-		}
-	}
-}
-
-/**
- * Adds resources to the Voidgrid
- *
- * @param AddedResources - The resources added and how much of each is added
- */
-void AVoidgrid::AddResources(TMap<EResourceType, float> AddedResources)
-{
-	for (TPair<EResourceType, float> EachAddedResource : AddedResources)
-	{
-		if (EachAddedResource.Value < 0)
-		{
-			UE_LOG(LogTemp, Error, TEXT("Attempted to add a negative amount of resource. Use 'UseResources' instead."));
-		}
 		else
 		{
-
-			//Stores the storage capacity of this resource type
-			float Capacity = ResourceTypesToStorageCapacities.FindRef(EachAddedResource.Key);
-			//Stores the amount of this resource that this voidgrid already has
-			float CurrentAmount = Resources.Contains(EachAddedResource.Key) ? Resources.FindRef(EachAddedResource.Key) : 0;
-			//Stores the amount of resource that is actually added
-			float AddedAmount = CurrentAmount + EachAddedResource.Value > Capacity ? Capacity : Resources.FindRef(EachAddedResource.Key) + EachAddedResource.Value;
-				
-			//Emplace will override the previous key value pair.
-			Resources.Emplace(EachAddedResource.Key, AddedAmount);
-		}
-	}
-
-}
-
-/**
- * Gets the resources stored on this Voidgrid
- *
- * @return - The resources
- */
-const TMap<EResourceType, float> AVoidgrid::GetResources() const
-{
-	return Resources;
-}
-
-/**
- * Gets the storage capacities for each resource on this Voidgrid
- *
- * @return - The storage capacities
- */
-const TMap<EResourceType, float> AVoidgrid::GetResourceStorageCapacities() const
-{
-	return ResourceTypesToStorageCapacities;
-}
-
-/**
- * Adds storage capacity for each resource type specified, and increase them by the amount specified
- *
- * @param ResourceTypesToAmountToIncreaseCapacities - The resource types to the amount of increased capacity
- */
-void AVoidgrid::AddResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToIncreaseCapacities)
-{
-	for (TPair<EResourceType, float> EachResourceTypeToAmountToIncreaseCapacity : ResourceTypesToAmountToIncreaseCapacities)
-	{
-		//Stores the capacity added to this resource type
-		float AddedCapacity = EachResourceTypeToAmountToIncreaseCapacity.Value;
-		//Stores what the new capacity of this resource type will actually be
-		float NewStorageCapacity = ResourceTypesToStorageCapacities.Contains(EachResourceTypeToAmountToIncreaseCapacity.Key) ? ResourceTypesToStorageCapacities.FindRef(EachResourceTypeToAmountToIncreaseCapacity.Key) + AddedCapacity : AddedCapacity;
-		ResourceTypesToStorageCapacities.Emplace(EachResourceTypeToAmountToIncreaseCapacity.Key, NewStorageCapacity);
-	}
-}
-
-/**
- * Removes storage capacity for each resource type specified, and decreases them by the amount specified
- *
- * @param ResourceTypesToAmountToDecreaseCapacities - The resource types to the amount of decreased capacity
- */
-void AVoidgrid::RemoveResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToDecreaseCapacities)
-{
-	for (TPair<EResourceType, float> EachResourceTypeToAmountToDecreaseCapacity : ResourceTypesToAmountToDecreaseCapacities)
-	{
-		if (ResourceTypesToStorageCapacities.Contains(EachResourceTypeToAmountToDecreaseCapacity.Key))
-		{
-			//Stores the current capacity of this resource type
-			float CurrentCapacity = ResourceTypesToStorageCapacities.FindRef(EachResourceTypeToAmountToDecreaseCapacity.Key);
-			//Stores the current capacity minus the amount of capacity that was removed
-			float CurrentCapacityMinusDecreasedAmount = CurrentCapacity - EachResourceTypeToAmountToDecreaseCapacity.Value;
-			//Stores the new storage capacity
-			float NewStorageCapacity = CurrentCapacityMinusDecreasedAmount < 0 ? 0 : CurrentCapacityMinusDecreasedAmount;
-
-			ResourceTypesToStorageCapacities.Emplace(EachResourceTypeToAmountToDecreaseCapacity.Key, NewStorageCapacity);
+			LowerIndex = MiddleIndex + 1;
 		}
 	}
 }
@@ -1082,6 +1035,116 @@ const bool AVoidgrid::UseResources(TMap<EResourceType, float> UsedResources)
 
 	return true;
 }
+
+/* /\ Requests /\ *\
+\* -------------- */
+
+/* -------------- *\
+\* \/ Capacity \/ */
+
+/**
+ * Gets the storage capacities for each resource on this Voidgrid
+ *
+ * @return - The storage capacities
+ */
+const TMap<EResourceType, float> AVoidgrid::GetResourceStorageCapacities() const
+{
+	return ResourceTypesToStorageCapacities;
+}
+
+/**
+ * Adds storage capacity for each resource type specified, and increase them by the amount specified
+ *
+ * @param ResourceTypesToAmountToIncreaseCapacities - The resource types to the amount of increased capacity
+ */
+void AVoidgrid::AddResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToIncreaseCapacities)
+{
+	for (TPair<EResourceType, float> EachResourceTypeToAmountToIncreaseCapacity : ResourceTypesToAmountToIncreaseCapacities)
+	{
+		//Stores the capacity added to this resource type
+		float AddedCapacity = EachResourceTypeToAmountToIncreaseCapacity.Value;
+		//Stores what the new capacity of this resource type will actually be
+		float NewStorageCapacity = ResourceTypesToStorageCapacities.Contains(EachResourceTypeToAmountToIncreaseCapacity.Key) ? ResourceTypesToStorageCapacities.FindRef(EachResourceTypeToAmountToIncreaseCapacity.Key) + AddedCapacity : AddedCapacity;
+		ResourceTypesToStorageCapacities.Emplace(EachResourceTypeToAmountToIncreaseCapacity.Key, NewStorageCapacity);
+	}
+}
+
+/**
+ * Removes storage capacity for each resource type specified, and decreases them by the amount specified
+ *
+ * @param ResourceTypesToAmountToDecreaseCapacities - The resource types to the amount of decreased capacity
+ */
+void AVoidgrid::RemoveResourceStorageCapacity(TMap<EResourceType, float> ResourceTypesToAmountToDecreaseCapacities)
+{
+	for (TPair<EResourceType, float> EachResourceTypeToAmountToDecreaseCapacity : ResourceTypesToAmountToDecreaseCapacities)
+	{
+		if (ResourceTypesToStorageCapacities.Contains(EachResourceTypeToAmountToDecreaseCapacity.Key))
+		{
+			//Stores the current capacity of this resource type
+			float CurrentCapacity = ResourceTypesToStorageCapacities.FindRef(EachResourceTypeToAmountToDecreaseCapacity.Key);
+			//Stores the current capacity minus the amount of capacity that was removed
+			float CurrentCapacityMinusDecreasedAmount = CurrentCapacity - EachResourceTypeToAmountToDecreaseCapacity.Value;
+			//Stores the new storage capacity
+			float NewStorageCapacity = CurrentCapacityMinusDecreasedAmount < 0 ? 0 : CurrentCapacityMinusDecreasedAmount;
+
+			ResourceTypesToStorageCapacities.Emplace(EachResourceTypeToAmountToDecreaseCapacity.Key, NewStorageCapacity);
+		}
+	}
+}
+
+/* /\ Capacity /\ *\
+\* -------------- */
+
+/* ----------- *\
+\* \/ Rates \/ */
+
+/**
+ * Gets the production rates of each resource type
+ *
+ * @return A map of each resource type to how much of each is being produced
+ */
+const TMap<EResourceType, float> AVoidgrid::GetResourceProductionRates() const
+{
+	return ResourceTypesToProductionRates;
+}
+
+/**
+ * Gets the consumption rates of each resource type
+ *
+ * @return A map of each resource type to how much of each is being consumed
+ */
+const TMap<EResourceType, float> AVoidgrid::GetResourceConsumptionRates() const
+{
+	return ResourceTypesToConsumptionRates;
+}
+
+/**
+ * Calculates the resources created and consumed over a given time period
+ *
+ * @param OutResourceTypesToProductionRates - The production rates of each resource type
+ * @param OutResourceTypesToConsumptionRates - The consumption rates of each resource type
+ * @param ResourcesProduced - The resources produced over the given time period
+ * @param ResourcesConsumed - The resources consumed over the given time period
+ * @param Time - The time period over which resources were created and used
+ */
+void AVoidgrid::CalculateResourceRates(TMap<EResourceType, float>& OutResourceTypesToProductionRates, TMap<EResourceType, float>& OutResourceTypesToConsumptionRates, TMap<EResourceType, float> ResourcesProduced, TMap<EResourceType, float> ResourcesConsumed, float Time)
+{
+	OutResourceTypesToProductionRates.Empty();
+	OutResourceTypesToConsumptionRates.Empty();
+
+	for (TPair<EResourceType, float> EachResourceProduced : ResourcesProduced)
+	{
+		OutResourceTypesToProductionRates.Emplace(EachResourceProduced.Key, EachResourceProduced.Value / Time);
+	}
+
+	for (TPair<EResourceType, float> EachResourceConsumed : ResourcesConsumed)
+	{
+		OutResourceTypesToConsumptionRates.Emplace(EachResourceConsumed.Key, EachResourceConsumed.Value / Time);
+	}
+}
+
+/* /\ Rates /\ *\
+\* ----------- */
 
 /* /\ Resource Management /\ *\
 \* ------------------------- */
