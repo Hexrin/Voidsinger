@@ -53,9 +53,12 @@ void UPixelMoldEditorBase::SetMold(MinimalPixelMoldDataType NewMold)
  */
 void UPixelMoldEditorBase::LoadMoldFromTarget()
 {
-	SetMold(Target->GetPixelMold());
+	if (IsValid(Target))
+	{
+		SetMold(Target->GetPixelMold());
 
-	OnMoldUpdated(Mold.Array(), Mold.Array(), false);
+		OnMoldUpdated(Mold.Array(), Mold.Array(), false);
+	}
 }
 
 /**
@@ -236,4 +239,14 @@ bool UPixelMoldEditorBase::GetPart(FIntPoint Location, FMinimalPartInstanceData&
 
 	PartData = PartLocations.FindRef(Location);
 	return true;
+}
+
+/**
+ * Gets the current mold of this editor
+ *
+ * @return The current mold
+ */
+const TSet<FMinimalPartInstanceData>& UPixelMoldEditorBase::GetMold() const
+{
+	return Mold;
 }
