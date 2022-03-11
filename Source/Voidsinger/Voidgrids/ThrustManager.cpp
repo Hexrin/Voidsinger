@@ -62,18 +62,18 @@ void UThrustManager::PredictThrustToLocation(float& TimeToLocation, FVector2D& D
 }
 
 /**
- * Predicts the time it will take to reach a certain angular velocity given the Voidgrid's thrusters.
+ * Predicts the direction of thrust and the time it will take to reach a certain angular velocity given the available thrust sources.
  *
- * @param Target - The voidgrid to predict the motion of.
- * @param Velocity - The target velocity to predict the time to reach.
- * @return The time it will take to reach a certain angular velocity. Returns -1 if it is impossible to reach the target velocity.
+ * @param TimeToVelocity -  Will be set to the time to reach the given location. Set to -1 if location is unachievable.
+ * @param bClockwiseToVelocity - Whether or not the voidgrid needs to accelerate in the clockwise direction to reach the target velocity.
+ * @param TargetVelocity - The angular velocity in radians per second to predict the thrust needed to arrive at.
  */
-float UThrustManager::TimeToAngularVelocity(const float Velocity) const
+UFUNCTION(BlueprintPure)
+void UThrustManager::PredictThrustToAngularVelocity(float& TimeToVelocity, bool& bClockwiseToVelocity, const float TargetVelocity) const
 { 
-	float AngularDirection = ((Voidgrid->AngularVelocity) - (Velocity));
-	UE_LOG(LogTemp, Warning, TEXT("AngularDirection = %f"), AngularDirection);
-	return ((AngularDirection) / (GetMaximumAccelerationInDirection(AngularDirection)));
-
+	float DeltaVelocity = TargetVelocity - Voidgrid->AngularVelocity;
+	bClockwiseToVelocity = TargetVelocity > 0;
+	TimeToVelocity = abs(DeltaVelocity) / GetMaximumAccelerationInDirection(bClockwiseToVelocity);
 }
 
 /**
