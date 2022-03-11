@@ -243,11 +243,11 @@ public:
 	 * Creates an Array containing all Locations with values in the GridMap.
 	 * Use GetGridPairs() unless a return type of TArray<GridLocationType> is required.
 	 *
-	 * @return An Array containing all Locations with values in the GridMap.
+	 * @param OutLocationArray - An Array containing all Locations with values in the GridMap.
 	 */
-	TArray<GridLocationType> GenerateLocationArray() const
+	void GenerateLocationArray(TArray<FIntPoint>& OutLocationArray) const
 	{
-		return GridInfo.GenerateKeyArray();
+		GridInfo.GenerateKeyArray(OutLocationArray);
 	}
 
 	/* /\ Grid State /\ *\

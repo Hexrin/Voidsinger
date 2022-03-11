@@ -665,7 +665,10 @@ TSet<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 	//If the locations contained is less than 2, then it's impossible that there's any breaks, so return all locations
 	if (LocationsContained.Num() < 2)
 	{
-		ReturnVal.Emplace(LocationsToPixelState.GenerateLocationArray());
+		TArray<FIntPoint> LocationArray;
+		LocationsToPixelState.GenerateLocationArray(LocationArray);
+
+		ReturnVal.Emplace(LocationArray);
 		return ReturnVal;
 	}
 
@@ -703,7 +706,7 @@ TSet<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 
 		if (!bLocationAlreadyFound)
 		{
-			if (LocationsToPixelState.PointsConnected(FirstLocationContained, LocationsContained[EachLocationContainedAfterFirst], SeparatedSectionConnectedToFirstLocation, IsIntact))
+			if (LocationsToPixelState.PointsConnected(FirstLocationContained, LocationsContained[EachLocationContainedAfterFirst], SeparatedSectionConnectedToFirstLocation, &AVoidgrid::IsIntact))
 			{
 				//If the locations are connected, then add them to ConnectedLocations, because those locations are connected to FirstLocationContained
 				ConnectedLocations.Emplace(FirstLocationContained);
@@ -713,7 +716,7 @@ TSet<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 			else
 			{
 				//If the locations aren't connected, then not all locations are connected
-				bool bAllLocationsConnected = false;
+				bAllLocationsConnected = false;
 				
 				//Add this separated section to the return value
 				ReturnVal.Emplace(SeparatedSectionConnectedToFirstLocation);
@@ -724,7 +727,7 @@ TSet<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 				//Stores the separated section not connected to FirstLocationContained, but instead connected to the other location
 				TArray<FIntPoint> SeparatedSectionConnectedToEachLocationContainedAfterFirst;
 
-				LocationsToPixelState.PointsConnected(LocationsContained[EachLocationContainedAfterFirst], FirstLocationContained, SeparatedSectionConnectedToEachLocationContainedAfterFirst, IsIntact);
+				LocationsToPixelState.PointsConnected(LocationsContained[EachLocationContainedAfterFirst], FirstLocationContained, SeparatedSectionConnectedToEachLocationContainedAfterFirst, &AVoidgrid::IsIntact);
 
 				ReturnVal.Emplace(SeparatedSectionConnectedToEachLocationContainedAfterFirst);
 			}
@@ -733,7 +736,10 @@ TSet<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 
 	if (bAllLocationsConnected)
 	{
-		ReturnVal.Emplace(LocationsToPixelState.GenerateLocationArray());
+		TArray<FIntPoint> LocationArray;
+		LocationsToPixelState.GenerateLocationArray(LocationArray);
+
+		ReturnVal.Emplace(LocationArray);
 		return ReturnVal;
 	}
 
