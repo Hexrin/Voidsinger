@@ -61,14 +61,16 @@ public:
 	void PredictThrustToLinearVelocity(float& TimeToVelocity, FVector2D& DirectionToVelocity, const FVector2D TargetVelocity) const;
 
 	/**
-	 * Predicts the time it will take to reach a certain location. Assumes the Voidgrid is not accelerating.
+	 * Predicts the direction of thrust and the time it will take to reach a certain location. Assumes the Voidgrid is not accelerating.
 	 *
-	 * @param TargetLocation - The location to predict the time to arrival.
-	 * @param ErrorRadius - The radius around the target location that count as being at.
-	 * @return The time to reach the given location. -1 if location is unachievable.
+	 * @param TimeToVelocity -  Will be set to the time to reach the given location. Will be set to < 0 if location is unachievable.
+	 * @param DirectionToVelocity - Set to the direction acceleration is needed in.
+	 * @param TargetLocation - The location to predict the thrust needed to arrive at.
+	 * @param ErrorRadius - The radius around the target location that count as being at .
+	 * @param bAccelerating - Whether or not to include the acceleration capabilities of this voidgrid in the predictions.
 	 */
 	UFUNCTION(BlueprintPure)
-	float PredictTimeToLocation(const FVector2D TargetLocation, const float ErrorRadius = 0.f) const;
+	void PredictThrustToLocation(float& TimeToLocation, FVector2D& DirectionToLocation, const FVector2D TargetLocation, const float ErrorRadius = 0.f) const;
 
 	/**
 	 * Predicts the direction of thrust and the time it will take to reach a certain angular velocity given the available thrust sources.

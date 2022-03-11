@@ -31,7 +31,7 @@ void UThrustManager::PredictThrustToLinearVelocity(float& TimeToVelocity, FVecto
 /**
  * Predicts the direction of thrust and the time it will take to reach a certain location. Assumes the Voidgrid is not accelerating.
  *
- * @param TimeToVelocity -  Will be set to the time to reach the given location. Set to -1 if location is unachievable.
+ * @param TimeToVelocity -  Will be set to the time to reach the given location. Will be set to < 0 if location is unachievable.
  * @param DirectionToVelocity - Set to the direction acceleration is needed in.
  * @param TargetLocation - The location to predict the thrust needed to arrive at.
  * @param ErrorRadius - The radius around the target location that count as being at .
@@ -45,7 +45,7 @@ void UThrustManager::PredictThrustToLocation(float& TimeToLocation, FVector2D& D
 	float VoidgridSpeed = Voidgrid->LinearVelocity.Size();
 
 	//If voidgrid will arrive within the error radius of the target location.
-	if ((DeltaPosition ^ Voidgrid->LinearVelocity) / VoidgridSpeed <= ErrorRadius)
+	if (abs(DeltaPosition ^ Voidgrid->LinearVelocity) / VoidgridSpeed <= ErrorRadius)
 	{
 		TimeToLocation = (DeltaPosition | Voidgrid->LinearVelocity) / FMath::Square(VoidgridSpeed);
 	}
@@ -54,8 +54,11 @@ void UThrustManager::PredictThrustToLocation(float& TimeToLocation, FVector2D& D
 		TimeToLocation = -1;
 	}
 
-	FVector2D DeltaVelocity = 
-	DirectionToLocation = ;
+	//The direction to the target location.
+	FVector2D TargetDirection = DeltaPosition.GetSafeNormal();
+
+	//If not pointing in correct direction return direction that will adjust velocity to be in the correct direction.
+	DirectionToLocation = TimeToLocation > 0 ? TargetDirection : (TargetDirection - (Voidgrid->LinearVelocity / VoidgridSpeed)).GetSafeNormal();
 }
 
 /**
