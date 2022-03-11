@@ -133,17 +133,28 @@ float UThrustManager::GetThrustSourceAccelerationInDirection(const FVector2D Dir
 	return 0;
 }
 
-float UThrustManager::GetThrustRotation(const bool bClockwise, FThrustSource ThrustSource) const
+/**
+ * Gets the maximum possible acceleration that a given thrust source can cause in a given angular direction on this voidgrid.
+ *
+ * @param bClockwise - The angular direction to get the possible acceleration in.
+ * @param ThrustSource - The source of thrust used in calculations.
+ * @return The magnitude of the acceleration.
+ */
+float UThrustManager::GetThrustSourceAccelerationInRotation(const bool bClockwise, const FThrustSource ThrustSource) const
 {
-	float RotationalEffectivness = ((ThrustSource.Location - Voidgrid->CenterOfMass) ^ ThrustSource.Direction)*ThrustSource.Force;
-	if (bClockwise) 
+	if (Voidgrid->MomentOfInertia > 0)
 	{
-		return RotationalEffectivness;
+		float RotationalEffectivness = ((ThrustSource.Location - Voidgrid->CenterOfMass) ^ ThrustSource.Direction) * ThrustSource.Force / Voidgrid->MomentOfInertia;
+		if (bClockwise)
+		{
+			return FMath::Max(RotationalEffectivness, 0);
+		}
+		else
+		{
+			return FMath::Max(RotationalEffectivness * -1.f, 0);
+		}
 	}
-	else
-	{
-		return RotationalEffectivness* -1.f;
-	}
+	return 0;
 }
 
 void UThrustManager::AddManagedThrustSource(FThrustSource ThrustSource)
