@@ -226,9 +226,19 @@ float UThrustManager::GetMaximumAccelerationInDirection(const float DirectionAng
 
 // /\ GetMaximumAccelerationInDirection /\ //
 
+/**
+ * Gets the maximum acceleration that all managed thrust sources can provide in a given direction.
+ *
+ * @param bClockwise - Whether or not to get the rotation in the clockwise direction.
+ * @return The acceleration in radians / second^2.
+ */
 float UThrustManager::GetMaximumAccelerationInRotation(const bool bClockwise) const
 {
-	return bClockwise ? ClockwiseThrust : CounterClockwiseThrust;
+	if (Voidgrid->MomentOfInertia > 0)
+	{
+		return (bClockwise ? ClockwiseThrust : CounterClockwiseThrust) / Voidgrid->MomentOfInertia;
+	}
+	return 0;
 }
 
 

@@ -175,6 +175,12 @@ private:
 
 	// /\ GetMaximumAccelerationInDirection /\ //
 
+	/**
+	 * Gets the maximum acceleration that all managed thrust sources can provide in a given direction.
+	 *
+	 * @param bClockwise - Whether or not to get the rotation in the clockwise direction.
+	 * @return The acceleration in radians / second^2.
+	 */
 	UFUNCTION()
 	float GetMaximumAccelerationInRotation(const bool bClockwise) const;
 
