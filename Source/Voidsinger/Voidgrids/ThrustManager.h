@@ -154,9 +154,26 @@ private:
 	UPROPERTY()
 	float CounterClockwiseThrust{ 0 };
 	
+	// \/ GetMaximumAccelerationInDirection \/ //
+
+	/**
+	 * Gets the maximum acceleration that all managed thrust sources can provide in a given direction.
+	 * 
+	 * @param Direction - A vector pointing in the target direction.
+	 * @return The acceleration in grid tile / second^2.
+	 */
 	UFUNCTION()
 	float GetMaximumAccelerationInDirection(const FVector2D Direction) const;
+
+	/**
+	 * Gets the maximum acceleration that all managed thrust sources can provide in a given direction.
+	 *
+	 * @param DirectionAngle - The rotation of the target direction.
+	 * @return The acceleration in grid tile / second^2.
+	 */
 	float GetMaximumAccelerationInDirection(const float DirectionAngle) const;
+
+	// /\ GetMaximumAccelerationInDirection /\ //
 
 	UFUNCTION()
 	float GetMaximumAccelerationInRotation(const bool bClockwise) const;

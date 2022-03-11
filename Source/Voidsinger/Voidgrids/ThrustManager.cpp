@@ -195,16 +195,36 @@ void UThrustManager::RemoveManagedThrustSource(FThrustSource ThrustSource)
 	}
 }
 
+// \/ GetMaximumAccelerationInDirection \/ //
+
+/**
+ * Gets the maximum acceleration that all managed thrust sources can provide in a given direction.
+ *
+ * @param Direction - A vector pointing in the target direction.
+ * @return The acceleration in grid tile / second^2.
+ */
 float UThrustManager::GetMaximumAccelerationInDirection(const FVector2D Direction) const
 {
-	const FVector2D NormailizedDirection = Direction.GetSafeNormal();
-	return (NormailizedDirection.X > 0 ? ForwardThrust : BackwardThrust) * NormailizedDirection.X + (NormailizedDirection.Y > 0 ? RightThrust : LeftThrust) * NormailizedDirection.Y;
+	if (Voidgrid->Mass > 0)
+	{
+		const FVector2D NormailizedDirection = Direction.GetSafeNormal();
+		return ((NormailizedDirection.X > 0 ? ForwardThrust : BackwardThrust) * NormailizedDirection.X + (NormailizedDirection.Y > 0 ? RightThrust : LeftThrust) * NormailizedDirection.Y) / Voidgrid->Mass;
+	}
+	return 0;
 }
 
+/**
+ * Gets the maximum acceleration that all managed thrust sources can provide in a given direction.
+ *
+ * @param DirectionAngle - The rotation of the target direction.
+ * @return The acceleration in grid tile / second^2.
+ */
 float UThrustManager::GetMaximumAccelerationInDirection(const float DirectionAngle) const
 {
 	return GetMaximumAccelerationInDirection(FVector2D(FMath::Cos(DirectionAngle), FMath::Sin(DirectionAngle)));
 }
+
+// /\ GetMaximumAccelerationInDirection /\ //
 
 float UThrustManager::GetMaximumAccelerationInRotation(const bool bClockwise) const
 {
