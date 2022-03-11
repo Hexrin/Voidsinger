@@ -122,7 +122,7 @@ void UThrustManager::PredictThrustToOrientation(float& TimeToOrientation, bool& 
  *
  * @param Direction - The direction in local space to get the possible acceleration in.
  * @param ThrustSource - The source of thrust used in calculations.
- * @return The magnitude of the acceleration.
+ * @return The magnitude of the acceleration in grid tiles / second^2.
  */
 float UThrustManager::GetThrustSourceAccelerationInDirection(const FVector2D Direction, const FThrustSource ThrustSource) const
 {
@@ -138,7 +138,7 @@ float UThrustManager::GetThrustSourceAccelerationInDirection(const FVector2D Dir
  *
  * @param bClockwise - The angular direction to get the possible acceleration in.
  * @param ThrustSource - The source of thrust used in calculations.
- * @return The magnitude of the acceleration.
+ * @return The acceleration in radians / second^2.
  */
 float UThrustManager::GetThrustSourceAccelerationInRotation(const bool bClockwise, const FThrustSource ThrustSource) const
 {
@@ -164,15 +164,13 @@ float UThrustManager::GetThrustSourceAccelerationInRotation(const bool bClockwis
  */
 void UThrustManager::AddManagedThrustSource(FThrustSource ThrustSource)
 {
-	//Get linear thrust vectors
-	(ThrustSource.Direction.X > 0 ? ForwardThrust : BackwardThrust) += abs(ThrustSource.Direction.X) * ThrustSource.Force;
-	(ThrustSource.Direction.Y > 0 ? RightThrust : LeftThrust) += abs(ThrustSource.Direction.Y) * ThrustSource.Force;
-
-	//Get rotational thrust vectors
-	float RotationalEffectivness = (ThrustSource.Location - Voidgrid->CenterOfMass) ^ ThrustSource.Direction;
-	if (FMath::IsNearlyZero(RotationalEffectivness, .01f))
+	if (!ManagedThrustSources.Contains(ThrustSource))
 	{
-		(RotationalEffectivness > 0 ? ClockwiseThrust : CounterClockwiseThrust) += abs(RotationalEffectivness) * ThrustSource.Force;
+		//Get linear thrust vectors
+		(ThrustSource.Direction.X > 0 ? ForwardThrust : BackwardThrust) += abs(ThrustSource.Direction.X) * ThrustSource.Force;
+		(ThrustSource.Direction.Y > 0 ? RightThrust : LeftThrust) += abs(ThrustSource.Direction.Y) * ThrustSource.Force;
+
+		ManagedThrustSources.Add(ThrustSource);
 	}
 }
 
@@ -183,15 +181,13 @@ void UThrustManager::AddManagedThrustSource(FThrustSource ThrustSource)
  */
 void UThrustManager::RemoveManagedThrustSource(FThrustSource ThrustSource)
 {
-	//Get linear thrust vectors
-	(ThrustSource.Direction.X > 0 ? ForwardThrust : BackwardThrust) -= abs(ThrustSource.Direction.X) * ThrustSource.Force;
-	(ThrustSource.Direction.Y > 0 ? RightThrust : LeftThrust) -= abs(ThrustSource.Direction.Y) * ThrustSource.Force;
-
-	//Get rotational thrust vectors
-	float RotationalEffectivness = (ThrustSource.Location - Voidgrid->CenterOfMass) ^ ThrustSource.Direction;
-	if (FMath::IsNearlyZero(RotationalEffectivness, .01f))
+	if (ManagedThrustSources.Contains(ThrustSource))
 	{
-		(RotationalEffectivness < 0 ? ClockwiseThrust : CounterClockwiseThrust) -= abs(RotationalEffectivness) * ThrustSource.Force;
+		//Get linear thrust vectors
+		(ThrustSource.Direction.X > 0 ? ForwardThrust : BackwardThrust) -= abs(ThrustSource.Direction.X) * ThrustSource.Force;
+		(ThrustSource.Direction.Y > 0 ? RightThrust : LeftThrust) -= abs(ThrustSource.Direction.Y) * ThrustSource.Force;
+
+		ManagedThrustSources.Remove(ThrustSource);
 	}
 }
 
@@ -234,13 +230,14 @@ float UThrustManager::GetMaximumAccelerationInDirection(const float DirectionAng
  */
 float UThrustManager::GetMaximumAccelerationInRotation(const bool bClockwise) const
 {
-	if (Voidgrid->MomentOfInertia > 0)
+	float TotalAcceleration = 0;
+	for (FThrustSource EachManagedThrustSource : ManagedThrustSources)
 	{
-		return (bClockwise ? ClockwiseThrust : CounterClockwiseThrust) / Voidgrid->MomentOfInertia;
-	}
-	return 0;
-}
+		TotalAcceleration += GetThrustSourceAccelerationInRotation(bClockwise, EachManagedThrustSource);
+	}	
 
+	return  TotalAcceleration;
+}
 
 /* /\ Thrust Predictions /\ *\
 \* ------------------------ */

@@ -9,6 +9,9 @@
 
 class AVoidgrid;
 
+/**
+ * Stores information about a thruster or other thrust source.
+ */
 USTRUCT(BlueprintType)
 struct VOIDSINGER_API FThrustSource
 {
@@ -26,25 +29,66 @@ struct VOIDSINGER_API FThrustSource
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector2D Location{ FIntPoint::ZeroValue };
 
+	/**
+	 * Creates a thrust source with the given stats.
+	 * 
+	 * @param ThrustForce - The maximum force this thrust source can apply.
+	 * @param ThrustDirection - The direction of the force applied by this thrust source.
+	 * @param ThrustLocaiton - The location of the force relative to the center of the object being thrusted upon.
+	 */
 	FThrustSource(float ThrustForce = 0, FVector2D ThrustDirection = FVector2D(1, 0), FVector2D ThrustLocation = FIntPoint::ZeroValue)
 	{
 		Force = FMath::Max(ThrustForce, 0.f);
 		Direction = ThrustDirection.GetSafeNormal();
 		Location = ThrustLocation;
 	}
+
+	/**
+	 * Converts this thrust source to a string.
+	 * 
+	 * @return A string containing all the data of this.
+	 */
+	FString ToString() const
+	{
+		FString ReturnValue = FString::SanitizeFloat(Force);
+		ReturnValue += Direction.ToString() + Location.ToString();
+		return ReturnValue;
+}
+
+	/**
+	 * Test to see if two thrust sources components are all equal.
+	 */
+	bool operator==(const FThrustSource& Other) const
+	{
+		return Force == Other.Force && Direction == Other.Direction && Location == Other.Location;
+	}
 };
+
+//Hash function for FThrustSource
+#if UE_BUILD_DEBUG
+uint32 GetTypeHash(const FThrustSource& Thing);
+#else // optimize by inlining in shipping and development builds
+FORCEINLINE uint32 GetTypeHash(const FThrustSource& Thing)
+{
+	return FTextLocalizationResource::HashString(Thing.ToString());
+}
+#endif
 
 //Delegate that broadcasts a thrust request containing the effectiveness, move direction, and move rotation
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FThrustRequest, FPartActivationData, Data);
 
 /**
- * 
+ * A class for managing a voidgrid's thrust sources. 
+ * Can make predictions about acceleration and make thrust requests.
  */
 UCLASS()
 class VOIDSINGER_API UThrustManager : public UObject
 {
 	GENERATED_BODY()
 
+	/**
+	 * Initializes the voidgrid reference.
+	 */
 	UThrustManager();
 
 	/* ------------------------ *\
@@ -98,7 +142,7 @@ public:
 	 * 
 	 * @param Direction - The direction in local space to get the possible acceleration in. 
 	 * @param ThrustSource - The source of thrust used in calculations.
-	 * @return The magnitude of the acceleration.
+	 * @return The magnitude of the acceleration in grid tiles / second^2.
 	 */
 	UFUNCTION(BlueprintPure)
 	float GetThrustSourceAccelerationInDirection(const FVector2D Direction, const FThrustSource ThrustSource) const;
@@ -108,7 +152,7 @@ public:
 	 *
 	 * @param bClockwise - The angular direction to get the possible acceleration in.
 	 * @param ThrustSource - The source of thrust used in calculations.
-	 * @return The magnitude of the acceleration.
+	 * @return The acceleration in radians / second^2.
 	 */
 	UFUNCTION(BlueprintPure)
 	float GetThrustSourceAccelerationInRotation(const bool bClockwise, const FThrustSource ThrustSource) const;
@@ -146,13 +190,9 @@ private:
 	UPROPERTY()
 	float LeftThrust{ 0 };
 
-	//The thrust force that can be applied in the clockwise direction.
+	//All of the thrust sources managed by this .
 	UPROPERTY()
-	float ClockwiseThrust{ 0 };
-
-	//The thrust force that can be applied in the counterclockwise direction.
-	UPROPERTY()
-	float CounterClockwiseThrust{ 0 };
+	TSet<FThrustSource> ManagedThrustSources;
 	
 	// \/ GetMaximumAccelerationInDirection \/ //
 
@@ -184,20 +224,23 @@ private:
 	UFUNCTION()
 	float GetMaximumAccelerationInRotation(const bool bClockwise) const;
 
-	UPROPERTY()
-	const AVoidgrid* Voidgrid;
-
 	/* /\ Thrust Predictions /\ *\
 	\* ------------------------ */
 
-	/* --------------- *\
-	\* \/ Delegates \/ */
+	/* -------------------- *\
+	\* \/ Thrust Control \/ */
 
 public:
 
+	//Called when this makes a thrust request. Vector will be in the direction of the target move direction, and rotation will be the target orientation.
 	UPROPERTY()
 	FThrustRequest OnThrustRequest;
 
-	/* /\ Delegates /\ *\
-	\* --------------- */
+	/* /\ Thrust Control /\ *\
+	\* -------------------- */
+
+private:
+	//A reference to the voidgrid, whose thrust is being manged by this
+	UPROPERTY()
+	const AVoidgrid* Voidgrid;
 };
