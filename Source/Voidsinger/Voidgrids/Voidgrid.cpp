@@ -602,14 +602,82 @@ FVoidgridState AVoidgrid::GetState()
  *
  * @param Location - The location of the pixel to damage.
  */
-void AVoidgrid::RemovePixel(GridLocationType Location)
+void AVoidgrid::RemovePixel(GridLocationType Location, bool bCheckForBreaks = true)
 {
 	if (LocationsToPixelState.Contains(Location))
 	{
 		LocationsToTemperaturesPendingHeatTransfer.Emplace(Location, LocationsToPixelState.Find(Location)->GetTemperature());
+
+		if (bCheckForBreaks)
+		{
+
+			FindSeparatedSections(Location);
+		}
 	}
 
 	SetPixelIntact(Location, false);
+}
+
+/**
+ * Checks for breaks in the Voidgrid around the given location, and finds each separated section
+ *
+ * @param Location - The location to check for breaks around
+ *
+ * @return An array of arrays of parts that are connected to each other
+ */
+TArray<TGridMap<PixelType>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
+{
+
+	//Stores the return value
+	TArray<TGridMap<PixelType>> ReturnVal;
+
+	FIntPoint LeftLocation = Location - (0, 1); // (0, 1) because unreal has x and y swapped
+	FIntPoint RightLocation = Location + (0, 1);
+	FIntPoint TopLocation = Location + (1, 0);
+	FIntPoint BottomLocation = Location - (1, 0);
+
+	TSet<FIntPoint> LocationsContained;
+
+	if (LocationsToPixelState.Contains(LeftLocation) && LocationsToPixelState.Find(LeftLocation)->IsIntact())
+	{
+		LocationsContained.Emplace(LeftLocation);
+	}
+	if (LocationsToPixelState.Contains(RightLocation) && LocationsToPixelState.Find(RightLocation)->IsIntact())
+	{
+		LocationsContained.Emplace(RightLocation);
+	}
+	if (LocationsToPixelState.Contains(TopLocation) && LocationsToPixelState.Find(TopLocation)->IsIntact())
+	{
+		LocationsContained.Emplace(TopLocation);
+	}
+	if (LocationsToPixelState.Contains(BottomLocation) && LocationsToPixelState.Find(BottomLocation)->IsIntact())
+	{
+		LocationsContained.Emplace(BottomLocation);
+	}
+
+	//If the locations contained is less than 2, then it's impossible that there's any breaks
+	if (LocationsContained.Num() < 2)
+	{
+		ReturnVal.Emplace(LocationsToPixelState);
+		return ReturnVal;
+	}
+
+
+	//for (int EachLocationAround = 0; EachLocationAround < 4; EachLocationAround++)
+	//{
+	//	FIntPoint LocationAround;
+	//	FIntPoint LocationOpposite;
+
+	//	switch (EachLocationAround)
+	//	{
+	//	case 1:
+	//		LocationAround = (1, 0);
+	//		LocationOpposite = (-1, 0)
+	//			break;
+	//	case 2:
+	//		LocationAround = ()
+	//	}
+	//}
 }
 
 /**

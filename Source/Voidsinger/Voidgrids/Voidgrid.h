@@ -561,7 +561,16 @@ public:
 	 * 
 	 * @param Location - The location of the pixel to damage.
 	 */
-	void RemovePixel(GridLocationType Location);
+	void RemovePixel(GridLocationType Location, bool bCheckForBreaks = true);
+
+	/**
+	 * Checks for breaks in the Voidgrid around the given location, and finds each separated section
+	 * 
+	 * @param Location - The location to check for breaks around
+	 * 
+	 * @return An array of arrays of parts that are connected to each other
+	 */
+	TArray<TArray<PixelType>> FindSeparatedSections(FIntPoint Location);
 
 	/**
 	 * Repair a pixel.
@@ -612,7 +621,7 @@ private:
 	void ShrinkBounds(const FIntPoint RemovedPixelLocation);
 
 	//Stores the Pixel Mold of this.
-	PixelMoldType LocationsToPixelState;
+	TGridMap<FGridPixelData> LocationsToPixelState;
 
 	//Stores the target parts and shape of this.
 	TSet<FMinimalPartInstanceData> TargetParts;
