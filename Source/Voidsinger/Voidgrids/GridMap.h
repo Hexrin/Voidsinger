@@ -140,7 +140,7 @@ public:
 	 * @param Location - The location to search for.
 	 * @return Whether or not the location has a value.
 	 */
-	bool Contains(GridLocationType Location)
+	bool Contains(GridLocationType Location) const
 	{
 		return GridInfo.Contains(Location);
 	}
@@ -154,7 +154,7 @@ public:
 	 */
 
 	template<typename Predicate>
-	bool Contains(GridLocationType Location, Predicate Pred)
+	bool Contains(GridLocationType Location, Predicate Pred) const
 	{
 		return GridInfo.Contains(Location) && Pred(GridInfo.Find(Location));
 	}
@@ -183,7 +183,7 @@ public:
 	 * @param Location - The location to search at.
 	 * @return A reference to the value at Location.
 	 */
-	ValueType FindRef(GridLocationType Location)
+	ValueType FindRef(GridLocationType Location) const
 	{
 		if (Contains(Location))
 		{
@@ -205,7 +205,7 @@ public:
 	 *
 	 * @return The number of values in a GridMap.
 	 */
-	const int32 Num()
+	const int32 Num() const
 	{
 		return GridInfo.Num();
 	}
@@ -215,7 +215,7 @@ public:
 	 */
 	void Empty()
 	{
-		return GridInfo.Empty();
+		GridInfo.Empty();
 	}
 
 	/**
@@ -223,7 +223,7 @@ public:
 	 *
 	 * @return An array of all Location Value Pairs.
 	 */
-	GridInfoType GetGridPairs()
+	GridInfoType GetGridPairs() const
 	{
 		return GridInfo;
 	}
@@ -234,7 +234,7 @@ public:
 	 *
 	 * @return An Array containing all Values in the GridMap.
 	 */
-	TArray<ValueType> GenerateValueArray()
+	TArray<ValueType> GenerateValueArray() const
 	{
 		return GridInfo.GenerateValueArray();
 	}
@@ -245,7 +245,7 @@ public:
 	 *
 	 * @return An Array containing all Locations with values in the GridMap.
 	 */
-	TArray<GridLocationType> GenerateLocationArray()
+	TArray<GridLocationType> GenerateLocationArray() const
 	{
 		return GridInfo.GenerateKeyArray();
 	}
@@ -257,6 +257,7 @@ public:
 	\* \/ Grid Shape Analysis \/ */
 
 public:
+
 	/**
 	 * Gets the Location Value Pairs that satisfy the given predicate.
 	 * 
@@ -264,7 +265,7 @@ public:
 	 * @return An array of Location Value Pairs that satisfy the given predicate.
 	 */
 	template<typename Predicate>
-	TArray<LocationValuePairType> FilterGridPairs(Predicate InclusionCondition)
+	TArray<LocationValuePairType> FilterGridPairs(Predicate InclusionCondition) const
 	{
 		TArray<LocationValuePairType> Pairs = TArray<LocationValuePairType>();
 		for (LocationValuePairType GridInfoPair : GridInfo)
@@ -285,7 +286,7 @@ public:
 	 * @param EndLocation -  The target location in grid space for the connectivity search.
 	 * @return Whether or not StartLocation is connected to EndLocation.
 	 */
-	bool PointsConnected(GridLocationType StartLocation, GridLocationType EndLocation)
+	bool PointsConnected(GridLocationType StartLocation, GridLocationType EndLocation) const
 	{
 		return PointsConnected(StartLocation, EndLocation, AlwaysConnect);
 	}
@@ -299,7 +300,7 @@ public:
 	 * @return Whether or not StartLocation is connected to EndLocation by Location Value Pairs that satisfy the given predicate.
 	 */
 	template<typename Predicate>
-	bool PointsConnected(GridLocationType StartLocation, GridLocationType EndLocation, Predicate ConectivityCondition)
+	bool PointsConnected(GridLocationType StartLocation, GridLocationType EndLocation, Predicate ConectivityCondition) const
 	{
 		//Initialize Connectivity Array
 		TArray<GridLocationType> ConectivityArray = TArray<GridLocationType>();
@@ -314,7 +315,7 @@ public:
 	 * @param SeachedLocations - An array storing locations already searched.
 	 * @return Whether or not StartLocation is connected to EndLocation.
 	 */
-	bool PointsConnected(GridLocationType StartLocation, GridLocationType EndLocation, TArray<GridLocationType>& SeachedLocations)
+	bool PointsConnected(GridLocationType StartLocation, GridLocationType EndLocation, TArray<GridLocationType>& SeachedLocations) const
 	{
 		return PointsConnected(StartLocation, EndLocation, SeachedLocations, AlwaysConnect);
 	}
@@ -329,7 +330,7 @@ public:
 	 * @return Whether or not StartLocation is connected to EndLocation.
 	 */
 	template<typename Predicate>
-	bool PointsConnected(GridLocationType StartLocation, GridLocationType EndLocation, TArray<GridLocationType>& SeachedLocations, Predicate ConectivityCondition)
+	bool PointsConnected(GridLocationType StartLocation, GridLocationType EndLocation, TArray<GridLocationType>& SeachedLocations, Predicate ConectivityCondition) const
 	{
 		//Detect if function has reached target
 		if (StartLocation == EndLocation)
