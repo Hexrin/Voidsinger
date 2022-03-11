@@ -77,27 +77,44 @@ void UThrustManager::PredictThrustToAngularVelocity(float& TimeToVelocity, bool&
 }
 
 /**
- * Predicts the time it will take to reach a certain orientation given the Voidgrid's thrusters.
+ * Predicts the direction of thrust and the time it will take to reach a certain orientation given the available thrust sources.
  *
- * @param Orientation - The target orientation to predict the time to reach.
- * @param bAccelerating - Whether or not to factor in the voidgrids acceleration capabilities into the calculations
- * @return The time it will take to reach a certain orientation. Returns -1 if it is impossible to reach the target orientation.
+ * @param TimeToVelocity -  Will be set to the time to reach the given location. Set to -1 if location is unachievable.
+ * @param bClockwiseToVelocity - Whether or not the voidgrid needs to accelerate in the clockwise direction to reach the target velocity.
+ * @param TargetOrientation - The orientation in radians to predict the thrust needed to arrive at.
+ * @param bAccelerating - Whether or not to include the acceleration capabilities of this voidgrid in the predictions.
  */
-float UThrustManager::TimeToOrientation(const float Orientation, const bool bAccelerating) const
+UFUNCTION(BlueprintPure)
+void UThrustManager::PredictThrustToOrientation(float& TimeToOrientation, bool& bClockwiseToOrientation, const float TargetOrientation, const bool bAccelerating = true) const
 {
-	float CounterClockwiseAngularDistance = FMath::Fmod(Orientation > 0 ? Orientation - Voidgrid->GetActorQuat().GetAngle() : 2 * PI - (Orientation - Voidgrid->GetActorQuat().GetAngle()), 2 * PI);
+	//The angular distance form current orientation to the target orientation in the counterclockwise direction.
+	float CounterClockwiseAngularDistance = FMath::Fmod(TargetOrientation > 0 ? TargetOrientation - Voidgrid->GetActorQuat().GetAngle() : 2 * PI - (TargetOrientation - Voidgrid->GetActorQuat().GetAngle()), 2 * PI);
+	//The angular distance form current orientation to the target orientation in the clockwise direction.
 	float ClockwiseAngularDistance = PI - CounterClockwiseAngularDistance;
 
+	bClockwiseToOrientation = ClockwiseAngularDistance < CounterClockwiseAngularDistance;
 	if (bAccelerating)
 	{
-		bool bAccelerateClockwise = ClockwiseAngularDistance < CounterClockwiseAngularDistance;
-		//Uses the quadratic formula to caluclate the time to orentation if constanly acelerating
-		float HalfAccelertion = GetMaximumAccelerationInRotation(bAccelerateClockwise) / 2;
-		float AccelerationRelativeVelocity = bAccelerateClockwise ? Voidgrid->AngularVelocity * -1 : Voidgrid->AngularVelocity;
-		return (-1 * AccelerationRelativeVelocity + AccelerationRelativeVelocity) / (2 * HalfAccelertion);
+		// \/ Uses the quadratic formula to solve for the time to orientation \/ //
+
+		//The acceleration in the direction with the least angular distance.
+		float Acceleration = GetMaximumAccelerationInRotation(bClockwiseToOrientation);
+
+		if (Acceleration > 0)
+		{
+			//The velocity in the same direction as the acceleration.
+			float AccellerationRelativeVelocity = bClockwiseToOrientation ? Voidgrid->AngularVelocity : Voidgrid->AngularVelocity * -1;
+			//The distance in the same direction as the acceleration
+			float AccelerationRelativeDistance = bClockwiseToOrientation ? ClockwiseAngularDistance : CounterClockwiseAngularDistance;
+
+			TimeToOrientation = (-AccellerationRelativeVelocity + FMath::Sqrt(FMath::Square(AccellerationRelativeVelocity) + 2 * Acceleration * AccelerationRelativeDistance)) / Acceleration;
+			return;
+		}
+		// /\ Uses the quadratic formula to solve for the time to orientation /\ //
 	}
-	
-	return (Voidgrid->AngularVelocity > 0 ? CounterClockwiseAngularDistance : ClockwiseAngularDistance) / Voidgrid->AngularVelocity;
+
+	//Angular distance / angular velocity
+	TimeToOrientation = (Voidgrid->AngularVelocity > 0 ? CounterClockwiseAngularDistance : ClockwiseAngularDistance) / Voidgrid->AngularVelocity;
 }
 
 FVector2D UThrustManager::GetThrustDirection(const FVector2D ThrustDirection, FThrustSource ThrustSource) const

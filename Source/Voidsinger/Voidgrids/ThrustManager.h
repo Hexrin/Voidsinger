@@ -91,7 +91,7 @@ public:
 	 * @param bAccelerating - Whether or not to include the acceleration capabilities of this voidgrid in the predictions.
 	 */
 	UFUNCTION(BlueprintPure)
-	float PredictThrustToOrientation(float& TimeToOrientation, bool& bClockwiseToOrientation, const float TargetOrientation, const bool bAccelerating = true) const;
+	void PredictThrustToOrientation(float& TimeToOrientation, bool& bClockwiseToOrientation, const float TargetOrientation, const bool bAccelerating = true) const;
 
 	/**
 	 * Gets the maximum possible acceleration that a given thrust source can cause in a given direction on this voidgrid.
