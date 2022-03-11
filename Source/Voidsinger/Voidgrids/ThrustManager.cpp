@@ -126,7 +126,11 @@ void UThrustManager::PredictThrustToOrientation(float& TimeToOrientation, bool& 
  */
 float UThrustManager::GetThrustSourceAccelerationInDirection(const FVector2D Direction, const FThrustSource ThrustSource) const
 {
-	return FMath::Max(ThrustSource.Direction | Direction * ThrustSource.Force, 0.f);
+	if (Voidgrid->Mass > 0)
+	{
+		return FMath::Max(ThrustSource.Direction | Direction * ThrustSource.Force, 0.f) / Voidgrid->Mass;
+	}
+	return 0;
 }
 
 float UThrustManager::GetThrustRotation(const bool bClockwise, FThrustSource ThrustSource) const
