@@ -5,7 +5,6 @@
 
 #include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/ThrusterModule.h"
 #include "Voidsinger/Voidgrids/Voidgrid.h"
-#include <Runtime/Engine/Classes/Kismet/KismetMathLibrary.h>
 
 UThrustManager::UThrustManager()
 {

@@ -25,13 +25,11 @@ void UThrusterModule::OnActivate_Implementation(const FPartActivationData Data)
 	{
 		if (IsValid(GetVoidgrid()->GetThrustManager()))
 		{
-			if ((Data.Vector | ThrustDirection) > 0 && GetVoidgrid()->GetThrustManager()->TimeToLinearVelocity(Data.Vector) > 0)
+			FThrustSource ThrustSource = FThrustSource(ThrustForce, ThrustDirection, Part->GetTransform().TransformGridLocation(ThrustLocation));
+			if (GetVoidgrid()->GetThrustManager()->GetThrustSourceAccelerationInDirection(Data.Vector, ThrustSource) > 0 || GetVoidgrid()->GetThrustManager()->GetThrustSourceAccelerationInRotation(Data.Rotation > 0, ThrustSource) > 0)
 			{
-				Thrust();
-				return;
+				GetVoidgrid()->AddImpulse(ThrustForce * ThrustDirection, ThrustSource.Location);
 			}
-
-			if(GetVoidgrid()->GetThrustManager()->GetThrustRotation())
 		}
 		else
 		{
