@@ -157,6 +157,11 @@ float UThrustManager::GetThrustSourceAccelerationInRotation(const bool bClockwis
 	return 0;
 }
 
+/**
+ * Adds a thrust source to this for use in thrust prediction calculations.
+ *
+ * @param ThrustSource - The thrust source to add.
+ */
 void UThrustManager::AddManagedThrustSource(FThrustSource ThrustSource)
 {
 	//Get linear thrust vectors
@@ -171,6 +176,11 @@ void UThrustManager::AddManagedThrustSource(FThrustSource ThrustSource)
 	}
 }
 
+/**
+ * Removes a thrust source to this for use in thrust prediction calculations.
+ *
+ * @param ThrustSource - The thrust source to remove.
+ */
 void UThrustManager::RemoveManagedThrustSource(FThrustSource ThrustSource)
 {
 	//Get linear thrust vectors

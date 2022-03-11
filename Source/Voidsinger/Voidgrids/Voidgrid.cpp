@@ -95,7 +95,7 @@ void AVoidgrid::AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpul
 
 	FVector2D RelativeImpulseLocation = FVector2D(GridImpulseLocation) + FVector2D(PixelMeshComponent->GetRelativeLocation());
 	//Clamp new velocity within MaxAngualarVelocity
-	//                             | --------------------------------------------------------------------- Get New Velocity --------------------------------------------------------------------- |
+	//                             | -------------------------------------- Get New Velocity -------------------------------------- |
 	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation, WorldImpulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
 }
 
