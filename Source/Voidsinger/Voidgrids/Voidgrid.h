@@ -564,13 +564,13 @@ public:
 	void RemovePixel(GridLocationType Location, bool bCheckForBreaks = true);
 
 	/**
-	 * Checks for breaks in the Voidgrid around the given location, and finds each separated section
+	 * Checks for breaks in the Voidgrid around the given location, and finds each separated section. These sets added together should give the keys of LocationsToPixelState
 	 * 
 	 * @param Location - The location to check for breaks around
 	 * 
 	 * @return An array of arrays of parts that are connected to each other
 	 */
-	TArray<TArray<PixelType>> FindSeparatedSections(FIntPoint Location);
+	TSet<TSet<FIntPoint>> FindSeparatedSections(FIntPoint Location);
 
 	/**
 	 * Repair a pixel.
@@ -583,6 +583,13 @@ public:
 	 * Repairs a random pixel.
 	 */
 	void RepairPixel();
+
+	/**
+	 * Checks if the given location is intact.
+	 * 
+	 * @return Whether the location is intact or not
+	 */
+	bool IsIntact(FIntPoint Location);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UThrustManager> ThrustManagerClass;

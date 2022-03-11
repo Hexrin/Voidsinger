@@ -602,7 +602,7 @@ FVoidgridState AVoidgrid::GetState()
  *
  * @param Location - The location of the pixel to damage.
  */
-void AVoidgrid::RemovePixel(GridLocationType Location, bool bCheckForBreaks = true)
+void AVoidgrid::RemovePixel(GridLocationType Location, bool bCheckForBreaks)
 {
 	if (LocationsToPixelState.Contains(Location))
 	{
@@ -625,61 +625,126 @@ void AVoidgrid::RemovePixel(GridLocationType Location, bool bCheckForBreaks = tr
  *
  * @return An array of arrays of parts that are connected to each other
  */
-TArray<TGridMap<PixelType>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
+TSet<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 {
-
 	//Stores the return value
-	TArray<TGridMap<PixelType>> ReturnVal;
+	TSet<TSet<FIntPoint>> ReturnVal;
 
+	//Stores the location to the left of Location
 	FIntPoint LeftLocation = Location - (0, 1); // (0, 1) because unreal has x and y swapped
+	//Stores the location to the right of Location
 	FIntPoint RightLocation = Location + (0, 1);
+	//Stores the location above Location
 	FIntPoint TopLocation = Location + (1, 0);
+	//Stores the location below Location
 	FIntPoint BottomLocation = Location - (1, 0);
 
-	TSet<FIntPoint> LocationsContained;
+	// \/ Find which adjacent locations are contained within LocationsToPixelState \/ //
 
-	if (LocationsToPixelState.Contains(LeftLocation) && LocationsToPixelState.Find(LeftLocation)->IsIntact())
+	TArray<FIntPoint> LocationsContained;
+
+	if (LocationsToPixelState.Contains(LeftLocation) && IsIntact(LeftLocation))
 	{
 		LocationsContained.Emplace(LeftLocation);
 	}
-	if (LocationsToPixelState.Contains(RightLocation) && LocationsToPixelState.Find(RightLocation)->IsIntact())
+	if (LocationsToPixelState.Contains(RightLocation) && IsIntact(RightLocation))
 	{
 		LocationsContained.Emplace(RightLocation);
 	}
-	if (LocationsToPixelState.Contains(TopLocation) && LocationsToPixelState.Find(TopLocation)->IsIntact())
+	if (LocationsToPixelState.Contains(TopLocation) && IsIntact(TopLocation))
 	{
 		LocationsContained.Emplace(TopLocation);
 	}
-	if (LocationsToPixelState.Contains(BottomLocation) && LocationsToPixelState.Find(BottomLocation)->IsIntact())
+	if (LocationsToPixelState.Contains(BottomLocation) && IsIntact(BottomLocation))
 	{
 		LocationsContained.Emplace(BottomLocation);
 	}
 
-	//If the locations contained is less than 2, then it's impossible that there's any breaks
+	// /\ Find which adjacent locations are contained within LocationsToPixelState /\ //
+
+	//If the locations contained is less than 2, then it's impossible that there's any breaks, so return all locations
 	if (LocationsContained.Num() < 2)
 	{
-		ReturnVal.Emplace(LocationsToPixelState);
+		ReturnVal.Emplace(LocationsToPixelState.GenerateLocationArray());
 		return ReturnVal;
 	}
 
+	//Stores whether all adjacent locations are still connected to each other or not
+	bool bAllLocationsConnected = true;
+		
+	//Stores the first location within the locations contained array
+	FIntPoint FirstLocationContained = LocationsContained[0];
+	//Stores which locations are connected to the first location contained
+	TSet<FIntPoint> ConnectedLocations;
 
-	//for (int EachLocationAround = 0; EachLocationAround < 4; EachLocationAround++)
-	//{
-	//	FIntPoint LocationAround;
-	//	FIntPoint LocationOpposite;
+	for (int EachLocationContainedAfterFirst = 1; EachLocationContainedAfterFirst < LocationsContained.Num(); EachLocationContainedAfterFirst++)
+	{
+		//Stores the separated section that's connected to the first contained location
+		TArray<FIntPoint> SeparatedSectionConnectedToFirstLocation;
 
-	//	switch (EachLocationAround)
-	//	{
-	//	case 1:
-	//		LocationAround = (1, 0);
-	//		LocationOpposite = (-1, 0)
-	//			break;
-	//	case 2:
-	//		LocationAround = ()
-	//	}
-	//}
+		//Stores whether EachLocationContainedAfterFirst has already been found in other searches
+		bool bLocationAlreadyFound = false;
+
+		//Check if EachLocationContainedAfterFirst has been found to be connected to FirstLocation
+		bLocationAlreadyFound = ConnectedLocations.Contains(LocationsContained[EachLocationContainedAfterFirst]);
+
+		//Check if EachLocationContainedAfterFirst has been found in a section that isn't connected to FirstLocation
+		if (!bLocationAlreadyFound)
+		{
+			for (TSet<FIntPoint> EachSeparatedSection : ReturnVal)
+			{
+				if (EachSeparatedSection.Contains(LocationsContained[EachLocationContainedAfterFirst]))
+				{
+					bLocationAlreadyFound = true;
+					break;
+				}
+			}
+		}
+
+		if (!bLocationAlreadyFound)
+		{
+			if (LocationsToPixelState.PointsConnected(FirstLocationContained, LocationsContained[EachLocationContainedAfterFirst], SeparatedSectionConnectedToFirstLocation, IsIntact))
+			{
+				//If the locations are connected, then add them to ConnectedLocations, because those locations are connected to FirstLocationContained
+				ConnectedLocations.Emplace(FirstLocationContained);
+				ConnectedLocations.Emplace(LocationsContained[EachLocationContainedAfterFirst]);
+				ConnectedLocations.Append(SeparatedSectionConnectedToFirstLocation);
+			}
+			else
+			{
+				//If the locations aren't connected, then not all locations are connected
+				bool bAllLocationsConnected = false;
+				
+				//Add this separated section to the return value
+				ReturnVal.Emplace(SeparatedSectionConnectedToFirstLocation);
+				ConnectedLocations.Append(SeparatedSectionConnectedToFirstLocation);
+
+				//Find the section of pixels that are connected to the other location, but not the FirstLocationContained, and add that to the return value
+
+				//Stores the separated section not connected to FirstLocationContained, but instead connected to the other location
+				TArray<FIntPoint> SeparatedSectionConnectedToEachLocationContainedAfterFirst;
+
+				LocationsToPixelState.PointsConnected(LocationsContained[EachLocationContainedAfterFirst], FirstLocationContained, SeparatedSectionConnectedToEachLocationContainedAfterFirst, IsIntact);
+
+				ReturnVal.Emplace(SeparatedSectionConnectedToEachLocationContainedAfterFirst);
+			}
+		}
+	}
+
+	if (bAllLocationsConnected)
+	{
+		ReturnVal.Emplace(LocationsToPixelState.GenerateLocationArray());
+		return ReturnVal;
+	}
+
+	if (ReturnVal.Num() > 4)
+	{
+		UE_LOG(LogTemp, Error, TEXT("FindSeparatedSections() has found more than four separated sections on Voidgrid %s, despite this being impossible."), *GetName());
+	}
+
+	return ReturnVal;
 }
-
+	
 /**
  * Repair a pixel.
  *
@@ -710,6 +775,16 @@ void AVoidgrid::RepairPixel()
 	{
 		RepairPixel(MutablePixels.Array()[FMath::RandRange(0, MutablePixels.Num() - 1)]);
 	}
+}
+
+/**
+ * Checks if the given location is intact.
+ *
+ * @return Whether the location is intact or not
+ */
+bool AVoidgrid::IsIntact(FIntPoint Location)
+{
+	return LocationsToPixelState.Find(Location)->IsIntact();
 }
 
 /**
