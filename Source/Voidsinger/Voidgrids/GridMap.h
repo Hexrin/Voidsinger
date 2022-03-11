@@ -306,7 +306,6 @@ public:
 		return PointsConnected(StartLocation, EndLocation, ConectivityArray, ConectivityCondition);
 	}
 
-private:
 	/**
 	 * Checks if StartLocation is connected to EndLocation in the grid.
 	 *
@@ -367,6 +366,8 @@ private:
 
 		return ReturnValue;
 	}
+
+private:
 
 	/**
 	 * Helper Function for PointsConnected. Always returns true.
