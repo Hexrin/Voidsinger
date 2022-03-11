@@ -117,9 +117,16 @@ void UThrustManager::PredictThrustToOrientation(float& TimeToOrientation, bool& 
 	TimeToOrientation = (Voidgrid->AngularVelocity > 0 ? CounterClockwiseAngularDistance : ClockwiseAngularDistance) / Voidgrid->AngularVelocity;
 }
 
-FVector2D UThrustManager::GetThrustDirection(const FVector2D ThrustDirection, FThrustSource ThrustSource) const
+/**
+ * Gets the maximum possible acceleration that a given thrust source can cause in a given direction on this voidgrid.
+ *
+ * @param Direction - The direction in local space to get the possible acceleration in.
+ * @param ThrustSource - The source of thrust used in calculations.
+ * @return The magnitude of the acceleration.
+ */
+float UThrustManager::GetThrustSourceAccelerationInDirection(const FVector2D Direction, const FThrustSource ThrustSource) const
 {
-	return FMath::Max((ThrustSource.Direction | ThrustDirection * ThrustSource.Force),0.f);
+	return FMath::Max(ThrustSource.Direction | Direction * ThrustSource.Force, 0.f);
 }
 
 float UThrustManager::GetThrustRotation(const bool bClockwise, FThrustSource ThrustSource) const
