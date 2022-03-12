@@ -626,10 +626,10 @@ void AVoidgrid::RemovePixel(GridLocationType Location, bool bCheckForBreaks)
  *
  * @return An array of arrays of parts that are connected to each other
  */
-TSet<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
+TArray<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 {
 	//Stores the return value
-	TSet<TSet<FIntPoint>> ReturnVal;
+	TArray<TSet<FIntPoint>> ReturnVal;
 
 	//Stores the location to the left of Location
 	FIntPoint LeftLocation = Location - (0, 1); // (0, 1) because unreal has x and y swapped

@@ -570,7 +570,7 @@ public:
 	 * 
 	 * @return An array of arrays of parts that are connected to each other
 	 */
-	TSet<TSet<FIntPoint>> FindSeparatedSections(FIntPoint Location);
+	TArray<TSet<FIntPoint>> FindSeparatedSections(FIntPoint Location);
 
 	/**
 	 * Repair a pixel.
