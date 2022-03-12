@@ -2,7 +2,7 @@
 
 
 #include "Voidgrid.h"
-#include "Voidsinger/Voidgrids/Parts/PartModules/ThrustManager.h"
+#include "Voidsinger/Voidgrids/ThrustManager.h"
 #include "DrawDebugHelpers.h"
 #include "Parts/Part.h"
 
@@ -89,7 +89,7 @@ void AVoidgrid::Tick(float DeltaTime)
  */
 void AVoidgrid::AddImpulse(FVector2D Impulse, FVector WorldImpulseLocation)
 {
-	AddImpulse(FVector2D(GetActorTransform().GetRotation().UnrotateVector(FVector(Impulse, 0)))), FVector2D(GetActorTransform().InverseTransformPosition(WorldImpulseLocation)));
+	AddImpulse(FVector2D(GetActorTransform().GetRotation().UnrotateVector(FVector(Impulse, 0))), FVector2D(GetActorTransform().InverseTransformPosition(WorldImpulseLocation)));
 }
 
 /**

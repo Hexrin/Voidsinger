@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Voidsinger/Voidgrids/Parts/PartModules/ActivatablePartModules/PartActivationData.h"
+#include "Internationalization/TextLocalizationResource.h"
 #include "ThrustManager.generated.h"
 
 class AVoidgrid;

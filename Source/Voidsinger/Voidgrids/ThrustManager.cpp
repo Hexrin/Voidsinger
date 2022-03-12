@@ -36,7 +36,7 @@ void UThrustManager::PredictThrustToLinearVelocity(float& TimeToVelocity, FVecto
  * @param ErrorRadius - The radius around the target location that count as being at .
  * @param bAccelerating - Whether or not to include the acceleration capabilities of this voidgrid in the predictions.
  */
-void UThrustManager::PredictThrustToLocation(float& TimeToLocation, FVector2D& DirectionToLocation, const FVector2D TargetLocation, const float ErrorRadius = 0.f) const
+void UThrustManager::PredictThrustToLocation(float& TimeToLocation, FVector2D& DirectionToLocation, const FVector2D TargetLocation, const float ErrorRadius) const
 {
 	FVector2D DeltaPosition = TargetLocation - FVector2D(Voidgrid->GetActorLocation());
 
@@ -84,7 +84,7 @@ void UThrustManager::PredictThrustToAngularVelocity(float& TimeToVelocity, bool&
  * @param bAccelerating - Whether or not to include the acceleration capabilities of this voidgrid in the predictions.
  */
 UFUNCTION(BlueprintPure)
-void UThrustManager::PredictThrustToOrientation(float& TimeToOrientation, bool& bClockwiseToOrientation, const float TargetOrientation, const bool bAccelerating = true) const
+void UThrustManager::PredictThrustToOrientation(float& TimeToOrientation, bool& bClockwiseToOrientation, const float TargetOrientation, const bool bAccelerating) const
 {
 	//The angular distance form current orientation to the target orientation in the counterclockwise direction.
 	float CounterClockwiseAngularDistance = FMath::Fmod(TargetOrientation > 0 ? TargetOrientation - Voidgrid->GetActorQuat().GetAngle() : 2 * PI - (TargetOrientation - Voidgrid->GetActorQuat().GetAngle()), 2 * PI);
@@ -146,11 +146,11 @@ float UThrustManager::GetThrustSourceAccelerationInRotation(const bool bClockwis
 		float RotationalEffectivness = ((ThrustSource.Location - Voidgrid->CenterOfMass) ^ ThrustSource.Direction) * ThrustSource.Force / Voidgrid->MomentOfInertia;
 		if (bClockwise)
 		{
-			return FMath::Max(RotationalEffectivness, 0);
+			return FMath::Max(RotationalEffectivness, 0.f);
 		}
 		else
 		{
-			return FMath::Max(RotationalEffectivness * -1.f, 0);
+			return FMath::Max(RotationalEffectivness * -1.f, 0.f);
 		}
 	}
 	return 0;
