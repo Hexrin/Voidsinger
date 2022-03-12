@@ -611,8 +611,9 @@ void AVoidgrid::RemovePixel(GridLocationType Location, bool bCheckForBreaks)
 
 		if (bCheckForBreaks)
 		{
+			TArray<TSet<FIntPoint>> SeparatedSections = FindSeparatedSections(Location);
 
-			FindSeparatedSections(Location);
+			SeparatedSections.Remove(ChooseSectionToKeep(SeparatedSections));
 		}
 	}
 
@@ -751,6 +752,36 @@ TArray<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 	}
 
 	return ReturnVal;
+}
+
+/**
+ * Chooses a section to keep out of the given sections
+ *
+ * @param Sections - The sections to choose from
+ *
+ * @returns The section to keep
+ */
+TSet<FIntPoint> AVoidgrid::ChooseSectionToKeep(TArray<TSet<FIntPoint>> Sections)
+{
+	if (!Sections.IsEmpty())
+	{
+		return Sections[0];
+	}
+
+	return TSet<FIntPoint>();
+}
+
+/**
+ * Creates a voidgrid with the given shape. The ship will have the same parts as those locations on this voidgrid. Also removes that shape from this Voidgrid.
+ *
+ * @param Shape - The shape of the new voidgrid
+ */
+void AVoidgrid::CreateNewVoidgrid(TSet<FIntPoint> Shape)
+{
+	for (FIntPoint EachLocation : Shape)
+	{
+
+	}
 }
 	
 /**

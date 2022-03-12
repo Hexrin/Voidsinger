@@ -573,6 +573,22 @@ public:
 	TArray<TSet<FIntPoint>> FindSeparatedSections(FIntPoint Location);
 
 	/**
+	 * Chooses a section to keep out of the given sections
+	 * 
+	 * @param Sections - The sections to choose from
+	 * 
+	 * @returns The section to keep
+	 */
+	TSet<FIntPoint> ChooseSectionToKeep(TArray<TSet<FIntPoint>> Sections);
+
+	/**
+	 * Creates a voidgrid with the given shape. The ship will have the same parts as those locations on this voidgrid. Also removes that shape from this Voidgrid.
+	 * 
+	 * @param Shape - The shape of the new voidgrid
+	 */
+	void CreateNewVoidgrid(TSet<FIntPoint> Shape);
+
+	/**
 	 * Repair a pixel.
 	 *
 	 * @param Location - The location of the pixel to repair.
