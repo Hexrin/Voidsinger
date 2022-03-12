@@ -585,11 +585,13 @@ public:
 	void RepairPixel();
 
 	/**
-	 * Checks if the given location is intact.
-	 * 
-	 * @return Whether the location is intact or not
+	 * Checks if the given pixel is intact.
+	 *
+	 * @param LocationToPixelData - The pixel to check
+	 *
+	 * @return Whether the pixel is intact or not
 	 */
-	bool IsIntact(FIntPoint Location);
+	static bool IsIntact(TPair<FIntPoint, FGridPixelData> LocationToPixelData);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UThrustManager> ThrustManagerClass;

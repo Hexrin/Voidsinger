@@ -5,6 +5,7 @@
 #include "Voidsinger/Voidgrids/Parts/PartModules/ThrustManager.h"
 #include "DrawDebugHelpers.h"
 #include "Parts/Part.h"
+#include "functional"
 
 //Sets default values for this voidgrid's properties
 AVoidgrid::AVoidgrid()
@@ -643,19 +644,19 @@ TSet<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 
 	TArray<FIntPoint> LocationsContained;
 
-	if (LocationsToPixelState.Contains(LeftLocation) && IsIntact(LeftLocation))
+	if (LocationsToPixelState.Contains(LeftLocation) && LocationsToPixelState.Find(LeftLocation)->IsIntact())
 	{
 		LocationsContained.Emplace(LeftLocation);
 	}
-	if (LocationsToPixelState.Contains(RightLocation) && IsIntact(RightLocation))
+	if (LocationsToPixelState.Contains(RightLocation) && LocationsToPixelState.Find(RightLocation)->IsIntact())
 	{
 		LocationsContained.Emplace(RightLocation);
 	}
-	if (LocationsToPixelState.Contains(TopLocation) && IsIntact(TopLocation))
+	if (LocationsToPixelState.Contains(TopLocation) && LocationsToPixelState.Find(TopLocation)->IsIntact())
 	{
 		LocationsContained.Emplace(TopLocation);
 	}
-	if (LocationsToPixelState.Contains(BottomLocation) && IsIntact(BottomLocation))
+	if (LocationsToPixelState.Contains(BottomLocation) && LocationsToPixelState.Find(BottomLocation)->IsIntact())
 	{
 		LocationsContained.Emplace(BottomLocation);
 	}
@@ -706,6 +707,7 @@ TSet<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 
 		if (!bLocationAlreadyFound)
 		{
+
 			if (LocationsToPixelState.PointsConnected(FirstLocationContained, LocationsContained[EachLocationContainedAfterFirst], SeparatedSectionConnectedToFirstLocation, &AVoidgrid::IsIntact))
 			{
 				//If the locations are connected, then add them to ConnectedLocations, because those locations are connected to FirstLocationContained
@@ -784,13 +786,15 @@ void AVoidgrid::RepairPixel()
 }
 
 /**
- * Checks if the given location is intact.
+ * Checks if the given pixel is intact.
  *
- * @return Whether the location is intact or not
+ * @param LocationToPixelData - The pixel to check
+ * 
+ * @return Whether the pixel is intact or not
  */
-bool AVoidgrid::IsIntact(FIntPoint Location)
+ bool AVoidgrid::IsIntact(TPair<FIntPoint, FGridPixelData> LocationToPixelData)
 {
-	return LocationsToPixelState.Find(Location)->IsIntact();
+	return LocationToPixelData.Value.IsIntact();
 }
 
 /**
