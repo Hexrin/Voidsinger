@@ -605,6 +605,8 @@ FVoidgridState AVoidgrid::GetState()
  */
 void AVoidgrid::RemovePixel(GridLocationType Location, bool bCheckForBreaks)
 {
+	SetPixelIntact(Location, false);
+
 	if (LocationsToPixelState.Contains(Location))
 	{
 		LocationsToTemperaturesPendingHeatTransfer.Emplace(Location, LocationsToPixelState.Find(Location)->GetTemperature());
@@ -624,8 +626,6 @@ void AVoidgrid::RemovePixel(GridLocationType Location, bool bCheckForBreaks)
 			}
 		}
 	}
-
-	SetPixelIntact(Location, false);
 }
 
 /**
@@ -641,13 +641,13 @@ TArray<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 	TArray<TSet<FIntPoint>> ReturnVal;
 
 	//Stores the location to the left of Location
-	FIntPoint LeftLocation = Location - (0, 1); // (0, 1) because unreal has x and y swapped
+	FIntPoint LeftLocation = Location - FIntPoint(0, 1); // (0, 1) because unreal has x and y swapped
 	//Stores the location to the right of Location
-	FIntPoint RightLocation = Location + (0, 1);
+	FIntPoint RightLocation = Location + FIntPoint(0, 1);
 	//Stores the location above Location
-	FIntPoint TopLocation = Location + (1, 0);
+	FIntPoint TopLocation = Location + FIntPoint(1, 0);
 	//Stores the location below Location
-	FIntPoint BottomLocation = Location - (1, 0);
+	FIntPoint BottomLocation = Location - FIntPoint(1, 0);
 
 	// \/ Find which adjacent locations are contained within LocationsToPixelState \/ //
 
@@ -685,6 +685,9 @@ TArray<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 	//Stores whether all adjacent locations are still connected to each other or not
 	bool bAllLocationsConnected = true;
 		
+	//Stores whether the separated section connected to first location contained has already been stored
+	bool bSeparatedSectionWithFirstLocationFound = false;
+
 	//Stores the first location within the locations contained array
 	FIntPoint FirstLocationContained = LocationsContained[0];
 	//Stores which locations are connected to the first location contained
@@ -719,6 +722,7 @@ TArray<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 
 			if (LocationsToPixelState.PointsConnected(FirstLocationContained, LocationsContained[EachLocationContainedAfterFirst], SeparatedSectionConnectedToFirstLocation, &AVoidgrid::IsIntact))
 			{
+
 				//If the locations are connected, then add them to ConnectedLocations, because those locations are connected to FirstLocationContained
 				ConnectedLocations.Emplace(FirstLocationContained);
 				ConnectedLocations.Emplace(LocationsContained[EachLocationContainedAfterFirst]);
@@ -726,11 +730,17 @@ TArray<TSet<FIntPoint>> AVoidgrid::FindSeparatedSections(FIntPoint Location)
 			}
 			else
 			{
+
 				//If the locations aren't connected, then not all locations are connected
 				bAllLocationsConnected = false;
 				
-				//Add this separated section to the return value
-				ReturnVal.Emplace(SeparatedSectionConnectedToFirstLocation);
+				if (!bSeparatedSectionWithFirstLocationFound)
+				{
+					//Add this separated section to the return value
+					ReturnVal.Emplace(SeparatedSectionConnectedToFirstLocation);
+					bSeparatedSectionWithFirstLocationFound = true;
+				}
+				
 				ConnectedLocations.Append(SeparatedSectionConnectedToFirstLocation);
 
 				//Find the section of pixels that are connected to the other location, but not the FirstLocationContained, and add that to the return value
@@ -796,7 +806,10 @@ void AVoidgrid::CreateNewVoidgrid(TSet<FIntPoint> Shape)
 		RemovePixel(EachLocation, false);
 	}
 
-	AVoidgrid* NewVoidgrid = GetWorld()->SpawnActor<AVoidgrid>(AVoidgrid::StaticClass(), GetActorLocation(), GetActorRotation());
+	FVector2D RotatedCenterOfMass = CenterOfMass.GetRotated(GetActorRotation().Yaw);
+
+
+	AVoidgrid* NewVoidgrid = GetWorld()->SpawnActor<AVoidgrid>(AVoidgrid::StaticClass(), GetActorLocation() - FVector(RotatedCenterOfMass, 0), GetActorRotation());
 
 	NewVoidgrid->SetState(FVoidgridState(NewMold, NewState));
 }
@@ -842,6 +855,7 @@ void AVoidgrid::RepairPixel()
  */
  bool AVoidgrid::IsIntact(TPair<FIntPoint, FGridPixelData> LocationToPixelData)
 {
+	UE_LOG(LogTemp, Warning, TEXT("pixel %s is intact %i"), *LocationToPixelData.Key.ToString(), LocationToPixelData.Value.IsIntact());
 	return LocationToPixelData.Value.IsIntact();
 }
 
