@@ -80,24 +80,6 @@ void AVoidgrid::Tick(float DeltaTime)
 \* \/ Physics \/ */
 
 // \/ Add Impulse \/ 
-/**
- * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
- *
- * @param RelativeImpulse - The impulse to apply to this voidgrid in relative space.
- * @param GridImpulseLocation - The location on the part grid to apply the impulse at.
- */
-void AVoidgrid::AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpulseLocation)
-{
-	FVector2D WorldImpulse = FVector2D(GetActorRotation().RotateVector(FVector(RelativeImpulse, 0)));
-	//Clamp new velocity within MaxLinearVelocity
-	//                            | -------- Get New Velocity -------- |
-	LinearVelocity = FMath::Clamp(LinearVelocity + (WorldImpulse / Mass), FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
-
-	FVector2D RelativeImpulseLocation = FVector2D(GridImpulseLocation) + FVector2D(PixelMeshComponent->GetRelativeLocation());
-	//Clamp new velocity within MaxAngualarVelocity
-	//                             | -------------------------------------- Get New Velocity -------------------------------------- |
-	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation, WorldImpulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
-}
 
 /**
  * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
@@ -107,15 +89,39 @@ void AVoidgrid::AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpul
  */
 void AVoidgrid::AddImpulse(FVector2D Impulse, FVector WorldImpulseLocation)
 {
+	AddImpulse(FVector2D(GetActorTransform().GetRotation().UnrotateVector(FVector(Impulse, 0)))), FVector2D(GetActorTransform().InverseTransformPosition(WorldImpulseLocation)));
+}
+
+/**
+ * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
+ *
+ * @param RelativeImpulse - The impulse to apply to this voidgrid in relative space.
+ * @param RelativeImpulseLocation - The location relative this to apply the impulse at.
+ */
+void AVoidgrid::AddImpulse(FVector2D RelativeImpulse, FVector2D RelativeImpulseLocation)
+{
+	FVector2D WorldImpulse = FVector2D(GetActorRotation().RotateVector(FVector(RelativeImpulse, 0)));
 	//Clamp new velocity within MaxLinearVelocity
 	//                            | -------- Get New Velocity -------- |
-	LinearVelocity = FMath::Clamp(LinearVelocity + (Impulse / Mass), FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
+	LinearVelocity = FMath::Clamp(LinearVelocity + (WorldImpulse / Mass), FVector2D(-1 * MaxLinearVelocity), FVector2D(MaxLinearVelocity));
 
-	FVector2D RelativeImpulseLocation = FVector2D(GetActorTransform().InverseTransformPosition(WorldImpulseLocation));
 	//Clamp new velocity within MaxAngualarVelocity
-	//                             | --------------------------------------------------------------------- Get New Velocity --------------------------------------------------------------------- |
-	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation, Impulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
+	//                             | -------------------------------------- Get New Velocity -------------------------------------- |
+	AngularVelocity = FMath::Clamp(AngularVelocity + FVector2D::CrossProduct(RelativeImpulseLocation, WorldImpulse) / MomentOfInertia, -1 * MaxAngularVelocity, MaxAngularVelocity);
 }
+
+
+/**
+ * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
+ *
+ * @param RelativeImpulse - The impulse to apply to this voidgrid in relative space.
+ * @param GridImpulseLocation - The location on the part grid to apply the impulse at.
+ */
+void AVoidgrid::AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpulseLocation)
+{
+	AddImpulse(RelativeImpulse, FVector2D(GridImpulseLocation) + FVector2D(PixelMeshComponent->GetRelativeLocation()));
+}
+
 // /\ Add Impulse /\ 
 
 /**

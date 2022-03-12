@@ -350,6 +350,8 @@ public:
 
 	FMassDelegate OnMassChanged;
 
+	// \/ Add Impulse \/ 
+
 	/**
 	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
 	 *
@@ -358,6 +360,15 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	void AddImpulse(FVector2D Impulse, FVector WorldImpulseLocation);
+
+	/**
+	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
+	 *
+	 * @param RelativeImpulse - The impulse to apply to this voidgrid in relative space.
+	 * @param RelativeImpulseLocation - The location relative this to apply the impulse at.
+	 */
+	void AddImpulse(FVector2D RelativeImpulse, FVector2D RelativeImpulseLocation);
+
 	/**
 	 * Pushes this voidgrid in the direction of Impulse with the force of |Impulse|.
 	 *
@@ -365,6 +376,8 @@ public:
 	 * @param WorldImpulseLocation - The location in world space to apply the impulse at.
 	 */
 	void AddImpulse(FVector2D RelativeImpulse, GridLocationType GridImpulseLocation = GridLocationType::ZeroValue);
+
+	// /\ Add Impulse /\ 
 
 	/**
 	 * Gets the instantaneous linear velocity of a point on this Voidgrid
