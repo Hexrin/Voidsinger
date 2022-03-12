@@ -613,7 +613,15 @@ void AVoidgrid::RemovePixel(GridLocationType Location, bool bCheckForBreaks)
 		{
 			TArray<TSet<FIntPoint>> SeparatedSections = FindSeparatedSections(Location);
 
-			SeparatedSections.Remove(ChooseSectionToKeep(SeparatedSections));
+			TSet<FIntPoint> SectionToKeep = ChooseSectionToKeep(SeparatedSections);
+
+			for (TSet<FIntPoint> EachSeparatedSection : SeparatedSections)
+			{
+				if (!(EachSeparatedSection.Difference(SectionToKeep).IsEmpty()))
+				{
+					CreateNewVoidgrid(EachSeparatedSection);
+				}
+			}
 		}
 	}
 
@@ -778,10 +786,19 @@ TSet<FIntPoint> AVoidgrid::ChooseSectionToKeep(TArray<TSet<FIntPoint>> Sections)
  */
 void AVoidgrid::CreateNewVoidgrid(TSet<FIntPoint> Shape)
 {
+	TSet<FPartInstanceData> NewState;
+	TSet<FMinimalPartInstanceData> NewMold;
+
 	for (FIntPoint EachLocation : Shape)
 	{
-
+		NewMold.Emplace(LocationsToPixelState.Find(EachLocation)->GetCurrentPart()->GetMinimalPartInstanceData());
+		NewState.Emplace(LocationsToPixelState.Find(EachLocation)->GetCurrentPart()->GetPartInstanceData());
+		RemovePixel(EachLocation, false);
 	}
+
+	AVoidgrid* NewVoidgrid = GetWorld()->SpawnActor<AVoidgrid>(AVoidgrid::StaticClass(), GetActorLocation(), GetActorRotation());
+
+	NewVoidgrid->SetState(FVoidgridState(NewMold, NewState));
 }
 	
 /**
