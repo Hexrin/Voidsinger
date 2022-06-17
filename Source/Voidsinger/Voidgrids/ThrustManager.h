@@ -83,7 +83,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FThrustRequest, FPartActivationData,
  * Can make predictions about acceleration and make thrust requests.
  */
 UCLASS()
-class VOIDSINGER_API UThrustManager : public UObject
+class VOIDSINGER_API UThrustManager : public UObject, public FTickableGameObject
 {
 	GENERATED_BODY()
 
@@ -232,6 +232,26 @@ private:
 	\* \/ Thrust Control \/ */
 
 public:
+	/**
+	 * Tick override to track if the interval has passed and the delegate should be called
+	 *
+	 * @param DeltaTime - The time since the previous tick
+	 */
+	virtual void Tick(float DeltaTime) override;
+
+	/**
+	 * Determines if this object is tickable
+	 *
+	 * @return - Whether this object is tickable or not
+	 */
+	virtual bool IsTickable() const override;
+
+	/**
+	 * Returns this object's StatId
+	 *
+	 * @return - This object's StatId
+	 */
+	virtual TStatId GetStatId() const override;
 
 	//Called when this makes a thrust request. Vector will be in the direction of the target move direction, and rotation will be the target orientation.
 	UPROPERTY()

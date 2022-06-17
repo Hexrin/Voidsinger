@@ -240,3 +240,33 @@ float UThrustManager::GetMaximumAccelerationInRotation(const bool bClockwise) co
 
 /* /\ Thrust Predictions /\ *\
 \* ------------------------ */
+
+/**
+ * Tick override to track if the interval has passed and the delegate should be called
+ *
+ * @param DeltaTime - The time since the previous tick
+ */
+void UThrustManager::Tick(float DeltaTime)
+{
+
+}
+
+/**
+ * Determines if this object is tickable
+ *
+ * @return - Whether this object is tickable or not
+ */
+bool UThrustManager::IsTickable() const
+{
+	return IsValid(Voidgrid);
+}
+
+/**
+ * Returns this object's StatId
+ *
+ * @return - This object's StatId
+ */
+TStatId UThrustManager::GetStatId() const
+{
+	return TStatId();
+}

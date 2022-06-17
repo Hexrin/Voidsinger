@@ -9,7 +9,7 @@
 //Sets default values for this voidgrid's properties
 AVoidgrid::AVoidgrid()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	//Initialize Root Component
@@ -1171,7 +1171,6 @@ EFaction AVoidgrid::GetFaction() const
  */
 void AVoidgrid::AddResourceRequest(FResourceRequest ResourceRequest)
 {
-
 	//Stores the lower index of the range where ResourceRequest should be
 	int LowerIndex = 0;
 
